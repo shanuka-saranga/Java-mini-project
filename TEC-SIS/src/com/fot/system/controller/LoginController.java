@@ -24,8 +24,10 @@ public class LoginController {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                String email = view.getEmail();
-                String password = view.getPassword();
+//                String email = view.getEmail(); TODO
+//                String password = view.getPassword(); TODO
+                String email = "test@gmail.com";
+                String password = "1234";
 
                 User user = service.login(email, password);
 

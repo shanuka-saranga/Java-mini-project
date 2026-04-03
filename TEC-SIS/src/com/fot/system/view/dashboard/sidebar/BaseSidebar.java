@@ -1,5 +1,6 @@
 package com.fot.system.view.dashboard.sidebar;
 
+import com.fot.system.config.AppConfig;
 import com.fot.system.config.AppTheme;
 import com.fot.system.view.dashboard.MainDashboard;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
@@ -42,9 +43,9 @@ public abstract class BaseSidebar extends JPanel {
     }
 
     private void addCommonButtons() {
-        add(createMenuButton("Home", FontAwesomeSolid.HOME, "WelcomeCard"));
+        add(createMenuButton("Home", FontAwesomeSolid.HOME, AppConfig.MENU_HOME));
         add(Box.createVerticalStrut(10));
-        add(createMenuButton("Profile", FontAwesomeSolid.USER, "ProfileCard"));
+        add(createMenuButton("Profile", FontAwesomeSolid.USER, AppConfig.MENU_PROFILE));
         add(Box.createVerticalStrut(10));
     }
 
@@ -52,7 +53,7 @@ public abstract class BaseSidebar extends JPanel {
 
     private void addFooter() {
         add(Box.createVerticalGlue());
-        JButton logoutBtn = createMenuButton("Logout", FontAwesomeSolid.SIGN_OUT_ALT, "Logout");
+        JButton logoutBtn = createMenuButton("Logout", FontAwesomeSolid.SIGN_OUT_ALT, AppConfig.MENU_LOGOUT);
         add(logoutBtn);
         add(Box.createVerticalStrut(25));
     }
@@ -78,8 +79,10 @@ public abstract class BaseSidebar extends JPanel {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         button.setHorizontalAlignment(SwingConstants.LEFT);
+        button.setVerticalAlignment(SwingConstants.CENTER);
+        button.setHorizontalTextPosition(SwingConstants.RIGHT);
+        button.setVerticalTextPosition(SwingConstants.CENTER);
         button.setIconTextGap(15);
-        button.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 
         button.addActionListener(e -> {
             if (!cardName.equals("Logout")) {
@@ -90,15 +93,10 @@ public abstract class BaseSidebar extends JPanel {
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(AppTheme.PRIMARY_HOVER);
-                button.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createMatteBorder(0, 5, 0, 0, Color.WHITE),
-                        BorderFactory.createEmptyBorder(0, 15, 0, 0)
-                ));
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setBackground(AppTheme.PRIMARY);
-                button.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
             }
         });
 

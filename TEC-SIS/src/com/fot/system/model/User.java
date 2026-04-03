@@ -59,6 +59,9 @@ public abstract class User {
         this.lastName = lastName;
     }
 
+    public String getName(){
+        return firstName + " " + lastName;
+    }
     public String getRole() {
         return role;
     }
