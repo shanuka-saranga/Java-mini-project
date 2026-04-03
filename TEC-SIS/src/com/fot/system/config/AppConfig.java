@@ -22,5 +22,4 @@ public class AppConfig {
     public static final String MENU_NOTICES = "NOTICES";
     public static final String MENU_TIMETABLES = "TIMETABLES";
     public static final String MENU_REPORTS = "REPORTS";
-
 }
