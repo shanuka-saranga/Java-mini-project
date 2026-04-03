@@ -1,16 +1,16 @@
-CREATE TABLE Users (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(50) NOT NULL,
-    LastName VARCHAR(50) NOT NULL,
-     Role ENUM('Admin', 'Dean', 'Lecturer', 'TO', 'Student') NOT NULL,
-    Dob DATE NOT NULL,
-    Email VARCHAR(100) UNIQUE NOT NULL,
-    Phone VARCHAR(15) UNIQUE NOT NULL,
-    Address VARCHAR(100),
-    DepartmentID INT NOT NULL,
-    PasswordHash VARCHAR(255) NOT NULL,
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    Status ENUM('Active', 'Inactive') DEFAULT 'Active',
-    FOREIGN KEY (DepartmentID) REFERENCES Department (DepartmentID) ON DELETE CASCADE ON UPDATE CASCADE
-)
+CREATE TABLE users (
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   first_name VARCHAR(50) NOT NULL,
+   last_name VARCHAR(50) NOT NULL,
+   role ENUM('Admin', 'Dean', 'Lecturer', 'TO', 'Student') NOT NULL,
+   dob DATE NOT NULL,
+   email VARCHAR(100) UNIQUE NOT NULL,
+   phone VARCHAR(15) UNIQUE NOT NULL,
+   address VARCHAR(100),
+   department_id INT NOT NULL,
+   password_hash VARCHAR(255) NOT NULL,
+   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   status ENUM('Active', 'Inactive') DEFAULT 'Active',
+    FOREIGN KEY (department_id) REFERENCES department (department_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
