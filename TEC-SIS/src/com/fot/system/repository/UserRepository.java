@@ -22,8 +22,9 @@ public class UserRepository {
 
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
-
             if (rs.next()) {
+                String currentStatus = rs.getString("status");
+                System.out.println("User Status from DB: " + currentStatus);
                 return mapResultSetToUser(rs);
             }
 
@@ -99,6 +100,7 @@ public class UserRepository {
         user.setLastName(rs.getString("last_name"));
         user.setEmail(rs.getString("email"));
         user.setPasswordHash(rs.getString("password_hash"));
+        user.setStatus(rs.getString("status"));
         user.setRole(rs.getString("role"));
 
         return user;

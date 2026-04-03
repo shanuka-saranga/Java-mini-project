@@ -15,7 +15,6 @@ public class UserService {
 
     public User login(String email, String password) {
 
-        // Validation
         if (email == null || email.isEmpty()) {
             throw new RuntimeException("Email is required");
         }
@@ -25,17 +24,18 @@ public class UserService {
         }
 
         User user = userRepository.findByEmail(email);
-
+        System.out.println("user data"+user.getEmail());
         if (user == null) {
-            return null; // user not found
+            System.out.println("User user not found!");
+            return null;
         }
-
         if (!user.getPasswordHash().equals(password)) {
-            return null; // wrong password
+            return null;
         }
 
-        if (!"Active".equalsIgnoreCase(user.getStatus())) {
-            throw new RuntimeException("User account is inactive");
+        if (!"ACTIVE".equalsIgnoreCase(user.getStatus())) {
+            System.out.println("user status is = "+ user.getStatus());
+            throw new RuntimeException("User account is blocked");
         }
 
         return user;

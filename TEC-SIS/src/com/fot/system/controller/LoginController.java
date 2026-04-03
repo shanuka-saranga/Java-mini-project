@@ -59,7 +59,6 @@ public class LoginController {
         }
     }
 
-    // 🔥 Role-Based Dashboard Logic
     private void openDashboard(User user) {
 
         String role = user.getRole();
