@@ -2,6 +2,7 @@ package com.fot.system.controller;
 
 import com.fot.system.model.User;
 import com.fot.system.service.UserService;
+import com.fot.system.view.dashboard.MainDashboard;
 import com.fot.system.view.login.LoginView;
 
 import javax.swing.*;
@@ -16,17 +17,12 @@ public class LoginController {
     public LoginController(LoginView view) {
         this.view = view;
         this.service = new UserService();
-
-        // Attach event
         this.view.getLoginButton().addActionListener(new LoginAction());
     }
 
-    // 🔘 Inner Class for Button Action
     class LoginAction implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
-
             try {
                 String email = view.getEmail();
                 String password = view.getPassword();
@@ -34,15 +30,9 @@ public class LoginController {
                 User user = service.login(email, password);
 
                 if (user != null) {
-
-                    JOptionPane.showMessageDialog(view,
-                            "Welcome " + user.getFullName());
-
-                    // 👉 Role-based navigation (basic)
+                    view.showSuccessMessage("Welcome " + user.getFullName());
                     openDashboard(user);
-
-                    view.dispose(); // close login window
-
+                    view.dispose();
                 } else {
                     JOptionPane.showMessageDialog(view,
                             "Invalid Email or Password",
@@ -62,6 +52,8 @@ public class LoginController {
     private void openDashboard(User user) {
 
         String role = user.getRole();
+        MainDashboard dashboard = new MainDashboard(user);
+        dashboard.setVisible(true);
 
         switch (role) {
 
