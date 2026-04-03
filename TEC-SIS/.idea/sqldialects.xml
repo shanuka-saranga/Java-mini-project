@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/database/Attendance.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/Course.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/Department.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/Lecture.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/Lecturers.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/Marks.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/MedicalParticipation.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/Medicals.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/TechnicalOfficer.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/Users.sql" dialect="GenericSQL" />
+  </component>
+</project>

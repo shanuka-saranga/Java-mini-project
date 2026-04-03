@@ -1,0 +1,27 @@
+CREATE TABLE Marks (
+    MarkID INT AUTO_INCREMENT PRIMARY KEY,
+    StudentRegNo VARCHAR(15) NOT NULL,
+    CourseCode VARCHAR(10) NOT NULL,
+    Quiz1 DECIMAL(5,2) DEFAULT 0.00,
+    Quiz2 DECIMAL(5,2) DEFAULT 0.00,
+    Quiz3 DECIMAL(5,2) DEFAULT 0.00,
+    Assessment1 DECIMAL(5,2) DEFAULT 0.00
+);
+CREATE TABLE MidExam (
+    MidExamID INT AUTO_INCREMENT PRIMARY KEY,
+    MarkID INT NOT NULL,
+    ExamType ENUM('Theory', 'Practical') NOT NULL,
+    MidExamMark DECIMAL(5,2) DEFAULT 0.00,
+    FOREIGN KEY (MarkID) REFERENCES Marks(MarkID)
+        ON DELETE CASCADE
+    
+);
+
+CREATE TABLE EndExam (
+    EndExamID INT AUTO_INCREMENT PRIMARY KEY,
+    MarkID INT NOT NULL,
+    ExamType ENUM('Theory', 'Practical') NOT NULL,
+    EndExamMark DECIMAL(5,2) DEFAULT 0.00,
+    FOREIGN KEY (MarkID) REFERENCES Marks(MarkID)
+        ON DELETE CASCADE
+);

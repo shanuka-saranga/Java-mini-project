@@ -1,0 +1,14 @@
+CREATE TABLE Attendance (
+    AttendanceID INT AUTO_INCREMENT PRIMARY KEY,
+    RegNo VARCHAR(15) NOT NULL,
+    LectureID INT NOT NULL,
+    SessionDate DATE NOT NULL,
+    Status ENUM(
+        'Present',
+        'Absent'
+    ) NOT NULL,
+    RecordedBy INT NOT NULL,
+    FOREIGN KEY (RegNo) REFERENCES Student (StudentRegNo) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (LectureID) REFERENCES Lecture (LectureID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (RecordedBy) REFERENCES Users (Id) ON DELETE CASCADE ON UPDATE CASCADE
+)

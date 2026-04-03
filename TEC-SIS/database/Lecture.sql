@@ -1,0 +1,11 @@
+CREATE TABLE Lecture (
+    LectureID INT AUTO_INCREMENT PRIMARY KEY,
+    CourseID INT NOT NULL,
+    LecturerID INT NOT NULL,
+    LectureDate DATE NOT NULL,
+    StartTime TIME NOT NULL,
+    DurationHours DECIMAL(4, 2) NOT NULL,
+    SessionType ENUM('Theory', 'Practical') NOT NULL,
+    FOREIGN KEY (CourseID) REFERENCES Course (CourseID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (LecturerID) REFERENCES Lecturer (UserID) ON DELETE CASCADE ON UPDATE CASCADE
+)
