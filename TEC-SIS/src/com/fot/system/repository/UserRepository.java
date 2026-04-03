@@ -84,7 +84,6 @@ public class UserRepository {
         return users;
     }
 
-    // 🔄 Map ResultSet → User Object (Reusable)
     private User mapResultSetToUser(ResultSet rs) throws SQLException {
 
         User user = new User() {
@@ -92,6 +91,7 @@ public class UserRepository {
             public void displayDashboard() {
                 System.out.println("Dashboard for: " + getRole());
             }
+
         };
 
         user.setId(rs.getInt("id"));

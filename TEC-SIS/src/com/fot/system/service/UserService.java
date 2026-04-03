@@ -13,7 +13,6 @@ public class UserService {
         this.userRepository = new UserRepository();
     }
 
-    // 🔐 LOGIN LOGIC
     public User login(String email, String password) {
 
         // Validation

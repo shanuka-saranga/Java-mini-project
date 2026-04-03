@@ -63,7 +63,7 @@ public abstract class User {
         return role;
     }
 
-    protected void setRole(String role) {
+    public void setRole(String role) {  //TODO make as protected
         this.role = role;
     }
 
