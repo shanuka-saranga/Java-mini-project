@@ -34,4 +34,21 @@ public class Staff extends User {
     public String getDesignation() { return designation; }
     public void setDesignation(String designation) { this.designation = designation; }
 
+    @Override
+    public String toString() {
+        return "Staff{" +
+                "id=" + getId() +
+                ", firstName='" + getFirstName() + '\'' +
+                ", lastName='" + getLastName() + '\'' +
+                ", role='" + getRole() + '\'' +
+                ", dob=" + getDob() +
+                ", email='" + getEmail() + '\'' +
+                ", phone='" + getPhone() + '\'' +
+                ", address='" + getAddress() + '\'' +
+                ", departmentId=" + getDepartmentId() +
+                ", staffCode='" + staffCode + '\'' +
+                ", designation='" + designation + '\'' +
+                '}';
+    }
+
 }

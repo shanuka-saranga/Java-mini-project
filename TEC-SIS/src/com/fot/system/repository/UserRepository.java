@@ -26,9 +26,7 @@ public class UserRepository {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                String currentStatus = rs.getString("status");
-                System.out.println("User Status from DB: " + currentStatus);
-                return mapResultSetToUser(rs);
+                return mapToUser(rs);
             }
 
         } catch (SQLException e) {
@@ -106,25 +104,61 @@ public class UserRepository {
     }
 
     public List<User> findAll() {
-
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM users";
+
+        String sql = "SELECT u.*, s.registration_no, s.registration_year, s.student_type, " +
+                "st.staff_code, st.designation " +
+                "FROM users u " +
+                "LEFT JOIN student s ON u.id = s.user_id " +
+                "LEFT JOIN staff st ON u.id = st.user_id";
 
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                users.add(mapResultSetToUser(rs));
+                // දැන් මේක ඇතුළේ staff_code තියෙන නිසා Error එකක් එන්නේ නැහැ
+                users.add(mapToSpecificUser(rs));
             }
 
         } catch (SQLException e) {
+            System.err.println("Error in findAll: " + e.getMessage());
             e.printStackTrace();
         }
 
         return users;
     }
 
-    private User mapResultSetToUser(ResultSet rs) throws SQLException {
+    private User mapToSpecificUser(ResultSet rs) throws SQLException {
+        String role = rs.getString("role");
+        User user;
+
+        if (AppConfig.ROLE_STUDENT.equalsIgnoreCase(role)) {
+            user = new Student();
+            ((Student) user).setRegistrationNo(rs.getString("registration_no"));
+            ((Student) user).setRegistrationYear(rs.getInt("registration_year"));
+            ((Student) user).setStudentType(rs.getString("student_type"));
+        } else {
+            user = new Staff();
+            ((Staff) user).setStaffCode(rs.getString("staff_code"));
+            ((Staff) user).setDesignation(rs.getString("designation"));
+        }
+
+        user.setId(rs.getInt("id"));
+        user.setFirstName(rs.getString("first_name"));
+        user.setLastName(rs.getString("last_name"));
+        user.setEmail(rs.getString("email"));
+        user.setPhone(rs.getString("phone"));
+        user.setAddress(rs.getString("address"));
+        user.setDob(rs.getDate("dob"));
+        user.setDepartmentId(rs.getInt("department_id"));
+        user.setPasswordHash(rs.getString("password_hash"));
+        user.setStatus(rs.getString("status"));
+        user.setRole(role);
+
+        return user;
+    }
+
+    private User mapToUser(ResultSet rs) throws SQLException {
         String role = rs.getString("role");
         User user;
 
@@ -147,5 +181,26 @@ public class UserRepository {
         user.setRole(role);
 
         return user;
+    }
+
+    public User findById(int id) {
+        String sql = "SELECT u.*, s.registration_no, s.registration_year, s.student_type, " +
+                "st.staff_code, st.designation " +
+                "FROM users u " +
+                "LEFT JOIN student s ON u.id = s.user_id " +
+                "LEFT JOIN staff st ON u.id = st.user_id " +
+                "WHERE u.id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapToSpecificUser(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error finding user by ID: " + e.getMessage());
+        }
+        return null;
     }
 }

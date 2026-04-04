@@ -8,8 +8,8 @@ import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
 import java.awt.*;
 
-public class AdminHomePage extends JPanel {
-    public AdminHomePage(User user) {
+public class AdminHomePanel extends JPanel {
+    public AdminHomePanel(User user) {
         setBackground(Color.WHITE);
         setLayout(new GridBagLayout());
         setLayout(new BorderLayout(20, 20));

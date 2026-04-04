@@ -140,4 +140,20 @@ public abstract class User {
         return firstName + " " + lastName;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", role='" + role + '\'' +
+                ", dob=" + dob +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                ", departmentId=" + departmentId +
+                ", status='" + status + '\'' +
+                '}';
+    }
+
 }

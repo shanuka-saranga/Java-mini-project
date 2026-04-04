@@ -40,4 +40,22 @@ public class Student extends User {
     public String getStudentType() { return studentType; }
     public void setStudentType(String studentType) { this.studentType = studentType; }
 
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + getId() +
+                ", firstName='" + getFirstName() + '\'' +
+                ", lastName='" + getLastName() + '\'' +
+                ", role='" + getRole() + '\'' +
+                ", dob=" + getDob() +
+                ", email='" + getEmail() + '\'' +
+                ", phone='" + getPhone() + '\'' +
+                ", address='" + getAddress() + '\'' +
+                ", departmentId=" + getDepartmentId() +
+                ", registrationNo='" + registrationNo + '\'' +
+                ", registrationYear=" + registrationYear +
+                ", studentType='" + studentType + '\'' +
+                '}';
+    }
+
 }
