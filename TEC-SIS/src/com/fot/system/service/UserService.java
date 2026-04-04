@@ -1,5 +1,6 @@
 package com.fot.system.service;
 
+import com.fot.system.config.AppConfig;
 import com.fot.system.model.User;
 import com.fot.system.repository.UserRepository;
 
@@ -33,7 +34,7 @@ public class UserService {
             return null;
         }
 
-        if (!"ACTIVE".equalsIgnoreCase(user.getStatus())) {
+        if (!AppConfig.STATUS_ACTIVE.equalsIgnoreCase(user.getStatus())) {
             System.out.println("user status is = "+ user.getStatus());
             throw new RuntimeException("User account is blocked");
         }

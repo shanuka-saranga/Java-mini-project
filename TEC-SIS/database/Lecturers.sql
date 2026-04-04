@@ -1,6 +1,0 @@
-CREATE TABLE Lecturer (
-    UserID INT NOT NULL,
-    StaffCode VARCHAR(10) UNIQUE NOT NULL,
-    Role ENUM('Lecturer', 'Dean') DEFAULT 'Lecturer',
-    FOREIGN KEY (UserID) REFERENCES Users (Id) ON DELETE CASCADE ON UPDATE CASCADE
-)

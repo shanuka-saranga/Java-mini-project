@@ -18,9 +18,19 @@ public abstract class User {
 
     public User() {}
 
-    public User(int id, String firstName, String lastName, String role, Date dob,
-                String email, String phone, String address, int departmentId,
-                String passwordHash, String status) {
+    public User(
+            int id,
+            String firstName,
+            String lastName,
+            String role,
+            Date dob,
+            String email,
+            String phone,
+            String address,
+            int departmentId,
+            String passwordHash,
+            String status
+    ) {
 
         this.id = id;
         this.firstName = firstName;
@@ -130,6 +140,4 @@ public abstract class User {
         return firstName + " " + lastName;
     }
 
-    // 🔷 Abstract Method (Abstraction)
-    public abstract void displayDashboard();
 }

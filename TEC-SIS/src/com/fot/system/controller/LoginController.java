@@ -83,6 +83,5 @@ public class LoginController {
                 System.out.println("Unknown role");
         }
 
-        user.displayDashboard();
     }
 }

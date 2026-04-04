@@ -8,6 +8,10 @@ public class AppConfig {
     public static final String ROLE_LECTURER = "LECTURER";
     public static final String ROLE_TO = "TO";
 
+    // user status
+    public static final String STATUS_ACTIVE = "ACTIVE";
+    public static final String STATUS_BLOCKED = "BLOCKED";
+
 
     // sidebar menu items
     public static final String MENU_HOME = "HOME";
