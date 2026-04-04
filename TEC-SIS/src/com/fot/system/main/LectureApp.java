@@ -4,7 +4,7 @@ import com.fot.system.view.login.LoginView;
 
 import javax.swing.*;
 
-public class MainApp {
+public class LectureApp {
 
     public static void main(String[] args) {
 

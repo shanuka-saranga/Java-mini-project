@@ -3,7 +3,6 @@ package com.fot.system.service;
 import com.fot.system.config.AppConfig;
 import com.fot.system.model.User;
 import com.fot.system.repository.UserRepository;
-
 import java.util.List;
 
 public class UserService {

@@ -4,8 +4,7 @@ import com.fot.system.view.login.LoginView;
 
 import javax.swing.*;
 
-public class MainApp {
-
+public class ToApp {
     public static void main(String[] args) {
 
         SwingUtilities.invokeLater(() -> {

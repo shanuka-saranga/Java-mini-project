@@ -1,5 +1,6 @@
 package com.fot.system.view.login;
 
+import com.fot.system.config.AppTheme;
 import com.fot.system.controller.LoginController;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -11,10 +12,8 @@ public class LoginView extends JFrame {
     private JPasswordField passwordField;
     private JButton loginButton;
 
-    private final Color TEAL_PRIMARY = new Color(0, 128, 128);
-    private final Color TEAL_HOVER = new Color(0, 102, 102);
 
-    public LoginView() {
+    public LoginView(String email , String password) {
         setTitle("TEC-SIS | Login");
         setSize(450, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -25,7 +24,7 @@ public class LoginView extends JFrame {
         mainPanel.setBackground(Color.WHITE);
 
         JPanel headerBar = new JPanel();
-        headerBar.setBackground(TEAL_PRIMARY);
+        headerBar.setBackground(AppTheme.PRIMARY);
         headerBar.setPreferredSize(new Dimension(450, 10));
         mainPanel.add(headerBar, BorderLayout.NORTH);
 
@@ -80,7 +79,7 @@ public class LoginView extends JFrame {
         formPanel.add(passwordField, gbc);
         loginButton = new JButton("Login Now");
         loginButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        loginButton.setBackground(TEAL_PRIMARY);
+        loginButton.setBackground(AppTheme.PRIMARY);
         loginButton.setForeground(Color.WHITE);
         loginButton.setOpaque(true);
         loginButton.setBorderPainted(false);
@@ -97,7 +96,7 @@ public class LoginView extends JFrame {
         add(mainPanel);
         emailField.requestFocus();
 
-        new LoginController(this);
+        new LoginController(this, email,password);
     }
 
     public String getEmail() { return emailField.getText().trim(); }
