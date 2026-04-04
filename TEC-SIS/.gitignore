@@ -30,3 +30,8 @@ bin/
 .DS_Store
 
 /src/db.properties
+
+.idea/
+*.iml
+out/
+*.class
