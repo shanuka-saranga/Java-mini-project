@@ -29,5 +29,17 @@ public class AppTheme {
     public static final Color TABLE_ROW_BG = Color.WHITE;
     public static final Color TABLE_ROW_ALT_BG = new Color(245, 245, 245); // Light Gray for alternate rows
     public static final Color TABLE_SELECTION_BG = new Color(224, 242, 241); // Light Teal
-    public static final Color TABLE_SELECTION_FG = new Color(0, 77, 64); // Dark Teal
+    public static final Color TABLE_SELECTION_FG = new Color(0, 77, 64);
+
+
+    // extra backgrounds
+    public static final Color CARD_BG = new Color(245, 250, 250);
+    public static final Color CONTENT_BG = new Color(250, 252, 252);
+
+    // extra fonts
+    public static final Font SUB_TITLE_FONT = new Font("Segoe UI", Font.BOLD, 18);
+    public static final Font BUTTON_FONT = new Font("Segoe UI", Font.BOLD, 14);
+
+    // borders
+    public static final Color BORDER_LIGHT = new Color(220, 230, 230);
 }

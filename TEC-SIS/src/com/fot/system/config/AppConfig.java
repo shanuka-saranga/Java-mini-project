@@ -27,4 +27,17 @@ public class AppConfig {
     public static final String MENU_TIMETABLES = "TIMETABLES";
     public static final String MENU_REPORTS = "REPORTS";
 
+
+    // student menu items
+
+
+    public static final String MENU_MY_COURSES = "MY_COURSES";
+    public static final String MENU_MY_TIMETABLE = "MY_TIMETABLE";
+    public static final String MENU_MEDICALS = "MEDICALS";
+    public static final String MENU_RESULTS = "RESULTS";
+
+
+
+
+
 }

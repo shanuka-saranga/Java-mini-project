@@ -1,6 +1,7 @@
 package com.fot.system.main;
 
-import com.fot.system.view.login.LoginView;
+import com.fot.system.model.User;
+import com.fot.system.view.dashboard.MainDashboard;
 
 import javax.swing.*;
 
@@ -14,8 +15,14 @@ public class StudentApp {
                 e.printStackTrace();
             }
 
-            LoginView loginView = new LoginView("test@gmail.com","1234");
-            loginView.setVisible(true);
+            User student = new User() {};
+            student.setId(13);
+            student.setFirstName("Test");
+            student.setLastName("Student");
+            student.setRole("STUDENT");
+
+            MainDashboard dashboard = new MainDashboard(student);
+            dashboard.setVisible(true);
         });
     }
 }
