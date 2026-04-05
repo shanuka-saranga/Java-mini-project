@@ -9,6 +9,7 @@ import com.fot.system.view.dashboard.sidebar.BaseSidebar;
 import com.fot.system.view.dashboard.sidebar.StudentSidebar;
 import com.fot.system.view.dashboard.student.MyCoursesPanel;
 import com.fot.system.view.dashboard.student.StudentProfilePanel;
+import com.fot.system.view.dashboard.student.MyTimetablePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,7 +59,7 @@ public class MainDashboard extends JFrame {
         } else if (AppConfig.ROLE_STUDENT.equalsIgnoreCase(currentUser.getRole())) {
             contentArea.add(new MyCoursesPanel(currentUser, "Home"), AppConfig.MENU_HOME);
             contentArea.add(new MyCoursesPanel(currentUser, "My Courses"), AppConfig.MENU_MY_COURSES);
-            contentArea.add(createPlaceholderPanel("My Timetable"), AppConfig.MENU_MY_TIMETABLE);
+            contentArea.add(new MyTimetablePanel(), AppConfig.MENU_MY_TIMETABLE);
             contentArea.add(createPlaceholderPanel("Notices"), AppConfig.MENU_NOTICES);
             contentArea.add(createPlaceholderPanel("Results"), AppConfig.MENU_RESULTS);
             contentArea.add(createPlaceholderPanel("Attendance"), AppConfig.MENU_ATTENDANCE);
