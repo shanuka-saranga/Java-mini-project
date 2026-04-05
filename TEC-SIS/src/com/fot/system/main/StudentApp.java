@@ -1,11 +1,11 @@
 package com.fot.system.main;
 
-import com.fot.system.model.User;
-import com.fot.system.view.dashboard.MainDashboard;
+import com.fot.system.view.login.LoginView;
 
 import javax.swing.*;
 
 public class StudentApp {
+
     public static void main(String[] args) {
 
         SwingUtilities.invokeLater(() -> {
@@ -15,14 +15,8 @@ public class StudentApp {
                 e.printStackTrace();
             }
 
-            User student = new User() {};
-            student.setId(13);
-            student.setFirstName("Test");
-            student.setLastName("Student");
-            student.setRole("STUDENT");
-
-            MainDashboard dashboard = new MainDashboard(student);
-            dashboard.setVisible(true);
+            LoginView loginView = new LoginView("aruni@fot.ruh.ac.lk", "pass123");
+            loginView.setVisible(true);
         });
     }
 }

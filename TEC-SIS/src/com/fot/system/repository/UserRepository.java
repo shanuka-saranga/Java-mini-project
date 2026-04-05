@@ -19,17 +19,24 @@ public class UserRepository {
     }
 
     public User findByEmail(String email) {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT u.*, s.registration_no, s.registration_year, s.student_type, " +
+                "st.staff_code, st.designation " +
+                "FROM users u " +
+                "LEFT JOIN student s ON u.id = s.user_id " +
+                "LEFT JOIN staff st ON u.id = st.user_id " +
+                "WHERE u.email = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return mapToUser(rs);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapToSpecificUser(rs);
+                }
             }
 
         } catch (SQLException e) {
+            System.err.println("Error finding user by email: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -203,4 +210,33 @@ public class UserRepository {
         }
         return null;
     }
+
+
+    //user profile
+    public boolean updateUserProfile(User user) {
+        String sql = "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, address = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, user.getFirstName());
+            stmt.setString(2, user.getLastName());
+            stmt.setString(3, user.getEmail());
+            stmt.setString(4, user.getPhone());
+            stmt.setString(5, user.getAddress());
+            stmt.setInt(6, user.getId());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error updating user profile: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+
+
+
+
 }
