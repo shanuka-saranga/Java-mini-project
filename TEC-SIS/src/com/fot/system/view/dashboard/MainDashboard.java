@@ -8,6 +8,7 @@ import com.fot.system.view.dashboard.sidebar.AdminSidebar;
 import com.fot.system.view.dashboard.sidebar.BaseSidebar;
 import com.fot.system.view.dashboard.sidebar.StudentSidebar;
 import com.fot.system.view.dashboard.student.MyCoursesPanel;
+import com.fot.system.view.dashboard.student.StudentProfilePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,7 +62,7 @@ public class MainDashboard extends JFrame {
             contentArea.add(createPlaceholderPanel("Notices"), AppConfig.MENU_NOTICES);
             contentArea.add(createPlaceholderPanel("Results"), AppConfig.MENU_RESULTS);
             contentArea.add(createPlaceholderPanel("Attendance"), AppConfig.MENU_ATTENDANCE);
-            contentArea.add(createPlaceholderPanel("Profile"), AppConfig.MENU_PROFILE);
+            contentArea.add(new StudentProfilePanel(currentUser), AppConfig.MENU_PROFILE);
         }
 
         cardLayout.show(contentArea, AppConfig.MENU_HOME);

@@ -9,6 +9,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+
+
     public UserService() {
         this.userRepository = new UserRepository();
     }
@@ -70,6 +72,12 @@ public class UserService {
 
     public User getUserById(int id) {
         return userRepository.findById(id);
+    }
+
+
+    //update
+    public boolean updateUserProfile(com.fot.system.model.User user) {
+        return userRepository.updateUserProfile(user);
     }
 
 }
