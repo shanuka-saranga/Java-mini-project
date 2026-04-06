@@ -3,7 +3,7 @@ package com.fot.system.view.dashboard.admin;
 import com.fot.system.config.AppTheme;
 import com.fot.system.model.User;
 import com.fot.system.service.UserService;
-import com.fot.system.view.dashboard.admin.manageUsers.UserDetailsComponent;
+import com.fot.system.view.dashboard.admin.UserTableComponent;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
@@ -20,6 +20,7 @@ public class ManageUsersPanel extends JPanel {
     private JLabel lblDetailName, lblDetailEmail, lblDetailRole, lblDetailStatus;
     private UserDetailsComponent userDetailsComp;
     private final UserService userService ;
+    JSplitPane splitPane ;
 
     public ManageUsersPanel(User currentUser) {
         setLayout(new BorderLayout(20, 20));
@@ -32,7 +33,7 @@ public class ManageUsersPanel extends JPanel {
         userService = new UserService();
         loadDataFromDatabase();
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setTopComponent(userTableComp);
         splitPane.setBottomComponent(userDetailsComp);
 
@@ -115,11 +116,10 @@ public class ManageUsersPanel extends JPanel {
                 protected void done() {
                     try {
                         User fullUser = get();
-                        // 3. සම්පූර්ණ Object එකම Component එකට දෙනවා
                         userDetailsComp.updateDetails(fullUser);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                        splitPane.setDividerLocation(350);
+                        userDetailsComp.setVisible(true);
+                    } catch (Exception e) { e.printStackTrace(); }
                 }
             };
             worker.execute();

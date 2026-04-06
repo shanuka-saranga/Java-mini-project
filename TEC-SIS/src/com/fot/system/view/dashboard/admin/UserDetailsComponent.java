@@ -1,8 +1,10 @@
-package com.fot.system.view.dashboard.admin.manageUsers;
+package com.fot.system.view.dashboard.admin;
 
+import com.fot.system.config.AppTheme;
 import com.fot.system.model.Staff;
 import com.fot.system.model.Student;
 import com.fot.system.model.User;
+import com.fot.system.view.components.CustomButton;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 
@@ -41,6 +43,7 @@ public class UserDetailsComponent extends JPanel {
         add(createBottomActions(), BorderLayout.SOUTH);
     }
 
+
     private JPanel createViewPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
@@ -57,7 +60,6 @@ public class UserDetailsComponent extends JPanel {
         lblAddress = createStyledLabel("Address: -", FontAwesomeSolid.MAP_MARKER_ALT);
         lblExtra = createStyledLabel("-", FontAwesomeSolid.ID_CARD);
 
-        // Grid එකට පිළිවෙලට එකතු කරමු
         addToGrid(panel, lblFirstName, 0, 0, gbc);
         addToGrid(panel, lblLastName, 1, 0, gbc);
         addToGrid(panel, lblEmail, 0, 1, gbc);
@@ -105,22 +107,63 @@ public class UserDetailsComponent extends JPanel {
         return panel;
     }
 
+
+
     private JPanel createBottomActions() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panel.setOpaque(false);
+        // ප්‍රධාන පැනල් එක (Layout එක BorderLayout දාමු)
+        JPanel mainActionPanel = new JPanel(new BorderLayout());
+        mainActionPanel.setOpaque(false);
 
-        JButton btnEdit = new JButton("Edit Profile");
-        JButton btnSave = new JButton("Save Changes");
-        JButton btnCancel = new JButton("Cancel");
+        // වම් පැත්තේ බටන් එක (Close)
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftPanel.setOpaque(false);
+        CustomButton btnClose = new CustomButton(
+                "Close",
+                AppTheme.BTN_CANCEL_BG,
+                AppTheme.BTN_CANCEL_FG,
+                AppTheme.BTN_CANCEL_HOVER,
+                new Dimension(120, 40)
+        );
 
-        btnSave.setBackground(TEAL_COLOR);
-        btnSave.setForeground(Color.WHITE);
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightPanel.setOpaque(false);
+
+        CustomButton btnEdit = new CustomButton(
+                "Edit Profile",
+                AppTheme.BTN_EDIT_BG,
+                AppTheme.BTN_EDIT_FG,
+                AppTheme.BTN_EDIT_HOVER,
+                new Dimension(150, 40)
+        );
+
+        CustomButton btnSave = new CustomButton(
+                "Save Changes",
+                AppTheme.BTN_SAVE_BG,
+                AppTheme.BTN_SAVE_FG,
+                AppTheme.BTN_SAVE_HOVER,
+                new Dimension(150, 40)
+        );
+
+        CustomButton btnCancel = new CustomButton(
+                "Cancel",
+                AppTheme.BTN_CANCEL_BG,
+                AppTheme.BTN_CANCEL_FG,
+                AppTheme.BTN_CANCEL_HOVER,
+                new Dimension(120, 40)
+        );
+
         btnSave.setVisible(false);
         btnCancel.setVisible(false);
+
+
+        btnClose.addActionListener(e -> {
+            setVisible(false);
+        });
 
         btnEdit.addActionListener(e -> {
             cardLayout.show(container, "EDIT");
             btnEdit.setVisible(false);
+            btnClose.setVisible(false); // Edit කරද්දී close එක හංගන්න පුළුවන් (Optional)
             btnSave.setVisible(true);
             btnCancel.setVisible(true);
         });
@@ -130,25 +173,31 @@ public class UserDetailsComponent extends JPanel {
             btnSave.setVisible(false);
             btnCancel.setVisible(false);
             btnEdit.setVisible(true);
+            btnClose.setVisible(true);
         });
 
         btnSave.addActionListener(e -> {
-            // මෙතනදී UI එකෙන් දත්ත අරන් currentUser එක update කරලා Service එකට යවන්න
             saveUpdatedData();
             cardLayout.show(container, "VIEW");
             btnSave.setVisible(false);
             btnCancel.setVisible(false);
             btnEdit.setVisible(true);
+            btnClose.setVisible(true);
         });
 
-        panel.add(btnEdit);
-        panel.add(btnSave);
-        panel.add(btnCancel);
-        return panel;
+        leftPanel.add(btnClose);
+
+        rightPanel.add(btnEdit);
+        rightPanel.add(btnSave);
+        rightPanel.add(btnCancel);
+
+        mainActionPanel.add(leftPanel, BorderLayout.WEST);
+        mainActionPanel.add(rightPanel, BorderLayout.EAST);
+
+        return mainActionPanel;
     }
 
     private void saveUpdatedData() {
-        // UI fields වලින් දත්ත අරගෙන model එක update කිරීම
         currentUser.setFirstName(txtFirstName.getText());
         currentUser.setLastName(txtLastName.getText());
         currentUser.setEmail(txtEmail.getText());
@@ -156,8 +205,7 @@ public class UserDetailsComponent extends JPanel {
         currentUser.setAddress(txtAddress.getText());
         currentUser.setStatus(cmbStatus.getSelectedItem().toString());
 
-        // TODO: මෙතනදී UserService.updateUser(currentUser) call කරන්න
-        updateDetails(currentUser); // View එක refresh කරන්න
+        updateDetails(currentUser);
         JOptionPane.showMessageDialog(this, "Profile updated successfully!");
     }
 
@@ -194,7 +242,6 @@ public class UserDetailsComponent extends JPanel {
         lblStatus.setText("Status: " + user.getStatus());
         lblAddress.setText("Address: " + user.getAddress());
 
-        // 2. Edit Mode Pre-fill
         txtFirstName.setText(user.getFirstName());
         txtLastName.setText(user.getLastName());
         txtEmail.setText(user.getEmail());
@@ -202,7 +249,6 @@ public class UserDetailsComponent extends JPanel {
         txtAddress.setText(user.getAddress());
         cmbStatus.setSelectedItem(user.getStatus());
 
-        // 3. Sub-class data (Student/Staff)
         if (user instanceof Student) {
             String regNo = ((Student) user).getRegistrationNo();
             lblExtra.setText("Registration No: " + regNo);

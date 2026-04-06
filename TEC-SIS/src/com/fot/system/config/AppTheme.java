@@ -30,4 +30,24 @@ public class AppTheme {
     public static final Color TABLE_ROW_ALT_BG = new Color(245, 245, 245); // Light Gray for alternate rows
     public static final Color TABLE_SELECTION_BG = new Color(224, 242, 241); // Light Teal
     public static final Color TABLE_SELECTION_FG = new Color(0, 77, 64); // Dark Teal
+
+    // 1. Primary Button (Save / Confirm)
+    public static final Color BTN_SAVE_BG = PRIMARY;
+    public static final Color BTN_SAVE_FG = Color.WHITE;
+    public static final Color BTN_SAVE_HOVER = new Color(0, 105, 105); // Darker Teal
+
+    // 2. Secondary Button (Edit / Update)
+    public static final Color BTN_EDIT_BG = new Color(224, 242, 241); // Very Light Teal
+    public static final Color BTN_EDIT_FG = PRIMARY;
+    public static final Color BTN_EDIT_HOVER = new Color(178, 223, 219); // Slightly Darker Light Teal
+
+    // 3. Danger/Neutral Button (Cancel / Reset)
+    public static final Color BTN_CANCEL_BG = new Color(158, 158, 158); // Gray
+    public static final Color BTN_CANCEL_FG = Color.WHITE;
+    public static final Color BTN_CANCEL_HOVER = new Color(117, 117, 117); // Darker Gray
+
+    // 4. Delete Button
+    public static final Color BTN_DELETE_BG = new Color(211, 47, 47); // Red
+    public static final Color BTN_DELETE_FG = Color.WHITE;
+    public static final Color BTN_DELETE_HOVER = new Color(183, 28, 28);
 }
