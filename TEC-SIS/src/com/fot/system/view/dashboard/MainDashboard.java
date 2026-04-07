@@ -6,6 +6,7 @@ import com.fot.system.view.dashboard.admin.manageCourses.ManageCoursesPanel;
 import com.fot.system.view.dashboard.admin.manageNotices.ManageNoticesPanel;
 import com.fot.system.view.dashboard.admin.AdminHomePanel;
 import com.fot.system.view.dashboard.admin.manageUsers.ManageUsersPanel;
+import com.fot.system.view.dashboard.shared.UserProfilePanelFactory;
 import com.fot.system.view.dashboard.sidebar.AdminSidebar;
 import com.fot.system.view.dashboard.sidebar.BaseSidebar;
 
@@ -40,6 +41,7 @@ public class MainDashboard extends JFrame {
         contentArea = new JPanel(cardLayout);
         contentArea.setBackground(Color.WHITE);
         contentArea.add(new AdminHomePanel(user), AppConfig.MENU_HOME);
+        contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
         contentArea.add(new ManageUsersPanel(user),AppConfig.MENU_MANAGE_USERS);
         contentArea.add(new ManageCoursesPanel(user), AppConfig.MENU_MANAGE_COURSES);
         contentArea.add(new ManageNoticesPanel(user), AppConfig.MENU_MANAGE_NOTICES);
