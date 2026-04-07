@@ -10,6 +10,7 @@ public class AddUserRequest {
     private final String password;
     private final String phone;
     private final String address;
+    private final String profilePicturePath;
     private final String dob;
     private final String departmentId;
     private final String status;
@@ -27,6 +28,7 @@ public class AddUserRequest {
             String password,
             String phone,
             String address,
+            String profilePicturePath,
             String dob,
             String departmentId,
             String status,
@@ -43,6 +45,7 @@ public class AddUserRequest {
         this.password = password;
         this.phone = phone;
         this.address = address;
+        this.profilePicturePath = profilePicturePath;
         this.dob = dob;
         this.departmentId = departmentId;
         this.status = status;
@@ -79,6 +82,10 @@ public class AddUserRequest {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getProfilePicturePath() {
+        return profilePicturePath;
     }
 
     public String getDob() {

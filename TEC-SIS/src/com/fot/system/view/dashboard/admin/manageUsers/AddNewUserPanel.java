@@ -5,9 +5,12 @@ import com.fot.system.config.AppTheme;
 import com.fot.system.model.AddUserRequest;
 import com.fot.system.model.Department;
 import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.components.ProfilePhotoFrame;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.io.File;
 import java.util.List;
 
 public class AddNewUserPanel extends JPanel {
@@ -20,8 +23,10 @@ public class AddNewUserPanel extends JPanel {
     private JPasswordField txtPassword;
     private JTextField txtPhone;
     private JTextField txtAddress;
+    private JTextField txtProfilePicture;
     private JTextField txtDob;
     private JComboBox<Department> cmbDepartment;
+    private ProfilePhotoFrame profilePhotoFrame;
 
     private JComboBox<String> cmbRole;
     private JComboBox<String> cmbStatus;
@@ -74,8 +79,11 @@ public class AddNewUserPanel extends JPanel {
         txtPassword = new JPasswordField(15);
         txtPhone = new JTextField(15);
         txtAddress = new JTextField(15);
+        txtProfilePicture = new JTextField(15);
+        txtProfilePicture.setEditable(false);
         txtDob = new JTextField(15);
         cmbDepartment = new JComboBox<>();
+        profilePhotoFrame = new ProfilePhotoFrame("No image selected");
 
         cmbRole = new JComboBox<>(new String[]{
                 AppConfig.ROLE_STUDENT,
@@ -98,13 +106,15 @@ public class AddNewUserPanel extends JPanel {
         addFormRow(formPanel, "Password:", txtPassword, 4, gbc);
         addFormRow(formPanel, "Phone:", txtPhone, 5, gbc);
         addFormRow(formPanel, "Address:", txtAddress, 6, gbc);
-        addFormRow(formPanel, "DOB (yyyy-mm-dd):", txtDob, 7, gbc);
-        addFormRow(formPanel, "Department:", cmbDepartment, 8, gbc);
-        addFormRow(formPanel, "Status:", cmbStatus, 9, gbc);
+        addFormRow(formPanel, "Profile Picture:", createProfilePictureSelector(), 7, gbc);
+        addFormRow(formPanel, "Preview:", profilePhotoFrame, 8, gbc);
+        addFormRow(formPanel, "DOB (yyyy-mm-dd):", txtDob, 9, gbc);
+        addFormRow(formPanel, "Department:", cmbDepartment, 10, gbc);
+        addFormRow(formPanel, "Status:", cmbStatus, 11, gbc);
 
         initializeRoleSpecificPanel();
 
-        gbc.gridy = 10;
+        gbc.gridy = 12;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
@@ -193,6 +203,65 @@ public class AddNewUserPanel extends JPanel {
         return mainActionPanel;
     }
 
+    private JPanel createProfilePictureSelector() {
+        JPanel panel = new JPanel(new BorderLayout(8, 0));
+        panel.setOpaque(false);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        buttonPanel.setOpaque(false);
+
+        CustomButton browseButton = new CustomButton(
+                "Browse",
+                AppTheme.BTN_EDIT_BG,
+                AppTheme.BTN_EDIT_FG,
+                AppTheme.BTN_EDIT_HOVER,
+                new Dimension(100, 34)
+        );
+        browseButton.addActionListener(e -> chooseProfilePicture());
+
+        CustomButton clearButton = new CustomButton(
+                "Clear",
+                AppTheme.BTN_CANCEL_BG,
+                AppTheme.BTN_CANCEL_FG,
+                AppTheme.BTN_CANCEL_HOVER,
+                new Dimension(90, 34)
+        );
+        clearButton.addActionListener(e -> clearProfilePicture());
+
+        buttonPanel.add(browseButton);
+        buttonPanel.add(clearButton);
+
+        panel.add(txtProfilePicture, BorderLayout.CENTER);
+        panel.add(buttonPanel, BorderLayout.EAST);
+        return panel;
+    }
+
+    private void chooseProfilePicture() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select Profile Picture");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif"));
+
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            txtProfilePicture.setText(selectedFile.getAbsolutePath());
+            updateImagePreview(selectedFile.getAbsolutePath());
+        }
+    }
+
+    private void clearProfilePicture() {
+        txtProfilePicture.setText("");
+        profilePhotoFrame.clearImage();
+    }
+
+    private void updateImagePreview(String imagePath) {
+        if (imagePath == null || imagePath.trim().isEmpty()) {
+            clearProfilePicture();
+            return;
+        }
+        profilePhotoFrame.setImagePath(imagePath);
+    }
+
     private void updateRoleSpecificFields() {
         if (isStudentRole()) {
             roleCardLayout.show(roleSpecificPanel, STUDENT_CARD);
@@ -212,6 +281,7 @@ public class AddNewUserPanel extends JPanel {
         txtPassword.setText("");
         txtPhone.setText("");
         txtAddress.setText("");
+        clearProfilePicture();
         txtDob.setText("");
         if (cmbDepartment.getItemCount() > 0) {
             cmbDepartment.setSelectedIndex(0);
@@ -237,6 +307,7 @@ public class AddNewUserPanel extends JPanel {
                 getPassword(),
                 getPhone(),
                 getAddress(),
+                getProfilePicturePath(),
                 getDob(),
                 getDepartmentId(),
                 getStatus(),
@@ -274,6 +345,10 @@ public class AddNewUserPanel extends JPanel {
 
     public String getAddress() {
         return txtAddress.getText().trim();
+    }
+
+    public String getProfilePicturePath() {
+        return txtProfilePicture.getText().trim();
     }
 
     public String getDob() {

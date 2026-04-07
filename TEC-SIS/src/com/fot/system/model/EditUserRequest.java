@@ -11,6 +11,7 @@ public class EditUserRequest {
     private final String password;
     private final String phone;
     private final String address;
+    private final String profilePicturePath;
     private final String dob;
     private final String departmentId;
     private final String status;
@@ -29,6 +30,7 @@ public class EditUserRequest {
             String password,
             String phone,
             String address,
+            String profilePicturePath,
             String dob,
             String departmentId,
             String status,
@@ -46,6 +48,7 @@ public class EditUserRequest {
         this.password = password;
         this.phone = phone;
         this.address = address;
+        this.profilePicturePath = profilePicturePath;
         this.dob = dob;
         this.departmentId = departmentId;
         this.status = status;
@@ -86,6 +89,10 @@ public class EditUserRequest {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getProfilePicturePath() {
+        return profilePicturePath;
     }
 
     public String getDob() {

@@ -12,11 +12,22 @@ public class AppTheme {
     // Background Colors
     public static final Color BG_LIGHT = Color.WHITE;
     public static final Color SIDEBAR_BG = PRIMARY;
+    public static final Color SURFACE_MUTED = new Color(248, 251, 251);
+    public static final Color SURFACE_SOFT = new Color(245, 248, 248);
 
     // Text Colors
     public static final Color TEXT_LIGHT = Color.WHITE;
     public static final Color TEXT_DARK = new Color(50, 50, 50);
     public static final Color TEXT_MUTED = new Color(180, 180, 180);
+    public static final Color TEXT_SUBTLE = new Color(110, 110, 110);
+
+    // Borders / Frames
+    public static final Color BORDER_LIGHT = new Color(235, 235, 235);
+    public static final Color BORDER_MUTED = new Color(220, 220, 220);
+    public static final Color BORDER_SOFT = new Color(240, 240, 240);
+    public static final Color AVATAR_BORDER = PRIMARY;
+    public static final Color AVATAR_BG = new Color(245, 248, 248);
+    public static final Color AVATAR_TEXT = new Color(110, 110, 110);
 
     // Fonts
     public static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 22);

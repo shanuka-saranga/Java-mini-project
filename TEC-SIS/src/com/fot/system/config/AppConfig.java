@@ -1,5 +1,7 @@
 package com.fot.system.config;
 
+import java.nio.file.Path;
+
 public class AppConfig {
 
     // user roles
@@ -8,6 +10,15 @@ public class AppConfig {
     public static final String ROLE_STUDENT = "STUDENT";
     public static final String ROLE_LECTURER = "LECTURER";
     public static final String ROLE_TO = "TO";
+
+    // local storage
+
+    public static final String APP_STORAGE_DIR =
+            Path.of(System.getProperty("user.dir"), "storage").toString();
+
+    public static final String PROFILE_PICTURE_DIR =
+            Path.of(APP_STORAGE_DIR, "profile-pictures").toString();
+
 
     // user status
     public static final String STATUS_ACTIVE = "ACTIVE";

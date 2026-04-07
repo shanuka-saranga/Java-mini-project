@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class BaseAdminTablePanel extends JScrollPane {
+public abstract class  BaseAdminTablePanel extends JScrollPane {
 
     private final JTable table;
     private final DefaultTableModel tableModel;

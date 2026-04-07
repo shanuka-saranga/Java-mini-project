@@ -14,9 +14,11 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ProfilePictureStorageService profilePictureStorageService;
 
     public UserService() {
         this.userRepository = new UserRepository();
+        this.profilePictureStorageService = new ProfilePictureStorageService();
     }
 
     public User login(String email, String password) {
@@ -137,6 +139,11 @@ public class UserService {
         user.setPasswordHash(request.getPassword());
         user.setPhone(request.getPhone());
         user.setAddress(request.getAddress());
+        user.setProfilePicturePath(saveProfilePictureIfPresent(
+                request.getProfilePicturePath(),
+                request.getEmail(),
+                request.getRole()
+        ));
         user.setDob(parseDob(request.getDob()));
         user.setRole(request.getRole());
         user.setStatus(normalizeStatus(request.getStatus()));
@@ -150,6 +157,11 @@ public class UserService {
         user.setPasswordHash(request.getPassword());
         user.setPhone(request.getPhone());
         user.setAddress(request.getAddress());
+        user.setProfilePicturePath(resolveProfilePicturePathForUpdate(
+                request.getProfilePicturePath(),
+                request.getEmail(),
+                request.getRole()
+        ));
         user.setDob(parseDob(request.getDob()));
         user.setRole(request.getRole());
         user.setStatus(normalizeStatus(request.getStatus()));
@@ -188,6 +200,25 @@ public class UserService {
             return AppConfig.STATUS_BLOCKED;
         }
         return AppConfig.STATUS_ACTIVE;
+    }
+
+    private String saveProfilePictureIfPresent(String sourcePath, String email, String role) {
+        if (sourcePath == null || sourcePath.trim().isEmpty()) {
+            return null;
+        }
+        return profilePictureStorageService.saveProfilePicture(sourcePath, email, role);
+    }
+
+    private String resolveProfilePicturePathForUpdate(String picturePath, String email, String role) {
+        if (picturePath == null || picturePath.trim().isEmpty()) {
+            return null;
+        }
+
+        if (profilePictureStorageService.isManagedProfilePicture(picturePath)) {
+            return picturePath.trim();
+        }
+
+        return profilePictureStorageService.saveProfilePicture(picturePath, email, role);
     }
 
 }

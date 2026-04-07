@@ -69,7 +69,7 @@ public class UserRepository {
     }
 
     public boolean save(User user) {
-        String sqlUser = "INSERT INTO users (first_name, last_name, role, dob, email, phone, address, department_id, password_hash, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlUser = "INSERT INTO users (first_name, last_name, role, dob, email, phone, address, profile_picture_path, department_id, password_hash, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             conn.setAutoCommit(false);
@@ -82,9 +82,10 @@ public class UserRepository {
                 stmt.setString(5, user.getEmail());
                 stmt.setString(6, user.getPhone());
                 stmt.setString(7, user.getAddress());
-                stmt.setInt(8, user.getDepartmentId());
-                stmt.setString(9, user.getPasswordHash());
-                stmt.setString(10, user.getStatus());
+                stmt.setString(8, user.getProfilePicturePath());
+                stmt.setInt(9, user.getDepartmentId());
+                stmt.setString(10, user.getPasswordHash());
+                stmt.setString(11, user.getStatus());
 
                 int affectedRows = stmt.executeUpdate();
                 if (affectedRows == 0) throw new SQLException("Creating user failed.");
@@ -116,7 +117,7 @@ public class UserRepository {
     }
 
     public boolean update(User user) {
-        String sqlUser = "UPDATE users SET first_name = ?, last_name = ?, role = ?, dob = ?, email = ?, phone = ?, address = ?, department_id = ?, password_hash = ?, status = ? WHERE id = ?";
+        String sqlUser = "UPDATE users SET first_name = ?, last_name = ?, role = ?, dob = ?, email = ?, phone = ?, address = ?, profile_picture_path = ?, department_id = ?, password_hash = ?, status = ? WHERE id = ?";
 
         try {
             conn.setAutoCommit(false);
@@ -129,10 +130,11 @@ public class UserRepository {
                 stmt.setString(5, user.getEmail());
                 stmt.setString(6, user.getPhone());
                 stmt.setString(7, user.getAddress());
-                stmt.setInt(8, user.getDepartmentId());
-                stmt.setString(9, user.getPasswordHash());
-                stmt.setString(10, user.getStatus());
-                stmt.setInt(11, user.getId());
+                stmt.setString(8, user.getProfilePicturePath());
+                stmt.setInt(9, user.getDepartmentId());
+                stmt.setString(10, user.getPasswordHash());
+                stmt.setString(11, user.getStatus());
+                stmt.setInt(12, user.getId());
 
                 int affectedRows = stmt.executeUpdate();
                 if (affectedRows == 0) {
@@ -279,6 +281,7 @@ public class UserRepository {
         user.setEmail(rs.getString("email"));
         user.setPhone(rs.getString("phone"));
         user.setAddress(rs.getString("address"));
+        user.setProfilePicturePath(rs.getString("profile_picture_path"));
         user.setDob(rs.getDate("dob"));
         user.setDepartmentId(rs.getInt("department_id"));
         user.setPasswordHash(rs.getString("password_hash"));
@@ -304,6 +307,7 @@ public class UserRepository {
         user.setEmail(rs.getString("email"));
         user.setPhone(rs.getString("phone"));
         user.setAddress(rs.getString("address"));
+        user.setProfilePicturePath(rs.getString("profile_picture_path"));
         user.setDob(rs.getDate("dob"));
         user.setDepartmentId(rs.getInt("department_id"));
         user.setPasswordHash(rs.getString("password_hash"));

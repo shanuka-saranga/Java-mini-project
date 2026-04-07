@@ -7,6 +7,7 @@ import com.fot.system.model.Staff;
 import com.fot.system.model.Student;
 import com.fot.system.model.User;
 import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.components.ProfilePhotoFrame;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 
@@ -24,6 +25,7 @@ public class UserDetailsPanel extends JPanel {
     private final EditUserController editUserController = new EditUserController();
 
     private JLabel lblFirstName, lblLastName, lblEmail, lblRole, lblStatus, lblPhone, lblAddress, lblExtra;
+    private ProfilePhotoFrame profilePhotoFrame;
 
     private final Color TEAL_COLOR = new Color(0, 121, 107);
     private User currentUser;
@@ -49,8 +51,13 @@ public class UserDetailsPanel extends JPanel {
 
 
     private JPanel createViewPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel panel = new JPanel(new BorderLayout(20, 0));
         panel.setBackground(Color.WHITE);
+
+        profilePhotoFrame = new ProfilePhotoFrame("No Image");
+
+        JPanel detailsGrid = new JPanel(new GridBagLayout());
+        detailsGrid.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 10, 8, 10);
         gbc.anchor = GridBagConstraints.WEST;
@@ -64,17 +71,19 @@ public class UserDetailsPanel extends JPanel {
         lblAddress = createStyledLabel("Address: -", FontAwesomeSolid.MAP_MARKER_ALT);
         lblExtra = createStyledLabel("-", FontAwesomeSolid.ID_CARD);
 
-        addToGrid(panel, lblFirstName, 0, 0, gbc);
-        addToGrid(panel, lblLastName, 1, 0, gbc);
-        addToGrid(panel, lblEmail, 0, 1, gbc);
-        addToGrid(panel, lblPhone, 1, 1, gbc);
-        addToGrid(panel, lblRole, 0, 2, gbc);
-        addToGrid(panel, lblStatus, 1, 2, gbc);
+        addToGrid(detailsGrid, lblFirstName, 0, 0, gbc);
+        addToGrid(detailsGrid, lblLastName, 1, 0, gbc);
+        addToGrid(detailsGrid, lblEmail, 0, 1, gbc);
+        addToGrid(detailsGrid, lblPhone, 1, 1, gbc);
+        addToGrid(detailsGrid, lblRole, 0, 2, gbc);
+        addToGrid(detailsGrid, lblStatus, 1, 2, gbc);
 
         gbc.gridwidth = 2;
-        addToGrid(panel, lblAddress, 0, 3, gbc);
-        addToGrid(panel, lblExtra, 0, 4, gbc);
+        addToGrid(detailsGrid, lblAddress, 0, 3, gbc);
+        addToGrid(detailsGrid, lblExtra, 0, 4, gbc);
 
+        panel.add(profilePhotoFrame, BorderLayout.WEST);
+        panel.add(detailsGrid, BorderLayout.CENTER);
         return panel;
     }
 
@@ -264,6 +273,7 @@ public class UserDetailsPanel extends JPanel {
         lblRole.setText("Role: " + user.getRole());
         lblStatus.setText("Status: " + user.getStatus());
         lblAddress.setText("Address: " + user.getAddress());
+        updateProfileImage(user.getProfilePicturePath());
         editUserDetailsPanel.setUserData(user);
 
         if (user instanceof Student) {
@@ -296,5 +306,9 @@ public class UserDetailsPanel extends JPanel {
 
     public void setDepartments(List<Department> departments) {
         editUserDetailsPanel.setDepartments(departments);
+    }
+
+    private void updateProfileImage(String imagePath) {
+        profilePhotoFrame.setImagePath(imagePath);
     }
 }

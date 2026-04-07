@@ -12,6 +12,7 @@ public abstract class User {
     private String email;
     private String phone;
     private String address;
+    private String profilePicturePath;
     private int departmentId;
     private String passwordHash;
     private String status;
@@ -110,6 +111,14 @@ public abstract class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getProfilePicturePath() {
+        return profilePicturePath;
+    }
+
+    public void setProfilePicturePath(String profilePicturePath) {
+        this.profilePicturePath = profilePicturePath;
     }
 
     public int getDepartmentId() {
