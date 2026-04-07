@@ -80,7 +80,8 @@ public class AddNewUserPanel extends JPanel {
         cmbRole = new JComboBox<>(new String[]{
                 AppConfig.ROLE_STUDENT,
                 AppConfig.ROLE_LECTURER,
-                AppConfig.ROLE_TO
+                AppConfig.ROLE_TO,
+                AppConfig.ROLE_DEAN
         });
         cmbRole.addActionListener(e -> updateRoleSpecificFields());
 

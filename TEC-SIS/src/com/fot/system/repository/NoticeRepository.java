@@ -1,6 +1,7 @@
 package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
+import com.fot.system.config.AppConfig;
 import com.fot.system.model.Notice;
 
 import java.sql.Connection;
@@ -98,6 +99,76 @@ public class NoticeRepository {
         }
     }
 
+    public int countActive() {
+        String sql = "SELECT COUNT(*) FROM notices WHERE status = 'ACTIVE' AND published_date <= CURDATE() " +
+                "AND (expiry_date IS NULL OR expiry_date >= CURDATE())";
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to count notices: " + e.getMessage(), e);
+        }
+
+        return 0;
+    }
+
+    public int countVisibleByRole(String role) {
+        String normalizedRole = normalizeRole(role);
+        if (AppConfig.ROLE_ADMIN.equalsIgnoreCase(normalizedRole)) {
+            return countActive();
+        }
+
+        String sql = "SELECT COUNT(*) FROM notices WHERE status = 'ACTIVE' AND published_date <= CURDATE() " +
+                "AND (expiry_date IS NULL OR expiry_date >= CURDATE()) AND (audience = 'ALL' OR audience = ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, normalizedRole);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to count visible notices: " + e.getMessage(), e);
+        }
+
+        return 0;
+    }
+
+    public List<Notice> findRecentVisibleByRole(String role, int limit) {
+        List<Notice> notices = new ArrayList<>();
+        String normalizedRole = normalizeRole(role);
+        boolean adminRole = AppConfig.ROLE_ADMIN.equalsIgnoreCase(normalizedRole);
+
+        String sql = "SELECT n.*, CONCAT(u.first_name, ' ', u.last_name) AS created_by_name " +
+                "FROM notices n INNER JOIN users u ON u.id = n.created_by " +
+                "WHERE n.status = 'ACTIVE' AND n.published_date <= CURDATE() " +
+                "AND (n.expiry_date IS NULL OR n.expiry_date >= CURDATE()) " +
+                (adminRole ? "" : "AND (n.audience = 'ALL' OR n.audience = ?) ") +
+                "ORDER BY FIELD(n.priority, 'HIGH', 'MEDIUM', 'LOW'), n.published_date DESC, n.id DESC LIMIT ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            int index = 1;
+            if (!adminRole) {
+                stmt.setString(index++, normalizedRole);
+            }
+            stmt.setInt(index, limit);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    notices.add(mapNotice(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load visible notices: " + e.getMessage(), e);
+        }
+
+        return notices;
+    }
+
     private void bindNotice(PreparedStatement stmt, Notice notice) throws SQLException {
         stmt.setString(1, notice.getTitle());
         stmt.setString(2, notice.getContent());
@@ -126,5 +197,9 @@ public class NoticeRepository {
         notice.setCreatedBy(rs.getInt("created_by"));
         notice.setCreatedByName(rs.getString("created_by_name"));
         return notice;
+    }
+
+    private String normalizeRole(String role) {
+        return role == null ? "" : role.trim().toUpperCase();
     }
 }

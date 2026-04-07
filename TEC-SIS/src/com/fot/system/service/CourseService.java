@@ -27,6 +27,10 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
+    public int getCourseCount() {
+        return courseRepository.countAll();
+    }
+
     public Course getCourseByCode(String courseCode) {
         if (normalize(courseCode).isEmpty()) {
             throw new RuntimeException("Course code is required.");

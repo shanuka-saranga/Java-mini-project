@@ -55,6 +55,14 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public int getUserCount() {
+        return userRepository.countAll();
+    }
+
+    public int getUserCountByRole(String role) {
+        return userRepository.countByRole(role);
+    }
+
 
     public User addUser(AddUserRequest request) {
         User user = createUserByRole(request);

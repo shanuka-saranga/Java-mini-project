@@ -135,6 +135,21 @@ public class CourseRepository {
         return lecturers;
     }
 
+    public int countAll() {
+        String sql = "SELECT COUNT(*) FROM courses";
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to count courses: " + e.getMessage(), e);
+        }
+
+        return 0;
+    }
+
     private void bindCourse(PreparedStatement stmt, Course course) throws SQLException {
         stmt.setString(1, course.getCourseCode());
         stmt.setString(2, course.getCourseName());

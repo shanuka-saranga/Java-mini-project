@@ -25,6 +25,19 @@ public class NoticeService {
         return noticeRepository.findAll();
     }
 
+    public int getActiveNoticeCount() {
+        return noticeRepository.countActive();
+    }
+
+    public int getVisibleNoticeCountForRole(String role) {
+        return noticeRepository.countVisibleByRole(role);
+    }
+
+    public List<Notice> getRecentVisibleNoticesForRole(String role, int limit) {
+        int safeLimit = limit <= 0 ? 5 : limit;
+        return noticeRepository.findRecentVisibleByRole(role, safeLimit);
+    }
+
     public Notice getNoticeById(int noticeId) {
         if (noticeId <= 0) {
             throw new RuntimeException("Invalid notice ID.");

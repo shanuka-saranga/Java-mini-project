@@ -239,6 +239,25 @@ public class UserRepository {
         return users;
     }
 
+    public int countAll() {
+        return countBySql("SELECT COUNT(*) FROM users");
+    }
+
+    public int countByRole(String role) {
+        String sql = "SELECT COUNT(*) FROM users WHERE role = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, role);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to count users: " + e.getMessage(), e);
+        }
+        return 0;
+    }
+
     private User mapToSpecificUser(ResultSet rs) throws SQLException {
         String role = rs.getString("role");
         User user;
@@ -336,5 +355,17 @@ public class UserRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Database check failed: " + e.getMessage(), e);
         }
+    }
+
+    private int countBySql(String sql) {
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to count users: " + e.getMessage(), e);
+        }
+        return 0;
     }
 }

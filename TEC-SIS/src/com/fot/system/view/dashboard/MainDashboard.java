@@ -4,7 +4,7 @@ import com.fot.system.config.AppConfig;
 import com.fot.system.model.User;
 import com.fot.system.view.dashboard.admin.manageCourses.ManageCoursesPanel;
 import com.fot.system.view.dashboard.admin.manageNotices.ManageNoticesPanel;
-import com.fot.system.view.dashboard.admin.manageUsers.AdminHomePanel;
+import com.fot.system.view.dashboard.admin.AdminHomePanel;
 import com.fot.system.view.dashboard.admin.manageUsers.ManageUsersPanel;
 import com.fot.system.view.dashboard.sidebar.AdminSidebar;
 import com.fot.system.view.dashboard.sidebar.BaseSidebar;
