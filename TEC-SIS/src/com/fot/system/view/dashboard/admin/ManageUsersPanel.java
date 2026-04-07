@@ -44,6 +44,7 @@ public class ManageUsersPanel extends JPanel {
         userTableComp = new UserTableComponent();
         userDetailsComp = new UserDetailsPanel();
         userDetailsComp.setOnCloseAction(this::collapseBottomPanel);
+        userDetailsComp.setOnUserUpdatedAction(this::loadDataFromDatabase);
         addNewUserPanel.setOnCloseAction(this::collapseBottomPanel);
         userService = new UserService();
         departmentService = new DepartmentService();
@@ -119,7 +120,9 @@ public class ManageUsersPanel extends JPanel {
             @Override
             protected void done() {
                 try {
-                    addNewUserPanel.setDepartments(get());
+                    List<Department> departments = get();
+                    addNewUserPanel.setDepartments(departments);
+                    userDetailsComp.setDepartments(departments);
                 } catch (Exception e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(

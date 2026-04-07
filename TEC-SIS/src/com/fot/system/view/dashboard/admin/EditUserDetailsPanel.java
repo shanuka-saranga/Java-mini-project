@@ -1,23 +1,55 @@
 package com.fot.system.view.dashboard.admin;
 
+import com.fot.system.config.AppConfig;
+import com.fot.system.model.Department;
+import com.fot.system.model.EditUserRequest;
 import com.fot.system.model.Staff;
 import com.fot.system.model.Student;
 import com.fot.system.model.User;
+
 import javax.swing.*;
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class EditUserDetailsPanel extends JPanel {
-    private JTextField txtFirstName, txtLastName, txtEmail, txtPhone, txtAddress, txtExtra;
-    private JLabel lblExtraEdit;
+    private static final String STUDENT_CARD = "STUDENT";
+    private static final String STAFF_CARD = "STAFF";
+
+    private int currentUserId = -1;
+    private JTextField txtFirstName;
+    private JTextField txtLastName;
+    private JTextField txtEmail;
+    private JPasswordField txtPassword;
+    private JTextField txtPhone;
+    private JTextField txtAddress;
+    private JTextField txtDob;
+    private JComboBox<Department> cmbDepartment;
+    private JComboBox<String> cmbRole;
     private JComboBox<String> cmbStatus;
+    private final CardLayout roleCardLayout = new CardLayout();
+    private final JPanel roleSpecificPanel = new JPanel(roleCardLayout);
+    private JTextField txtRegistrationNo;
+    private JTextField txtRegistrationYear;
+    private JComboBox<String> cmbStudentType;
+    private JTextField txtStaffCode;
+    private JTextField txtDesignation;
 
     public EditUserDetailsPanel() {
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout());
         setBackground(Color.WHITE);
-        initComponent();
+
+        JScrollPane scrollPane = new JScrollPane(createFormPanel());
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        add(scrollPane, BorderLayout.CENTER);
     }
 
-    private void initComponent() {
+    private JPanel createFormPanel() {
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBackground(Color.WHITE);
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -25,64 +57,243 @@ public class EditUserDetailsPanel extends JPanel {
         txtFirstName = new JTextField(15);
         txtLastName = new JTextField(15);
         txtEmail = new JTextField(15);
+        txtPassword = new JPasswordField(15);
         txtPhone = new JTextField(15);
         txtAddress = new JTextField(15);
-        txtExtra = new JTextField(15);
-        lblExtraEdit = new JLabel("Extra Detail:");
-        cmbStatus = new JComboBox<>(new String[]{"ACTIVE", "INACTIVE", "PENDING"});
+        txtDob = new JTextField(15);
+        cmbDepartment = new JComboBox<>();
 
-        addEditRow("First Name:", txtFirstName, 0, gbc);
-        addEditRow("Last Name:", txtLastName, 1, gbc);
-        addEditRow("Email:", txtEmail, 2, gbc);
-        addEditRow("Phone:", txtPhone, 3, gbc);
-        addEditRow("Address:", txtAddress, 4, gbc);
-        addEditRow("Status:", cmbStatus, 5, gbc);
+        cmbRole = new JComboBox<>(new String[]{
+                AppConfig.ROLE_STUDENT,
+                AppConfig.ROLE_LECTURER,
+                AppConfig.ROLE_TO
+        });
+        cmbRole.setEnabled(false);
+        cmbRole.addActionListener(e -> updateRoleSpecificFields());
 
-        gbc.gridy = 6; gbc.gridx = 0; gbc.weightx = 0.2;
-        add(lblExtraEdit, gbc);
-        gbc.gridx = 1; gbc.weightx = 0.8;
-        add(txtExtra, gbc);
+        cmbStatus = new JComboBox<>(new String[]{
+                AppConfig.STATUS_ACTIVE,
+                AppConfig.STATUS_BLOCKED,
+                "SUSPENDED"
+        });
+
+        addFormRow(formPanel, "User Role:", cmbRole, 0, gbc);
+        addFormRow(formPanel, "First Name:", txtFirstName, 1, gbc);
+        addFormRow(formPanel, "Last Name:", txtLastName, 2, gbc);
+        addFormRow(formPanel, "Email:", txtEmail, 3, gbc);
+        addFormRow(formPanel, "Password:", txtPassword, 4, gbc);
+        addFormRow(formPanel, "Phone:", txtPhone, 5, gbc);
+        addFormRow(formPanel, "Address:", txtAddress, 6, gbc);
+        addFormRow(formPanel, "DOB (yyyy-mm-dd):", txtDob, 7, gbc);
+        addFormRow(formPanel, "Department:", cmbDepartment, 8, gbc);
+        addFormRow(formPanel, "Status:", cmbStatus, 9, gbc);
+
+        initializeRoleSpecificPanel();
+
+        gbc.gridy = 10;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        formPanel.add(roleSpecificPanel, gbc);
+
+        return formPanel;
+    }
+
+    private void initializeRoleSpecificPanel() {
+        roleSpecificPanel.setBackground(Color.WHITE);
+
+        JPanel studentPanel = new JPanel(new GridBagLayout());
+        studentPanel.setBackground(Color.WHITE);
+        GridBagConstraints studentGbc = new GridBagConstraints();
+        studentGbc.insets = new Insets(5, 10, 5, 10);
+        studentGbc.fill = GridBagConstraints.HORIZONTAL;
+
+        txtRegistrationNo = new JTextField(15);
+        txtRegistrationYear = new JTextField(15);
+        cmbStudentType = new JComboBox<>(new String[]{"PROPER", "REPEAT"});
+
+        addFormRow(studentPanel, "Registration No:", txtRegistrationNo, 0, studentGbc);
+        addFormRow(studentPanel, "Registration Year:", txtRegistrationYear, 1, studentGbc);
+        addFormRow(studentPanel, "Student Type:", cmbStudentType, 2, studentGbc);
+
+        JPanel staffPanel = new JPanel(new GridBagLayout());
+        staffPanel.setBackground(Color.WHITE);
+        GridBagConstraints staffGbc = new GridBagConstraints();
+        staffGbc.insets = new Insets(5, 10, 5, 10);
+        staffGbc.fill = GridBagConstraints.HORIZONTAL;
+
+        txtStaffCode = new JTextField(15);
+        txtDesignation = new JTextField(15);
+
+        addFormRow(staffPanel, "Staff Code:", txtStaffCode, 0, staffGbc);
+        addFormRow(staffPanel, "Designation:", txtDesignation, 1, staffGbc);
+
+        roleSpecificPanel.add(studentPanel, STUDENT_CARD);
+        roleSpecificPanel.add(staffPanel, STAFF_CARD);
+    }
+
+    public void setDepartments(List<Department> departments) {
+        DefaultComboBoxModel<Department> model = new DefaultComboBoxModel<>();
+        for (Department department : departments) {
+            model.addElement(department);
+        }
+        cmbDepartment.setModel(model);
     }
 
     public void setUserData(User user) {
+        currentUserId = user.getId();
+        cmbRole.setSelectedItem(user.getRole());
         txtFirstName.setText(user.getFirstName());
         txtLastName.setText(user.getLastName());
         txtEmail.setText(user.getEmail());
+        txtPassword.setText(user.getPasswordHash());
         txtPhone.setText(user.getPhone());
         txtAddress.setText(user.getAddress());
+        txtDob.setText(user.getDob() == null ? "" : new SimpleDateFormat("yyyy-MM-dd").format(user.getDob()));
         cmbStatus.setSelectedItem(user.getStatus());
+        selectDepartment(user.getDepartmentId());
 
         if (user instanceof Student) {
-            lblExtraEdit.setText("Registration No:");
-            txtExtra.setText(((Student) user).getRegistrationNo());
+            Student student = (Student) user;
+            txtRegistrationNo.setText(student.getRegistrationNo());
+            txtRegistrationYear.setText(String.valueOf(student.getRegistrationYear()));
+            cmbStudentType.setSelectedItem(student.getStudentType());
+            txtStaffCode.setText("");
+            txtDesignation.setText("");
         } else if (user instanceof Staff) {
-            lblExtraEdit.setText("Staff Code:");
-            txtExtra.setText(((Staff) user).getStaffCode());
+            Staff staff = (Staff) user;
+            txtStaffCode.setText(staff.getStaffCode());
+            txtDesignation.setText(staff.getDesignation());
+            txtRegistrationNo.setText("");
+            txtRegistrationYear.setText("");
+            cmbStudentType.setSelectedItem("PROPER");
+        }
+
+        updateRoleSpecificFields();
+    }
+
+    public EditUserRequest buildRequest() {
+        return new EditUserRequest(
+                currentUserId,
+                getRole(),
+                getFirstName(),
+                getLastName(),
+                getEmail(),
+                getPassword(),
+                getPhone(),
+                getAddress(),
+                getDob(),
+                getDepartmentId(),
+                getStatus(),
+                getRegistrationNo(),
+                getRegistrationYear(),
+                getStudentType(),
+                getStaffCode(),
+                getDesignation()
+        );
+    }
+
+    public String getRole() {
+        return cmbRole.getSelectedItem() == null ? "" : cmbRole.getSelectedItem().toString();
+    }
+
+    public String getFirstName() {
+        return txtFirstName.getText().trim();
+    }
+
+    public String getLastName() {
+        return txtLastName.getText().trim();
+    }
+
+    public String getEmail() {
+        return txtEmail.getText().trim();
+    }
+
+    public String getPassword() {
+        return new String(txtPassword.getPassword()).trim();
+    }
+
+    public String getPhone() {
+        return txtPhone.getText().trim();
+    }
+
+    public String getAddress() {
+        return txtAddress.getText().trim();
+    }
+
+    public String getDob() {
+        return txtDob.getText().trim();
+    }
+
+    public String getDepartmentId() {
+        Department department = getSelectedDepartment();
+        return department == null ? "" : String.valueOf(department.getDepartmentId());
+    }
+
+    public String getStatus() {
+        return cmbStatus.getSelectedItem() == null ? "" : cmbStatus.getSelectedItem().toString();
+    }
+
+    public String getRegistrationNo() {
+        return txtRegistrationNo.getText().trim();
+    }
+
+    public String getRegistrationYear() {
+        return txtRegistrationYear.getText().trim();
+    }
+
+    public String getStudentType() {
+        return cmbStudentType.getSelectedItem() == null ? "" : cmbStudentType.getSelectedItem().toString();
+    }
+
+    public String getStaffCode() {
+        return txtStaffCode.getText().trim();
+    }
+
+    public String getDesignation() {
+        return txtDesignation.getText().trim();
+    }
+
+    public boolean isStudentRole() {
+        return AppConfig.ROLE_STUDENT.equals(getRole());
+    }
+
+    private void updateRoleSpecificFields() {
+        if (isStudentRole()) {
+            roleCardLayout.show(roleSpecificPanel, STUDENT_CARD);
         } else {
-            lblExtraEdit.setText("Extra Detail:");
-            txtExtra.setText("");
+            roleCardLayout.show(roleSpecificPanel, STAFF_CARD);
         }
     }
 
-    public void updateModel(User user) {
-        user.setFirstName(txtFirstName.getText());
-        user.setLastName(txtLastName.getText());
-        user.setEmail(txtEmail.getText());
-        user.setPhone(txtPhone.getText());
-        user.setAddress(txtAddress.getText());
-        user.setStatus(cmbStatus.getSelectedItem().toString());
+    private void addFormRow(JPanel panel, String label, Component component, int row, GridBagConstraints gbc) {
+        gbc.gridy = row;
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.2;
+        panel.add(new JLabel(label), gbc);
 
-        if (user instanceof Student) {
-            ((Student) user).setRegistrationNo(txtExtra.getText());
-        } else if (user instanceof Staff) {
-            ((Staff) user).setStaffCode(txtExtra.getText());
-        }
+        gbc.gridx = 1;
+        gbc.weightx = 0.8;
+        panel.add(component, gbc);
     }
 
-    private void addEditRow(String label, Component c, int y, GridBagConstraints gbc) {
-        gbc.gridy = y; gbc.gridx = 0; gbc.weightx = 0.2;
-        add(new JLabel(label), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.8;
-        add(c, gbc);
+    private Department getSelectedDepartment() {
+        Object selectedItem = cmbDepartment.getSelectedItem();
+        if (selectedItem instanceof Department) {
+            return (Department) selectedItem;
+        }
+        return null;
+    }
+
+    private void selectDepartment(int departmentId) {
+        ComboBoxModel<Department> model = cmbDepartment.getModel();
+        for (int i = 0; i < model.getSize(); i++) {
+            Department department = model.getElementAt(i);
+            if (department.getDepartmentId() == departmentId) {
+                cmbDepartment.setSelectedItem(department);
+                return;
+            }
+        }
     }
 }

@@ -40,16 +40,32 @@ public class UserRepository {
         return exists("SELECT 1 FROM users WHERE email = ?", email);
     }
 
+    public boolean existsByEmailExcludingUserId(String email, int userId) {
+        return exists("SELECT 1 FROM users WHERE email = ? AND id <> ?", email, userId);
+    }
+
     public boolean existsByPhone(String phone) {
         return exists("SELECT 1 FROM users WHERE phone = ?", phone);
+    }
+
+    public boolean existsByPhoneExcludingUserId(String phone, int userId) {
+        return exists("SELECT 1 FROM users WHERE phone = ? AND id <> ?", phone, userId);
     }
 
     public boolean existsByRegistrationNo(String registrationNo) {
         return exists("SELECT 1 FROM student WHERE registration_no = ?", registrationNo);
     }
 
+    public boolean existsByRegistrationNoExcludingUserId(String registrationNo, int userId) {
+        return exists("SELECT 1 FROM student WHERE registration_no = ? AND user_id <> ?", registrationNo, userId);
+    }
+
     public boolean existsByStaffCode(String staffCode) {
         return exists("SELECT 1 FROM staff WHERE staff_code = ?", staffCode);
+    }
+
+    public boolean existsByStaffCodeExcludingUserId(String staffCode, int userId) {
+        return exists("SELECT 1 FROM staff WHERE staff_code = ? AND user_id <> ?", staffCode, userId);
     }
 
     public boolean save(User user) {
@@ -99,6 +115,44 @@ public class UserRepository {
         return false;
     }
 
+    public boolean update(User user) {
+        String sqlUser = "UPDATE users SET first_name = ?, last_name = ?, role = ?, dob = ?, email = ?, phone = ?, address = ?, department_id = ?, password_hash = ?, status = ? WHERE id = ?";
+
+        try {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement stmt = conn.prepareStatement(sqlUser)) {
+                stmt.setString(1, user.getFirstName());
+                stmt.setString(2, user.getLastName());
+                stmt.setString(3, user.getRole());
+                stmt.setDate(4, new java.sql.Date(user.getDob().getTime()));
+                stmt.setString(5, user.getEmail());
+                stmt.setString(6, user.getPhone());
+                stmt.setString(7, user.getAddress());
+                stmt.setInt(8, user.getDepartmentId());
+                stmt.setString(9, user.getPasswordHash());
+                stmt.setString(10, user.getStatus());
+                stmt.setInt(11, user.getId());
+
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("Updating user failed.");
+                }
+
+                updateRoleSpecificDetails(user);
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update user: " + e.getMessage(), e);
+        }
+    }
+
     private void saveStudentDetails(Student s) throws SQLException {
         String sql = "INSERT INTO student (user_id, registration_no, registration_year, student_type) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -116,6 +170,35 @@ public class UserRepository {
             stmt.setInt(1, s.getId());
             stmt.setString(2, s.getStaffCode());
             stmt.setString(3, s.getDesignation());
+            stmt.executeUpdate();
+        }
+    }
+
+    private void updateRoleSpecificDetails(User user) throws SQLException {
+        if (user instanceof Student) {
+            updateStudentDetails((Student) user);
+        } else if (user instanceof Staff) {
+            updateStaffDetails((Staff) user);
+        }
+    }
+
+    private void updateStudentDetails(Student student) throws SQLException {
+        String sql = "UPDATE student SET registration_no = ?, registration_year = ?, student_type = ? WHERE user_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, student.getRegistrationNo());
+            stmt.setInt(2, student.getRegistrationYear());
+            stmt.setString(3, student.getStudentType());
+            stmt.setInt(4, student.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    private void updateStaffDetails(Staff staff) throws SQLException {
+        String sql = "UPDATE staff SET staff_code = ?, designation = ? WHERE user_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, staff.getStaffCode());
+            stmt.setString(2, staff.getDesignation());
+            stmt.setInt(3, staff.getId());
             stmt.executeUpdate();
         }
     }
@@ -224,6 +307,18 @@ public class UserRepository {
     private boolean exists(String sql, String value) {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, value);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database check failed: " + e.getMessage(), e);
+        }
+    }
+
+    private boolean exists(String sql, String value, int userId) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, value);
+            stmt.setInt(2, userId);
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next();
             }

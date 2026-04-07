@@ -1,6 +1,8 @@
 package com.fot.system.view.dashboard.admin;
 
 import com.fot.system.config.AppTheme;
+import com.fot.system.controller.EditUserController;
+import com.fot.system.model.Department;
 import com.fot.system.model.Staff;
 import com.fot.system.model.Student;
 import com.fot.system.model.User;
@@ -10,6 +12,7 @@ import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class UserDetailsPanel extends JPanel {
     private static final String VIEW_CARD = "VIEW";
@@ -18,12 +21,14 @@ public class UserDetailsPanel extends JPanel {
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel container = new JPanel(cardLayout);
     private final EditUserDetailsPanel editUserDetailsPanel = new EditUserDetailsPanel();
+    private final EditUserController editUserController = new EditUserController();
 
     private JLabel lblFirstName, lblLastName, lblEmail, lblRole, lblStatus, lblPhone, lblAddress, lblExtra;
 
     private final Color TEAL_COLOR = new Color(0, 121, 107);
     private User currentUser;
     private Runnable onCloseAction;
+    private Runnable onUserUpdatedAction;
 
     public UserDetailsPanel() {
         setLayout(new BorderLayout());
@@ -151,12 +156,13 @@ public class UserDetailsPanel extends JPanel {
         });
 
         btnSave.addActionListener(e -> {
-            saveUpdatedData();
-            cardLayout.show(container, VIEW_CARD);
-            btnSave.setVisible(false);
-            btnCancel.setVisible(false);
-            btnEdit.setVisible(true);
-            btnClose.setVisible(true);
+            if (saveUpdatedData()) {
+                cardLayout.show(container, VIEW_CARD);
+                btnSave.setVisible(false);
+                btnCancel.setVisible(false);
+                btnEdit.setVisible(true);
+                btnClose.setVisible(true);
+            }
         });
 
         leftPanel.add(btnClose);
@@ -171,14 +177,23 @@ public class UserDetailsPanel extends JPanel {
         return mainActionPanel;
     }
 
-    private void saveUpdatedData() {
+    private boolean saveUpdatedData() {
         if (currentUser == null) {
-            return;
+            return false;
         }
 
-        editUserDetailsPanel.updateModel(currentUser);
-        updateDetails(currentUser);
-        JOptionPane.showMessageDialog(this, "Profile updated successfully!");
+        try {
+            User updatedUser = editUserController.updateUser(editUserDetailsPanel.buildRequest());
+            updateDetails(updatedUser);
+            if (onUserUpdatedAction != null) {
+                onUserUpdatedAction.run();
+            }
+            JOptionPane.showMessageDialog(this, "Profile updated successfully!");
+            return true;
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Edit User Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
     private void addToGrid(JPanel p, Component c, int x, int y, GridBagConstraints gbc) {
@@ -225,5 +240,13 @@ public class UserDetailsPanel extends JPanel {
 
     public void setOnCloseAction(Runnable onCloseAction) {
         this.onCloseAction = onCloseAction;
+    }
+
+    public void setOnUserUpdatedAction(Runnable onUserUpdatedAction) {
+        this.onUserUpdatedAction = onUserUpdatedAction;
+    }
+
+    public void setDepartments(List<Department> departments) {
+        editUserDetailsPanel.setDepartments(departments);
     }
 }

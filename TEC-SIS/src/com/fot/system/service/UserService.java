@@ -2,6 +2,7 @@ package com.fot.system.service;
 
 import com.fot.system.config.AppConfig;
 import com.fot.system.model.AddUserRequest;
+import com.fot.system.model.EditUserRequest;
 import com.fot.system.model.Staff;
 import com.fot.system.model.Student;
 import com.fot.system.model.User;
@@ -66,6 +67,17 @@ public class UserService {
         return user;
     }
 
+    public User updateUser(EditUserRequest request) {
+        User user = createUserByRole(request);
+        boolean updated = userRepository.update(user);
+
+        if (!updated) {
+            throw new RuntimeException("User update failed.");
+        }
+
+        return userRepository.findById(user.getId());
+    }
+
     private User createUserByRole(AddUserRequest request) {
         if (request.isStudentRole()) {
             Student student = new Student();
@@ -83,7 +95,39 @@ public class UserService {
         return staff;
     }
 
+    private User createUserByRole(EditUserRequest request) {
+        if (request.isStudentRole()) {
+            Student student = new Student();
+            student.setId(request.getUserId());
+            populateCommonFields(student, request);
+            student.setRegistrationNo(request.getRegistrationNo());
+            student.setRegistrationYear(parseRegistrationYear(request.getRegistrationYear()));
+            student.setStudentType(request.getStudentType());
+            return student;
+        }
+
+        Staff staff = new Staff();
+        staff.setId(request.getUserId());
+        populateCommonFields(staff, request);
+        staff.setStaffCode(request.getStaffCode());
+        staff.setDesignation(request.getDesignation());
+        return staff;
+    }
+
     private void populateCommonFields(User user, AddUserRequest request) {
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setPasswordHash(request.getPassword());
+        user.setPhone(request.getPhone());
+        user.setAddress(request.getAddress());
+        user.setDob(parseDob(request.getDob()));
+        user.setRole(request.getRole());
+        user.setStatus(normalizeStatus(request.getStatus()));
+        user.setDepartmentId(parseDepartmentId(request.getDepartmentId()));
+    }
+
+    private void populateCommonFields(User user, EditUserRequest request) {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
