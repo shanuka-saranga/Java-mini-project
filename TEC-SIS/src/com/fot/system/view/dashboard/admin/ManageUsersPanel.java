@@ -1,7 +1,10 @@
 package com.fot.system.view.dashboard.admin;
 
+import com.fot.system.controller.AddUserController;
 import com.fot.system.config.AppTheme;
+import com.fot.system.model.Department;
 import com.fot.system.model.User;
+import com.fot.system.service.DepartmentService;
 import com.fot.system.service.UserService;
 import com.fot.system.view.components.CustomButton;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
@@ -24,7 +27,9 @@ public class ManageUsersPanel extends JPanel {
     private JLabel lblDetailName, lblDetailEmail, lblDetailRole, lblDetailStatus;
     private UserDetailsPanel userDetailsComp;
     private final UserService userService ;
+    private final DepartmentService departmentService;
     private final AddNewUserPanel addNewUserPanel = new AddNewUserPanel();
+    private final AddUserController addUserController;
     private final CardLayout bottomCardLayout = new CardLayout();
     private final JPanel bottomContentPanel = new JPanel(bottomCardLayout);
     private static final int DETAILS_PANEL_HEIGHT = 350;
@@ -40,9 +45,11 @@ public class ManageUsersPanel extends JPanel {
         userDetailsComp = new UserDetailsPanel();
         userDetailsComp.setOnCloseAction(this::collapseBottomPanel);
         addNewUserPanel.setOnCloseAction(this::collapseBottomPanel);
-        addNewUserPanel.setOnSaveAction(this::handleAddUser);
         userService = new UserService();
+        departmentService = new DepartmentService();
+        addUserController = new AddUserController(addNewUserPanel, this::afterUserAdded);
         loadDataFromDatabase();
+        loadDepartments();
 
         bottomContentPanel.add(userDetailsComp, DETAILS_CARD);
         bottomContentPanel.add(addNewUserPanel, ADD_USER_CARD);
@@ -102,6 +109,31 @@ public class ManageUsersPanel extends JPanel {
         worker.execute();
     }
 
+    private void loadDepartments() {
+        SwingWorker<List<Department>, Void> worker = new SwingWorker<>() {
+            @Override
+            protected List<Department> doInBackground() {
+                return departmentService.getAllDepartments();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    addNewUserPanel.setDepartments(get());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(
+                            ManageUsersPanel.this,
+                            "Error loading departments!",
+                            "Department Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+        };
+        worker.execute();
+    }
+
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
@@ -129,28 +161,6 @@ public class ManageUsersPanel extends JPanel {
         userDetailsComp.setVisible(false);
         SwingUtilities.invokeLater(this::showBottomPanel);
     }
-
-    private void handleAddUser() {
-        if (addNewUserPanel.getFirstName().isEmpty() ||
-                addNewUserPanel.getLastName().isEmpty() ||
-                addNewUserPanel.getEmail().isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "First name, last name, and email are required.",
-                    "Validation Error",
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Add New User panel is connected. Save logic can be added next.",
-                "Add User",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-    }
-
 
     private void updateDetailsView() {
         int row = userTableComp.getTable().getSelectedRow();
@@ -199,6 +209,11 @@ public class ManageUsersPanel extends JPanel {
         splitPane.setDividerLocation(1.0);
         splitPane.revalidate();
         splitPane.repaint();
+    }
+
+    private void afterUserAdded() {
+        loadDataFromDatabase();
+        collapseBottomPanel();
     }
 
     private JPanel createActionButtons() {

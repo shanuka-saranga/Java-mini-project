@@ -36,8 +36,24 @@ public class UserRepository {
         return null;
     }
 
+    public boolean existsByEmail(String email) {
+        return exists("SELECT 1 FROM users WHERE email = ?", email);
+    }
+
+    public boolean existsByPhone(String phone) {
+        return exists("SELECT 1 FROM users WHERE phone = ?", phone);
+    }
+
+    public boolean existsByRegistrationNo(String registrationNo) {
+        return exists("SELECT 1 FROM student WHERE registration_no = ?", registrationNo);
+    }
+
+    public boolean existsByStaffCode(String staffCode) {
+        return exists("SELECT 1 FROM staff WHERE staff_code = ?", staffCode);
+    }
+
     public boolean save(User user) {
-        String sqlUser = "INSERT INTO users (first_name, last_name, role, dob, email, phone, address, department_id, password_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlUser = "INSERT INTO users (first_name, last_name, role, dob, email, phone, address, department_id, password_hash, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             conn.setAutoCommit(false);
@@ -52,6 +68,7 @@ public class UserRepository {
                 stmt.setString(7, user.getAddress());
                 stmt.setInt(8, user.getDepartmentId());
                 stmt.setString(9, user.getPasswordHash());
+                stmt.setString(10, user.getStatus());
 
                 int affectedRows = stmt.executeUpdate();
                 if (affectedRows == 0) throw new SQLException("Creating user failed.");
@@ -202,5 +219,16 @@ public class UserRepository {
             System.err.println("Error finding user by ID: " + e.getMessage());
         }
         return null;
+    }
+
+    private boolean exists(String sql, String value) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, value);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database check failed: " + e.getMessage(), e);
+        }
     }
 }
