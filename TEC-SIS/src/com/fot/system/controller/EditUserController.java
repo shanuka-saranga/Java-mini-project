@@ -22,6 +22,17 @@ public class EditUserController {
         return userService.updateUser(request);
     }
 
+    public void deleteUser(int userId) {
+        if (userId <= 0) {
+            throw new RuntimeException("Invalid user ID.");
+        }
+
+        boolean deleted = userService.deleteUser(userId);
+        if (!deleted) {
+            throw new RuntimeException("User delete failed.");
+        }
+    }
+
     private void validateEditUserRequest(EditUserRequest request) {
         if (request == null) {
             throw new RuntimeException("User request cannot be null.");

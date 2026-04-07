@@ -2,8 +2,9 @@ package com.fot.system.view.dashboard;
 
 import com.fot.system.config.AppConfig;
 import com.fot.system.model.User;
-import com.fot.system.view.dashboard.admin.AdminHomePanel;
-import com.fot.system.view.dashboard.admin.ManageUsersPanel;
+import com.fot.system.view.dashboard.admin.manageCourses.ManageCoursesPanel;
+import com.fot.system.view.dashboard.admin.manageUsers.AdminHomePanel;
+import com.fot.system.view.dashboard.admin.manageUsers.ManageUsersPanel;
 import com.fot.system.view.dashboard.sidebar.AdminSidebar;
 import com.fot.system.view.dashboard.sidebar.BaseSidebar;
 
@@ -39,6 +40,7 @@ public class MainDashboard extends JFrame {
         contentArea.setBackground(Color.WHITE);
         contentArea.add(new AdminHomePanel(user), AppConfig.MENU_HOME);
         contentArea.add(new ManageUsersPanel(user),AppConfig.MENU_MANAGE_USERS);
+        contentArea.add(new ManageCoursesPanel(user), AppConfig.MENU_MANAGE_COURSES);
         add(contentArea, BorderLayout.CENTER);
 
 

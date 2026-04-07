@@ -8,5 +8,5 @@ CREATE TABLE lecture (
      duration_hours DECIMAL(4, 2) NOT NULL,
      session_type ENUM('THEORY', 'PRACTICAL') NOT NULL,
      CONSTRAINT fk_lecture_course FOREIGN KEY (course_id) REFERENCES course (course_id) ON DELETE CASCADE ON UPDATE CASCADE,
-     CONSTRAINT fk_lecture_lecturer FOREIGN KEY (lecturer_id) REFERENCES lecturer (user_id) ON DELETE CASCADE ON UPDATE CASCADE
+     CONSTRAINT fk_lecture_lecturer FOREIGN KEY (lecturer_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE
 );

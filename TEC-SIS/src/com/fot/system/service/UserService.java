@@ -78,6 +78,14 @@ public class UserService {
         return userRepository.findById(user.getId());
     }
 
+    public boolean deleteUser(int userId) {
+        if (userId <= 0) {
+            throw new RuntimeException("Invalid user ID.");
+        }
+
+        return userRepository.deleteById(userId);
+    }
+
     private User createUserByRole(AddUserRequest request) {
         if (request.isStudentRole()) {
             Student student = new Student();

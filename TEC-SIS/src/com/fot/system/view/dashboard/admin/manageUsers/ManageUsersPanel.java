@@ -1,4 +1,4 @@
-package com.fot.system.view.dashboard.admin;
+package com.fot.system.view.dashboard.admin.manageUsers;
 
 import com.fot.system.controller.AddUserController;
 import com.fot.system.config.AppTheme;
@@ -21,7 +21,7 @@ public class ManageUsersPanel extends JPanel {
     private static final int COLLAPSED_DIVIDER_SIZE = 0;
 
     private JTable userTable;
-    private UserTableComponent userTableComp;
+    private UserTablePanel userTableComp;
     private DefaultTableModel tableModel;
     private JPanel detailsPanel;
     private JLabel lblDetailName, lblDetailEmail, lblDetailRole, lblDetailStatus;
@@ -41,10 +41,11 @@ public class ManageUsersPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         add(createHeader(), BorderLayout.NORTH);
-        userTableComp = new UserTableComponent();
+        userTableComp = new UserTablePanel();
         userDetailsComp = new UserDetailsPanel();
         userDetailsComp.setOnCloseAction(this::collapseBottomPanel);
         userDetailsComp.setOnUserUpdatedAction(this::loadDataFromDatabase);
+        userDetailsComp.setOnUserDeletedAction(this::afterUserDeleted);
         addNewUserPanel.setOnCloseAction(this::collapseBottomPanel);
         userService = new UserService();
         departmentService = new DepartmentService();
@@ -66,8 +67,6 @@ public class ManageUsersPanel extends JPanel {
         bottomContentPanel.setMinimumSize(new Dimension(0, 0));
 
         add(splitPane, BorderLayout.CENTER);
-
-        add(createActionButtons(), BorderLayout.SOUTH);
 
         userTableComp.getTable().getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -219,20 +218,10 @@ public class ManageUsersPanel extends JPanel {
         collapseBottomPanel();
     }
 
-    private JPanel createActionButtons() {
-        JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
-        actionPanel.setOpaque(false);
-
-        JButton editBtn = new JButton("Edit User");
-        editBtn.setIcon(FontIcon.of(FontAwesomeSolid.USER_EDIT, 14));
-
-        JButton deleteBtn = new JButton("Delete");
-        deleteBtn.setBackground(new Color(220, 53, 69));
-        deleteBtn.setForeground(Color.WHITE);
-        deleteBtn.setIcon(FontIcon.of(FontAwesomeSolid.TRASH_ALT, 14, Color.WHITE));
-
-        actionPanel.add(editBtn);
-        actionPanel.add(deleteBtn);
-        return actionPanel;
+    private void afterUserDeleted() {
+        loadDataFromDatabase();
+        collapseBottomPanel();
     }
+
+
 }

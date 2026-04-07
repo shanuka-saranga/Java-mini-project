@@ -1,4 +1,4 @@
-package com.fot.system.view.dashboard.admin;
+package com.fot.system.view.dashboard.admin.manageUsers;
 
 import com.fot.system.config.AppTheme;
 
@@ -7,12 +7,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class UserTableComponent extends JScrollPane {
+public class UserTablePanel extends JScrollPane {
 
     private JTable userTable;
     private DefaultTableModel tableModel;
 
-    public UserTableComponent() {
+    public UserTablePanel() {
         String[] columns = {"ID", "Name", "Email", "Role", "Status"};
 
         tableModel = new DefaultTableModel(columns, 0) {

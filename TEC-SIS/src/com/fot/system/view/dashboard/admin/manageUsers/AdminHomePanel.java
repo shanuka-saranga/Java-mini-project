@@ -1,4 +1,4 @@
-package com.fot.system.view.dashboard.admin;
+package com.fot.system.view.dashboard.admin.manageUsers;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.model.User;

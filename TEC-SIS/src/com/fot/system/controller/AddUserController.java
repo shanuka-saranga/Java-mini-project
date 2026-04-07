@@ -4,7 +4,7 @@ import com.fot.system.model.AddUserRequest;
 import com.fot.system.model.User;
 import com.fot.system.repository.UserRepository;
 import com.fot.system.service.UserService;
-import com.fot.system.view.dashboard.admin.AddNewUserPanel;
+import com.fot.system.view.dashboard.admin.manageUsers.AddNewUserPanel;
 
 import javax.swing.*;
 import java.sql.Date;

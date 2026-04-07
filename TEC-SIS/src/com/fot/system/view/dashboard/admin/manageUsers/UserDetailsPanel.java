@@ -1,4 +1,4 @@
-package com.fot.system.view.dashboard.admin;
+package com.fot.system.view.dashboard.admin.manageUsers;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.EditUserController;
@@ -29,6 +29,7 @@ public class UserDetailsPanel extends JPanel {
     private User currentUser;
     private Runnable onCloseAction;
     private Runnable onUserUpdatedAction;
+    private Runnable onUserDeletedAction;
 
     public UserDetailsPanel() {
         setLayout(new BorderLayout());
@@ -104,6 +105,14 @@ public class UserDetailsPanel extends JPanel {
                 new Dimension(150, 40)
         );
 
+        CustomButton btnDelete = new CustomButton(
+                "Delete",
+                AppTheme.BTN_DELETE_BG,
+                AppTheme.BTN_DELETE_FG,
+                AppTheme.BTN_DELETE_HOVER,
+                new Dimension(120, 40)
+        );
+
         CustomButton btnSave = new CustomButton(
                 "Save Changes",
                 AppTheme.BTN_SAVE_BG,
@@ -144,6 +153,8 @@ public class UserDetailsPanel extends JPanel {
             btnCancel.setVisible(true);
         });
 
+        btnDelete.addActionListener(e -> deleteCurrentUser());
+
         btnCancel.addActionListener(e -> {
             if (currentUser != null) {
                 editUserDetailsPanel.setUserData(currentUser);
@@ -167,6 +178,7 @@ public class UserDetailsPanel extends JPanel {
 
         leftPanel.add(btnClose);
 
+        rightPanel.add(btnDelete);
         rightPanel.add(btnEdit);
         rightPanel.add(btnSave);
         rightPanel.add(btnCancel);
@@ -193,6 +205,38 @@ public class UserDetailsPanel extends JPanel {
         } catch (RuntimeException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Edit User Error", JOptionPane.ERROR_MESSAGE);
             return false;
+        }
+    }
+
+    private void deleteCurrentUser() {
+        if (currentUser == null) {
+            return;
+        }
+
+        int option = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to delete " + currentUser.getFullName() + "?",
+                "Confirm Delete",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (option != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        try {
+            editUserController.deleteUser(currentUser.getId());
+            JOptionPane.showMessageDialog(this, "User deleted successfully!");
+            setVisible(false);
+
+            if (onUserDeletedAction != null) {
+                onUserDeletedAction.run();
+            } else if (onCloseAction != null) {
+                onCloseAction.run();
+            }
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Delete User Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -244,6 +288,10 @@ public class UserDetailsPanel extends JPanel {
 
     public void setOnUserUpdatedAction(Runnable onUserUpdatedAction) {
         this.onUserUpdatedAction = onUserUpdatedAction;
+    }
+
+    public void setOnUserDeletedAction(Runnable onUserDeletedAction) {
+        this.onUserDeletedAction = onUserDeletedAction;
     }
 
     public void setDepartments(List<Department> departments) {

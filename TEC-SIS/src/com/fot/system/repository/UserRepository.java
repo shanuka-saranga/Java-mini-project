@@ -153,6 +153,17 @@ public class UserRepository {
         }
     }
 
+    public boolean deleteById(int userId) {
+        String sql = "DELETE FROM users WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to delete user: " + e.getMessage(), e);
+        }
+    }
+
     private void saveStudentDetails(Student s) throws SQLException {
         String sql = "INSERT INTO student (user_id, registration_no, registration_year, student_type) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

@@ -1,5 +1,5 @@
-CREATE TABLE department (
-    department_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE departments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     dept_code VARCHAR(10) UNIQUE NOT NULL,
     dept_name VARCHAR(100) NOT NULL
 )

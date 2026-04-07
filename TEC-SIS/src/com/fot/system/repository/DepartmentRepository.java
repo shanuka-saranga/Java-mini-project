@@ -20,14 +20,14 @@ public class DepartmentRepository {
 
     public List<Department> findAll() {
         List<Department> departments = new ArrayList<>();
-        String sql = "SELECT department_id, dept_code, dept_name FROM department ORDER BY dept_name";
+        String sql = "SELECT id, dept_code, dept_name FROM departments ORDER BY dept_name";
 
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 Department department = new Department();
-                department.setDepartmentId(rs.getInt("department_id"));
+                department.setDepartmentId(rs.getInt("id"));
                 department.setDeptCode(rs.getString("dept_code"));
                 department.setDeptName(rs.getString("dept_name"));
                 departments.add(department);
