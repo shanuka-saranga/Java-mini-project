@@ -11,23 +11,21 @@ import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
 import java.awt.*;
 
-public class UserDetailsComponent extends JPanel {
+public class UserDetailsPanel extends JPanel {
+    private static final String VIEW_CARD = "VIEW";
+    private static final String EDIT_CARD = "EDIT";
 
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel container = new JPanel(cardLayout);
+    private final EditUserDetailsPanel editUserDetailsPanel = new EditUserDetailsPanel();
 
-    // View Labels
     private JLabel lblFirstName, lblLastName, lblEmail, lblRole, lblStatus, lblPhone, lblAddress, lblExtra;
-
-    // Edit Fields
-    private JTextField txtFirstName, txtLastName, txtEmail, txtPhone, txtAddress, txtExtra;
-    private JLabel lblExtraEdit; // Edit mode එකේදී Reg No/Staff Code කියන label එක මාරු කරන්න
-    private JComboBox<String> cmbStatus;
 
     private final Color TEAL_COLOR = new Color(0, 121, 107);
     private User currentUser;
+    private Runnable onCloseAction;
 
-    public UserDetailsComponent() {
+    public UserDetailsPanel() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createCompoundBorder(
@@ -36,8 +34,8 @@ public class UserDetailsComponent extends JPanel {
         ));
         setVisible(false);
 
-        container.add(createViewPanel(), "VIEW");
-        container.add(createEditPanel(), "EDIT");
+        container.add(createViewPanel(), VIEW_CARD);
+        container.add(editUserDetailsPanel, EDIT_CARD);
 
         add(container, BorderLayout.CENTER);
         add(createBottomActions(), BorderLayout.SOUTH);
@@ -67,42 +65,9 @@ public class UserDetailsComponent extends JPanel {
         addToGrid(panel, lblRole, 0, 2, gbc);
         addToGrid(panel, lblStatus, 1, 2, gbc);
 
-        gbc.gridwidth = 2; // Address එකට සම්පූර්ණ ඉඩ ගමු
+        gbc.gridwidth = 2;
         addToGrid(panel, lblAddress, 0, 3, gbc);
         addToGrid(panel, lblExtra, 0, 4, gbc);
-
-        return panel;
-    }
-
-    private JPanel createEditPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        txtFirstName = new JTextField(15);
-        txtLastName = new JTextField(15);
-        txtEmail = new JTextField(15);
-        txtPhone = new JTextField(15);
-        txtAddress = new JTextField(15);
-        txtExtra = new JTextField(15);
-        lblExtraEdit = new JLabel("Extra Detail:"); // මේක dynamically මාරු වෙනවා
-        cmbStatus = new JComboBox<>(new String[]{"ACTIVE", "INACTIVE", "PENDING"});
-
-        // Rows එකතු කිරීම
-        addEditRow(panel, "First Name:", txtFirstName, 0, gbc);
-        addEditRow(panel, "Last Name:", txtLastName, 1, gbc);
-        addEditRow(panel, "Email:", txtEmail, 2, gbc);
-        addEditRow(panel, "Phone:", txtPhone, 3, gbc);
-        addEditRow(panel, "Address:", txtAddress, 4, gbc);
-        addEditRow(panel, "Status:", cmbStatus, 5, gbc);
-
-        // අමතර දත්ත (Reg No/Staff Code) Row එක
-        gbc.gridy = 6; gbc.gridx = 0; gbc.weightx = 0.2;
-        panel.add(lblExtraEdit, gbc);
-        gbc.gridx = 1; gbc.weightx = 0.8;
-        panel.add(txtExtra, gbc);
 
         return panel;
     }
@@ -110,11 +75,9 @@ public class UserDetailsComponent extends JPanel {
 
 
     private JPanel createBottomActions() {
-        // ප්‍රධාන පැනල් එක (Layout එක BorderLayout දාමු)
         JPanel mainActionPanel = new JPanel(new BorderLayout());
         mainActionPanel.setOpaque(false);
 
-        // වම් පැත්තේ බටන් එක (Close)
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftPanel.setOpaque(false);
         CustomButton btnClose = new CustomButton(
@@ -158,18 +121,29 @@ public class UserDetailsComponent extends JPanel {
 
         btnClose.addActionListener(e -> {
             setVisible(false);
+            if (onCloseAction != null) {
+                onCloseAction.run();
+            }
         });
 
         btnEdit.addActionListener(e -> {
-            cardLayout.show(container, "EDIT");
+            if (currentUser == null) {
+                return;
+            }
+
+            editUserDetailsPanel.setUserData(currentUser);
+            cardLayout.show(container, EDIT_CARD);
             btnEdit.setVisible(false);
-            btnClose.setVisible(false); // Edit කරද්දී close එක හංගන්න පුළුවන් (Optional)
+            btnClose.setVisible(false);
             btnSave.setVisible(true);
             btnCancel.setVisible(true);
         });
 
         btnCancel.addActionListener(e -> {
-            cardLayout.show(container, "VIEW");
+            if (currentUser != null) {
+                editUserDetailsPanel.setUserData(currentUser);
+            }
+            cardLayout.show(container, VIEW_CARD);
             btnSave.setVisible(false);
             btnCancel.setVisible(false);
             btnEdit.setVisible(true);
@@ -178,7 +152,7 @@ public class UserDetailsComponent extends JPanel {
 
         btnSave.addActionListener(e -> {
             saveUpdatedData();
-            cardLayout.show(container, "VIEW");
+            cardLayout.show(container, VIEW_CARD);
             btnSave.setVisible(false);
             btnCancel.setVisible(false);
             btnEdit.setVisible(true);
@@ -198,26 +172,17 @@ public class UserDetailsComponent extends JPanel {
     }
 
     private void saveUpdatedData() {
-        currentUser.setFirstName(txtFirstName.getText());
-        currentUser.setLastName(txtLastName.getText());
-        currentUser.setEmail(txtEmail.getText());
-        currentUser.setPhone(txtPhone.getText());
-        currentUser.setAddress(txtAddress.getText());
-        currentUser.setStatus(cmbStatus.getSelectedItem().toString());
+        if (currentUser == null) {
+            return;
+        }
 
+        editUserDetailsPanel.updateModel(currentUser);
         updateDetails(currentUser);
         JOptionPane.showMessageDialog(this, "Profile updated successfully!");
     }
 
     private void addToGrid(JPanel p, Component c, int x, int y, GridBagConstraints gbc) {
         gbc.gridx = x; gbc.gridy = y; gbc.weightx = 1.0;
-        p.add(c, gbc);
-    }
-
-    private void addEditRow(JPanel p, String label, Component c, int y, GridBagConstraints gbc) {
-        gbc.gridy = y; gbc.gridx = 0; gbc.weightx = 0.2;
-        p.add(new JLabel(label), gbc);
-        gbc.gridx = 1; gbc.weightx = 0.8;
         p.add(c, gbc);
     }
 
@@ -233,7 +198,6 @@ public class UserDetailsComponent extends JPanel {
         System.out.println(user.toString());
         this.currentUser = user;
 
-        // 1. View Mode Update
         lblFirstName.setText("First Name: " + user.getFirstName());
         lblLastName.setText("Last Name: " + user.getLastName());
         lblEmail.setText("Email: " + user.getEmail());
@@ -241,31 +205,25 @@ public class UserDetailsComponent extends JPanel {
         lblRole.setText("Role: " + user.getRole());
         lblStatus.setText("Status: " + user.getStatus());
         lblAddress.setText("Address: " + user.getAddress());
-
-        txtFirstName.setText(user.getFirstName());
-        txtLastName.setText(user.getLastName());
-        txtEmail.setText(user.getEmail());
-        txtPhone.setText(user.getPhone());
-        txtAddress.setText(user.getAddress());
-        cmbStatus.setSelectedItem(user.getStatus());
+        editUserDetailsPanel.setUserData(user);
 
         if (user instanceof Student) {
             String regNo = ((Student) user).getRegistrationNo();
             lblExtra.setText("Registration No: " + regNo);
-            lblExtraEdit.setText("Registration No:");
-            txtExtra.setText(regNo);
             lblExtra.setVisible(true);
         } else if (user instanceof Staff) {
             String staffCode = ((Staff) user).getStaffCode();
             lblExtra.setText("Staff Code: " + staffCode);
-            lblExtraEdit.setText("Staff Code:");
-            txtExtra.setText(staffCode);
             lblExtra.setVisible(true);
         } else {
             lblExtra.setVisible(false);
         }
 
-        cardLayout.show(container, "VIEW");
+        cardLayout.show(container, VIEW_CARD);
         setVisible(true);
+    }
+
+    public void setOnCloseAction(Runnable onCloseAction) {
+        this.onCloseAction = onCloseAction;
     }
 }
