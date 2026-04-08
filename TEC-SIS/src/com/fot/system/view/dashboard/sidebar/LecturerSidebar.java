@@ -1,0 +1,31 @@
+package com.fot.system.view.dashboard.sidebar;
+
+import com.fot.system.config.AppConfig;
+import com.fot.system.view.dashboard.MainDashboard;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+
+import javax.swing.*;
+
+public class LecturerSidebar extends BaseSidebar {
+
+    public LecturerSidebar(MainDashboard frame) {
+        super(frame, "LECTURER");
+    }
+
+    @Override
+    protected void addRoleSpecificButtons() {
+        add(createMenuButton("My Courses", FontAwesomeSolid.BOOK_OPEN, AppConfig.MENU_COURSES));
+        add(Box.createVerticalStrut(10));
+
+        add(createMenuButton("Attendance", FontAwesomeSolid.USER_CHECK, AppConfig.MENU_ATTENDANCE));
+        add(Box.createVerticalStrut(10));
+
+        add(createMenuButton("Marks / Grades", FontAwesomeSolid.POLL, AppConfig.MENU_MARKS));
+        add(Box.createVerticalStrut(10));
+
+        add(createMenuButton("Notices", FontAwesomeSolid.BULLHORN, AppConfig.MENU_NOTICES));
+        add(Box.createVerticalStrut(10));
+
+        add(createMenuButton("Timetables", FontAwesomeSolid.CALENDAR_ALT, AppConfig.MENU_TIMETABLES));
+    }
+}

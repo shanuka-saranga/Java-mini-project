@@ -19,6 +19,9 @@ public class AppConfig {
     public static final String PROFILE_PICTURE_DIR =
             Path.of(APP_STORAGE_DIR, "profile-pictures").toString();
 
+    public static final String COURSE_MATERIAL_DIR =
+            Path.of(APP_STORAGE_DIR, "course-materials").toString();
+
 
     // user status
     public static final String STATUS_ACTIVE = "ACTIVE";
@@ -34,6 +37,7 @@ public class AppConfig {
     public static final String MENU_PROFILE = "PROFILE";
     public static final String MENU_COURSES = "COURSES";
     public static final String MENU_ATTENDANCE = "ATTENDANCE";
+    public static final String MENU_MARKS = "MARKS";
     public static final String MENU_USERS = "USERS";
     public static final String MENU_NOTICES = "NOTICES";
     public static final String MENU_TIMETABLES = "TIMETABLES";

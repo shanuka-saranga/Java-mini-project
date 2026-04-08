@@ -23,13 +23,7 @@ public class CourseRepository {
 
     public List<Course> findAll() {
         List<Course> courses = new ArrayList<>();
-        String sql = "SELECT c.id, c.course_code, c.course_name, c.credits, c.total_hours, c.session_type, " +
-                "c.department_id, d.dept_name, c.lecturer_in_charge_id, " +
-                "CONCAT(u.first_name, ' ', u.last_name) AS lecturer_name " +
-                "FROM courses c " +
-                "INNER JOIN departments d ON d.id = c.department_id " +
-                "LEFT JOIN users u ON u.id = c.lecturer_in_charge_id " +
-                "ORDER BY c.course_code";
+        String sql = baseCourseSelect() + " ORDER BY c.course_code";
 
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -45,13 +39,7 @@ public class CourseRepository {
     }
 
     public Course findByCourseCode(String courseCode) {
-        String sql = "SELECT c.id, c.course_code, c.course_name, c.credits, c.total_hours, c.session_type, " +
-                "c.department_id, d.dept_name, c.lecturer_in_charge_id, " +
-                "CONCAT(u.first_name, ' ', u.last_name) AS lecturer_name " +
-                "FROM courses c " +
-                "INNER JOIN departments d ON d.id = c.department_id " +
-                "LEFT JOIN users u ON u.id = c.lecturer_in_charge_id " +
-                "WHERE c.course_code = ?";
+        String sql = baseCourseSelect() + " WHERE c.course_code = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, courseCode);
@@ -65,6 +53,24 @@ public class CourseRepository {
         }
 
         return null;
+    }
+
+    public List<Course> findByLecturerId(int lecturerId) {
+        List<Course> courses = new ArrayList<>();
+        String sql = baseCourseSelect() + " WHERE c.lecturer_in_charge_id = ? ORDER BY c.course_code";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, lecturerId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    courses.add(mapCourse(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load lecturer courses: " + e.getMessage(), e);
+        }
+
+        return courses;
     }
 
     public boolean save(Course course) {
@@ -148,6 +154,15 @@ public class CourseRepository {
         }
 
         return 0;
+    }
+
+    private String baseCourseSelect() {
+        return "SELECT c.id, c.course_code, c.course_name, c.credits, c.total_hours, c.session_type, " +
+                "c.department_id, d.dept_name, c.lecturer_in_charge_id, " +
+                "CONCAT(u.first_name, ' ', u.last_name) AS lecturer_name " +
+                "FROM courses c " +
+                "INNER JOIN departments d ON d.id = c.department_id " +
+                "LEFT JOIN users u ON u.id = c.lecturer_in_charge_id";
     }
 
     private void bindCourse(PreparedStatement stmt, Course course) throws SQLException {

@@ -6,9 +6,13 @@ import com.fot.system.view.dashboard.admin.manageCourses.ManageCoursesPanel;
 import com.fot.system.view.dashboard.admin.manageNotices.ManageNoticesPanel;
 import com.fot.system.view.dashboard.admin.AdminHomePanel;
 import com.fot.system.view.dashboard.admin.manageUsers.ManageUsersPanel;
+import com.fot.system.view.dashboard.lecturer.LecturerHomePanel;
+import com.fot.system.view.dashboard.lecturer.myCourses.LecturerCoursesPanel;
+import com.fot.system.view.dashboard.shared.FeaturePlaceholderPanel;
 import com.fot.system.view.dashboard.shared.UserProfilePanelFactory;
 import com.fot.system.view.dashboard.sidebar.AdminSidebar;
 import com.fot.system.view.dashboard.sidebar.BaseSidebar;
+import com.fot.system.view.dashboard.sidebar.LecturerSidebar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +37,8 @@ public class MainDashboard extends JFrame {
             sidebar = new AdminSidebar(this);
         } else if (AppConfig.ROLE_STUDENT.equalsIgnoreCase(user.getRole())) {
 //            sidebar = new StudentSidebar(this); TODO
+        } else if (AppConfig.ROLE_LECTURER.equalsIgnoreCase(user.getRole())) {
+            sidebar = new LecturerSidebar(this);
         } else {
 //            sidebar = new LecturerSidebar(this); TODO
         }
@@ -40,11 +46,33 @@ public class MainDashboard extends JFrame {
         cardLayout = new CardLayout();
         contentArea = new JPanel(cardLayout);
         contentArea.setBackground(Color.WHITE);
-        contentArea.add(new AdminHomePanel(user), AppConfig.MENU_HOME);
-        contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
-        contentArea.add(new ManageUsersPanel(user),AppConfig.MENU_MANAGE_USERS);
-        contentArea.add(new ManageCoursesPanel(user), AppConfig.MENU_MANAGE_COURSES);
-        contentArea.add(new ManageNoticesPanel(user), AppConfig.MENU_MANAGE_NOTICES);
+        if (AppConfig.ROLE_LECTURER.equalsIgnoreCase(user.getRole())) {
+            contentArea.add(new LecturerHomePanel(user), AppConfig.MENU_HOME);
+            contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
+            contentArea.add(new LecturerCoursesPanel(user), AppConfig.MENU_COURSES);
+            contentArea.add(new FeaturePlaceholderPanel(
+                    "Attendance",
+                    "This section can be used to mark and review student attendance for lecturer-assigned courses."
+            ), AppConfig.MENU_ATTENDANCE);
+            contentArea.add(new FeaturePlaceholderPanel(
+                    "Marks / Grades",
+                    "This section can be used to enter, edit, and review assessments, marks, and final grades for lecturer courses."
+            ), AppConfig.MENU_MARKS);
+            contentArea.add(new FeaturePlaceholderPanel(
+                    "Notices",
+                    "This section can show notices relevant to lecturers, including faculty-wide and course-related announcements."
+            ), AppConfig.MENU_NOTICES);
+            contentArea.add(new FeaturePlaceholderPanel(
+                    "Timetables",
+                    "This section can display the lecturer timetable, teaching sessions, and classroom schedule."
+            ), AppConfig.MENU_TIMETABLES);
+        } else {
+            contentArea.add(new AdminHomePanel(user), AppConfig.MENU_HOME);
+            contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
+            contentArea.add(new ManageUsersPanel(user),AppConfig.MENU_MANAGE_USERS);
+            contentArea.add(new ManageCoursesPanel(user), AppConfig.MENU_MANAGE_COURSES);
+            contentArea.add(new ManageNoticesPanel(user), AppConfig.MENU_MANAGE_NOTICES);
+        }
         add(contentArea, BorderLayout.CENTER);
 
 

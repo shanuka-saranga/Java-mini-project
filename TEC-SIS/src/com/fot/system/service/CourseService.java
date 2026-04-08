@@ -31,6 +31,17 @@ public class CourseService {
         return courseRepository.countAll();
     }
 
+    public List<Course> getCoursesByLecturerId(int lecturerId) {
+        if (lecturerId <= 0) {
+            throw new RuntimeException("Invalid lecturer ID.");
+        }
+        return courseRepository.findByLecturerId(lecturerId);
+    }
+
+    public int getCourseCountByLecturerId(int lecturerId) {
+        return getCoursesByLecturerId(lecturerId).size();
+    }
+
     public Course getCourseByCode(String courseCode) {
         if (normalize(courseCode).isEmpty()) {
             throw new RuntimeException("Course code is required.");

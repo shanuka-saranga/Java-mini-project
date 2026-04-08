@@ -25,9 +25,26 @@ public class AppTheme {
     public static final Color BORDER_LIGHT = new Color(235, 235, 235);
     public static final Color BORDER_MUTED = new Color(220, 220, 220);
     public static final Color BORDER_SOFT = new Color(240, 240, 240);
+    public static final Color CARD_BG = Color.WHITE;
+    public static final Color CARD_MUTED_BG = new Color(248, 251, 251);
+    public static final Color CARD_BORDER = new Color(225, 233, 233);
     public static final Color AVATAR_BORDER = PRIMARY;
     public static final Color AVATAR_BG = new Color(245, 248, 248);
     public static final Color AVATAR_TEXT = new Color(110, 110, 110);
+    public static final Color PRIORITY_HIGH = new Color(211, 47, 47);
+    public static final Color PRIORITY_MEDIUM = new Color(255, 152, 0);
+    public static final Color PRIORITY_LOW = PRIMARY;
+    public static final Color ICON_ACCENT = new Color(0, 121, 107);
+    public static final Color CLOSE_ACTION = new Color(198, 40, 40);
+    public static final Color CLOSE_ACTION_HOVER = new Color(229, 57, 53);
+    public static final Color FILE_ICON_BG = new Color(224, 242, 241);
+    public static final Color FILE_ICON_FG = PRIMARY;
+    public static final Color ACTION_ICON_BG = new Color(241, 247, 247);
+    public static final Color ACTION_ICON_HOVER = new Color(224, 242, 241);
+    public static final Color ACTION_ICON_FG = PRIMARY;
+    public static final Color ACTION_DELETE_ICON_BG = new Color(255, 235, 238);
+    public static final Color ACTION_DELETE_ICON_HOVER = new Color(255, 205, 210);
+    public static final Color ACTION_DELETE_ICON_FG = new Color(198, 40, 40);
 
     // Fonts
     public static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 22);

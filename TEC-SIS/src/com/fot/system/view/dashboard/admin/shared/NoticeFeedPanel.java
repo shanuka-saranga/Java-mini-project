@@ -2,6 +2,7 @@ package com.fot.system.view.dashboard.admin.shared;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.model.Notice;
+import com.fot.system.view.components.FeedItemCard;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -10,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class NoticeFeedPanel extends JPanel {
+    private static final int NOTICE_CARD_HEIGHT = 138;
 
     private final JPanel listPanel;
     private final JLabel titleLabel;
@@ -17,9 +19,9 @@ public class NoticeFeedPanel extends JPanel {
 
     public NoticeFeedPanel(String title) {
         setLayout(new BorderLayout(0, 15));
-        setBackground(Color.WHITE);
+        setBackground(AppTheme.CARD_BG);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(235, 235, 235), 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
                 new EmptyBorder(18, 18, 18, 18)
         ));
 
@@ -32,7 +34,7 @@ public class NoticeFeedPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(listPanel);
         scrollPane.setBorder(null);
-        scrollPane.getViewport().setBackground(Color.WHITE);
+        scrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         add(titleLabel, BorderLayout.NORTH);
@@ -49,7 +51,7 @@ public class NoticeFeedPanel extends JPanel {
         if (notices == null || notices.isEmpty()) {
             JLabel emptyLabel = new JLabel("No notices available for this role.");
             emptyLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            emptyLabel.setForeground(new Color(120, 120, 120));
+            emptyLabel.setForeground(AppTheme.TEXT_SUBTLE);
             emptyLabel.setBorder(new EmptyBorder(12, 8, 12, 8));
             listPanel.add(emptyLabel);
         } else {
@@ -64,46 +66,13 @@ public class NoticeFeedPanel extends JPanel {
     }
 
     private JPanel createNoticeCard(Notice notice) {
-        JPanel card = new JPanel(new BorderLayout(0, 10));
-        card.setBackground(new Color(248, 251, 251));
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(225, 233, 233), 1, true),
-                new EmptyBorder(14, 14, 14, 14)
-        ));
-
-        JPanel header = new JPanel(new BorderLayout(10, 0));
-        header.setOpaque(false);
-
-        JLabel title = new JLabel(notice.getTitle());
-        title.setFont(new Font("Segoe UI", Font.BOLD, 15));
-
-        JLabel priorityBadge = new JLabel(notice.getPriority());
-        priorityBadge.setOpaque(true);
-        priorityBadge.setHorizontalAlignment(SwingConstants.CENTER);
-        priorityBadge.setBorder(new EmptyBorder(4, 10, 4, 10));
-        priorityBadge.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        priorityBadge.setBackground(priorityColor(notice.getPriority()));
-        priorityBadge.setForeground(Color.WHITE);
-
-        JTextArea content = new JTextArea(notice.getContent());
-        content.setEditable(false);
-        content.setLineWrap(true);
-        content.setWrapStyleWord(true);
-        content.setOpaque(false);
-        content.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        content.setForeground(new Color(70, 70, 70));
-
-        JLabel meta = new JLabel(buildMeta(notice));
-        meta.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        meta.setForeground(AppTheme.TEXT_MUTED);
-
-        header.add(title, BorderLayout.CENTER);
-        header.add(priorityBadge, BorderLayout.EAST);
-
-        card.add(header, BorderLayout.NORTH);
-        card.add(content, BorderLayout.CENTER);
-        card.add(meta, BorderLayout.SOUTH);
-        return card;
+        return new FeedItemCard(
+                notice.getTitle(),
+                truncate(notice.getContent(), 140),
+                buildMeta(notice),
+                priorityColor(notice.getPriority()),
+                NOTICE_CARD_HEIGHT
+        );
     }
 
     private String buildMeta(Notice notice) {
@@ -115,11 +84,22 @@ public class NoticeFeedPanel extends JPanel {
 
     private Color priorityColor(String priority) {
         if ("HIGH".equalsIgnoreCase(priority)) {
-            return AppTheme.BTN_DELETE_BG;
+            return AppTheme.PRIORITY_HIGH;
         }
         if ("MEDIUM".equalsIgnoreCase(priority)) {
-            return new Color(255, 152, 0);
+            return AppTheme.PRIORITY_MEDIUM;
         }
-        return AppTheme.PRIMARY;
+        return AppTheme.PRIORITY_LOW;
+    }
+
+    private String truncate(String text, int maxLength) {
+        if (text == null) {
+            return "";
+        }
+        String normalized = text.trim().replaceAll("\\s+", " ");
+        if (normalized.length() <= maxLength) {
+            return normalized;
+        }
+        return normalized.substring(0, maxLength - 3) + "...";
     }
 }

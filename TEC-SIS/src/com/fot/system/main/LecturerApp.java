@@ -4,7 +4,7 @@ import com.fot.system.view.login.LoginView;
 
 import javax.swing.*;
 
-public class LectureApp {
+public class LecturerApp {
 
     public static void main(String[] args) {
 
@@ -15,7 +15,7 @@ public class LectureApp {
                 e.printStackTrace();
             }
 
-            LoginView loginView = new LoginView("test@gmail.com","1234");
+            LoginView loginView = new LoginView("nimal@tec.ruh.ac.lk","1234");
             loginView.setVisible(true);
         });
     }
