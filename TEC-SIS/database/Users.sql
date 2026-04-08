@@ -20,7 +20,7 @@ CREATE TABLE student (
      user_id INT PRIMARY KEY,
      registration_no VARCHAR(20) UNIQUE NOT NULL,
      registration_year YEAR NOT NULL,
-     student_type ENUM('PROPER', 'REPEAT') NOT NULL,
+     student_type ENUM('PROPER', 'REPEAT','BATCH_MISSED') NOT NULL,
      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

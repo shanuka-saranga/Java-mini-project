@@ -14,6 +14,8 @@ public class EditCourseDetailsPanel extends JPanel {
     private JTextField txtCourseName;
     private JTextField txtCredits;
     private JTextField txtTotalHours;
+    private JTextField txtNoOfQuizzes;
+    private JTextField txtNoOfAssignments;
     private JComboBox<String> cmbSessionType;
     private JComboBox<Department> cmbDepartment;
     private JComboBox<LecturerOption> cmbLecturer;
@@ -31,6 +33,8 @@ public class EditCourseDetailsPanel extends JPanel {
         txtCourseName = new JTextField(15);
         txtCredits = new JTextField(15);
         txtTotalHours = new JTextField(15);
+        txtNoOfQuizzes = new JTextField(15);
+        txtNoOfAssignments = new JTextField(15);
         cmbSessionType = new JComboBox<>(new String[]{"THEORY", "PRACTICAL", "BOTH"});
         cmbDepartment = new JComboBox<>();
         cmbLecturer = new JComboBox<>();
@@ -40,8 +44,10 @@ public class EditCourseDetailsPanel extends JPanel {
         addFormRow("Credits:", txtCredits, 2, gbc);
         addFormRow("Total Hours:", txtTotalHours, 3, gbc);
         addFormRow("Session Type:", cmbSessionType, 4, gbc);
-        addFormRow("Department:", cmbDepartment, 5, gbc);
-        addFormRow("Lecturer in Charge:", cmbLecturer, 6, gbc);
+        addFormRow("No. of Quizzes:", txtNoOfQuizzes, 5, gbc);
+        addFormRow("No. of Assignments:", txtNoOfAssignments, 6, gbc);
+        addFormRow("Department:", cmbDepartment, 7, gbc);
+        addFormRow("Lecturer in Charge:", cmbLecturer, 8, gbc);
     }
 
     public void setCourseData(com.fot.system.model.Course course) {
@@ -51,6 +57,8 @@ public class EditCourseDetailsPanel extends JPanel {
         txtCredits.setText(String.valueOf(course.getCredits()));
         txtTotalHours.setText(String.valueOf(course.getTotalHours()));
         cmbSessionType.setSelectedItem(course.getSessionType());
+        txtNoOfQuizzes.setText(String.valueOf(course.getNoOfQuizzes()));
+        txtNoOfAssignments.setText(String.valueOf(course.getNoOfAssignments()));
         selectDepartmentById(course.getDepartmentId());
         selectLecturerById(course.getLecturerInChargeId());
     }
@@ -63,6 +71,8 @@ public class EditCourseDetailsPanel extends JPanel {
                 txtCredits.getText().trim(),
                 txtTotalHours.getText().trim(),
                 cmbSessionType.getSelectedItem() == null ? "" : cmbSessionType.getSelectedItem().toString(),
+                txtNoOfQuizzes.getText().trim(),
+                txtNoOfAssignments.getText().trim(),
                 getDepartmentId(),
                 getLecturerId()
         );

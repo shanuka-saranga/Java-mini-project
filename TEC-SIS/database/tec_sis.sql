@@ -34,6 +34,8 @@ CREATE TABLE `courses` (
                            `credits` int(11) NOT NULL,
                            `total_hours` int(11) NOT NULL,
                            `session_type` enum('THEORY','PRACTICAL','BOTH') NOT NULL DEFAULT 'THEORY',
+                           `no_of_quizzes` tinyint(4) NOT NULL DEFAULT 3,
+                           `no_of_assignments` tinyint(4) NOT NULL DEFAULT 1,
                            `department_id` int(11) NOT NULL,
                            `lecturer_in_charge_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -42,15 +44,15 @@ CREATE TABLE `courses` (
 -- Dumping data for table `courses`
 --
 
-INSERT INTO `courses` (`id`, `course_code`, `course_name`, `credits`, `total_hours`, `session_type`, `department_id`, `lecturer_in_charge_id`) VALUES
-                                                                                                                                                   (1, 'ICT2152', 'E-Commerce Implementation, Management and Security', 2, 30, 'THEORY', 2, 3),
-                                                                                                                                                   (2, 'ICT2142', 'Object Oriented Analysis and Design', 2, 30, 'THEORY', 2, 4),
-                                                                                                                                                   (3, 'ICT2132', 'Object Oriented Programming Practicum', 2, 60, 'PRACTICAL', 2, 5),
-                                                                                                                                                   (4, 'ICT2122', 'Object Oriented Programming', 2, 30, 'THEORY', 2, 5),
-                                                                                                                                                   (5, 'ICT2113', 'Data Structures and Algorithms', 3, 45, 'BOTH', 2, 6),
-                                                                                                                                                   (6, 'ENG2122', 'English III', 2, 30, 'THEORY', 4, 7),
-                                                                                                                                                   (7, 'TCS2122', 'Soft Skills', 2, 30, 'THEORY', 4, 3),
-                                                                                                                                                   (8, 'TCS2112', 'Business Economics', 2, 30, 'THEORY', 4, 4);
+INSERT INTO `courses` (`id`, `course_code`, `course_name`, `credits`, `total_hours`, `session_type`, `no_of_quizzes`, `no_of_assignments`, `department_id`, `lecturer_in_charge_id`) VALUES
+                                                                                                                                                   (1, 'ICT2152', 'E-Commerce Implementation, Management and Security', 2, 30, 'THEORY', 3, 1, 2, 3),
+                                                                                                                                                   (2, 'ICT2142', 'Object Oriented Analysis and Design', 2, 30, 'THEORY', 3, 1, 2, 4),
+                                                                                                                                                   (3, 'ICT2132', 'Object Oriented Programming Practicum', 2, 60, 'PRACTICAL', 3, 1, 2, 5),
+                                                                                                                                                   (4, 'ICT2122', 'Object Oriented Programming', 2, 30, 'THEORY', 3, 1, 2, 5),
+                                                                                                                                                   (5, 'ICT2113', 'Data Structures and Algorithms', 3, 45, 'BOTH', 3, 1, 2, 6),
+                                                                                                                                                   (6, 'ENG2122', 'English III', 2, 30, 'THEORY', 3, 1, 4, 7),
+                                                                                                                                                   (7, 'TCS2122', 'Soft Skills', 2, 30, 'THEORY', 3, 1, 4, 3),
+                                                                                                                                                   (8, 'TCS2112', 'Business Economics', 2, 30, 'THEORY', 3, 1, 4, 4);
 
 -- --------------------------------------------------------
 

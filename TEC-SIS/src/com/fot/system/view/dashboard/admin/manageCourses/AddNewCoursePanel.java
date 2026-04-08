@@ -16,6 +16,8 @@ public class AddNewCoursePanel extends JPanel {
     private JTextField txtCourseName;
     private JTextField txtCredits;
     private JTextField txtTotalHours;
+    private JTextField txtNoOfQuizzes;
+    private JTextField txtNoOfAssignments;
     private JComboBox<String> cmbSessionType;
     private JComboBox<Department> cmbDepartment;
     private JComboBox<LecturerOption> cmbLecturer;
@@ -55,6 +57,8 @@ public class AddNewCoursePanel extends JPanel {
         txtCourseName = new JTextField(15);
         txtCredits = new JTextField(15);
         txtTotalHours = new JTextField(15);
+        txtNoOfQuizzes = new JTextField(15);
+        txtNoOfAssignments = new JTextField(15);
         cmbSessionType = new JComboBox<>(new String[]{"THEORY", "PRACTICAL", "BOTH"});
         cmbDepartment = new JComboBox<>();
         cmbLecturer = new JComboBox<>();
@@ -64,8 +68,10 @@ public class AddNewCoursePanel extends JPanel {
         addFormRow(formPanel, "Credits:", txtCredits, 2, gbc);
         addFormRow(formPanel, "Total Hours:", txtTotalHours, 3, gbc);
         addFormRow(formPanel, "Session Type:", cmbSessionType, 4, gbc);
-        addFormRow(formPanel, "Department:", cmbDepartment, 5, gbc);
-        addFormRow(formPanel, "Lecturer in Charge:", cmbLecturer, 6, gbc);
+        addFormRow(formPanel, "No. of Quizzes:", txtNoOfQuizzes, 5, gbc);
+        addFormRow(formPanel, "No. of Assignments:", txtNoOfAssignments, 6, gbc);
+        addFormRow(formPanel, "Department:", cmbDepartment, 7, gbc);
+        addFormRow(formPanel, "Lecturer in Charge:", cmbLecturer, 8, gbc);
 
         return formPanel;
     }
@@ -120,6 +126,8 @@ public class AddNewCoursePanel extends JPanel {
         txtCourseName.setText("");
         txtCredits.setText("");
         txtTotalHours.setText("");
+        txtNoOfQuizzes.setText("3");
+        txtNoOfAssignments.setText("1");
         cmbSessionType.setSelectedItem("THEORY");
 
         if (cmbDepartment.getItemCount() > 0) {
@@ -137,6 +145,8 @@ public class AddNewCoursePanel extends JPanel {
                 txtCredits.getText().trim(),
                 txtTotalHours.getText().trim(),
                 cmbSessionType.getSelectedItem() == null ? "" : cmbSessionType.getSelectedItem().toString(),
+                txtNoOfQuizzes.getText().trim(),
+                txtNoOfAssignments.getText().trim(),
                 getDepartmentId(),
                 getLecturerId()
         );

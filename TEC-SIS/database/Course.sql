@@ -5,6 +5,8 @@ CREATE TABLE courses (
      credits INT NOT NULL,
      total_hours INT NOT NULL,
      session_type ENUM('THEORY', 'PRACTICAL', 'BOTH') NOT NULL DEFAULT 'THEORY',
+     no_of_quizzes TINYINT NOT NULL DEFAULT 3,
+     no_of_assignments TINYINT NOT NULL DEFAULT 1,
      department_id INT NOT NULL,
      lecturer_in_charge_id INT,
      FOREIGN KEY (department_id) REFERENCES department (id) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -5,6 +5,6 @@ import com.fot.system.view.dashboard.admin.shared.BaseAdminTablePanel;
 public class CourseTablePanel extends BaseAdminTablePanel {
 
     public CourseTablePanel() {
-        super(new String[]{"ID", "Code", "Course Name", "Department", "Credits", "Hours", "Session", "Lecturer"});
+        super(new String[]{"ID", "Code", "Course Name", "Department", "Credits", "Hours", "Session", "Quizzes", "Assignments", "Lecturer"});
     }
 }

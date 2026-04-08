@@ -125,6 +125,14 @@ public class CourseService {
             throw new RuntimeException("Total hours must be greater than 0.");
         }
 
+        if (course.getNoOfQuizzes() < 0) {
+            throw new RuntimeException("Number of quizzes cannot be negative.");
+        }
+
+        if (course.getNoOfAssignments() < 0) {
+            throw new RuntimeException("Number of assignments cannot be negative.");
+        }
+
         String sessionType = normalize(course.getSessionType()).toUpperCase();
         if (!VALID_SESSION_TYPES.contains(sessionType)) {
             throw new RuntimeException("Invalid session type.");
@@ -147,6 +155,8 @@ public class CourseService {
         course.setCredits(parsePositiveInt(request.getCredits(), "Credits must be greater than 0."));
         course.setTotalHours(parsePositiveInt(request.getTotalHours(), "Total hours must be greater than 0."));
         course.setSessionType(request.getSessionType());
+        course.setNoOfQuizzes(parseNonNegativeInt(request.getNoOfQuizzes(), "Number of quizzes cannot be negative."));
+        course.setNoOfAssignments(parseNonNegativeInt(request.getNoOfAssignments(), "Number of assignments cannot be negative."));
         course.setDepartmentId(parsePositiveInt(request.getDepartmentId(), "Department is required."));
         course.setLecturerInChargeId(parseOptionalInt(request.getLecturerInChargeId()));
         return course;
@@ -178,6 +188,18 @@ public class CourseService {
             return parsedValue;
         } catch (NumberFormatException e) {
             throw new RuntimeException("Lecturer is invalid.");
+        }
+    }
+
+    private int parseNonNegativeInt(String value, String message) {
+        try {
+            int parsedValue = Integer.parseInt(normalize(value));
+            if (parsedValue < 0) {
+                throw new RuntimeException(message);
+            }
+            return parsedValue;
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(message);
         }
     }
 

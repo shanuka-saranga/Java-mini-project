@@ -7,6 +7,8 @@ public class Course {
     private int credits;
     private int totalHours;
     private String sessionType;
+    private int noOfQuizzes;
+    private int noOfAssignments;
     private int departmentId;
     private String departmentName;
     private Integer lecturerInChargeId;
@@ -58,6 +60,22 @@ public class Course {
 
     public void setSessionType(String sessionType) {
         this.sessionType = sessionType;
+    }
+
+    public int getNoOfQuizzes() {
+        return noOfQuizzes;
+    }
+
+    public void setNoOfQuizzes(int noOfQuizzes) {
+        this.noOfQuizzes = noOfQuizzes;
+    }
+
+    public int getNoOfAssignments() {
+        return noOfAssignments;
+    }
+
+    public void setNoOfAssignments(int noOfAssignments) {
+        this.noOfAssignments = noOfAssignments;
     }
 
     public int getDepartmentId() {

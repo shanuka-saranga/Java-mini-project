@@ -27,6 +27,8 @@ public class CourseDetailsPanel extends JPanel {
     private JLabel lblCredits;
     private JLabel lblHours;
     private JLabel lblSessionType;
+    private JLabel lblNoOfQuizzes;
+    private JLabel lblNoOfAssignments;
     private JLabel lblDepartment;
     private JLabel lblLecturer;
 
@@ -64,6 +66,8 @@ public class CourseDetailsPanel extends JPanel {
         lblCredits = createStyledLabel("Credits: -", FontAwesomeSolid.CALCULATOR);
         lblHours = createStyledLabel("Total Hours: -", FontAwesomeSolid.CLOCK);
         lblSessionType = createStyledLabel("Session Type: -", FontAwesomeSolid.LAYER_GROUP);
+        lblNoOfQuizzes = createStyledLabel("No. of Quizzes: -", FontAwesomeSolid.LIST_OL);
+        lblNoOfAssignments = createStyledLabel("No. of Assignments: -", FontAwesomeSolid.TASKS);
         lblDepartment = createStyledLabel("Department: -", FontAwesomeSolid.BUILDING);
         lblLecturer = createStyledLabel("Lecturer: -", FontAwesomeSolid.USER_TIE);
 
@@ -72,10 +76,12 @@ public class CourseDetailsPanel extends JPanel {
         addToGrid(panel, lblCredits, 0, 1, gbc);
         addToGrid(panel, lblHours, 1, 1, gbc);
         addToGrid(panel, lblSessionType, 0, 2, gbc);
-        addToGrid(panel, lblDepartment, 1, 2, gbc);
+        addToGrid(panel, lblNoOfQuizzes, 1, 2, gbc);
+        addToGrid(panel, lblNoOfAssignments, 0, 3, gbc);
+        addToGrid(panel, lblDepartment, 1, 3, gbc);
 
         gbc.gridwidth = 2;
-        addToGrid(panel, lblLecturer, 0, 3, gbc);
+        addToGrid(panel, lblLecturer, 0, 4, gbc);
 
         return panel;
     }
@@ -262,6 +268,8 @@ public class CourseDetailsPanel extends JPanel {
         lblCredits.setText("Credits: " + course.getCredits());
         lblHours.setText("Total Hours: " + course.getTotalHours());
         lblSessionType.setText("Session Type: " + course.getSessionType());
+        lblNoOfQuizzes.setText("No. of Quizzes: " + course.getNoOfQuizzes());
+        lblNoOfAssignments.setText("No. of Assignments: " + course.getNoOfAssignments());
         lblDepartment.setText("Department: " + course.getDepartmentName());
         lblLecturer.setText("Lecturer: " + (course.getLecturerInChargeName() == null ? "Not Assigned" : course.getLecturerInChargeName()));
         editCourseDetailsPanel.setCourseData(course);

@@ -74,8 +74,8 @@ public class CourseRepository {
     }
 
     public boolean save(Course course) {
-        String sql = "INSERT INTO courses (course_code, course_name, credits, total_hours, session_type, department_id, lecturer_in_charge_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO courses (course_code, course_name, credits, total_hours, session_type, no_of_quizzes, no_of_assignments, department_id, lecturer_in_charge_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             bindCourse(stmt, course);
@@ -86,11 +86,11 @@ public class CourseRepository {
     }
 
     public boolean update(Course course) {
-        String sql = "UPDATE courses SET course_code = ?, course_name = ?, credits = ?, total_hours = ?, session_type = ?, department_id = ?, lecturer_in_charge_id = ? WHERE id = ?";
+        String sql = "UPDATE courses SET course_code = ?, course_name = ?, credits = ?, total_hours = ?, session_type = ?, no_of_quizzes = ?, no_of_assignments = ?, department_id = ?, lecturer_in_charge_id = ? WHERE id = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             bindCourse(stmt, course);
-            stmt.setInt(8, course.getId());
+            stmt.setInt(10, course.getId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException("Failed to update course: " + e.getMessage(), e);
@@ -157,7 +157,7 @@ public class CourseRepository {
     }
 
     private String baseCourseSelect() {
-        return "SELECT c.id, c.course_code, c.course_name, c.credits, c.total_hours, c.session_type, " +
+        return "SELECT c.id, c.course_code, c.course_name, c.credits, c.total_hours, c.session_type, c.no_of_quizzes, c.no_of_assignments, " +
                 "c.department_id, d.dept_name, c.lecturer_in_charge_id, " +
                 "CONCAT(u.first_name, ' ', u.last_name) AS lecturer_name " +
                 "FROM courses c " +
@@ -171,12 +171,14 @@ public class CourseRepository {
         stmt.setInt(3, course.getCredits());
         stmt.setInt(4, course.getTotalHours());
         stmt.setString(5, course.getSessionType());
-        stmt.setInt(6, course.getDepartmentId());
+        stmt.setInt(6, course.getNoOfQuizzes());
+        stmt.setInt(7, course.getNoOfAssignments());
+        stmt.setInt(8, course.getDepartmentId());
 
         if (course.getLecturerInChargeId() == null) {
-            stmt.setNull(7, java.sql.Types.INTEGER);
+            stmt.setNull(9, java.sql.Types.INTEGER);
         } else {
-            stmt.setInt(7, course.getLecturerInChargeId());
+            stmt.setInt(9, course.getLecturerInChargeId());
         }
     }
 
@@ -188,6 +190,8 @@ public class CourseRepository {
         course.setCredits(rs.getInt("credits"));
         course.setTotalHours(rs.getInt("total_hours"));
         course.setSessionType(rs.getString("session_type"));
+        course.setNoOfQuizzes(rs.getInt("no_of_quizzes"));
+        course.setNoOfAssignments(rs.getInt("no_of_assignments"));
         course.setDepartmentId(rs.getInt("department_id"));
         course.setDepartmentName(rs.getString("dept_name"));
 

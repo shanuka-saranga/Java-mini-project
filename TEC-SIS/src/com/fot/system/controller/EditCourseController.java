@@ -39,9 +39,13 @@ public class EditCourseController {
         requireValue(request.getCredits(), "Credits are required.");
         requireValue(request.getTotalHours(), "Total hours are required.");
         requireValue(request.getSessionType(), "Session type is required.");
+        requireValue(request.getNoOfQuizzes(), "Number of quizzes is required.");
+        requireValue(request.getNoOfAssignments(), "Number of assignments is required.");
         requireValue(request.getDepartmentId(), "Department is required.");
         parsePositiveInt(request.getCredits(), "Credits must be a valid number.");
         parsePositiveInt(request.getTotalHours(), "Total hours must be a valid number.");
+        parseNonNegativeInt(request.getNoOfQuizzes(), "Number of quizzes must be a valid non-negative number.");
+        parseNonNegativeInt(request.getNoOfAssignments(), "Number of assignments must be a valid non-negative number.");
         parsePositiveInt(request.getDepartmentId(), "Department is invalid.");
 
         if (!request.getLecturerInChargeId().trim().isEmpty()) {
@@ -59,6 +63,18 @@ public class EditCourseController {
         try {
             int parsedValue = Integer.parseInt(value.trim());
             if (parsedValue <= 0) {
+                throw new RuntimeException(message);
+            }
+            return parsedValue;
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(message);
+        }
+    }
+
+    private int parseNonNegativeInt(String value, String message) {
+        try {
+            int parsedValue = Integer.parseInt(value.trim());
+            if (parsedValue < 0) {
                 throw new RuntimeException(message);
             }
             return parsedValue;

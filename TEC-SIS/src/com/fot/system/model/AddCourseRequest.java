@@ -6,16 +6,20 @@ public class AddCourseRequest {
     private final String credits;
     private final String totalHours;
     private final String sessionType;
+    private final String noOfQuizzes;
+    private final String noOfAssignments;
     private final String departmentId;
     private final String lecturerInChargeId;
 
     public AddCourseRequest(String courseCode, String courseName, String credits, String totalHours,
-                            String sessionType, String departmentId, String lecturerInChargeId) {
+                            String sessionType, String noOfQuizzes, String noOfAssignments, String departmentId, String lecturerInChargeId) {
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.credits = credits;
         this.totalHours = totalHours;
         this.sessionType = sessionType;
+        this.noOfQuizzes = noOfQuizzes;
+        this.noOfAssignments = noOfAssignments;
         this.departmentId = departmentId;
         this.lecturerInChargeId = lecturerInChargeId;
     }
@@ -38,6 +42,14 @@ public class AddCourseRequest {
 
     public String getSessionType() {
         return sessionType;
+    }
+
+    public String getNoOfQuizzes() {
+        return noOfQuizzes;
+    }
+
+    public String getNoOfAssignments() {
+        return noOfAssignments;
     }
 
     public String getDepartmentId() {

@@ -117,6 +117,8 @@ public class ManageCoursesPanel extends JPanel {
                                 course.getCredits(),
                                 course.getTotalHours(),
                                 course.getSessionType(),
+                                course.getNoOfQuizzes(),
+                                course.getNoOfAssignments(),
                                 course.getLecturerInChargeName() == null ? "-" : course.getLecturerInChargeName()
                         };
                         courseTablePanel.addRow(rowData);
@@ -181,7 +183,9 @@ public class ManageCoursesPanel extends JPanel {
         course.setCredits(Integer.parseInt(courseTablePanel.getModel().getValueAt(row, 4).toString()));
         course.setTotalHours(Integer.parseInt(courseTablePanel.getModel().getValueAt(row, 5).toString()));
         course.setSessionType(courseTablePanel.getModel().getValueAt(row, 6).toString());
-        String lecturerName = courseTablePanel.getModel().getValueAt(row, 7).toString();
+        course.setNoOfQuizzes(Integer.parseInt(courseTablePanel.getModel().getValueAt(row, 7).toString()));
+        course.setNoOfAssignments(Integer.parseInt(courseTablePanel.getModel().getValueAt(row, 8).toString()));
+        String lecturerName = courseTablePanel.getModel().getValueAt(row, 9).toString();
         course.setLecturerInChargeName("-".equals(lecturerName) ? null : lecturerName);
 
         SwingWorker<Course, Void> worker = new SwingWorker<>() {
