@@ -23,6 +23,9 @@ public class LecturerSidebar extends BaseSidebar {
         add(createMenuButton("Marks / Grades", FontAwesomeSolid.POLL, AppConfig.MENU_MARKS));
         add(Box.createVerticalStrut(10));
 
+        add(createMenuButton("Exam Eligibility", FontAwesomeSolid.CLIPBOARD_CHECK, AppConfig.MENU_EXAM_ELIGIBILITY));
+        add(Box.createVerticalStrut(10));
+
         add(createMenuButton("Notices", FontAwesomeSolid.BULLHORN, AppConfig.MENU_NOTICES));
         add(Box.createVerticalStrut(10));
 
