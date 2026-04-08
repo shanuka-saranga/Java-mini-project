@@ -2,6 +2,8 @@ package com.fot.system.model;
 
 public class AssessmentCardSummary {
     private String title;
+    private String assessmentType;
+    private int itemNo;
     private double averageMark;
     private int attemptCount;
     private int absentCount;
@@ -14,6 +16,22 @@ public class AssessmentCardSummary {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getAssessmentType() {
+        return assessmentType;
+    }
+
+    public void setAssessmentType(String assessmentType) {
+        this.assessmentType = assessmentType;
+    }
+
+    public int getItemNo() {
+        return itemNo;
+    }
+
+    public void setItemNo(int itemNo) {
+        this.itemNo = itemNo;
     }
 
     public double getAverageMark() {

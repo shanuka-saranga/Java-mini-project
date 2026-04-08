@@ -17,6 +17,7 @@ public class LecturerCourseCard extends FeedItemCard {
                 "Department: " + valueOrDash(course.getDepartmentName()),
                 104
         );
+
         this.course = course;
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         if (selected) {

@@ -6,6 +6,7 @@ public class AppTheme {
 
     // Primary Colors
     public static final Color PRIMARY = new Color(0, 128, 128);      // Teal
+    public static final Color BASE_COLOR = PRIMARY;
     public static final Color PRIMARY_HOVER = new Color(0, 150, 136);
     public static final Color PRIMARY_ACTIVE = new Color(0, 105, 105);
 

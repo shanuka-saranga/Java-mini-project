@@ -1,6 +1,7 @@
 package com.fot.system.service;
 
 import com.fot.system.model.AssessmentCardSummary;
+import com.fot.system.model.AssessmentStudentMarkRow;
 import com.fot.system.model.CourseSemesterContext;
 import com.fot.system.model.StudentMarksOverviewRow;
 import com.fot.system.repository.LecturerMarksRepository;
@@ -50,5 +51,31 @@ public class LecturerMarksService {
             throw new RuntimeException("Invalid course ID.");
         }
         return lecturerMarksRepository.findStudentMarksOverviewByCourse(courseId, semesterYear);
+    }
+
+    public List<AssessmentStudentMarkRow> getAssessmentRows(String assessmentType, int courseId, int semesterYear, int itemNo) {
+        if (courseId <= 0) {
+            throw new RuntimeException("Invalid course ID.");
+        }
+        return lecturerMarksRepository.findAssessmentRows(assessmentType, courseId, semesterYear, itemNo);
+    }
+
+    public void saveAssessmentRows(String assessmentType, int itemNo, List<AssessmentStudentMarkRow> rows) {
+        for (AssessmentStudentMarkRow row : rows) {
+            String status = row.getStatus() == null ? "" : row.getStatus().trim();
+            if (status.isEmpty() && row.getMark() == null) {
+                continue;
+            }
+
+            boolean needsMark = "PRESENT".equalsIgnoreCase(status) || "SUBMITTED".equalsIgnoreCase(status);
+            if (needsMark && row.getMark() == null) {
+                throw new RuntimeException("Mark is required when status is " + status + ".");
+            }
+
+            if (row.getMark() != null && (row.getMark() < 0 || row.getMark() > 100)) {
+                throw new RuntimeException("Marks must be between 0 and 100.");
+            }
+        }
+        lecturerMarksRepository.saveAssessmentRows(assessmentType, itemNo, rows);
     }
 }

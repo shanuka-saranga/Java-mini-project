@@ -10,46 +10,35 @@ public class AssessmentSummaryCard extends JPanel {
 
     private final JLabel lblTitle;
     private final JLabel lblAverage;
-    private final JLabel lblAttempts;
-    private final JLabel lblAbsent;
-    private final JLabel lblMedical;
+    private final JLabel lblCounts;
 
     public AssessmentSummaryCard() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(AppTheme.CARD_BG);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.CARD_BORDER, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BASE_COLOR, 1, true),
                 new EmptyBorder(16, 16, 16, 16)
         ));
 
         lblTitle = createLabel("-", Font.BOLD, 18, AppTheme.TEXT_DARK);
         lblAverage = createLabel("Avg: 0.00", Font.BOLD, 24, AppTheme.TEXT_DARK);
-        lblAttempts = createLabel("Attempts: 0", Font.PLAIN, 13, AppTheme.TEXT_SUBTLE);
-        lblAbsent = createLabel("Absent: 0", Font.PLAIN, 13, AppTheme.TEXT_SUBTLE);
-        lblMedical = createLabel("Medical: 0", Font.PLAIN, 13, AppTheme.TEXT_SUBTLE);
+        lblCounts = createLabel("Attempts: 0 | Absent: 0 | Medical: 0 | Pending: 0", Font.PLAIN, 13, AppTheme.TEXT_SUBTLE);
 
         add(lblTitle);
         add(Box.createVerticalStrut(14));
         add(lblAverage);
-        add(Box.createVerticalStrut(10));
-        add(lblAttempts);
-        add(Box.createVerticalStrut(4));
-        add(lblAbsent);
-        add(Box.createVerticalStrut(4));
-        add(lblMedical);
-        add(Box.createVerticalStrut(4));
         add(Box.createVerticalGlue());
+        add(lblCounts);
 
         setPreferredSize(new Dimension(260, 164));
         setMaximumSize(new Dimension(Integer.MAX_VALUE, 164));
+        setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
-    public void setSummary(String title, String average, int attempts, int absent, int medical) {
+    public void setSummary(String title, String average, int attempts, int absent, int medical, int pending) {
         lblTitle.setText(title);
         lblAverage.setText("Avg: " + average);
-        lblAttempts.setText("Attempts: " + attempts);
-        lblAbsent.setText("Absent: " + absent);
-        lblMedical.setText("Medical: " + medical);
+        lblCounts.setText("Attempts: " + attempts + " | Absent: " + absent + " | Medical: " + medical + " | Pending: " + pending);
     }
 
     private JLabel createLabel(String text, int style, int size, Color color) {

@@ -2,6 +2,7 @@ package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
 import com.fot.system.model.AssessmentCardSummary;
+import com.fot.system.model.AssessmentStudentMarkRow;
 import com.fot.system.model.CourseSemesterContext;
 import com.fot.system.model.StudentMarksOverviewRow;
 
@@ -58,7 +59,10 @@ public class LecturerMarksRepository {
                 """;
 
         for (int quizNo = 1; quizNo <= quizCount; quizNo++) {
-            summaries.add(findNumberedSummary(sql, courseId, semesterYear, quizNo, "Quiz " + quizNo));
+            AssessmentCardSummary summary = findNumberedSummary(sql, courseId, semesterYear, quizNo, "Quiz " + quizNo);
+            summary.setAssessmentType("QUIZ");
+            summary.setItemNo(quizNo);
+            summaries.add(summary);
         }
         return summaries;
     }
@@ -80,7 +84,10 @@ public class LecturerMarksRepository {
                 """;
 
         for (int assignmentNo = 1; assignmentNo <= assignmentCount; assignmentNo++) {
-            summaries.add(findNumberedSummary(sql, courseId, semesterYear, assignmentNo, "Assessment " + assignmentNo));
+            AssessmentCardSummary summary = findNumberedSummary(sql, courseId, semesterYear, assignmentNo, "Assessment " + assignmentNo);
+            summary.setAssessmentType("ASSIGNMENT");
+            summary.setItemNo(assignmentNo);
+            summaries.add(summary);
         }
         return summaries;
     }
@@ -97,7 +104,10 @@ public class LecturerMarksRepository {
                 INNER JOIN mid_exams me ON me.mark_id = m.id
                 WHERE m.course_id = ? AND m.semester_year = ?
                 """;
-        return findSingleSummary(sql, courseId, semesterYear, "Mid Exam");
+        AssessmentCardSummary summary = findSingleSummary(sql, courseId, semesterYear, "Mid Exam");
+        summary.setAssessmentType("MID");
+        summary.setItemNo(0);
+        return summary;
     }
 
     public AssessmentCardSummary findEndExamSummary(int courseId, int semesterYear) {
@@ -112,7 +122,10 @@ public class LecturerMarksRepository {
                 INNER JOIN end_exams ee ON ee.mark_id = m.id
                 WHERE m.course_id = ? AND m.semester_year = ?
                 """;
-        return findSingleSummary(sql, courseId, semesterYear, "End Exam");
+        AssessmentCardSummary summary = findSingleSummary(sql, courseId, semesterYear, "End Exam");
+        summary.setAssessmentType("END");
+        summary.setItemNo(0);
+        return summary;
     }
 
     public List<StudentMarksOverviewRow> findStudentMarksOverviewByCourse(int courseId) {
@@ -172,6 +185,70 @@ public class LecturerMarksRepository {
         return rows;
     }
 
+    public List<AssessmentStudentMarkRow> findAssessmentRows(String assessmentType, int courseId, int semesterYear, int itemNo) {
+        return switch (assessmentType) {
+            case "QUIZ" -> runAssessmentRowsQuery(
+                    """
+                    SELECT m.id AS mark_id, m.student_reg_no, m.attempt_no, NULL AS exam_type, q.status, q.quiz_mark AS mark_value
+                    FROM marks m
+                    LEFT JOIN quizzes q ON q.mark_id = m.id AND q.quiz_no = ?
+                    WHERE m.course_id = ? AND m.semester_year = ?
+                    ORDER BY m.student_reg_no, m.attempt_no
+                    """,
+                    courseId, semesterYear, itemNo
+            );
+            case "ASSIGNMENT" -> runAssessmentRowsQuery(
+                    """
+                    SELECT m.id AS mark_id, m.student_reg_no, m.attempt_no, NULL AS exam_type, a.status, a.assignment_mark AS mark_value
+                    FROM marks m
+                    LEFT JOIN assignments a ON a.mark_id = m.id AND a.assignment_no = ?
+                    WHERE m.course_id = ? AND m.semester_year = ?
+                    ORDER BY m.student_reg_no, m.attempt_no
+                    """,
+                    courseId, semesterYear, itemNo
+            );
+            case "MID" -> runAssessmentRowsQuery(
+                    """
+                    SELECT m.id AS mark_id, m.student_reg_no, m.attempt_no, exam_types.exam_type, me.status, me.mid_exam_mark AS mark_value
+                    FROM marks m
+                    INNER JOIN courses c ON c.id = m.course_id
+                    INNER JOIN (
+                        SELECT 'THEORY' AS exam_type
+                        UNION ALL
+                        SELECT 'PRACTICAL' AS exam_type
+                    ) exam_types
+                        ON (c.session_type = 'BOTH' OR c.session_type = exam_types.exam_type)
+                    LEFT JOIN mid_exams me
+                        ON me.mark_id = m.id
+                       AND me.exam_type = exam_types.exam_type
+                    WHERE m.course_id = ? AND m.semester_year = ?
+                    ORDER BY m.student_reg_no, m.attempt_no, exam_types.exam_type
+                    """,
+                    courseId, semesterYear, 0
+            );
+            case "END" -> runAssessmentRowsQuery(
+                    """
+                    SELECT m.id AS mark_id, m.student_reg_no, m.attempt_no, exam_types.exam_type, ee.status, ee.end_exam_mark AS mark_value
+                    FROM marks m
+                    INNER JOIN courses c ON c.id = m.course_id
+                    INNER JOIN (
+                        SELECT 'THEORY' AS exam_type
+                        UNION ALL
+                        SELECT 'PRACTICAL' AS exam_type
+                    ) exam_types
+                        ON (c.session_type = 'BOTH' OR c.session_type = exam_types.exam_type)
+                    LEFT JOIN end_exams ee
+                        ON ee.mark_id = m.id
+                       AND ee.exam_type = exam_types.exam_type
+                    WHERE m.course_id = ? AND m.semester_year = ?
+                    ORDER BY m.student_reg_no, m.attempt_no, exam_types.exam_type
+                    """,
+                    courseId, semesterYear, 0
+            );
+            default -> new ArrayList<>();
+        };
+    }
+
     private AssessmentCardSummary findNumberedSummary(String sql, int courseId, int semesterYear, int itemNo, String title) {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, courseId);
@@ -223,5 +300,86 @@ public class LecturerMarksRepository {
         summary.setMedicalCount(0);
         summary.setPendingCount(0);
         return summary;
+    }
+
+    private List<AssessmentStudentMarkRow> runAssessmentRowsQuery(String sql, int courseId, int semesterYear, int itemNo) {
+        List<AssessmentStudentMarkRow> rows = new ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            if (itemNo > 0) {
+                stmt.setInt(1, itemNo);
+                stmt.setInt(2, courseId);
+                stmt.setInt(3, semesterYear);
+            } else {
+                stmt.setInt(1, courseId);
+                stmt.setInt(2, semesterYear);
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    AssessmentStudentMarkRow row = new AssessmentStudentMarkRow();
+                    row.setMarkId(rs.getInt("mark_id"));
+                    row.setRegistrationNo(rs.getString("student_reg_no"));
+                    row.setAttemptNo(rs.getInt("attempt_no"));
+                    row.setExamType(rs.getString("exam_type"));
+                    row.setStatus(rs.getString("status"));
+                    String status = rs.getString("status");
+                    if ("PRESENT".equalsIgnoreCase(status) || "SUBMITTED".equalsIgnoreCase(status)) {
+                        row.setMark(rs.getDouble("mark_value"));
+                    } else {
+                        row.setMark(null);
+                    }
+                    rows.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load assessment marks: " + e.getMessage(), e);
+        }
+        return rows;
+    }
+
+    public void saveAssessmentRows(String assessmentType, int itemNo, List<AssessmentStudentMarkRow> rows) {
+        String sql = switch (assessmentType) {
+            case "QUIZ" -> """
+                    INSERT INTO quizzes (mark_id, quiz_no, quiz_mark, status)
+                    VALUES (?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE quiz_mark = VALUES(quiz_mark), status = VALUES(status)
+                    """;
+            case "ASSIGNMENT" -> """
+                    INSERT INTO assignments (mark_id, assignment_no, assignment_mark, status)
+                    VALUES (?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE assignment_mark = VALUES(assignment_mark), status = VALUES(status)
+                    """;
+            case "MID" -> """
+                    INSERT INTO mid_exams (mark_id, exam_type, mid_exam_mark, status)
+                    VALUES (?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE mid_exam_mark = VALUES(mid_exam_mark), status = VALUES(status)
+                    """;
+            case "END" -> """
+                    INSERT INTO end_exams (mark_id, exam_type, end_exam_mark, status)
+                    VALUES (?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE end_exam_mark = VALUES(end_exam_mark), status = VALUES(status)
+                    """;
+            default -> throw new RuntimeException("Unsupported assessment type.");
+        };
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            for (AssessmentStudentMarkRow row : rows) {
+                if ((row.getStatus() == null || row.getStatus().isBlank()) && row.getMark() == null) {
+                    continue;
+                }
+
+                stmt.setInt(1, row.getMarkId());
+                if ("QUIZ".equals(assessmentType) || "ASSIGNMENT".equals(assessmentType)) {
+                    stmt.setInt(2, itemNo);
+                } else {
+                    stmt.setString(2, row.getExamType());
+                }
+                stmt.setDouble(3, row.getMark() == null ? 0.0 : row.getMark());
+                stmt.setString(4, row.getStatus().isBlank() ? "PENDING" : row.getStatus());
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save assessment marks: " + e.getMessage(), e);
+        }
     }
 }

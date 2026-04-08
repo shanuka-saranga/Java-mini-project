@@ -2,19 +2,17 @@ package com.fot.system.view.dashboard.lecturer.marksGrades;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.model.AssessmentCardSummary;
+import com.fot.system.model.AssessmentStudentMarkRow;
 import com.fot.system.model.Course;
 import com.fot.system.model.CourseSemesterContext;
-import com.fot.system.model.StudentMarksOverviewRow;
 import com.fot.system.model.User;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.LecturerMarksService;
 import com.fot.system.view.components.CloseActionButton;
-import com.fot.system.view.components.SectionCard;
 import com.fot.system.view.dashboard.lecturer.myCourses.LecturerCourseCard;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -25,6 +23,8 @@ import java.util.List;
 public class LecturerMarksAndGradesPanel extends JPanel {
     private static final String LIST_CARD = "LIST";
     private static final String DETAILS_CARD = "DETAILS";
+    private static final String SUMMARY_VIEW = "SUMMARY";
+    private static final String ITEM_VIEW = "ITEM";
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
     private final User currentUser;
@@ -36,12 +36,15 @@ public class LecturerMarksAndGradesPanel extends JPanel {
     private final JLabel lblSelectedCourse;
     private final JLabel lblSemesterSummary;
     private final JLabel lblOpenedCourseTab;
+    private final CardLayout detailsCardLayout;
+    private final JPanel detailsContentPanel;
     private final JPanel summaryCardsPanel;
-    private final JTable overviewTable;
-    private final DefaultTableModel overviewTableModel;
+    private final AssessmentMarksDetailPanel assessmentMarksDetailPanel;
 
     private List<Course> assignedCourses;
     private Course selectedCourse;
+    private AssessmentCardSummary selectedAssessmentSummary;
+    private int currentMarksYear;
 
     public LecturerMarksAndGradesPanel(User user) {
         this.currentUser = user;
@@ -68,6 +71,9 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         lblOpenedCourseTab = new JLabel("Opened Course");
         lblOpenedCourseTab.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblOpenedCourseTab.setForeground(AppTheme.TEXT_DARK);
+        detailsCardLayout = new CardLayout();
+        detailsContentPanel = new JPanel(detailsCardLayout);
+        detailsContentPanel.setOpaque(false);
 
         JPanel detailsView = new JPanel(new BorderLayout());
         detailsView.setOpaque(false);
@@ -89,37 +95,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
 
         summaryCardsPanel = new JPanel(new GridLayout(0, 3, 14, 14));
         summaryCardsPanel.setOpaque(false);
-        SectionCard summarySection = new SectionCard(
-                "Marks Summary",
-                "Current year and semester assessment summary for each available course item."
-        );
-        summarySection.setContent(summaryCardsPanel);
-
-        overviewTableModel = new DefaultTableModel(
-                new String[]{"Registration No", "Type", "Attempt", "Quizzes", "Assignments", "Mid Theory", "Mid Practical", "End Theory", "End Practical"},
-                0
-        ) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        overviewTable = new JTable(overviewTableModel);
-        overviewTable.setRowHeight(28);
-        overviewTable.setFillsViewportHeight(true);
-        overviewTable.getTableHeader().setReorderingAllowed(false);
-        overviewTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        styleOverviewTable();
-
-        JScrollPane tableScrollPane = new JScrollPane(overviewTable);
-        tableScrollPane.setBorder(null);
-        tableScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
-
-        SectionCard tableSection = new SectionCard(
-                "Student Marks Overview",
-                "Track quiz, assignment, mid, and end-exam participation statuses for each student attempt."
-        );
-        tableSection.setContent(tableScrollPane);
 
         JPanel contentStack = new JPanel();
         contentStack.setOpaque(false);
@@ -127,12 +102,17 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         contentStack.add(Box.createVerticalStrut(6));
         contentStack.add(lblSemesterSummary);
         contentStack.add(Box.createVerticalStrut(18));
-        contentStack.add(summarySection);
-        contentStack.add(Box.createVerticalStrut(18));
-        contentStack.add(tableSection);
+        contentStack.add(summaryCardsPanel);
         contentStack.add(Box.createVerticalGlue());
+        detailsContentPanel.add(contentStack, SUMMARY_VIEW);
 
-        JScrollPane openedCourseScrollPane = createScrollPane(contentStack);
+        assessmentMarksDetailPanel = new AssessmentMarksDetailPanel(
+                () -> detailsCardLayout.show(detailsContentPanel, SUMMARY_VIEW),
+                this::saveAssessmentDetailRows
+        );
+        detailsContentPanel.add(assessmentMarksDetailPanel, ITEM_VIEW);
+
+        JScrollPane openedCourseScrollPane = createScrollPane(detailsContentPanel);
         openedCourseScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
 
         openedCoursePanel.add(panelHeader, BorderLayout.NORTH);
@@ -183,16 +163,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         label.setForeground(AppTheme.TEXT_SUBTLE);
         return label;
-    }
-
-    private void styleOverviewTable() {
-        overviewTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        overviewTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        overviewTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        overviewTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        overviewTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
-        overviewTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        overviewTable.setGridColor(AppTheme.BORDER_LIGHT);
     }
 
     private void loadAssignedCourses() {
@@ -253,6 +223,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         selectedCourse = course;
         lblOpenedCourseTab.setText(course.getCourseName());
         lblSelectedCourse.setText(course.getCourseName());
+        detailsCardLayout.show(detailsContentPanel, SUMMARY_VIEW);
         loadMarksOverview();
         cardLayout.show(cardPanel, DETAILS_CARD);
     }
@@ -268,21 +239,19 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                 int currentYear = Year.now().getValue();
                 CourseSemesterContext context = lecturerMarksService.getCurrentSemesterContext(selectedCourse.getId(), currentYear);
                 List<AssessmentCardSummary> summaries = buildAssessmentSummaries(context);
-                List<StudentMarksOverviewRow> rows = lecturerMarksService.getStudentMarksOverviewByCourse(selectedCourse.getId(), context.getSemesterYear());
-                return new MarksViewData(context, summaries, rows);
+                return new MarksViewData(context, summaries);
             }
 
             @Override
             protected void done() {
                 try {
                     MarksViewData data = get();
+                    currentMarksYear = data.context.getSemesterYear();
                     lblSemesterSummary.setText("Current Year Marks Summary: " + data.context.getSemesterYear());
                     updateSummaryCards(data.summaries);
-                    updateOverviewTable(data.rows);
                 } catch (Exception e) {
                     lblSemesterSummary.setText("Current Year Marks Summary: -");
                     updateSummaryCards(List.of());
-                    updateOverviewTable(List.of());
                     JOptionPane.showMessageDialog(
                             LecturerMarksAndGradesPanel.this,
                             "Unable to load marks overview. Make sure the new marks tables and status columns exist in your database.",
@@ -345,8 +314,15 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                         formatMark(summary.getAverageMark()),
                         summary.getAttemptCount(),
                         summary.getAbsentCount(),
-                        summary.getMedicalCount()
+                        summary.getMedicalCount(),
+                        summary.getPendingCount()
                 );
+                attachClickHandler(card, new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        openAssessmentDetails(summary);
+                    }
+                });
                 summaryCardsPanel.add(card);
             }
         }
@@ -363,34 +339,74 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                 || summary.getPendingCount() > 0);
     }
 
-    private void updateOverviewTable(List<StudentMarksOverviewRow> rows) {
-        overviewTableModel.setRowCount(0);
-        if (rows == null || rows.isEmpty()) {
-            overviewTableModel.addRow(new Object[]{"No marks data", "-", "-", "-", "-", "-", "-", "-", "-"});
+    private void openAssessmentDetails(AssessmentCardSummary summary) {
+        if (selectedCourse == null || summary == null) {
+            return;
+        }
+        selectedAssessmentSummary = summary;
+
+        SwingWorker<List<AssessmentStudentMarkRow>, Void> worker = new SwingWorker<>() {
+            @Override
+            protected List<AssessmentStudentMarkRow> doInBackground() {
+                return lecturerMarksService.getAssessmentRows(
+                        summary.getAssessmentType(),
+                        selectedCourse.getId(),
+                        currentMarksYear,
+                        summary.getItemNo()
+                );
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    assessmentMarksDetailPanel.setAssessmentTitle(summary.getTitle());
+                    assessmentMarksDetailPanel.setAssessmentType(summary.getAssessmentType());
+                    assessmentMarksDetailPanel.setRows(get());
+                    detailsCardLayout.show(detailsContentPanel, ITEM_VIEW);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(
+                            LecturerMarksAndGradesPanel.this,
+                            "Unable to load student marks for the selected assessment.",
+                            "Marks Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+        };
+        worker.execute();
+    }
+
+    private void saveAssessmentDetailRows() {
+        if (selectedAssessmentSummary == null) {
             return;
         }
 
-        for (StudentMarksOverviewRow row : rows) {
-            overviewTableModel.addRow(new Object[]{
-                    row.getRegistrationNo(),
-                    row.getStudentType(),
-                    row.getAttemptNo(),
-                    row.getQuizzesCompleted(),
-                    row.getAssignmentsCompleted(),
-                    row.getMidTheoryStatus(),
-                    row.getMidPracticalStatus(),
-                    row.getEndTheoryStatus(),
-                    row.getEndPracticalStatus()
-            });
+        try {
+            lecturerMarksService.saveAssessmentRows(
+                    selectedAssessmentSummary.getAssessmentType(),
+                    selectedAssessmentSummary.getItemNo(),
+                    assessmentMarksDetailPanel.getEditedRows()
+            );
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Assessment marks saved successfully.",
+                    "Marks Saved",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            openAssessmentDetails(selectedAssessmentSummary);
+            loadMarksOverview();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Save Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
     private String formatMark(double value) {
         return DECIMAL_FORMAT.format(value);
-    }
-
-    private String valueOrDash(String value) {
-        return value == null || value.trim().isEmpty() ? "-" : value.trim();
     }
 
     private void attachClickHandler(Component component, MouseAdapter adapter) {
@@ -404,8 +420,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
 
     private record MarksViewData(
             CourseSemesterContext context,
-            List<AssessmentCardSummary> summaries,
-            List<StudentMarksOverviewRow> rows
+            List<AssessmentCardSummary> summaries
     ) {
     }
 }
