@@ -7,6 +7,7 @@ import com.fot.system.view.dashboard.admin.manageNotices.ManageNoticesPanel;
 import com.fot.system.view.dashboard.admin.AdminHomePanel;
 import com.fot.system.view.dashboard.admin.manageUsers.ManageUsersPanel;
 import com.fot.system.view.dashboard.lecturer.LecturerHomePanel;
+import com.fot.system.view.dashboard.lecturer.marksGrades.LecturerMarksAndGradesPanel;
 import com.fot.system.view.dashboard.lecturer.myCourses.LecturerCoursesPanel;
 import com.fot.system.view.dashboard.shared.FeaturePlaceholderPanel;
 import com.fot.system.view.dashboard.shared.UserProfilePanelFactory;
@@ -54,10 +55,7 @@ public class MainDashboard extends JFrame {
                     "Attendance",
                     "This section can be used to mark and review student attendance for lecturer-assigned courses."
             ), AppConfig.MENU_ATTENDANCE);
-            contentArea.add(new FeaturePlaceholderPanel(
-                    "Marks / Grades",
-                    "This section can be used to enter, edit, and review assessments, marks, and final grades for lecturer courses."
-            ), AppConfig.MENU_MARKS);
+            contentArea.add(new LecturerMarksAndGradesPanel(user), AppConfig.MENU_MARKS);
             contentArea.add(new FeaturePlaceholderPanel(
                     "Notices",
                     "This section can show notices relevant to lecturers, including faculty-wide and course-related announcements."
