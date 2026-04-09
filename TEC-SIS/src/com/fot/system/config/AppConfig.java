@@ -37,6 +37,7 @@ public class AppConfig {
     public static final String MENU_PROFILE = "PROFILE";
     public static final String MENU_COURSES = "COURSES";
     public static final String MENU_ATTENDANCE = "ATTENDANCE";
+    public static final String MENU_STUDENTS = "STUDENTS";
     public static final String MENU_MARKS = "MARKS";
     public static final String MENU_EXAM_ELIGIBILITY = "EXAM_ELIGIBILITY";
     public static final String MENU_USERS = "USERS";

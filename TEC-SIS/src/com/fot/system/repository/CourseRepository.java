@@ -225,4 +225,6 @@ public class CourseRepository {
             throw new RuntimeException("Database check failed: " + e.getMessage(), e);
         }
     }
+
 }
+

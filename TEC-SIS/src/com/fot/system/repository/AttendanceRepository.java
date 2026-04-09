@@ -2,19 +2,17 @@ package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
 import com.fot.system.model.AttendanceTableRow;
+import com.fot.system.model.StudentAttendance;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LecturerAttendanceRepository {
+public class AttendanceRepository {
 
     private final Connection conn;
 
-    public LecturerAttendanceRepository() {
+    public AttendanceRepository() {
         this.conn = DBConnection.getInstance().getConnection();
     }
 
@@ -80,5 +78,54 @@ public class LecturerAttendanceRepository {
 
     private String valueOrEmpty(String value) {
         return value == null ? "" : value;
+    }
+
+
+    public List<StudentAttendance> findAllStudentAttendance() {
+        List<StudentAttendance> attendanceList = new ArrayList<>();
+
+        String sql = """
+    SELECT 
+        s.registration_no, 
+        CONCAT(u.first_name, ' ', u.last_name) AS full_name, 
+        c.course_code, 
+        COUNT(a.id) AS total_sessions,
+        SUM(CASE WHEN a.attendance_status = 'PRESENT' OR a.attendance_status = 'MEDICAL' THEN 1 ELSE 0 END) AS attended_count
+    FROM student s
+    JOIN users u ON s.user_id = u.id
+    JOIN attendance a ON s.registration_no = a.student_reg_no
+    JOIN sessions sess ON a.session_id = sess.id
+    -- මෙතැනදී sess.course_id වෙනුවට ඔබේ වගුවේ ඇති සැබෑ column නම ලබා දෙන්න
+    JOIN courses c ON sess.course_id = c.id 
+    GROUP BY s.registration_no, u.first_name, u.last_name, c.course_code
+    ORDER BY s.registration_no, c.course_code;
+    """;
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                StudentAttendance att = new StudentAttendance();
+                att.setRegNo(rs.getString("registration_no"));
+                att.setStudentName(rs.getString("full_name"));
+                att.setCourseCode(rs.getString("course_code"));
+
+                int total = rs.getInt("total_sessions");
+                int attended = rs.getInt("attended_count");
+
+                att.setTotalSessions(total);
+                att.setAttendedSessions(attended);
+
+                // Calculate percentage logic
+                double percentage = (total > 0) ? (attended * 100.0 / total) : 0.0;
+                att.setAttendancePercentage(percentage);
+
+                attendanceList.add(att);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching attendance summary: " + e.getMessage(), e);
+        }
+
+        return attendanceList;
     }
 }

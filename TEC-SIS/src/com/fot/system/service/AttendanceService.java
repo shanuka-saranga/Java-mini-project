@@ -4,7 +4,7 @@ import com.fot.system.model.AttendanceCourseProgress;
 import com.fot.system.model.AttendanceTableRow;
 import com.fot.system.model.CourseAttendanceViewData;
 import com.fot.system.model.StudentAttendanceSummaryRow;
-import com.fot.system.repository.LecturerAttendanceRepository;
+import com.fot.system.repository.AttendanceRepository;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -15,17 +15,17 @@ import java.util.HashSet;
 
 public class AttendanceService {
 
-    private final LecturerAttendanceRepository lecturerAttendanceRepository;
+    private final AttendanceRepository attendanceRepository;
 
     public AttendanceService() {
-        this.lecturerAttendanceRepository = new LecturerAttendanceRepository();
+        this.attendanceRepository = new AttendanceRepository();
     }
 
     public List<AttendanceTableRow> getAttendanceRowsByCourse(int courseId) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
         }
-        return lecturerAttendanceRepository.findAttendanceRowsByCourse(courseId);
+        return attendanceRepository.findAttendanceRowsByCourse(courseId);
     }
 
     public CourseAttendanceViewData getCourseAttendanceViewData(int courseId, int totalCourseHours) {
@@ -36,7 +36,7 @@ public class AttendanceService {
             throw new RuntimeException("Invalid total course hours.");
         }
 
-        List<AttendanceTableRow> attendanceRows = lecturerAttendanceRepository.findAttendanceRowsByCourse(courseId);
+        List<AttendanceTableRow> attendanceRows = attendanceRepository.findAttendanceRowsByCourse(courseId);
         CourseAttendanceViewData viewData = new CourseAttendanceViewData();
         viewData.setAttendanceRows(attendanceRows);
         viewData.setCourseProgress(buildCourseProgress(attendanceRows, totalCourseHours));

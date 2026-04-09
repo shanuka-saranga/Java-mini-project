@@ -6,7 +6,7 @@ import com.fot.system.model.ExamEligibilityBatchSummary;
 import com.fot.system.model.ExamEligibilityRow;
 import com.fot.system.model.StudentAttendanceSummaryRow;
 import com.fot.system.model.StudentCourseCaRecord;
-import com.fot.system.repository.ExamEligibilityRepository;
+import com.fot.system.repository.MarksRepository;
 
 import java.time.Year;
 import java.util.ArrayList;
@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 public class ExamEligibilityService {
 
     private final AttendanceService attendanceService;
-    private final ExamEligibilityRepository examEligibilityRepository;
+    private final MarksRepository marksRepository;
 
     public ExamEligibilityService() {
         this.attendanceService = new AttendanceService();
-        this.examEligibilityRepository = new ExamEligibilityRepository();
+        this.marksRepository = new MarksRepository();
     }
 
     public CourseExamEligibilityViewData getCourseExamEligibilityViewData(int courseId, int totalCourseHours) {
@@ -36,7 +36,7 @@ public class ExamEligibilityService {
 
         int currentYear = Year.now().getValue();
         CourseAttendanceViewData attendanceViewData = attendanceService.getCourseAttendanceViewData(courseId, totalCourseHours);
-        List<StudentCourseCaRecord> caRecords = examEligibilityRepository.findStudentCourseCaRecords(courseId, currentYear);
+        List<StudentCourseCaRecord> caRecords = marksRepository.findStudentCourseCaRecords(courseId, currentYear);
 
         Map<String, StudentAttendanceSummaryRow> attendanceMap = attendanceViewData.getStudentSummaryRows().stream()
                 .collect(Collectors.toMap(StudentAttendanceSummaryRow::getRegistrationNo, Function.identity()));

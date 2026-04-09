@@ -5,7 +5,7 @@ import com.fot.system.model.CourseGradeViewData;
 import com.fot.system.model.StudentAttendanceSummaryRow;
 import com.fot.system.model.StudentCourseGradeRecord;
 import com.fot.system.model.StudentGradeRow;
-import com.fot.system.repository.LecturerGradesRepository;
+import com.fot.system.repository.MarksRepository;
 
 import java.time.Year;
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 
 public class LecturerGradesService {
 
-    private final LecturerGradesRepository lecturerGradesRepository;
+    private final MarksRepository lecturerGradesRepository;
     private final AttendanceService attendanceService;
 
     public LecturerGradesService() {
-        this.lecturerGradesRepository = new LecturerGradesRepository();
+        this.lecturerGradesRepository = new MarksRepository();
         this.attendanceService = new AttendanceService();
     }
 
