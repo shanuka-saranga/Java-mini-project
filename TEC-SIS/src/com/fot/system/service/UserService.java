@@ -22,6 +22,7 @@ public class UserService {
     }
 
     public User login(String email, String password) {
+        email = email == null ? null : email.trim();
 
         if (email == null || email.isEmpty()) {
             throw new RuntimeException("Email is required");
@@ -32,9 +33,7 @@ public class UserService {
         }
 
         User user = userRepository.findByEmail(email);
-        System.out.println("user data"+user.getEmail());
         if (user == null) {
-            System.out.println("User user not found!");
             return null;
         }
         if (!user.getPasswordHash().equals(password)) {

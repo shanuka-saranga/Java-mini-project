@@ -11,7 +11,9 @@ import com.fot.system.view.dashboard.lecturer.attendance.LecturerAttendancePanel
 import com.fot.system.view.dashboard.lecturer.examEligibility.LecturerExamEligibilityPanel;
 import com.fot.system.view.dashboard.lecturer.marksGrades.LecturerMarksAndGradesPanel;
 import com.fot.system.view.dashboard.lecturer.myCourses.LecturerCoursesPanel;
+import com.fot.system.view.dashboard.lecturer.notice.NoticePanel;
 import com.fot.system.view.dashboard.lecturer.studentDetails.StudentDetailsPanel;
+import com.fot.system.view.dashboard.lecturer.timetable.TimetablePanel;
 import com.fot.system.view.dashboard.shared.FeaturePlaceholderPanel;
 import com.fot.system.view.dashboard.shared.UserProfilePanelFactory;
 import com.fot.system.view.dashboard.sidebar.AdminSidebar;
@@ -61,17 +63,16 @@ public class MainDashboard extends JFrame {
                     "Notices",
                     "This section can show notices relevant to lecturers, including faculty-wide and course-related announcements."
             ), AppConfig.MENU_NOTICES);
-            contentArea.add(new FeaturePlaceholderPanel(
-                    "Timetables",
-                    "This section can display the lecturer timetable, teaching sessions, and classroom schedule."
-            ), AppConfig.MENU_TIMETABLES);
+            contentArea.add(new TimetablePanel(user), AppConfig.MENU_TIMETABLES);
             contentArea.add(new StudentDetailsPanel(user),AppConfig.MENU_STUDENTS);
+            contentArea.add(new NoticePanel(user),AppConfig.MENU_NOTICES);
         } else {
             contentArea.add(new AdminHomePanel(user), AppConfig.MENU_HOME);
             contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
             contentArea.add(new ManageUsersPanel(user),AppConfig.MENU_MANAGE_USERS);
             contentArea.add(new ManageCoursesPanel(user), AppConfig.MENU_MANAGE_COURSES);
             contentArea.add(new ManageNoticesPanel(user), AppConfig.MENU_MANAGE_NOTICES);
+
 
         }
         add(contentArea, BorderLayout.CENTER);

@@ -13,26 +13,21 @@ public class LoginController {
 
     private final LoginView view;
     private final UserService service;
-    String email;
-    String password;
+    private final String email;
+    private final String password;
 
     public LoginController(LoginView view , String email, String password) {
         this.view = view;
         this.service = new UserService();
-        this.view.getLoginButton().addActionListener(new LoginAction());
-
-        // TODO: Remove hardcoded email and password
         this.email = email;
         this.password = password;
+        this.view.getLoginButton().addActionListener(new LoginAction());
     }
 
     class LoginAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-//                String email = view.getEmail(); TODO
-//                String password = view.getPassword(); TODO
-
                 User user = service.login(email, password);
 
                 if (user != null) {
