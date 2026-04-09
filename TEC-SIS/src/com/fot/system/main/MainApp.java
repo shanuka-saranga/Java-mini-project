@@ -15,7 +15,7 @@ public class MainApp {
                 e.printStackTrace();
             }
 
-            LoginView loginView = new LoginView("test@gmail.com","1234");
+            LoginView loginView = new LoginView("admin@tec.ruh.ac.lk","1234");
             loginView.setVisible(true);
         });
     }

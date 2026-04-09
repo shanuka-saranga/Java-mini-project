@@ -63,15 +63,15 @@ public class LoginController {
 
         switch (role) {
 
-            case "Admin":
+            case "ADMIN":
                 System.out.println("Open Admin Dashboard");
                 break;
 
-            case "Student":
+            case "STUDENT":
                 System.out.println("Open Student Dashboard");
                 break;
 
-            case "Lecturer":
+            case "LECTURER":
                 System.out.println("Open Lecturer Dashboard");
                 break;
 
@@ -79,7 +79,7 @@ public class LoginController {
                 System.out.println("Open Technical Officer Dashboard");
                 break;
 
-            case "Dean":
+            case "DEAN":
                 System.out.println("Open Dean Dashboard");
                 break;
 
