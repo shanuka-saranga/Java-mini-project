@@ -72,6 +72,7 @@ public class MainDashboard extends JFrame {
             contentArea.add(new ManageUsersPanel(user),AppConfig.MENU_MANAGE_USERS);
             contentArea.add(new ManageCoursesPanel(user), AppConfig.MENU_MANAGE_COURSES);
             contentArea.add(new ManageNoticesPanel(user), AppConfig.MENU_MANAGE_NOTICES);
+            contentArea.add(new TimetablePanel(user), AppConfig.MENU_TIMETABLES);
 
 
         }
@@ -82,6 +83,8 @@ public class MainDashboard extends JFrame {
 
     public void switchPanel(String cardName) {
         cardLayout.show(contentArea, cardName);
+        contentArea.revalidate();
+        contentArea.repaint();
     }
 
 

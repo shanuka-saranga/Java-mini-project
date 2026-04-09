@@ -1,13 +1,41 @@
 package com.fot.system.model;
 
 public class TimetableSession {
+    private int id;
+    private int courseId;
+    private Integer lecturerId;
     private String day;
     private String courseCode;
     private String courseName;
+    private String lecturerName;
     private String startTime;
     private String endTime;
     private String venue;
     private String sessionType;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
+
+    public Integer getLecturerId() {
+        return lecturerId;
+    }
+
+    public void setLecturerId(Integer lecturerId) {
+        this.lecturerId = lecturerId;
+    }
 
     public String getDay() {
         return day;
@@ -31,6 +59,14 @@ public class TimetableSession {
 
     public void setCourseName(String courseName) {
         this.courseName = courseName;
+    }
+
+    public String getLecturerName() {
+        return lecturerName;
+    }
+
+    public void setLecturerName(String lecturerName) {
+        this.lecturerName = lecturerName;
     }
 
     public String getStartTime() {

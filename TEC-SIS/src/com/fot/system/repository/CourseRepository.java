@@ -55,6 +55,23 @@ public class CourseRepository {
         return null;
     }
 
+    public Course findById(int courseId) {
+        String sql = baseCourseSelect() + " WHERE c.id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, courseId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapCourse(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load course: " + e.getMessage(), e);
+        }
+
+        return null;
+    }
+
     public List<Course> findByLecturerId(int lecturerId) {
         List<Course> courses = new ArrayList<>();
         String sql = baseCourseSelect() + " WHERE c.lecturer_in_charge_id = ? ORDER BY c.course_code";
@@ -227,4 +244,3 @@ public class CourseRepository {
     }
 
 }
-

@@ -49,6 +49,13 @@ public class CourseService {
         return courseRepository.findByCourseCode(courseCode.trim().toUpperCase());
     }
 
+    public Course getCourseById(int courseId) {
+        if (courseId <= 0) {
+            throw new RuntimeException("Invalid course ID.");
+        }
+        return courseRepository.findById(courseId);
+    }
+
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
     }
