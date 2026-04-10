@@ -15,6 +15,7 @@ import com.fot.system.view.dashboard.lecturer.notice.NoticePanel;
 import com.fot.system.view.dashboard.lecturer.studentDetails.StudentDetailsPanel;
 import com.fot.system.view.dashboard.lecturer.timetable.TimetablePanel;
 import com.fot.system.view.dashboard.student.attendance.StudentAttendanceMedicalPanel;
+import com.fot.system.view.dashboard.student.marksGrades.StudentMarksAndGradesPanel;
 import com.fot.system.view.dashboard.student.StudentHomePanel;
 import com.fot.system.view.dashboard.shared.FeaturePlaceholderPanel;
 import com.fot.system.view.dashboard.shared.UserProfilePanelFactory;
@@ -72,6 +73,7 @@ public class MainDashboard extends JFrame {
         } else if (AppConfig.ROLE_STUDENT.equalsIgnoreCase(user.getRole())) {
             contentArea.add(new StudentHomePanel(user), AppConfig.MENU_HOME);
             contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
+            contentArea.add(new StudentMarksAndGradesPanel(user), AppConfig.MENU_MARKS);
             contentArea.add(new StudentAttendanceMedicalPanel(user), AppConfig.MENU_ATTENDANCE);
         } else {
             contentArea.add(new AdminHomePanel(user), AppConfig.MENU_HOME);

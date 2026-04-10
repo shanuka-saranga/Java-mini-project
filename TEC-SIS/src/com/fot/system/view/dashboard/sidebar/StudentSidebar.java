@@ -14,6 +14,8 @@ public class StudentSidebar extends BaseSidebar {
 
     @Override
     protected void addRoleSpecificButtons() {
+        add(createMenuButton("Marks / Grades", FontAwesomeSolid.POLL, AppConfig.MENU_MARKS));
+        add(Box.createVerticalStrut(10));
         add(createMenuButton("Attendance", FontAwesomeSolid.USER_CHECK, AppConfig.MENU_ATTENDANCE));
         add(Box.createVerticalStrut(10));
     }

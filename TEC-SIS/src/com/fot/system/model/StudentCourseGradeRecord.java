@@ -1,6 +1,11 @@
 package com.fot.system.model;
 
 public class StudentCourseGradeRecord {
+    private int courseId;
+    private String courseCode;
+    private String courseName;
+    private int credits;
+    private int semesterYear;
     private String registrationNo;
     private String studentName;
     private int registrationYear;
@@ -13,6 +18,46 @@ public class StudentCourseGradeRecord {
     private int assignmentCount;
     private int midExamCount;
     private int endExamCount;
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public int getCredits() {
+        return credits;
+    }
+
+    public void setCredits(int credits) {
+        this.credits = credits;
+    }
+
+    public int getSemesterYear() {
+        return semesterYear;
+    }
+
+    public void setSemesterYear(int semesterYear) {
+        this.semesterYear = semesterYear;
+    }
 
     public String getRegistrationNo() {
         return registrationNo;
