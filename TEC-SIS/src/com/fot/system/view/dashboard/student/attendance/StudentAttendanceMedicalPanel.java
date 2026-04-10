@@ -26,7 +26,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StudentAttendanceMedicalPanel extends JPanel {
     private final User currentUser;
@@ -39,6 +41,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
     private JTable attendanceTable;
     private JTable medicalTable;
     private JTable absentSessionTable;
+    private JPanel courseAttendanceSummaryPanel;
     private DefaultTableModel medicalDetailsTableModel;
     private JPanel medicalDetailsPanel;
     private JLabel lblMedicalDetailsMeta;
@@ -70,7 +73,12 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         contentPanel.add(createTopMeta(), BorderLayout.NORTH);
         contentPanel.add(createTablesArea(), BorderLayout.CENTER);
 
-        add(contentPanel, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(AppTheme.SURFACE_SOFT);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+        add(scrollPane, BorderLayout.CENTER);
         loadStudentAttendanceMedicalData();
     }
 
@@ -150,6 +158,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         attendanceTable = createStyledTable(attendanceTableModel);
         attendanceSorter = new TableRowSorter<>(attendanceTableModel);
         attendanceTable.setRowSorter(attendanceSorter);
+        courseAttendanceSummaryPanel = createCourseAttendanceSummaryPanel();
 
         medicalTableModel = new DefaultTableModel(
                 new Object[]{"Medical ID", "Sessions", "Submitted Date", "Approval", "Approved At", "Document"},
@@ -191,6 +200,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
             }
         });
 
+        panel.add(createSectionLabel("Course Attendance"));
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(courseAttendanceSummaryPanel);
+        panel.add(Box.createVerticalStrut(18));
         panel.add(createSectionLabel("All Session Attendance"));
         panel.add(Box.createVerticalStrut(10));
         panel.add(createScrollPane(attendanceTable, 340));
@@ -238,6 +251,39 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setPreferredSize(new Dimension(0, preferredHeight));
         return scrollPane;
+    }
+
+    private JPanel createCourseAttendanceSummaryPanel() {
+        JPanel panel = new JPanel(new GridLayout(0, 1, 0, 8));
+        panel.setOpaque(false);
+        return panel;
+    }
+
+    private JPanel createCourseAttendanceItem(String courseCode, String courseName, double percentage) {
+        JPanel item = new JPanel(new BorderLayout(12, 0));
+        item.setBackground(AppTheme.CARD_BG);
+        item.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                new EmptyBorder(10, 12, 10, 12)
+        ));
+        item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
+
+        JLabel courseLabel = new JLabel(courseCode + " - " + courseName);
+        courseLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        courseLabel.setForeground(AppTheme.TEXT_DARK);
+
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        progressBar.setValue((int) Math.round(percentage));
+        progressBar.setString(String.format("%.2f%%", percentage));
+        progressBar.setStringPainted(true);
+        progressBar.setForeground(AppTheme.PRIMARY);
+        progressBar.setBackground(AppTheme.SURFACE_MUTED);
+        progressBar.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        progressBar.setPreferredSize(new Dimension(220, 22));
+
+        item.add(courseLabel, BorderLayout.WEST);
+        item.add(progressBar, BorderLayout.CENTER);
+        return item;
     }
 
     private JPanel createMedicalDetailsPanel() {
@@ -372,6 +418,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
                 try {
                     StudentAttendanceMedicalViewData viewData = get();
                     renderAttendanceRows(viewData.getAttendanceRows());
+                    renderCourseAttendanceSummary(viewData.getAttendanceRows());
                     renderMedicalRows(viewData.getMedicalRows());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
@@ -424,6 +471,57 @@ public class StudentAttendanceMedicalPanel extends JPanel {
                     row.getAttendanceStatus()
             });
         }
+    }
+
+    private void renderCourseAttendanceSummary(List<StudentSessionAttendanceRow> rows) {
+        courseAttendanceSummaryPanel.removeAll();
+
+        if (rows == null || rows.isEmpty()) {
+            JLabel empty = new JLabel("No course attendance percentages available.");
+            empty.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            empty.setForeground(AppTheme.TEXT_SUBTLE);
+            courseAttendanceSummaryPanel.add(empty);
+            courseAttendanceSummaryPanel.revalidate();
+            courseAttendanceSummaryPanel.repaint();
+            return;
+        }
+
+        Map<String, CourseAttendanceAggregate> aggregates = new LinkedHashMap<>();
+        for (StudentSessionAttendanceRow row : rows) {
+            if (!"COMPLETED".equalsIgnoreCase(row.getSessionStatus())) {
+                continue;
+            }
+
+            String key = row.getCourseCode() + "|" + row.getCourseName();
+            CourseAttendanceAggregate aggregate = aggregates.computeIfAbsent(
+                    key,
+                    ignored -> new CourseAttendanceAggregate(row.getCourseCode(), row.getCourseName())
+            );
+            aggregate.totalSessions++;
+
+            if ("PRESENT".equalsIgnoreCase(row.getAttendanceStatus()) || "MEDICAL".equalsIgnoreCase(row.getAttendanceStatus())) {
+                aggregate.attendedSessions++;
+            }
+        }
+
+        if (aggregates.isEmpty()) {
+            JLabel empty = new JLabel("No completed course sessions available yet.");
+            empty.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            empty.setForeground(AppTheme.TEXT_SUBTLE);
+            courseAttendanceSummaryPanel.add(empty);
+        } else {
+            for (CourseAttendanceAggregate aggregate : aggregates.values()) {
+                double percentage = aggregate.totalSessions == 0
+                        ? 0
+                        : (aggregate.attendedSessions * 100.0) / aggregate.totalSessions;
+                courseAttendanceSummaryPanel.add(
+                        createCourseAttendanceItem(aggregate.courseCode, aggregate.courseName, percentage)
+                );
+            }
+        }
+
+        courseAttendanceSummaryPanel.revalidate();
+        courseAttendanceSummaryPanel.repaint();
     }
 
     private void renderMedicalRows(List<StudentMedicalRow> rows) {
@@ -501,6 +599,18 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         lblMedicalDetailsMeta.setText("Select a medical row to view its linked sessions.");
         medicalDetailsTableModel.setRowCount(0);
         medicalDetailsPanel.setVisible(false);
+    }
+
+    private static class CourseAttendanceAggregate {
+        private final String courseCode;
+        private final String courseName;
+        private int totalSessions;
+        private int attendedSessions;
+
+        private CourseAttendanceAggregate(String courseCode, String courseName) {
+            this.courseCode = courseCode;
+            this.courseName = courseName;
+        }
     }
 
     private void renderAbsentSessionOptions(List<AbsentSessionOption> options) {
