@@ -14,7 +14,7 @@ public class StudentApp {
                 e.printStackTrace();
             }
 
-            LoginView loginView = new LoginView("aruni@fot.ruh.ac.lk", "pass123");
+            LoginView loginView = new LoginView("aruni@fot.ruh.ac.lk", "1234");
             loginView.setVisible(true);
         });
     }
