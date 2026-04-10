@@ -85,7 +85,9 @@ public abstract class BaseSidebar extends JPanel {
         button.setIconTextGap(15);
 
         button.addActionListener(e -> {
-            if (!cardName.equals("Logout")) {
+            if (AppConfig.MENU_LOGOUT.equals(cardName)) {
+                parentFrame.logout();
+            } else {
                 parentFrame.switchPanel(cardName);
             }
         });

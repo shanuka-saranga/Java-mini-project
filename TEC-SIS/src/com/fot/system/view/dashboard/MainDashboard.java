@@ -2,6 +2,7 @@ package com.fot.system.view.dashboard;
 
 import com.fot.system.config.AppConfig;
 import com.fot.system.model.User;
+import com.fot.system.view.login.LoginView;
 import com.fot.system.view.dashboard.admin.manageCourses.ManageCoursesPanel;
 import com.fot.system.view.dashboard.admin.manageNotices.ManageNoticesPanel;
 import com.fot.system.view.dashboard.admin.AdminHomePanel;
@@ -53,7 +54,7 @@ public class MainDashboard extends JFrame {
             sidebar = new AdminSidebar(this);
         } else if (AppConfig.ROLE_STUDENT.equalsIgnoreCase(user.getRole())) {
             sidebar = new StudentSidebar(this);
-        } else if (AppConfig.ROLE_LECTURER.equalsIgnoreCase(user.getRole())) {
+        } else if (AppConfig.ROLE_LECTURER.equalsIgnoreCase(user.getRole()) || AppConfig.ROLE_DEAN.equalsIgnoreCase(user.getRole())) {
             sidebar = new LecturerSidebar(this);
         } else if (AppConfig.ROLE_TO.equalsIgnoreCase(user.getRole())) {
             sidebar = new TOSidebar(this);
@@ -111,6 +112,39 @@ public class MainDashboard extends JFrame {
         cardLayout.show(contentArea, cardName);
         contentArea.revalidate();
         contentArea.repaint();
+    }
+
+    public void logout() {
+        int choice = JOptionPane.showConfirmDialog(
+                this,
+                "Do you want to logout?",
+                "Logout",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (choice != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        LoginView loginView = new LoginView(getDevEmailForRole(), "1234");
+        loginView.setVisible(true);
+        dispose();
+    }
+
+    private String getDevEmailForRole() {
+        if (currentUser == null || currentUser.getRole() == null) {
+            return "";
+        }
+
+        String role = currentUser.getRole().trim().toUpperCase();
+        return switch (role) {
+            case "ADMIN" -> "admin@tec.ruh.ac.lk";
+            case "STUDENT" -> "aruni@fot.ruh.ac.lk";
+            case "LECTURER" -> "nimal@tec.ruh.ac.lk";
+            case "TO" -> "jagath@tec.ruh.ac.lk";
+            default -> "";
+        };
     }
 
 

@@ -8,7 +8,6 @@ public class StudentAttendance {
     private int attendedSessions;
     private double attendancePercentage;
 
-    // Getters and Setters
     public String getRegNo() { return regNo; }
     public void setRegNo(String regNo) { this.regNo = regNo; }
     public String getStudentName() { return studentName; }

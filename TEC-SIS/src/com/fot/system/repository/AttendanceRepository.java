@@ -9,7 +9,6 @@ import com.fot.system.model.MedicalSessionDetail;
 import com.fot.system.model.StudentAttendanceEditRow;
 import com.fot.system.model.StudentAttendanceUpdate;
 import com.fot.system.model.StudentMedicalRow;
-import com.fot.system.model.StudentAttendance;
 import com.fot.system.model.StudentSessionAttendanceRow;
 
 import java.sql.*;
@@ -924,54 +923,5 @@ public class AttendanceRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to approve medical record: " + e.getMessage(), e);
         }
-    }
-
-
-    public List<StudentAttendance> findAllStudentAttendance() {
-        List<StudentAttendance> attendanceList = new ArrayList<>();
-
-        String sql = """
-    SELECT 
-        s.registration_no, 
-        CONCAT(u.first_name, ' ', u.last_name) AS full_name, 
-        c.course_code, 
-        COUNT(a.id) AS total_sessions,
-        SUM(CASE WHEN a.attendance_status = 'PRESENT' OR a.attendance_status = 'MEDICAL' THEN 1 ELSE 0 END) AS attended_count
-    FROM student s
-    JOIN users u ON s.user_id = u.id
-    JOIN attendance a ON s.registration_no = a.student_reg_no
-    JOIN sessions sess ON a.session_id = sess.id
-    -- මෙතැනදී sess.course_id වෙනුවට ඔබේ වගුවේ ඇති සැබෑ column නම ලබා දෙන්න
-    JOIN courses c ON sess.course_id = c.id 
-    GROUP BY s.registration_no, u.first_name, u.last_name, c.course_code
-    ORDER BY s.registration_no, c.course_code;
-    """;
-
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                StudentAttendance att = new StudentAttendance();
-                att.setRegNo(rs.getString("registration_no"));
-                att.setStudentName(rs.getString("full_name"));
-                att.setCourseCode(rs.getString("course_code"));
-
-                int total = rs.getInt("total_sessions");
-                int attended = rs.getInt("attended_count");
-
-                att.setTotalSessions(total);
-                att.setAttendedSessions(attended);
-
-                // Calculate percentage logic
-                double percentage = (total > 0) ? (attended * 100.0 / total) : 0.0;
-                att.setAttendancePercentage(percentage);
-
-                attendanceList.add(att);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error fetching attendance summary: " + e.getMessage(), e);
-        }
-
-        return attendanceList;
     }
 }

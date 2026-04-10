@@ -28,7 +28,9 @@ public class LoginController {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                User user = service.login(email, password);
+                String loginEmail = isBlank(email) ? view.getEmail() : email;
+                String loginPassword = isBlank(password) ? view.getPassword() : password;
+                User user = service.login(loginEmail, loginPassword);
 
                 if (user != null) {
                     view.showSuccessMessage("Welcome " + user.getFullName());
@@ -82,5 +84,9 @@ public class LoginController {
                 System.out.println("Unknown role");
         }
 
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

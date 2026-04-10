@@ -60,6 +60,7 @@ public class LoginView extends JFrame {
                 BorderFactory.createLineBorder(new Color(200, 200, 200)),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
+        emailField.setText(email == null ? "" : email);
         gbc.gridy = 2;
         formPanel.add(emailField, gbc);
         JLabel passLabel = new JLabel("Password");
@@ -74,6 +75,7 @@ public class LoginView extends JFrame {
                 BorderFactory.createLineBorder(new Color(200, 200, 200)),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
+        passwordField.setText(password == null ? "" : password);
         gbc.gridy = 4;
         gbc.insets = new Insets(5, 5, 5, 5);
         formPanel.add(passwordField, gbc);
@@ -94,7 +96,11 @@ public class LoginView extends JFrame {
         formPanel.add(loginButton, gbc);
         mainPanel.add(formPanel, BorderLayout.CENTER);
         add(mainPanel);
-        emailField.requestFocus();
+        if (emailField.getText().trim().isEmpty()) {
+            emailField.requestFocus();
+        } else {
+            passwordField.requestFocus();
+        }
 
         new LoginController(this, email,password);
     }
