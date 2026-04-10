@@ -4,6 +4,7 @@ import com.fot.system.config.AppTheme;
 import com.fot.system.controller.AddStudentMedicalController;
 import com.fot.system.model.AbsentSessionOption;
 import com.fot.system.model.AddStudentMedicalRequest;
+import com.fot.system.model.MedicalSessionDetail;
 import com.fot.system.model.StudentAttendanceMedicalViewData;
 import com.fot.system.model.StudentMedicalRow;
 import com.fot.system.model.StudentSessionAttendanceRow;
@@ -38,6 +39,9 @@ public class StudentAttendanceMedicalPanel extends JPanel {
     private JTable attendanceTable;
     private JTable medicalTable;
     private JTable absentSessionTable;
+    private DefaultTableModel medicalDetailsTableModel;
+    private JPanel medicalDetailsPanel;
+    private JLabel lblMedicalDetailsMeta;
     private JTextField txtSearch;
     private JLabel lblAttendanceMeta;
     private JTextField txtMedicalStartDate;
@@ -47,6 +51,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
     private JLabel lblAbsentSessionMeta;
     private TableRowSorter<DefaultTableModel> attendanceSorter;
     private List<AbsentSessionOption> absentSessionOptions;
+    private List<StudentMedicalRow> medicalRows;
 
     public StudentAttendanceMedicalPanel(User user) {
         this.currentUser = user;
@@ -167,6 +172,24 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         documentColumn.setMinWidth(90);
         documentColumn.setCellRenderer(new DocumentActionCellRenderer());
         documentColumn.setCellEditor(new DocumentActionCellEditor());
+        medicalDetailsTableModel = new DefaultTableModel(
+                new Object[]{"Course Code", "Course Name", "Type", "Session No", "Session Date"},
+                0
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        lblMedicalDetailsMeta = new JLabel("Select a medical row to view its linked sessions.");
+        lblMedicalDetailsMeta.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        lblMedicalDetailsMeta.setForeground(AppTheme.TEXT_SUBTLE);
+        medicalDetailsPanel = createMedicalDetailsPanel();
+        medicalTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                showSelectedMedicalDetails();
+            }
+        });
 
         panel.add(createSectionLabel("All Session Attendance"));
         panel.add(Box.createVerticalStrut(10));
@@ -175,6 +198,8 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         panel.add(createSectionLabel("Medical Records"));
         panel.add(Box.createVerticalStrut(10));
         panel.add(createScrollPane(medicalTable, 260));
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(medicalDetailsPanel);
         panel.add(Box.createVerticalStrut(22));
         panel.add(createSectionLabel("Add Medical"));
         panel.add(Box.createVerticalStrut(10));
@@ -213,6 +238,20 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setPreferredSize(new Dimension(0, preferredHeight));
         return scrollPane;
+    }
+
+    private JPanel createMedicalDetailsPanel() {
+        JTable detailsTable = createStyledTable(medicalDetailsTableModel);
+        JPanel panel = new JPanel(new BorderLayout(0, 10));
+        panel.setBackground(AppTheme.CARD_BG);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                new EmptyBorder(14, 14, 14, 14)
+        ));
+        panel.add(lblMedicalDetailsMeta, BorderLayout.NORTH);
+        panel.add(createScrollPane(detailsTable, 140), BorderLayout.CENTER);
+        panel.setVisible(false);
+        return panel;
     }
 
     private JComponent createMedicalSubmissionPanel() {
@@ -388,7 +427,9 @@ public class StudentAttendanceMedicalPanel extends JPanel {
     }
 
     private void renderMedicalRows(List<StudentMedicalRow> rows) {
+        medicalRows = rows;
         medicalTableModel.setRowCount(0);
+        clearMedicalDetails();
 
         if (rows == null || rows.isEmpty()) {
             medicalTableModel.addRow(new Object[]{"-", "No medical submissions found.", "-", "-", "-", "-"});
@@ -405,6 +446,61 @@ public class StudentAttendanceMedicalPanel extends JPanel {
                     row.getMedicalDocument()
             });
         }
+    }
+
+    private void showSelectedMedicalDetails() {
+        int selectedRow = medicalTable.getSelectedRow();
+        if (selectedRow < 0 || medicalRows == null || medicalRows.isEmpty()) {
+            clearMedicalDetails();
+            return;
+        }
+
+        int modelRow = medicalTable.convertRowIndexToModel(selectedRow);
+        Object medicalIdValue = medicalTableModel.getValueAt(modelRow, 0);
+        int medicalId;
+        try {
+            medicalId = Integer.parseInt(String.valueOf(medicalIdValue));
+        } catch (NumberFormatException e) {
+            clearMedicalDetails();
+            return;
+        }
+
+        StudentMedicalRow selected = medicalRows.stream()
+                .filter(row -> row.getMedicalId() == medicalId)
+                .findFirst()
+                .orElse(null);
+
+        if (selected == null) {
+            clearMedicalDetails();
+            return;
+        }
+
+        lblMedicalDetailsMeta.setText(
+                "Submitted: " + selected.getSubmittedDate() +
+                        " | Approval: " + selected.getApprovalStatus() +
+                        (selected.getApprovedAt() == null || selected.getApprovedAt().isEmpty() ? "" : " | Approved: " + selected.getApprovedAt())
+        );
+
+        medicalDetailsTableModel.setRowCount(0);
+        for (MedicalSessionDetail detail : selected.getSessionDetails()) {
+            medicalDetailsTableModel.addRow(new Object[]{
+                    detail.getCourseCode(),
+                    detail.getCourseName(),
+                    detail.getSessionType(),
+                    detail.getSessionNo(),
+                    detail.getSessionDate()
+            });
+        }
+
+        medicalDetailsPanel.setVisible(true);
+        medicalDetailsPanel.revalidate();
+        medicalDetailsPanel.repaint();
+    }
+
+    private void clearMedicalDetails() {
+        lblMedicalDetailsMeta.setText("Select a medical row to view its linked sessions.");
+        medicalDetailsTableModel.setRowCount(0);
+        medicalDetailsPanel.setVisible(false);
     }
 
     private void renderAbsentSessionOptions(List<AbsentSessionOption> options) {
