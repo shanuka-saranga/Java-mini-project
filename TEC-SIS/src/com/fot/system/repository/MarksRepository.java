@@ -267,16 +267,13 @@ public class MarksRepository {
                         COUNT(DISTINCT a2.session_id) AS total_sessions,
                         SUM(CASE
                             WHEN a2.attendance_status = 'PRESENT' THEN 1
-                            WHEN md.approval_status = 'APPROVED' THEN 1
+                            WHEN a2.attendance_status = 'MEDICAL' THEN 1
                             ELSE 0
                         END) AS attended_sessions
                     FROM student st2
                     INNER JOIN attendance a2 ON a2.student_reg_no = st2.registration_no
                     INNER JOIN sessions s2 ON s2.id = a2.session_id
                     INNER JOIN timetable_sessions ts ON ts.id = s2.timetable_session_id
-                    LEFT JOIN medicals md
-                        ON md.student_reg_no = st2.registration_no
-                       AND md.session_id = a2.session_id
                     GROUP BY st2.user_id, ts.course_id
                 ) att ON att.user_id = st.user_id AND att.course_id = c.id
                 WHERE st.user_id = ?
@@ -358,15 +355,12 @@ public class MarksRepository {
                         COUNT(DISTINCT a2.session_id) AS total_sessions,
                         SUM(CASE
                             WHEN a2.attendance_status = 'PRESENT' THEN 1
-                            WHEN md.approval_status = 'APPROVED' THEN 1
+                            WHEN a2.attendance_status = 'MEDICAL' THEN 1
                             ELSE 0
                         END) AS attended_sessions
                     FROM attendance a2
                     INNER JOIN sessions s2 ON s2.id = a2.session_id
                     INNER JOIN timetable_sessions ts ON ts.id = s2.timetable_session_id
-                    LEFT JOIN medicals md
-                        ON md.student_reg_no = a2.student_reg_no
-                       AND md.session_id = a2.session_id
                     GROUP BY a2.student_reg_no, ts.course_id
                 ) att ON att.student_reg_no = m.student_reg_no AND att.course_id = c.id
                 ORDER BY m.semester_year DESC, c.course_code

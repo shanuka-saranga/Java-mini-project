@@ -230,12 +230,14 @@ public class LecturerAttendancePanel extends JPanel {
 
         openedCoursePanel.add(panelHeader, BorderLayout.NORTH);
         openedCoursePanel.add(contentStack, BorderLayout.CENTER);
+
         detailsView.add(openedCoursePanel, BorderLayout.CENTER);
 
         cardPanel.add(courseListScrollPane, LIST_CARD);
         cardPanel.add(detailsView, DETAILS_CARD);
 
         add(cardPanel, BorderLayout.CENTER);
+
         loadAssignedCourses();
     }
 

@@ -18,12 +18,17 @@ import com.fot.system.view.dashboard.student.attendance.StudentAttendanceMedical
 import com.fot.system.view.dashboard.student.marksGrades.StudentMarksAndGradesPanel;
 import com.fot.system.view.dashboard.student.timetable.StudentTimetablePanel;
 import com.fot.system.view.dashboard.student.StudentHomePanel;
+import com.fot.system.view.dashboard.to.TOHomePanel;
+import com.fot.system.view.dashboard.to.TOAttendancePanel;
+import com.fot.system.view.dashboard.to.TOMedicalPanel;
 import com.fot.system.view.dashboard.shared.FeaturePlaceholderPanel;
+import com.fot.system.view.dashboard.to.TOTimetablePanel;
 import com.fot.system.view.dashboard.shared.UserProfilePanelFactory;
 import com.fot.system.view.dashboard.sidebar.AdminSidebar;
 import com.fot.system.view.dashboard.sidebar.BaseSidebar;
 import com.fot.system.view.dashboard.sidebar.LecturerSidebar;
 import com.fot.system.view.dashboard.sidebar.StudentSidebar;
+import com.fot.system.view.dashboard.sidebar.TOSidebar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,6 +55,8 @@ public class MainDashboard extends JFrame {
             sidebar = new StudentSidebar(this);
         } else if (AppConfig.ROLE_LECTURER.equalsIgnoreCase(user.getRole())) {
             sidebar = new LecturerSidebar(this);
+        } else if (AppConfig.ROLE_TO.equalsIgnoreCase(user.getRole())) {
+            sidebar = new TOSidebar(this);
         } else {
             sidebar = new LecturerSidebar(this);
         }
@@ -78,6 +85,13 @@ public class MainDashboard extends JFrame {
             contentArea.add(new StudentAttendanceMedicalPanel(user), AppConfig.MENU_ATTENDANCE);
             contentArea.add(new NoticePanel(user), AppConfig.MENU_NOTICES);
             contentArea.add(new StudentTimetablePanel(user), AppConfig.MENU_TIMETABLES);
+        } else if (AppConfig.ROLE_TO.equalsIgnoreCase(user.getRole())) {
+            contentArea.add(new TOHomePanel(user), AppConfig.MENU_HOME);
+            contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
+            contentArea.add(new TOAttendancePanel(user), AppConfig.MENU_ATTENDANCE);
+            contentArea.add(new TOMedicalPanel(user), AppConfig.MENU_MEDICALS);
+            contentArea.add(new TOTimetablePanel(user), AppConfig.MENU_TIMETABLES);
+            contentArea.add(new NoticePanel(user), AppConfig.MENU_NOTICES);
         } else {
             contentArea.add(new AdminHomePanel(user), AppConfig.MENU_HOME);
             contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
