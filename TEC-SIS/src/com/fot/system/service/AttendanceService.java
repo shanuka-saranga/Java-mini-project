@@ -3,6 +3,9 @@ package com.fot.system.service;
 import com.fot.system.model.AttendanceCourseProgress;
 import com.fot.system.model.AttendanceTableRow;
 import com.fot.system.model.CourseAttendanceViewData;
+import com.fot.system.model.StudentAttendanceMedicalViewData;
+import com.fot.system.model.StudentMedicalRow;
+import com.fot.system.model.StudentSessionAttendanceRow;
 import com.fot.system.model.StudentAttendanceSummaryRow;
 import com.fot.system.repository.AttendanceRepository;
 
@@ -41,6 +44,20 @@ public class AttendanceService {
         viewData.setAttendanceRows(attendanceRows);
         viewData.setCourseProgress(buildCourseProgress(attendanceRows, totalCourseHours));
         viewData.setStudentSummaryRows(buildStudentSummaryRows(attendanceRows));
+        return viewData;
+    }
+
+    public StudentAttendanceMedicalViewData getStudentAttendanceMedicalViewData(int studentUserId) {
+        if (studentUserId <= 0) {
+            throw new RuntimeException("Invalid student user ID.");
+        }
+
+        List<StudentSessionAttendanceRow> attendanceRows = attendanceRepository.findStudentSessionAttendanceRows(studentUserId);
+        List<StudentMedicalRow> medicalRows = attendanceRepository.findStudentMedicalRows(studentUserId);
+
+        StudentAttendanceMedicalViewData viewData = new StudentAttendanceMedicalViewData();
+        viewData.setAttendanceRows(attendanceRows);
+        viewData.setMedicalRows(medicalRows);
         return viewData;
     }
 

@@ -22,6 +22,9 @@ public class AppConfig {
     public static final String COURSE_MATERIAL_DIR =
             Path.of(APP_STORAGE_DIR, "course-materials").toString();
 
+    public static final String MEDICAL_DOCUMENT_DIR =
+            Path.of(APP_STORAGE_DIR, "medical-documents").toString();
+
 
     // user status
     public static final String STATUS_ACTIVE = "ACTIVE";
