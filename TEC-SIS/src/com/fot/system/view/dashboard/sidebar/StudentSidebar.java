@@ -18,5 +18,9 @@ public class StudentSidebar extends BaseSidebar {
         add(Box.createVerticalStrut(10));
         add(createMenuButton("Attendance", FontAwesomeSolid.USER_CHECK, AppConfig.MENU_ATTENDANCE));
         add(Box.createVerticalStrut(10));
+        add(createMenuButton("Notices", FontAwesomeSolid.BULLHORN, AppConfig.MENU_NOTICES));
+        add(Box.createVerticalStrut(10));
+        add(createMenuButton("Timetables", FontAwesomeSolid.CALENDAR_ALT, AppConfig.MENU_TIMETABLES));
+        add(Box.createVerticalStrut(10));
     }
 }
