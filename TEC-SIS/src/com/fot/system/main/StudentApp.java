@@ -5,7 +5,6 @@ import com.fot.system.view.login.LoginView;
 import javax.swing.*;
 
 public class StudentApp {
-
     public static void main(String[] args) {
 
         SwingUtilities.invokeLater(() -> {
