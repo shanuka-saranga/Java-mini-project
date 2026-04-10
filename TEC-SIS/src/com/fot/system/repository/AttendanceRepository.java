@@ -5,6 +5,7 @@ import com.fot.system.model.AbsentSessionOption;
 import com.fot.system.model.AttendanceSessionRow;
 import com.fot.system.model.AttendanceTableRow;
 import com.fot.system.model.MedicalApprovalRow;
+import com.fot.system.model.MedicalSessionDetail;
 import com.fot.system.model.StudentAttendanceEditRow;
 import com.fot.system.model.StudentAttendanceUpdate;
 import com.fot.system.model.StudentMedicalRow;
@@ -14,7 +15,9 @@ import com.fot.system.model.StudentSessionAttendanceRow;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AttendanceRepository {
 
@@ -201,7 +204,10 @@ public class AttendanceRepository {
                     COALESCE(MAX(CASE WHEN m.approval_status = 'APPROVED' THEN 'APPROVED' ELSE m.approval_status END), '') AS medical_approval_status
                 FROM sessions s
                 INNER JOIN timetable_sessions ts ON ts.id = s.timetable_session_id
-                INNER JOIN marks mk ON mk.course_id = ts.course_id
+                INNER JOIN (
+                    SELECT DISTINCT student_reg_no, course_id
+                    FROM marks
+                ) mk ON mk.course_id = ts.course_id
                 INNER JOIN student st ON st.registration_no = mk.student_reg_no
                 INNER JOIN users u ON u.id = st.user_id
                 LEFT JOIN attendance a
@@ -213,7 +219,7 @@ public class AttendanceRepository {
                     ON m.id = ms.medical_id
                    AND m.student_reg_no = st.registration_no
                 WHERE s.id = ?
-                GROUP BY st.registration_no, student_name, attendance_status, medical_approval_status
+                GROUP BY st.registration_no, u.first_name, u.last_name, a.attendance_status
                 ORDER BY st.registration_no
                 """;
 
@@ -551,9 +557,10 @@ public class AttendanceRepository {
     }
 
     public List<StudentMedicalRow> findStudentMedicalRows(int studentUserId) {
-        List<StudentMedicalRow> rows = new ArrayList<>();
+        Map<Integer, StudentMedicalRow> groupedRows = new LinkedHashMap<>();
         String sql = """
                 SELECT
+                    m.id,
                     c.course_code,
                     c.course_name,
                     ts.session_type,
@@ -578,25 +585,32 @@ public class AttendanceRepository {
             stmt.setInt(1, studentUserId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    StudentMedicalRow row = new StudentMedicalRow();
-                    row.setCourseCode(rs.getString("course_code"));
-                    row.setCourseName(rs.getString("course_name"));
-                    row.setSessionType(rs.getString("session_type"));
-                    row.setSessionNo(rs.getInt("session_no"));
-                    row.setSessionDate(String.valueOf(rs.getDate("session_date")));
-                    row.setSubmittedDate(String.valueOf(rs.getDate("submitted_date")));
-                    row.setApprovalStatus(valueOrEmpty(rs.getString("approval_status")));
-                    row.setApprovedAt(rs.getTimestamp("approved_at") == null ? "" : String.valueOf(rs.getTimestamp("approved_at")));
-                    row.setRemarks(valueOrEmpty(rs.getString("remarks")));
-                    row.setMedicalDocument(valueOrEmpty(rs.getString("medical_document")));
-                    rows.add(row);
+                    int medicalId = rs.getInt("id");
+                    StudentMedicalRow row = groupedRows.computeIfAbsent(medicalId, ignored -> {
+                        StudentMedicalRow created = new StudentMedicalRow();
+                        created.setMedicalId(medicalId);
+                        created.setSubmittedDate(String.valueOf(rsGetDate(rs, "submitted_date")));
+                        created.setApprovalStatus(valueOrEmpty(rsGetString(rs, "approval_status")));
+                        created.setApprovedAt(rsGetTimestamp(rs, "approved_at"));
+                        created.setRemarks(valueOrEmpty(rsGetString(rs, "remarks")));
+                        created.setMedicalDocument(valueOrEmpty(rsGetString(rs, "medical_document")));
+                        return created;
+                    });
+
+                    MedicalSessionDetail detail = new MedicalSessionDetail();
+                    detail.setCourseCode(rs.getString("course_code"));
+                    detail.setCourseName(rs.getString("course_name"));
+                    detail.setSessionType(rs.getString("session_type"));
+                    detail.setSessionNo(rs.getInt("session_no"));
+                    detail.setSessionDate(String.valueOf(rs.getDate("session_date")));
+                    row.getSessionDetails().add(detail);
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to load student medical rows: " + e.getMessage(), e);
         }
 
-        return rows;
+        return new ArrayList<>(groupedRows.values());
     }
 
     public String findStudentRegistrationNoByUserId(int studentUserId) {
@@ -775,7 +789,7 @@ public class AttendanceRepository {
     }
 
     public List<MedicalApprovalRow> findMedicalRowsByStatus(String status) {
-        List<MedicalApprovalRow> rows = new ArrayList<>();
+        Map<Integer, MedicalApprovalRow> groupedRows = new LinkedHashMap<>();
         String sql = """
                 SELECT
                     m.id,
@@ -805,27 +819,58 @@ public class AttendanceRepository {
             stmt.setString(1, status);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    MedicalApprovalRow row = new MedicalApprovalRow();
-                    row.setMedicalId(rs.getInt("id"));
-                    row.setRegistrationNo(rs.getString("registration_no"));
-                    row.setStudentName(rs.getString("student_name"));
-                    row.setCourseCode(rs.getString("course_code"));
-                    row.setCourseName(rs.getString("course_name"));
-                    row.setSessionType(rs.getString("session_type"));
-                    row.setSessionNo(rs.getInt("session_no"));
-                    row.setSessionDate(String.valueOf(rs.getDate("session_date")));
-                    row.setSubmittedDate(String.valueOf(rs.getDate("submitted_date")));
-                    row.setApprovalStatus(valueOrEmpty(rs.getString("approval_status")));
-                    row.setApprovedAt(rs.getTimestamp("approved_at") == null ? "" : String.valueOf(rs.getTimestamp("approved_at")));
-                    row.setMedicalDocument(valueOrEmpty(rs.getString("medical_document")));
-                    rows.add(row);
+                    int medicalId = rs.getInt("id");
+                    MedicalApprovalRow row = groupedRows.computeIfAbsent(medicalId, ignored -> {
+                        MedicalApprovalRow created = new MedicalApprovalRow();
+                        created.setMedicalId(medicalId);
+                        created.setRegistrationNo(rsGetString(rs, "registration_no"));
+                        created.setStudentName(rsGetString(rs, "student_name"));
+                        created.setSubmittedDate(String.valueOf(rsGetDate(rs, "submitted_date")));
+                        created.setApprovalStatus(valueOrEmpty(rsGetString(rs, "approval_status")));
+                        created.setApprovedAt(rsGetTimestamp(rs, "approved_at"));
+                        created.setMedicalDocument(valueOrEmpty(rsGetString(rs, "medical_document")));
+                        return created;
+                    });
+
+                    MedicalSessionDetail detail = new MedicalSessionDetail();
+                    detail.setCourseCode(rs.getString("course_code"));
+                    detail.setCourseName(rs.getString("course_name"));
+                    detail.setSessionType(rs.getString("session_type"));
+                    detail.setSessionNo(rs.getInt("session_no"));
+                    detail.setSessionDate(String.valueOf(rs.getDate("session_date")));
+                    row.getSessionDetails().add(detail);
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to load medical rows: " + e.getMessage(), e);
         }
 
-        return rows;
+        return new ArrayList<>(groupedRows.values());
+    }
+
+    private String rsGetString(ResultSet rs, String column) {
+        try {
+            return rs.getString(column);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Date rsGetDate(ResultSet rs, String column) {
+        try {
+            return rs.getDate(column);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String rsGetTimestamp(ResultSet rs, String column) {
+        try {
+            Timestamp timestamp = rs.getTimestamp(column);
+            return timestamp == null ? "" : String.valueOf(timestamp);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void approveMedical(int medicalId, int approvedBy) {

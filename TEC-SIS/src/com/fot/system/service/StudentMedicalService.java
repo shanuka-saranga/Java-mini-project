@@ -5,6 +5,7 @@ import com.fot.system.model.AddStudentMedicalRequest;
 import com.fot.system.repository.AttendanceRepository;
 
 import java.sql.Date;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class StudentMedicalService {
@@ -67,6 +68,10 @@ public class StudentMedicalService {
     private void validateDateOrder(Date startDate, Date endDate) {
         if (endDate.before(startDate)) {
             throw new RuntimeException("Medical end date cannot be before start date.");
+        }
+        long daysBetween = ChronoUnit.DAYS.between(startDate.toLocalDate(), endDate.toLocalDate());
+        if (daysBetween > 4) {
+            throw new RuntimeException("Medical date range cannot be more than 5 days.");
         }
     }
 }

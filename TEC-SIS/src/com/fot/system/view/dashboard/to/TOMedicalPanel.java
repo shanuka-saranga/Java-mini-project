@@ -3,6 +3,7 @@ package com.fot.system.view.dashboard.to;
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.MedicalApprovalController;
 import com.fot.system.model.MedicalApprovalRow;
+import com.fot.system.model.MedicalSessionDetail;
 import com.fot.system.model.User;
 import com.fot.system.view.components.CustomButton;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
@@ -26,6 +27,15 @@ public class TOMedicalPanel extends JPanel {
     private final DefaultTableModel approvedTableModel;
     private final JTable pendingTable;
     private final JTable approvedTable;
+    private final DefaultTableModel pendingDetailsTableModel;
+    private final DefaultTableModel approvedDetailsTableModel;
+    private final JLabel lblPendingDetailsMeta;
+    private final JLabel lblApprovedDetailsMeta;
+    private final JPanel pendingDetailsPanel;
+    private final JPanel approvedDetailsPanel;
+
+    private List<MedicalApprovalRow> pendingRows = List.of();
+    private List<MedicalApprovalRow> approvedRows = List.of();
 
     public TOMedicalPanel(User user) {
         this.currentUser = user;
@@ -38,31 +48,49 @@ public class TOMedicalPanel extends JPanel {
         add(createHeader(), BorderLayout.NORTH);
 
         pendingTableModel = new DefaultTableModel(
-                new Object[]{"ID", "Reg No", "Student", "Course Code", "Course Name", "Type", "Session No", "Session Date", "Submitted Date", "Document"},
+                new Object[]{"ID", "Reg No", "Student", "Sessions", "Submitted Date", "Document"},
                 0
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 9;
+                return column == 5;
             }
         };
 
         approvedTableModel = new DefaultTableModel(
-                new Object[]{"ID", "Reg No", "Student", "Course Code", "Course Name", "Type", "Session No", "Session Date", "Submitted Date", "Approved At", "Document"},
+                new Object[]{"ID", "Reg No", "Student", "Sessions", "Submitted Date", "Approved At", "Document"},
                 0
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 10;
+                return column == 6;
             }
         };
 
+        pendingDetailsTableModel = createDetailsTableModel();
+        approvedDetailsTableModel = createDetailsTableModel();
+        lblPendingDetailsMeta = createDetailsMetaLabel();
+        lblApprovedDetailsMeta = createDetailsMetaLabel();
+
         pendingTable = createStyledTable(pendingTableModel);
         approvedTable = createStyledTable(approvedTableModel);
-        configureDocumentColumn(pendingTable, 9);
-        configureDocumentColumn(approvedTable, 10);
+        configureDocumentColumn(pendingTable, 5);
+        configureDocumentColumn(approvedTable, 6);
         hideIdColumn(pendingTable);
         hideIdColumn(approvedTable);
+
+        pendingDetailsPanel = createDetailsPanel(lblPendingDetailsMeta, pendingDetailsTableModel);
+        approvedDetailsPanel = createDetailsPanel(lblApprovedDetailsMeta, approvedDetailsTableModel);
+        pendingTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                showMedicalDetails(pendingTable, pendingRows, lblPendingDetailsMeta, pendingDetailsTableModel, pendingDetailsPanel);
+            }
+        });
+        approvedTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                showMedicalDetails(approvedTable, approvedRows, lblApprovedDetailsMeta, approvedDetailsTableModel, approvedDetailsPanel);
+            }
+        });
 
         add(createContent(), BorderLayout.CENTER);
         loadMedicalData();
@@ -111,10 +139,14 @@ public class TOMedicalPanel extends JPanel {
         content.add(createSectionLabel("Pending Medical Approvals"));
         content.add(Box.createVerticalStrut(10));
         content.add(createScrollPane(pendingTable, 280));
+        content.add(Box.createVerticalStrut(10));
+        content.add(pendingDetailsPanel);
         content.add(Box.createVerticalStrut(22));
         content.add(createSectionLabel("Approved Medicals"));
         content.add(Box.createVerticalStrut(10));
         content.add(createScrollPane(approvedTable, 280));
+        content.add(Box.createVerticalStrut(10));
+        content.add(approvedDetailsPanel);
 
         JScrollPane mainScrollPane = new JScrollPane(content);
         mainScrollPane.setBorder(null);
@@ -134,6 +166,36 @@ public class TOMedicalPanel extends JPanel {
         CustomButton button = new CustomButton(text, bg, fg, hover, new Dimension(170, 40));
         button.setIcon(FontIcon.of(icon, 14, fg));
         return button;
+    }
+
+    private DefaultTableModel createDetailsTableModel() {
+        return new DefaultTableModel(new Object[]{"Course Code", "Course Name", "Type", "Session No", "Session Date"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+    }
+
+    private JLabel createDetailsMetaLabel() {
+        JLabel label = new JLabel("Select a medical row to view its linked sessions.");
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setForeground(AppTheme.TEXT_SUBTLE);
+        return label;
+    }
+
+    private JPanel createDetailsPanel(JLabel metaLabel, DefaultTableModel detailsModel) {
+        JTable detailsTable = createStyledTable(detailsModel);
+        JPanel panel = new JPanel(new BorderLayout(0, 10));
+        panel.setBackground(AppTheme.CARD_BG);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                new EmptyBorder(14, 14, 14, 14)
+        ));
+        panel.add(metaLabel, BorderLayout.NORTH);
+        panel.add(createScrollPane(detailsTable, 140), BorderLayout.CENTER);
+        panel.setVisible(false);
+        return panel;
     }
 
     private JTable createStyledTable(DefaultTableModel model) {
@@ -192,8 +254,12 @@ public class TOMedicalPanel extends JPanel {
             protected void done() {
                 try {
                     MedicalPanelData data = get();
+                    pendingRows = data.pendingRows;
+                    approvedRows = data.approvedRows;
                     renderPendingRows(data.pendingRows);
                     renderApprovedRows(data.approvedRows);
+                    clearDetails(lblPendingDetailsMeta, pendingDetailsTableModel, pendingDetailsPanel);
+                    clearDetails(lblApprovedDetailsMeta, approvedDetailsTableModel, approvedDetailsPanel);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
                             TOMedicalPanel.this,
@@ -214,11 +280,7 @@ public class TOMedicalPanel extends JPanel {
                     row.getMedicalId(),
                     row.getRegistrationNo(),
                     row.getStudentName(),
-                    row.getCourseCode(),
-                    row.getCourseName(),
-                    row.getSessionType(),
-                    row.getSessionNo(),
-                    row.getSessionDate(),
+                    row.getSessionCount(),
                     row.getSubmittedDate(),
                     row.getMedicalDocument()
             });
@@ -232,16 +294,66 @@ public class TOMedicalPanel extends JPanel {
                     row.getMedicalId(),
                     row.getRegistrationNo(),
                     row.getStudentName(),
-                    row.getCourseCode(),
-                    row.getCourseName(),
-                    row.getSessionType(),
-                    row.getSessionNo(),
-                    row.getSessionDate(),
+                    row.getSessionCount(),
                     row.getSubmittedDate(),
                     row.getApprovedAt(),
                     row.getMedicalDocument()
             });
         }
+    }
+
+    private void showMedicalDetails(
+            JTable sourceTable,
+            List<MedicalApprovalRow> rows,
+            JLabel metaLabel,
+            DefaultTableModel detailsModel,
+            JPanel detailsPanel
+    ) {
+        int selectedRow = sourceTable.getSelectedRow();
+        if (selectedRow < 0) {
+            clearDetails(metaLabel, detailsModel, detailsPanel);
+            return;
+        }
+
+        int modelRow = sourceTable.convertRowIndexToModel(selectedRow);
+        int medicalId = Integer.parseInt(String.valueOf(sourceTable.getModel().getValueAt(modelRow, 0)));
+
+        MedicalApprovalRow selected = rows.stream()
+                .filter(row -> row.getMedicalId() == medicalId)
+                .findFirst()
+                .orElse(null);
+
+        if (selected == null) {
+            clearDetails(metaLabel, detailsModel, detailsPanel);
+            return;
+        }
+
+        metaLabel.setText(
+                selected.getRegistrationNo() + " | " +
+                        selected.getStudentName() + " | Submitted: " + selected.getSubmittedDate() +
+                        (selected.getApprovedAt().isEmpty() ? "" : " | Approved: " + selected.getApprovedAt())
+        );
+
+        detailsModel.setRowCount(0);
+        for (MedicalSessionDetail detail : selected.getSessionDetails()) {
+            detailsModel.addRow(new Object[]{
+                    detail.getCourseCode(),
+                    detail.getCourseName(),
+                    detail.getSessionType(),
+                    detail.getSessionNo(),
+                    detail.getSessionDate()
+            });
+        }
+
+        detailsPanel.setVisible(true);
+        detailsPanel.revalidate();
+        detailsPanel.repaint();
+    }
+
+    private void clearDetails(JLabel metaLabel, DefaultTableModel detailsModel, JPanel detailsPanel) {
+        metaLabel.setText("Select a medical row to view its linked sessions.");
+        detailsModel.setRowCount(0);
+        detailsPanel.setVisible(false);
     }
 
     private void approveSelectedMedical() {

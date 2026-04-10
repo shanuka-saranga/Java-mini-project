@@ -147,17 +147,21 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         attendanceTable.setRowSorter(attendanceSorter);
 
         medicalTableModel = new DefaultTableModel(
-                new Object[]{"Course Code", "Course Name", "Type", "Session No", "Session Date", "Submitted Date", "Approval", "Approved At", "Document"},
+                new Object[]{"Medical ID", "Sessions", "Submitted Date", "Approval", "Approved At", "Document"},
                 0
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 8;
+                return column == 5;
             }
         };
 
         medicalTable = createStyledTable(medicalTableModel);
-        TableColumn documentColumn = medicalTable.getColumnModel().getColumn(8);
+        TableColumn idColumn = medicalTable.getColumnModel().getColumn(0);
+        idColumn.setMinWidth(0);
+        idColumn.setMaxWidth(0);
+        idColumn.setPreferredWidth(0);
+        TableColumn documentColumn = medicalTable.getColumnModel().getColumn(5);
         documentColumn.setPreferredWidth(90);
         documentColumn.setMaxWidth(90);
         documentColumn.setMinWidth(90);
@@ -387,17 +391,14 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         medicalTableModel.setRowCount(0);
 
         if (rows == null || rows.isEmpty()) {
-            medicalTableModel.addRow(new Object[]{"-", "No medical submissions found.", "-", "-", "-", "-", "-", "-", "-", "-"});
+            medicalTableModel.addRow(new Object[]{"-", "No medical submissions found.", "-", "-", "-", "-"});
             return;
         }
 
         for (StudentMedicalRow row : rows) {
             medicalTableModel.addRow(new Object[]{
-                    row.getCourseCode(),
-                    row.getCourseName(),
-                    row.getSessionType(),
-                    row.getSessionNo(),
-                    row.getSessionDate(),
+                    row.getMedicalId(),
+                    row.getSessionCount(),
                     row.getSubmittedDate(),
                     row.getApprovalStatus(),
                     row.getApprovedAt(),
