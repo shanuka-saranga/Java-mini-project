@@ -42,6 +42,13 @@ public class CourseService {
         return getCoursesByLecturerId(lecturerId).size();
     }
 
+    public List<Course> getCoursesByStudentUserId(int studentUserId) {
+        if (studentUserId <= 0) {
+            throw new RuntimeException("Invalid student user ID.");
+        }
+        return courseRepository.findByStudentUserId(studentUserId);
+    }
+
     public Course getCourseByCode(String courseCode) {
         if (normalize(courseCode).isEmpty()) {
             throw new RuntimeException("Course code is required.");

@@ -27,6 +27,8 @@ public class UserProfileEditPanel extends JPanel {
     private final JTextArea txtAddress;
     private final JTextField txtDob;
     private final JPasswordField txtPassword;
+    private final JPanel dobFieldPanel;
+    private final JPanel passwordFieldPanel;
     private final ProfileSectionCard profileCard;
 
     private String currentProfilePicturePath = "";
@@ -134,11 +136,13 @@ public class UserProfileEditPanel extends JPanel {
                 "Allowed Updates",
                 "Only the fields below can be changed from your profile panel."
         );
+        dobFieldPanel = createEditableField("Date of Birth (yyyy-mm-dd)", txtDob);
+        passwordFieldPanel = createEditableField("Password", txtPassword);
         updateCard.setContent(createFieldStack(new JComponent[]{
                 createEditableField("Phone Number", txtPhone),
                 createEditableField("Address", createTextAreaScrollPane()),
-                createEditableField("Date of Birth (yyyy-mm-dd)", txtDob),
-                createEditableField("Password", txtPassword)
+                dobFieldPanel,
+                passwordFieldPanel
         }));
 
         right.add(accountCard);
@@ -152,7 +156,7 @@ public class UserProfileEditPanel extends JPanel {
         add(content, BorderLayout.CENTER);
     }
 
-    public void bind(User user, String departmentName, String roleInfo, String accessHint, String dob, boolean canEditDob) {
+    public void bind(User user, String departmentName, String roleInfo, String accessHint, String dob, boolean canEditDob, boolean canEditPassword) {
         currentProfilePicturePath = user.getProfilePicturePath() == null ? "" : user.getProfilePicturePath();
         txtProfilePicture.setText(currentProfilePicturePath);
         photoFrame.setImagePath(currentProfilePicturePath);
@@ -161,7 +165,11 @@ public class UserProfileEditPanel extends JPanel {
         txtDob.setText(valueOrEmpty(dob));
         txtDob.setEditable(canEditDob);
         txtDob.setEnabled(canEditDob);
+        dobFieldPanel.setVisible(canEditDob);
         txtPassword.setText(user.getPasswordHash());
+        txtPassword.setEditable(canEditPassword);
+        txtPassword.setEnabled(canEditPassword);
+        passwordFieldPanel.setVisible(canEditPassword);
 
         lblNameValue.setText(user.getFullName());
         lblEmailValue.setText(valueOrDash(user.getEmail()));
@@ -169,6 +177,8 @@ public class UserProfileEditPanel extends JPanel {
         lblDepartmentValue.setText(valueOrDash(departmentName));
         lblRoleInfoValue.setText(valueOrDash(roleInfo));
         lblEditHint.setText(accessHint);
+        revalidate();
+        repaint();
     }
 
     public void chooseProfilePicture(Component parent) {

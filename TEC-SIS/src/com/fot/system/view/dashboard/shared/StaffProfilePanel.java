@@ -14,6 +14,11 @@ public class StaffProfilePanel extends UserProfilePanel {
     }
 
     @Override
+    protected boolean canEditPassword() {
+        return true;
+    }
+
+    @Override
     protected String getSubtitleText() {
         return "Review your staff profile and update the personal information allowed for staff accounts.";
     }

@@ -14,6 +14,10 @@ import java.text.SimpleDateFormat;
 public class CourseMaterialCard extends JPanel {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
+    public CourseMaterialCard(CourseMaterial material, Runnable onOpen) {
+        this(material, onOpen, null, null);
+    }
+
     public CourseMaterialCard(CourseMaterial material, Runnable onOpen, Runnable onEdit, Runnable onDelete) {
         setLayout(new BorderLayout(14, 0));
         setBackground(AppTheme.CARD_MUTED_BG);
@@ -81,36 +85,42 @@ public class CourseMaterialCard extends JPanel {
         actions.setOpaque(false);
         actions.setLayout(new FlowLayout(FlowLayout.RIGHT, 8, 0));
 
-        MaterialActionButton openButton = new MaterialActionButton(
-                FontAwesomeSolid.EXTERNAL_LINK_ALT,
-                AppTheme.ACTION_ICON_FG,
-                AppTheme.ACTION_ICON_BG,
-                AppTheme.ACTION_ICON_HOVER,
-                "Open Material"
-        );
-        openButton.addActionListener(e -> onOpen.run());
+        if (onOpen != null) {
+            MaterialActionButton openButton = new MaterialActionButton(
+                    FontAwesomeSolid.EXTERNAL_LINK_ALT,
+                    AppTheme.ACTION_ICON_FG,
+                    AppTheme.ACTION_ICON_BG,
+                    AppTheme.ACTION_ICON_HOVER,
+                    "Open Material"
+            );
+            openButton.addActionListener(e -> onOpen.run());
+            actions.add(openButton);
+        }
 
-        MaterialActionButton editButton = new MaterialActionButton(
-                FontAwesomeSolid.EDIT,
-                AppTheme.ACTION_ICON_FG,
-                AppTheme.ACTION_ICON_BG,
-                AppTheme.ACTION_ICON_HOVER,
-                "Edit Material"
-        );
-        editButton.addActionListener(e -> onEdit.run());
+        if (onEdit != null) {
+            MaterialActionButton editButton = new MaterialActionButton(
+                    FontAwesomeSolid.EDIT,
+                    AppTheme.ACTION_ICON_FG,
+                    AppTheme.ACTION_ICON_BG,
+                    AppTheme.ACTION_ICON_HOVER,
+                    "Edit Material"
+            );
+            editButton.addActionListener(e -> onEdit.run());
+            actions.add(editButton);
+        }
 
-        MaterialActionButton deleteButton = new MaterialActionButton(
-                FontAwesomeSolid.TRASH_ALT,
-                AppTheme.ACTION_DELETE_ICON_FG,
-                AppTheme.ACTION_DELETE_ICON_BG,
-                AppTheme.ACTION_DELETE_ICON_HOVER,
-                "Remove Material"
-        );
-        deleteButton.addActionListener(e -> onDelete.run());
+        if (onDelete != null) {
+            MaterialActionButton deleteButton = new MaterialActionButton(
+                    FontAwesomeSolid.TRASH_ALT,
+                    AppTheme.ACTION_DELETE_ICON_FG,
+                    AppTheme.ACTION_DELETE_ICON_BG,
+                    AppTheme.ACTION_DELETE_ICON_HOVER,
+                    "Remove Material"
+            );
+            deleteButton.addActionListener(e -> onDelete.run());
+            actions.add(deleteButton);
+        }
 
-        actions.add(openButton);
-        actions.add(editButton);
-        actions.add(deleteButton);
         return actions;
     }
 

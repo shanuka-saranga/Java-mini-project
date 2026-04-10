@@ -173,7 +173,8 @@ public abstract class UserProfilePanel extends JPanel {
                 roleInfo.primaryValue + " | " + roleInfo.secondaryValue,
                 getEditAccessHint(),
                 dob,
-                canEditDob()
+                canEditDob(),
+                canEditPassword()
         );
     }
 
@@ -285,6 +286,8 @@ public abstract class UserProfilePanel extends JPanel {
     }
 
     protected abstract boolean canEditDob();
+
+    protected abstract boolean canEditPassword();
 
     protected abstract String getSubtitleText();
 

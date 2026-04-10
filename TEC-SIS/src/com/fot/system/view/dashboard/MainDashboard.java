@@ -14,11 +14,13 @@ import com.fot.system.view.dashboard.lecturer.myCourses.LecturerCoursesPanel;
 import com.fot.system.view.dashboard.lecturer.notice.NoticePanel;
 import com.fot.system.view.dashboard.lecturer.studentDetails.StudentDetailsPanel;
 import com.fot.system.view.dashboard.lecturer.timetable.TimetablePanel;
+import com.fot.system.view.dashboard.student.StudentHomePanel;
 import com.fot.system.view.dashboard.shared.FeaturePlaceholderPanel;
 import com.fot.system.view.dashboard.shared.UserProfilePanelFactory;
 import com.fot.system.view.dashboard.sidebar.AdminSidebar;
 import com.fot.system.view.dashboard.sidebar.BaseSidebar;
 import com.fot.system.view.dashboard.sidebar.LecturerSidebar;
+import com.fot.system.view.dashboard.sidebar.StudentSidebar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,11 +44,11 @@ public class MainDashboard extends JFrame {
         if (AppConfig.ROLE_ADMIN.equalsIgnoreCase(user.getRole())) {
             sidebar = new AdminSidebar(this);
         } else if (AppConfig.ROLE_STUDENT.equalsIgnoreCase(user.getRole())) {
-//            sidebar = new StudentSidebar(this); TODO
+            sidebar = new StudentSidebar(this);
         } else if (AppConfig.ROLE_LECTURER.equalsIgnoreCase(user.getRole())) {
             sidebar = new LecturerSidebar(this);
         } else {
-//            sidebar = new LecturerSidebar(this); TODO
+            sidebar = new LecturerSidebar(this);
         }
         add(sidebar, BorderLayout.WEST);
         cardLayout = new CardLayout();
@@ -66,6 +68,9 @@ public class MainDashboard extends JFrame {
             contentArea.add(new TimetablePanel(user), AppConfig.MENU_TIMETABLES);
             contentArea.add(new StudentDetailsPanel(user),AppConfig.MENU_STUDENTS);
             contentArea.add(new NoticePanel(user),AppConfig.MENU_NOTICES);
+        } else if (AppConfig.ROLE_STUDENT.equalsIgnoreCase(user.getRole())) {
+            contentArea.add(new StudentHomePanel(user), AppConfig.MENU_HOME);
+            contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
         } else {
             contentArea.add(new AdminHomePanel(user), AppConfig.MENU_HOME);
             contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);

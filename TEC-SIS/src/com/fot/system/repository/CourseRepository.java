@@ -90,6 +90,32 @@ public class CourseRepository {
         return courses;
     }
 
+    public List<Course> findByStudentUserId(int studentUserId) {
+        List<Course> courses = new ArrayList<>();
+        String sql = baseCourseSelect() + """
+                 INNER JOIN marks m ON m.course_id = c.id
+                 INNER JOIN student s ON s.registration_no = m.student_reg_no
+                 WHERE s.user_id = ?
+                 GROUP BY c.id, c.course_code, c.course_name, c.credits, c.total_hours, c.session_type,
+                          c.no_of_quizzes, c.no_of_assignments, c.department_id, d.dept_name,
+                          c.lecturer_in_charge_id, lecturer_name
+                 ORDER BY c.course_code
+                """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, studentUserId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    courses.add(mapCourse(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load student courses: " + e.getMessage(), e);
+        }
+
+        return courses;
+    }
+
     public boolean save(Course course) {
         String sql = "INSERT INTO courses (course_code, course_name, credits, total_hours, session_type, no_of_quizzes, no_of_assignments, department_id, lecturer_in_charge_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
