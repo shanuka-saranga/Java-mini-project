@@ -1,15 +1,14 @@
 package com.fot.system.service;
 
-import com.fot.system.model.AddNoticeRequest;
-import com.fot.system.model.EditNoticeRequest;
-import com.fot.system.model.Notice;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.NoticeRepository;
 
 import java.sql.Date;
 import java.util.List;
 import java.util.Set;
 
-public class NoticeService {
+public class NoticeService implements INoticeService {
 
     private static final Set<String> VALID_AUDIENCE = Set.of("ALL", "STUDENT", "LECTURER", "TO");
     private static final Set<String> VALID_PRIORITY = Set.of("LOW", "MEDIUM", "HIGH");

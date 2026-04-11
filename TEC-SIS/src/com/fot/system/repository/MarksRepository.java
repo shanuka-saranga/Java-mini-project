@@ -1,10 +1,8 @@
 package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.StudentCoursePerformance;
-import com.fot.system.model.StudentsPerformance;
-import com.fot.system.model.StudentCourseCaRecord;
-import com.fot.system.model.StudentCourseGradeRecord;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -1,7 +1,8 @@
 package com.fot.system.view.dashboard.shared;
 
 import com.fot.system.config.AppConfig;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.view.dashboard.student.profile.StudentProfilePanel;
 
 public final class UserProfilePanelFactory {

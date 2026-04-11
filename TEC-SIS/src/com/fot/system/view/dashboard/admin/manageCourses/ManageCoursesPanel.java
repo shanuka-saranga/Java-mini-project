@@ -2,10 +2,8 @@ package com.fot.system.view.dashboard.admin.manageCourses;
 
 import com.fot.system.controller.AddCourseController;
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Course;
-import com.fot.system.model.Department;
-import com.fot.system.model.Staff;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.view.components.CustomButton;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;

@@ -1,7 +1,8 @@
 package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.CourseMaterial;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

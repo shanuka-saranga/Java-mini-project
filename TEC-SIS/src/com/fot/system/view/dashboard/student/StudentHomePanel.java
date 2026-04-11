@@ -1,10 +1,8 @@
 package com.fot.system.view.dashboard.student;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Course;
-import com.fot.system.model.CourseMaterial;
-import com.fot.system.model.Notice;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseMaterialService;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.FileOpenService;

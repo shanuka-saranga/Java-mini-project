@@ -1,7 +1,8 @@
 package com.fot.system.view.dashboard.lecturer.marksGrades;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.AssessmentStudentMarkRow;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.SectionCard;
 

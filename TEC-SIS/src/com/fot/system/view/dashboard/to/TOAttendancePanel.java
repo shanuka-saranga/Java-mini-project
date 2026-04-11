@@ -2,13 +2,8 @@ package com.fot.system.view.dashboard.to;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.AttendanceSessionController;
-import com.fot.system.model.AddAttendanceSessionRequest;
-import com.fot.system.model.AttendanceSessionEditorData;
-import com.fot.system.model.AttendanceSessionRow;
-import com.fot.system.model.Course;
-import com.fot.system.model.StudentAttendanceUpdate;
-import com.fot.system.model.TimetableSession;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.AttendanceService;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.TimetableService;

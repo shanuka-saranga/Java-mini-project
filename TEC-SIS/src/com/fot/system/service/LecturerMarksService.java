@@ -1,9 +1,7 @@
 package com.fot.system.service;
 
-import com.fot.system.model.AssessmentCardSummary;
-import com.fot.system.model.AssessmentStudentMarkRow;
-import com.fot.system.model.CourseSemesterContext;
-import com.fot.system.model.StudentMarksOverviewRow;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.LecturerMarksRepository;
 
 import java.util.List;

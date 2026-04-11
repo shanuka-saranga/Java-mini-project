@@ -1,8 +1,8 @@
 package com.fot.system.view.dashboard.lecturer.studentDetails;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.StudentDetailsRow;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.LecturerStudentDetailsService;
 
 import javax.swing.*;

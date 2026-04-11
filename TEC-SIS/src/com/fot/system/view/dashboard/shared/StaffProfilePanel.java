@@ -1,6 +1,7 @@
 package com.fot.system.view.dashboard.shared;
 
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 public class StaffProfilePanel extends UserProfilePanel {
 

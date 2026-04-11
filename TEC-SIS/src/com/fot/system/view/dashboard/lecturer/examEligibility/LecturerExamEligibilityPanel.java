@@ -1,11 +1,8 @@
 package com.fot.system.view.dashboard.lecturer.examEligibility;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Course;
-import com.fot.system.model.CourseExamEligibilityViewData;
-import com.fot.system.model.ExamEligibilityBatchSummary;
-import com.fot.system.model.ExamEligibilityRow;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.ExamEligibilityService;
 import com.fot.system.view.components.CloseActionButton;

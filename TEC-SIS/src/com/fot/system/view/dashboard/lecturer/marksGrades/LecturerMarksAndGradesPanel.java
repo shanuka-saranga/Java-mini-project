@@ -1,13 +1,8 @@
 package com.fot.system.view.dashboard.lecturer.marksGrades;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.AssessmentCardSummary;
-import com.fot.system.model.AssessmentStudentMarkRow;
-import com.fot.system.model.Course;
-import com.fot.system.model.CourseGradeViewData;
-import com.fot.system.model.CourseSemesterContext;
-import com.fot.system.model.StudentGradeRow;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.LecturerGradesService;
 import com.fot.system.service.LecturerMarksService;

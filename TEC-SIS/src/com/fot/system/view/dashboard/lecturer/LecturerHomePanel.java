@@ -1,9 +1,8 @@
 package com.fot.system.view.dashboard.lecturer;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Course;
-import com.fot.system.model.Notice;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.NoticeService;
 import com.fot.system.view.components.FeedItemCard;

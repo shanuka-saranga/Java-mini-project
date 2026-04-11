@@ -1,7 +1,7 @@
 package com.fot.system.controller;
 
-import com.fot.system.model.TimetableSession;
-import com.fot.system.model.TimetableSessionRequest;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.TimetableService;
 
 public class TimetableSessionController {

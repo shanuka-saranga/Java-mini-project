@@ -2,11 +2,8 @@ package com.fot.system.view.dashboard.lecturer.timetable;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.TimetableSessionController;
-import com.fot.system.model.Course;
-import com.fot.system.model.Staff;
-import com.fot.system.model.TimetableSession;
-import com.fot.system.model.TimetableSessionRequest;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.TimetableService;
 import com.fot.system.view.components.CustomButton;

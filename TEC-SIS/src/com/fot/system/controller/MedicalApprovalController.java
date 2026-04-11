@@ -1,6 +1,7 @@
 package com.fot.system.controller;
 
-import com.fot.system.model.MedicalApprovalRow;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.MedicalApprovalService;
 
 import java.util.List;

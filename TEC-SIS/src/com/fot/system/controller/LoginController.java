@@ -1,6 +1,7 @@
 package com.fot.system.controller;
 
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.UserService;
 import com.fot.system.view.dashboard.MainDashboard;
 import com.fot.system.view.login.LoginView;

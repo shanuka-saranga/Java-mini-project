@@ -1,7 +1,7 @@
 package com.fot.system.controller;
 
-import com.fot.system.model.CourseMaterial;
-import com.fot.system.model.EditCourseMaterialRequest;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseMaterialService;
 
 public class EditCourseMaterialController {

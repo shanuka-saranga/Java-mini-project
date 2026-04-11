@@ -2,11 +2,8 @@ package com.fot.system.view.dashboard.shared;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.EditUserController;
-import com.fot.system.model.Department;
-import com.fot.system.model.EditUserRequest;
-import com.fot.system.model.Staff;
-import com.fot.system.model.Student;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.DepartmentService;
 import com.fot.system.service.UserService;
 import com.fot.system.view.components.CustomButton;

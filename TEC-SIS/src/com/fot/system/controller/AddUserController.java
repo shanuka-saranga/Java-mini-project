@@ -1,7 +1,7 @@
 package com.fot.system.controller;
 
-import com.fot.system.model.AddUserRequest;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.UserRepository;
 import com.fot.system.service.UserService;
 import com.fot.system.view.dashboard.admin.manageUsers.AddNewUserPanel;

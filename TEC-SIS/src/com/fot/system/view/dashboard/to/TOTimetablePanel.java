@@ -1,8 +1,8 @@
 package com.fot.system.view.dashboard.to;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.TimetableSession;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.TimetableService;
 
 import javax.swing.*;

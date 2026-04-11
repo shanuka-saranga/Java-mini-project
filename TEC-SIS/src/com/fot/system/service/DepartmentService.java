@@ -1,6 +1,7 @@
 package com.fot.system.service;
 
-import com.fot.system.model.Department;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.DepartmentRepository;
 
 import java.util.List;

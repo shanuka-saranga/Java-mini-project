@@ -1,6 +1,7 @@
 package com.fot.system.service;
 
-import com.fot.system.model.*;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.MarksRepository;
 import com.fot.system.repository.StudentRepository;
 import com.fot.system.util.AcademicPerformance;

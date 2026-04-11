@@ -1,7 +1,7 @@
 package com.fot.system.view.dashboard.admin.manageNotices;
 
-import com.fot.system.model.EditNoticeRequest;
-import com.fot.system.model.Notice;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import javax.swing.*;
 import java.awt.*;

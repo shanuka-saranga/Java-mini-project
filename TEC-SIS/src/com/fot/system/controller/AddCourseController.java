@@ -1,7 +1,7 @@
 package com.fot.system.controller;
 
-import com.fot.system.model.AddCourseRequest;
-import com.fot.system.model.Course;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.view.dashboard.admin.manageCourses.AddNewCoursePanel;
 

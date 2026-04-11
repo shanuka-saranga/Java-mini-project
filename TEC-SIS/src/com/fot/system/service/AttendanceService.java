@@ -1,17 +1,7 @@
 package com.fot.system.service;
 
-import com.fot.system.model.AttendanceCourseProgress;
-import com.fot.system.model.AttendanceSessionEditorData;
-import com.fot.system.model.AttendanceSessionRow;
-import com.fot.system.model.AttendanceTableRow;
-import com.fot.system.model.AddAttendanceSessionRequest;
-import com.fot.system.model.CourseAttendanceViewData;
-import com.fot.system.model.StudentAttendanceMedicalViewData;
-import com.fot.system.model.StudentAttendanceEditRow;
-import com.fot.system.model.StudentMedicalRow;
-import com.fot.system.model.StudentSessionAttendanceRow;
-import com.fot.system.model.StudentAttendanceSummaryRow;
-import com.fot.system.model.StudentAttendanceUpdate;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.AttendanceRepository;
 
 import java.util.ArrayList;
@@ -22,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
-public class AttendanceService {
+public class AttendanceService implements IAttendanceService {
 
     private final AttendanceRepository attendanceRepository;
 

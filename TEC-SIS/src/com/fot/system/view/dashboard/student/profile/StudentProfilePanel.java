@@ -1,6 +1,7 @@
 package com.fot.system.view.dashboard.student.profile;
 
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.view.dashboard.shared.UserProfilePanel;
 
 public class StudentProfilePanel extends UserProfilePanel {

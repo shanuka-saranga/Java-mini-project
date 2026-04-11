@@ -1,15 +1,14 @@
 package com.fot.system.service;
 
-import com.fot.system.model.TimetableSession;
-import com.fot.system.model.TimetableSessionRequest;
-import com.fot.system.model.Course;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.TimetableRepository;
 
 import java.sql.Time;
 import java.util.List;
 import java.util.Set;
 
-public class TimetableService {
+public class TimetableService implements ITimetableService {
     private static final Set<String> VALID_TYPES = Set.of("THEORY", "PRACTICAL");
     private static final Set<String> VALID_DAYS = Set.of("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY");
 

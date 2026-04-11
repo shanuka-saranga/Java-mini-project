@@ -1,7 +1,8 @@
 package com.fot.system.view.dashboard.lecturer.myCourses;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.CourseMaterial;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.view.components.MaterialActionButton;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;

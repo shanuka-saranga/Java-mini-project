@@ -1,8 +1,7 @@
 package com.fot.system.view.dashboard.admin.manageCourses;
 
-import com.fot.system.model.Department;
-import com.fot.system.model.EditCourseRequest;
-import com.fot.system.model.Staff;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,7 +49,7 @@ public class EditCourseDetailsPanel extends JPanel {
         addFormRow("Lecturer in Charge:", cmbLecturer, 8, gbc);
     }
 
-    public void setCourseData(com.fot.system.model.Course course) {
+    public void setCourseData(Course course) {
         this.courseId = course.getId();
         txtCourseCode.setText(course.getCourseCode());
         txtCourseName.setText(course.getCourseName());

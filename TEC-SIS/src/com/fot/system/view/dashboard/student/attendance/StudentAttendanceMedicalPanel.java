@@ -2,13 +2,8 @@ package com.fot.system.view.dashboard.student.attendance;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.AddStudentMedicalController;
-import com.fot.system.model.AbsentSessionOption;
-import com.fot.system.model.AddStudentMedicalRequest;
-import com.fot.system.model.MedicalSessionDetail;
-import com.fot.system.model.StudentAttendanceMedicalViewData;
-import com.fot.system.model.StudentMedicalRow;
-import com.fot.system.model.StudentSessionAttendanceRow;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.AttendanceService;
 import com.fot.system.service.FileOpenService;
 import com.fot.system.view.components.CustomButton;

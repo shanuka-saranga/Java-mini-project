@@ -1,10 +1,8 @@
 package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.AssessmentCardSummary;
-import com.fot.system.model.AssessmentStudentMarkRow;
-import com.fot.system.model.CourseSemesterContext;
-import com.fot.system.model.StudentMarksOverviewRow;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

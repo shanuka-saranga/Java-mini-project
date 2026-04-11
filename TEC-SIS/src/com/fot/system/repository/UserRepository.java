@@ -2,9 +2,8 @@ package com.fot.system.repository;
 
 import com.fot.system.config.AppConfig;
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.Staff;
-import com.fot.system.model.Student;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;

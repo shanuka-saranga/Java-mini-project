@@ -1,7 +1,7 @@
 package com.fot.system.controller;
 
-import com.fot.system.model.Course;
-import com.fot.system.model.EditCourseRequest;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 
 public class EditCourseController {

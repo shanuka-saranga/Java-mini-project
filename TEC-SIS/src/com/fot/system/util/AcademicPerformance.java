@@ -1,8 +1,7 @@
 package com.fot.system.util;
 
-import com.fot.system.model.StudentCoursePerformance;
-import com.fot.system.model.StudentCourseCaRecord;
-import com.fot.system.model.StudentCourseGradeRecord;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import java.util.List;
 

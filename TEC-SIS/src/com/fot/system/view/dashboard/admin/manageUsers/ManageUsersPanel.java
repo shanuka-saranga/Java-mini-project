@@ -2,8 +2,8 @@ package com.fot.system.view.dashboard.admin.manageUsers;
 
 import com.fot.system.controller.AddUserController;
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Department;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.DepartmentService;
 import com.fot.system.service.UserService;
 import com.fot.system.view.components.CustomButton;

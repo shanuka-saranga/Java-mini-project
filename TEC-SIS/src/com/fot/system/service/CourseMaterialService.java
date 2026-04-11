@@ -1,8 +1,7 @@
 package com.fot.system.service;
 
-import com.fot.system.model.AddCourseMaterialRequest;
-import com.fot.system.model.CourseMaterial;
-import com.fot.system.model.EditCourseMaterialRequest;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.CourseMaterialRepository;
 
 import java.util.List;

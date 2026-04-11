@@ -1,8 +1,8 @@
 package com.fot.system.view.dashboard.admin;
 
 import com.fot.system.config.AppConfig;
-import com.fot.system.model.Notice;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.NoticeService;
 import com.fot.system.service.UserService;

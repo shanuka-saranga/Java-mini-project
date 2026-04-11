@@ -1,12 +1,8 @@
 package com.fot.system.view.dashboard.lecturer.attendance;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.AttendanceCourseProgress;
-import com.fot.system.model.AttendanceTableRow;
-import com.fot.system.model.Course;
-import com.fot.system.model.CourseAttendanceViewData;
-import com.fot.system.model.StudentAttendanceSummaryRow;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.AttendanceService;
 import com.fot.system.service.CourseService;
 import com.fot.system.view.components.CloseActionButton;

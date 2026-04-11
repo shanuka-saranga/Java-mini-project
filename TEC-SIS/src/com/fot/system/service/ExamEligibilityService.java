@@ -1,11 +1,7 @@
 package com.fot.system.service;
 
-import com.fot.system.model.CourseAttendanceViewData;
-import com.fot.system.model.CourseExamEligibilityViewData;
-import com.fot.system.model.ExamEligibilityBatchSummary;
-import com.fot.system.model.ExamEligibilityRow;
-import com.fot.system.model.StudentAttendanceSummaryRow;
-import com.fot.system.model.StudentCourseCaRecord;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.MarksRepository;
 
 import java.time.Year;

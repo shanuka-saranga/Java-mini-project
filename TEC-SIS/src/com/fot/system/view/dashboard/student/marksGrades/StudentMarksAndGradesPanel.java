@@ -1,9 +1,8 @@
 package com.fot.system.view.dashboard.student.marksGrades;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.StudentMarksGradeViewData;
-import com.fot.system.model.StudentSubjectGradeRow;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.StudentMarksGradesService;
 
 import javax.swing.*;

@@ -1,10 +1,7 @@
 package com.fot.system.service;
 
-import com.fot.system.model.CourseAttendanceViewData;
-import com.fot.system.model.CourseGradeViewData;
-import com.fot.system.model.StudentAttendanceSummaryRow;
-import com.fot.system.model.StudentCourseGradeRecord;
-import com.fot.system.model.StudentGradeRow;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.MarksRepository;
 
 import java.time.Year;

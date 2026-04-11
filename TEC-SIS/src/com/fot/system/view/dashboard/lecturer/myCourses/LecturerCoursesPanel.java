@@ -3,10 +3,8 @@ package com.fot.system.view.dashboard.lecturer.myCourses;
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.AddCourseMaterialController;
 import com.fot.system.controller.EditCourseMaterialController;
-import com.fot.system.model.Course;
-import com.fot.system.model.CourseMaterial;
-import com.fot.system.model.EditCourseMaterialRequest;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseMaterialService;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.FileOpenService;
@@ -349,7 +347,7 @@ public class LecturerCoursesPanel extends JPanel {
         }
 
         try {
-            addCourseMaterialController.addMaterial(new com.fot.system.model.AddCourseMaterialRequest(
+            addCourseMaterialController.addMaterial(new AddCourseMaterialRequest(
                     String.valueOf(selectedCourse.getId()),
                     selectedCourse.getCourseCode(),
                     dialog.getTitleValue(),

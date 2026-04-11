@@ -1,10 +1,7 @@
 package com.fot.system.service;
 
-import com.fot.system.model.AddCourseRequest;
-import com.fot.system.model.Course;
-import com.fot.system.model.Department;
-import com.fot.system.model.EditCourseRequest;
-import com.fot.system.model.Staff;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.CourseRepository;
 import com.fot.system.repository.DepartmentRepository;
 

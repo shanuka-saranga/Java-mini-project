@@ -1,15 +1,8 @@
 package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.AbsentSessionOption;
-import com.fot.system.model.AttendanceSessionRow;
-import com.fot.system.model.AttendanceTableRow;
-import com.fot.system.model.MedicalApprovalRow;
-import com.fot.system.model.MedicalSessionDetail;
-import com.fot.system.model.StudentAttendanceEditRow;
-import com.fot.system.model.StudentAttendanceUpdate;
-import com.fot.system.model.StudentMedicalRow;
-import com.fot.system.model.StudentSessionAttendanceRow;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import java.sql.*;
 import java.time.LocalDate;

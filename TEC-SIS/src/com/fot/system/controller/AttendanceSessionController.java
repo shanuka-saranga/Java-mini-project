@@ -1,8 +1,7 @@
 package com.fot.system.controller;
 
-import com.fot.system.model.AddAttendanceSessionRequest;
-import com.fot.system.model.AttendanceSessionRow;
-import com.fot.system.model.StudentAttendanceUpdate;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.AttendanceService;
 
 import java.util.List;

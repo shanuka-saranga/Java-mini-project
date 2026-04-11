@@ -1,11 +1,12 @@
 package com.fot.system.service;
 
-import com.fot.system.model.MedicalApprovalRow;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.AttendanceRepository;
 
 import java.util.List;
 
-public class MedicalApprovalService {
+public class MedicalApprovalService implements IMedicalApprovalService {
 
     private final AttendanceRepository attendanceRepository;
 
