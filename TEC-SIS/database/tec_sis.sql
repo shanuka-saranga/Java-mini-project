@@ -35,7 +35,7 @@ CREATE TABLE `assignments` (
                                `status` enum('PENDING','SUBMITTED','NOT_SUBMITTED','MEDICAL') NOT NULL DEFAULT 'PENDING',
                                `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
                                `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `assignments`
@@ -307,7 +307,7 @@ CREATE TABLE `courses` (
                            `no_of_assignments` tinyint(4) NOT NULL DEFAULT 1,
                            `department_id` int(11) NOT NULL,
                            `lecturer_in_charge_id` int(11) DEFAULT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `courses`
@@ -376,7 +376,7 @@ CREATE TABLE `end_exams` (
                              `end_exam_mark` decimal(5,2) NOT NULL DEFAULT 0.00,
                              `status` enum('PENDING','PRESENT','ABSENT','MEDICAL') NOT NULL DEFAULT 'PENDING',
                              `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `end_exams`
@@ -578,7 +578,7 @@ CREATE TABLE `marks` (
                          `attempt_no` tinyint(4) NOT NULL DEFAULT 1,
                          `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
                          `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `marks`
@@ -812,7 +812,7 @@ CREATE TABLE `mid_exams` (
                              `mid_exam_mark` decimal(5,2) NOT NULL DEFAULT 0.00,
                              `status` enum('PENDING','PRESENT','ABSENT','MEDICAL') NOT NULL DEFAULT 'PENDING',
                              `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `mid_exams`
@@ -1052,7 +1052,7 @@ CREATE TABLE `quizzes` (
                            `status` enum('PENDING','PRESENT','ABSENT','MEDICAL') NOT NULL DEFAULT 'PENDING',
                            `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
                            `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `quizzes`
@@ -1559,7 +1559,7 @@ CREATE TABLE `sessions` (
                             `remarks` varchar(255) DEFAULT NULL,
                             `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
                             `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `sessions`

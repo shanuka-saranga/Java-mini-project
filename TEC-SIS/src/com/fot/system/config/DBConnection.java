@@ -1,12 +1,22 @@
 package com.fot.system.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Properties;
-import java.io.InputStream;
 
 public class DBConnection {
+    private static final String[] PROPERTY_LOCATIONS = {
+            "db.properties",
+            "db.propertise",
+            "src/db.properties",
+            "src/db.propertise",
+            "TEC-SIS/src/db.properties",
+            "TEC-SIS/src/db.propertise"
+    };
 
     private static DBConnection instance;
     private Connection connection;
@@ -17,10 +27,10 @@ public class DBConnection {
 
     private DBConnection() {
         try {
-            // Load properties file
             Properties props = new Properties();
-            InputStream input = getClass().getClassLoader().getResourceAsStream("db.properties");
-            props.load(input);
+            try (InputStream input = openPropertiesStream()) {
+                props.load(input);
+            }
 
             URL = props.getProperty("db.url");
             USER = props.getProperty("db.user");
@@ -35,6 +45,26 @@ public class DBConnection {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private InputStream openPropertiesStream() throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+
+        for (String location : PROPERTY_LOCATIONS) {
+            InputStream resourceStream = classLoader.getResourceAsStream(location);
+            if (resourceStream != null) {
+                return resourceStream;
+            }
+        }
+
+        for (String location : PROPERTY_LOCATIONS) {
+            Path path = Path.of(location);
+            if (Files.exists(path)) {
+                return Files.newInputStream(path);
+            }
+        }
+
+        throw new IllegalStateException("Database properties file not found.");
     }
 
     public static DBConnection getInstance() {
