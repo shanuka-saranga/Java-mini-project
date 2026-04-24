@@ -2,16 +2,8 @@ package com.fot.system.view.dashboard.to;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.AttendanceSessionController;
-import com.fot.system.model.AddAttendanceSessionRequest;
-import com.fot.system.model.AttendanceSessionEditorData;
-import com.fot.system.model.AttendanceSessionRow;
-import com.fot.system.model.Course;
-import com.fot.system.model.StudentAttendanceUpdate;
-import com.fot.system.model.TimetableSession;
-import com.fot.system.model.User;
-import com.fot.system.service.AttendanceService;
-import com.fot.system.service.CourseService;
-import com.fot.system.service.TimetableService;
+import com.fot.system.model.*;
+import com.fot.system.service.*;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.dashboard.lecturer.attendance.AttendanceSessionDialog;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
@@ -19,401 +11,262 @@ import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class TOAttendancePanel extends JPanel {
-    private static final String[] ATTENDANCE_STATUSES = {"PRESENT", "ABSENT"};
+
+    private static final String[] STATUSES = {"PRESENT", "ABSENT"};
 
     private final User currentUser;
-    private final AttendanceService attendanceService;
-    private final CourseService courseService;
-    private final TimetableService timetableService;
-    private final AttendanceSessionController attendanceSessionController;
-    private DefaultTableModel sessionTableModel;
-    private JTable sessionTable;
-    private DefaultTableModel studentTableModel;
-    private JTable studentTable;
-    private JLabel lblSelectedSession;
-    private JTextField txtSessionSearch;
+    private final AttendanceService attendanceService = new AttendanceService();
+    private final CourseService courseService = new CourseService();
+    private final TimetableService timetableService = new TimetableService();
+    private final AttendanceSessionController controller = new AttendanceSessionController();
 
-    private List<Course> allCourses = new ArrayList<>();
-    private List<TimetableSession> allTimetableSessions = new ArrayList<>();
+    private DefaultTableModel sessionModel, studentModel;
+    private JTable sessionTable, studentTable;
+    private JTextField txtSearch;
+    private JLabel lblSession;
+
+    private List<Course> courses = new ArrayList<>();
+    private List<TimetableSession> timetableSessions = new ArrayList<>();
     private AttendanceSessionRow selectedSession;
 
     public TOAttendancePanel(User user) {
         this.currentUser = user;
-        this.attendanceService = new AttendanceService();
-        this.courseService = new CourseService();
-        this.timetableService = new TimetableService();
-        this.attendanceSessionController = new AttendanceSessionController();
 
         setLayout(new BorderLayout(20, 20));
         setBackground(AppTheme.SURFACE_SOFT);
         setBorder(new EmptyBorder(24, 24, 24, 24));
 
-        add(createHeader(), BorderLayout.NORTH);
-        add(createContent(), BorderLayout.CENTER);
+        add(header(), BorderLayout.NORTH);
+        add(content(), BorderLayout.CENTER);
 
         loadLookupData();
         loadSessions();
     }
 
-    private JPanel createHeader() {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setOpaque(false);
-
-        JPanel titleBlock = new JPanel(new BorderLayout(0, 8));
-        titleBlock.setOpaque(false);
+    // ================= HEADER =================
+    private JPanel header() {
+        JPanel p = new JPanel(new BorderLayout());
+        p.setOpaque(false);
 
         JLabel title = new JLabel("Attendance Management");
         title.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        title.setForeground(AppTheme.TEXT_DARK);
 
-        JLabel subtitle = new JLabel("Manage all sessions, create new session records, and update student attendance statuses.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitle.setForeground(AppTheme.TEXT_SUBTLE);
+        JLabel sub = new JLabel("Manage sessions and student attendance.");
+        sub.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        titleBlock.add(title, BorderLayout.NORTH);
-        titleBlock.add(subtitle, BorderLayout.SOUTH);
+        JPanel left = new JPanel(new GridLayout(2, 1));
+        left.setOpaque(false);
+        left.add(title);
+        left.add(sub);
 
-        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         actions.setOpaque(false);
 
-        CustomButton refreshBtn = createActionButton("Refresh", FontAwesomeSolid.SYNC_ALT, AppTheme.BTN_EDIT_BG, AppTheme.BTN_EDIT_FG, AppTheme.BTN_EDIT_HOVER);
-        refreshBtn.addActionListener(e -> loadSessions());
+        actions.add(btn("Refresh", FontAwesomeSolid.SYNC_ALT, e -> loadSessions()));
+        actions.add(btn("Add", FontAwesomeSolid.PLUS, e -> openDialog()));
+        actions.add(btn("Save", FontAwesomeSolid.SAVE, e -> saveAttendance()));
 
-        CustomButton addBtn = createActionButton("Add New Session", FontAwesomeSolid.PLUS, AppTheme.BTN_SAVE_BG, AppTheme.BTN_SAVE_FG, AppTheme.BTN_SAVE_HOVER);
-        addBtn.addActionListener(e -> openAddSessionDialog());
+        p.add(left, BorderLayout.WEST);
+        p.add(actions, BorderLayout.EAST);
 
-        CustomButton saveBtn = createActionButton("Save Attendance", FontAwesomeSolid.SAVE, AppTheme.BTN_SAVE_BG, AppTheme.BTN_SAVE_FG, AppTheme.BTN_SAVE_HOVER);
-        saveBtn.addActionListener(e -> saveAttendance());
-
-        actions.add(refreshBtn);
-        actions.add(addBtn);
-        actions.add(saveBtn);
-
-        header.add(titleBlock, BorderLayout.WEST);
-        header.add(actions, BorderLayout.EAST);
-        return header;
+        return p;
     }
 
-    private JComponent createContent() {
-        JPanel content = new JPanel(new BorderLayout(0, 18));
-        content.setOpaque(false);
+    // ================= CONTENT =================
+    private JComponent content() {
+        JPanel p = new JPanel(new BorderLayout(0, 15));
+        p.setOpaque(false);
 
-        JPanel topSection = new JPanel(new BorderLayout(0, 10));
-        topSection.setOpaque(false);
+        txtSearch = new JTextField();
+        txtSearch.getDocument().addDocumentListener(simpleListener(this::filter));
 
-        txtSessionSearch = new JTextField();
-        txtSessionSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        txtSessionSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
-                new EmptyBorder(8, 10, 8, 10)
-        ));
-        txtSessionSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                applySessionFilter();
-            }
+        sessionModel = new DefaultTableModel(new Object[]{
+                "ID","Code","Course","Type","No","Date","Day","Time","Venue","Status"},0);
 
-            @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                applySessionFilter();
-            }
+        sessionTable = table(sessionModel, false);
+        sessionTable.setRowSorter(new TableRowSorter<>(sessionModel));
+        sessionTable.getSelectionModel().addListSelectionListener(e -> openSession());
 
-            @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                applySessionFilter();
-            }
-        });
+        studentModel = new DefaultTableModel(
+                new Object[]{"Reg No","Student","Status","Medical"},0);
 
-        topSection.add(createSectionLabel("All Sessions"), BorderLayout.NORTH);
-        topSection.add(txtSessionSearch, BorderLayout.SOUTH);
+        studentTable = table(studentModel, true);
+        studentTable.getColumnModel().getColumn(2)
+                .setCellEditor(new DefaultCellEditor(new JComboBox<>(STATUSES)));
 
-        sessionTableModel = new DefaultTableModel(
-                new Object[]{"Session ID", "Course Code", "Course Name", "Type", "Session No", "Date", "Day", "Time", "Venue", "Status"},
-                0
-        ) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+        lblSession = new JLabel("Select session");
+
+        JPanel wrap = new JPanel();
+        wrap.setLayout(new BoxLayout(wrap, BoxLayout.Y_AXIS));
+        wrap.setOpaque(false);
+
+        wrap.add(new JLabel("Sessions"));
+        wrap.add(txtSearch);
+        wrap.add(scroll(sessionTable, 250));
+        wrap.add(Box.createVerticalStrut(15));
+        wrap.add(lblSession);
+        wrap.add(scroll(studentTable, 300));
+
+        p.add(new JScrollPane(wrap), BorderLayout.CENTER);
+        return p;
+    }
+
+    // ================= HELPERS =================
+    private CustomButton btn(String text, FontAwesomeSolid icon, java.awt.event.ActionListener e) {
+        CustomButton b = new CustomButton(text, AppTheme.BTN_SAVE_BG, Color.WHITE,
+                AppTheme.BTN_SAVE_HOVER, new Dimension(140,40));
+        b.setIcon(FontIcon.of(icon, 14));
+        b.addActionListener(e);
+        return b;
+    }
+
+    private JTable table(DefaultTableModel model, boolean editable) {
+        JTable t = new JTable(model);
+        t.setRowHeight(28);
+        if (!editable) t.setDefaultEditor(Object.class, null);
+        return t;
+    }
+
+    private JScrollPane scroll(JTable t, int h) {
+        JScrollPane sp = new JScrollPane(t);
+        sp.setPreferredSize(new Dimension(0,h));
+        return sp;
+    }
+
+    private javax.swing.event.DocumentListener simpleListener(Runnable r) {
+        return new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e){r.run();}
+            public void removeUpdate(javax.swing.event.DocumentEvent e){r.run();}
+            public void changedUpdate(javax.swing.event.DocumentEvent e){r.run();}
         };
-
-        sessionTable = createStyledTable(sessionTableModel, false);
-        sessionTable.setRowSorter(new TableRowSorter<>(sessionTableModel));
-        sessionTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        sessionTable.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                openSelectedSession();
-            }
-        });
-
-        JScrollPane sessionsScrollPane = createScrollPane(sessionTable, 260);
-
-        JPanel bottomSection = new JPanel(new BorderLayout(0, 10));
-        bottomSection.setOpaque(false);
-
-        lblSelectedSession = createMetaLabel("Select a session row to edit attendance.");
-
-        studentTableModel = new DefaultTableModel(
-                new Object[]{"Reg No", "Student", "Attendance Status", "Medical"},
-                0
-        ) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 2;
-            }
-        };
-
-        studentTable = createStyledTable(studentTableModel, true);
-        TableColumn statusColumn = studentTable.getColumnModel().getColumn(2);
-        statusColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(ATTENDANCE_STATUSES)));
-        JScrollPane studentsScrollPane = createScrollPane(studentTable, 320);
-
-        bottomSection.add(createSectionLabel("Student Attendance"), BorderLayout.NORTH);
-        bottomSection.add(lblSelectedSession, BorderLayout.CENTER);
-        bottomSection.add(studentsScrollPane, BorderLayout.SOUTH);
-
-        JPanel wrapper = new JPanel();
-        wrapper.setOpaque(false);
-        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
-        wrapper.add(topSection);
-        wrapper.add(Box.createVerticalStrut(10));
-        wrapper.add(sessionsScrollPane);
-        wrapper.add(Box.createVerticalStrut(22));
-        wrapper.add(bottomSection);
-
-        JScrollPane mainScrollPane = new JScrollPane(wrapper);
-        mainScrollPane.setBorder(null);
-        mainScrollPane.getViewport().setBackground(AppTheme.SURFACE_SOFT);
-        mainScrollPane.getVerticalScrollBar().setUnitIncrement(16);
-
-        content.add(mainScrollPane, BorderLayout.CENTER);
-        return content;
     }
 
-    private JLabel createSectionLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        label.setForeground(AppTheme.TEXT_DARK);
-        return label;
+    private void showError(String msg){
+        JOptionPane.showMessageDialog(this,msg,"Error",JOptionPane.ERROR_MESSAGE);
     }
 
-    private JLabel createMetaLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        label.setForeground(AppTheme.TEXT_SUBTLE);
-        return label;
-    }
-
-    private CustomButton createActionButton(String text, FontAwesomeSolid icon, Color bg, Color fg, Color hover) {
-        CustomButton button = new CustomButton(text, bg, fg, hover, new Dimension(150, 40));
-        button.setIcon(FontIcon.of(icon, 14, fg));
-        return button;
-    }
-
-    private JTable createStyledTable(DefaultTableModel model, boolean editable) {
-        JTable table = new JTable(model);
-        table.setRowHeight(28);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        table.setForeground(AppTheme.TEXT_DARK);
-        table.setGridColor(AppTheme.BORDER_SOFT);
-        table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
-        table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        table.setFillsViewportHeight(true);
-        if (!editable) {
-            table.setDefaultEditor(Object.class, null);
-        }
-        return table;
-    }
-
-    private JScrollPane createScrollPane(JTable table, int preferredHeight) {
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
-        scrollPane.getViewport().setBackground(AppTheme.CARD_BG);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPane.setPreferredSize(new Dimension(0, preferredHeight));
-        return scrollPane;
-    }
-
+    // ================= DATA =================
     private void loadLookupData() {
-        SwingWorker<Void, Void> worker = new SwingWorker<>() {
-            @Override
-            protected Void doInBackground() {
-                allCourses = courseService.getAllCourses();
-                allTimetableSessions = timetableService.getAllTimetableSessions();
+        new SwingWorker<Void,Void>(){
+            protected Void doInBackground(){
+                courses = courseService.getAllCourses();
+                timetableSessions = timetableService.getAllTimetableSessions();
                 return null;
             }
-        };
-        worker.execute();
+        }.execute();
     }
 
     private void loadSessions() {
-        SwingWorker<List<AttendanceSessionRow>, Void> worker = new SwingWorker<>() {
-            @Override
-            protected List<AttendanceSessionRow> doInBackground() {
+        new SwingWorker<List<AttendanceSessionRow>,Void>(){
+            protected List<AttendanceSessionRow> doInBackground(){
                 return attendanceService.getAllAttendanceSessions();
             }
-
-            @Override
-            protected void done() {
-                try {
-                    renderSessions(get());
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(
-                            TOAttendancePanel.this,
-                            "Failed to load sessions.",
-                            "Attendance Error",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                }
+            protected void done(){
+                try{ renderSessions(get()); }
+                catch(Exception e){ showError("Load failed"); }
             }
-        };
-        worker.execute();
+        }.execute();
     }
 
-    private void renderSessions(List<AttendanceSessionRow> rows) {
-        sessionTableModel.setRowCount(0);
-        for (AttendanceSessionRow row : rows) {
-            sessionTableModel.addRow(new Object[]{
-                    row.getSessionId(),
-                    row.getCourseCode(),
-                    row.getCourseName(),
-                    row.getSessionType(),
-                    row.getSessionNo(),
-                    row.getSessionDate(),
-                    row.getSessionDay(),
-                    row.getTimeRange(),
-                    row.getVenue(),
-                    row.getSessionStatus()
-            });
-        }
-        studentTableModel.setRowCount(0);
-        selectedSession = null;
-        lblSelectedSession.setText("Select a session row to edit attendance.");
-        applySessionFilter();
-    }
-
-    private void applySessionFilter() {
-        TableRowSorter<?> sorter = (TableRowSorter<?>) sessionTable.getRowSorter();
-        String keyword = txtSessionSearch.getText() == null ? "" : txtSessionSearch.getText().trim();
-        if (keyword.isEmpty()) {
-            sorter.setRowFilter(null);
-        } else {
-            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(keyword)));
-        }
-    }
-
-    private void openSelectedSession() {
-        int selectedRow = sessionTable.getSelectedRow();
-        if (selectedRow < 0) {
-            return;
-        }
-
-        int modelRow = sessionTable.convertRowIndexToModel(selectedRow);
-        int sessionId = Integer.parseInt(sessionTableModel.getValueAt(modelRow, 0).toString());
-
-        SwingWorker<AttendanceSessionEditorData, Void> worker = new SwingWorker<>() {
-            @Override
-            protected AttendanceSessionEditorData doInBackground() {
-                return attendanceService.getSessionEditorData(sessionId);
-            }
-
-            @Override
-            protected void done() {
-                try {
-                    renderSessionEditor(get());
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(
-                            TOAttendancePanel.this,
-                            "Failed to load session attendance.",
-                            "Attendance Error",
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                }
-            }
-        };
-        worker.execute();
-    }
-
-    private void renderSessionEditor(AttendanceSessionEditorData data) {
-        selectedSession = data.getSession();
-        studentTableModel.setRowCount(0);
-
-        if (selectedSession == null) {
-            lblSelectedSession.setText("Select a session row to edit attendance.");
-            return;
-        }
-
-        lblSelectedSession.setText(
-                selectedSession.getCourseCode() + " | Session " + selectedSession.getSessionNo() + " | " +
-                        selectedSession.getSessionDate() + " | " + selectedSession.getTimeRange()
-        );
-
-        data.getStudentRows().forEach(row -> studentTableModel.addRow(new Object[]{
-                row.getRegistrationNo(),
-                row.getStudentName(),
-                row.getAttendanceStatus().isEmpty() ? "ABSENT" : row.getAttendanceStatus(),
-                row.getMedicalApprovalStatus().isEmpty() ? "-" : row.getMedicalApprovalStatus()
+    private void renderSessions(List<AttendanceSessionRow> list){
+        sessionModel.setRowCount(0);
+        list.forEach(r -> sessionModel.addRow(new Object[]{
+                r.getSessionId(), r.getCourseCode(), r.getCourseName(),
+                r.getSessionType(), r.getSessionNo(), r.getSessionDate(),
+                r.getSessionDay(), r.getTimeRange(), r.getVenue(), r.getSessionStatus()
         }));
+        studentModel.setRowCount(0);
+        lblSession.setText("Select session");
+        selectedSession = null;
     }
 
-    private void openAddSessionDialog() {
-        if (allCourses == null || allCourses.isEmpty() || allTimetableSessions == null || allTimetableSessions.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Course and timetable data are still loading.", "Attendance", JOptionPane.WARNING_MESSAGE);
+    private void filter(){
+        String k = txtSearch.getText().trim();
+        TableRowSorter<?> s = (TableRowSorter<?>) sessionTable.getRowSorter();
+        s.setRowFilter(k.isEmpty()? null : RowFilter.regexFilter("(?i)"+k));
+    }
+
+    private void openSession(){
+        int r = sessionTable.getSelectedRow();
+        if(r<0) return;
+
+        int id = Integer.parseInt(sessionModel.getValueAt(
+                sessionTable.convertRowIndexToModel(r),0).toString());
+
+        new SwingWorker<AttendanceSessionEditorData,Void>(){
+            protected AttendanceSessionEditorData doInBackground(){
+                return attendanceService.getSessionEditorData(id);
+            }
+            protected void done(){
+                try{ renderEditor(get()); }
+                catch(Exception e){ showError("Load failed"); }
+            }
+        }.execute();
+    }
+
+    private void renderEditor(AttendanceSessionEditorData d){
+        selectedSession = d.getSession();
+        studentModel.setRowCount(0);
+
+        if(selectedSession==null) return;
+
+        lblSession.setText(selectedSession.getCourseCode()+" | "+selectedSession.getSessionDate());
+
+        d.getStudentRows().forEach(s ->
+                studentModel.addRow(new Object[]{
+                        s.getRegistrationNo(),
+                        s.getStudentName(),
+                        s.getAttendanceStatus().isEmpty()?"ABSENT":s.getAttendanceStatus(),
+                        s.getMedicalApprovalStatus()
+                }));
+    }
+
+    private void openDialog(){
+        if(courses.isEmpty()) {
+            JOptionPane.showMessageDialog(this,"Loading...");
             return;
         }
 
-        AttendanceSessionDialog dialog = new AttendanceSessionDialog(
+        AttendanceSessionDialog d = new AttendanceSessionDialog(
                 SwingUtilities.getWindowAncestor(this),
-                allCourses,
-                allTimetableSessions
-        );
-        dialog.setVisible(true);
+                courses, timetableSessions);
 
-        AddAttendanceSessionRequest request = dialog.getRequest();
-        if (request == null) {
-            return;
-        }
+        d.setVisible(true);
 
-        try {
-            attendanceSessionController.createSessionForTo(request);
-            JOptionPane.showMessageDialog(this, "New session created successfully.");
+        AddAttendanceSessionRequest req = d.getRequest();
+        if(req==null) return;
+
+        try{
+            controller.createSessionForTo(req);
             loadSessions();
-        } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Attendance Error", JOptionPane.ERROR_MESSAGE);
-        }
+        }catch(Exception e){ showError(e.getMessage()); }
     }
 
-    private void saveAttendance() {
-        if (selectedSession == null) {
-            JOptionPane.showMessageDialog(this, "Select a session first.", "Attendance", JOptionPane.WARNING_MESSAGE);
+    private void saveAttendance(){
+        if(selectedSession==null){
+            JOptionPane.showMessageDialog(this,"Select session first");
             return;
         }
 
-        List<StudentAttendanceUpdate> updates = new ArrayList<>();
-        for (int row = 0; row < studentTableModel.getRowCount(); row++) {
-            updates.add(new StudentAttendanceUpdate(
-                    String.valueOf(studentTableModel.getValueAt(row, 0)),
-                    String.valueOf(studentTableModel.getValueAt(row, 2))
+        List<StudentAttendanceUpdate> list = new ArrayList<>();
+        for(int i=0;i<studentModel.getRowCount();i++){
+            list.add(new StudentAttendanceUpdate(
+                    String.valueOf(studentModel.getValueAt(i,0)),
+                    String.valueOf(studentModel.getValueAt(i,2))
             ));
         }
 
-        try {
-            attendanceSessionController.saveAttendance(selectedSession.getSessionId(), currentUser.getId(), updates);
-            JOptionPane.showMessageDialog(this, "Attendance saved successfully.");
-            openSelectedSession();
-        } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Attendance Error", JOptionPane.ERROR_MESSAGE);
-        }
+        try{
+            controller.saveAttendance(selectedSession.getSessionId(),
+                    currentUser.getId(), list);
+            JOptionPane.showMessageDialog(this,"Saved");
+            openSession();
+        }catch(Exception e){ showError(e.getMessage()); }
     }
 }
