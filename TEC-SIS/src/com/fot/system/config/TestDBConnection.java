@@ -10,8 +10,7 @@ public class TestDBConnection {
             Connection conn = DBConnection.getInstance().getConnection();
 
             if (conn != null && !conn.isClosed()) {
-                System.out.println(" Database connected successfully!");
-            } else {
+                System.out.println(" Database connected successfully!");            } else {
                 System.out.println(" Failed to connect to database.");
             }
 
