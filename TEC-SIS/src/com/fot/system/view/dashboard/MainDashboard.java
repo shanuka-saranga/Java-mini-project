@@ -23,7 +23,6 @@ import com.fot.system.view.dashboard.student.StudentHomePanel;
 import com.fot.system.view.dashboard.to.TOHomePanel;
 import com.fot.system.view.dashboard.to.TOAttendancePanel;
 import com.fot.system.view.dashboard.to.TOMedicalPanel;
-import com.fot.system.view.dashboard.shared.FeaturePlaceholderPanel;
 import com.fot.system.view.dashboard.to.TOTimetablePanel;
 import com.fot.system.view.dashboard.shared.UserProfilePanelFactory;
 import com.fot.system.view.dashboard.sidebar.AdminSidebar;
@@ -40,10 +39,17 @@ public class MainDashboard extends JFrame {
     private BaseSidebar sidebar;
     private JPanel contentArea;
     private CardLayout cardLayout;
-    private User currentUser;
+    private final User currentUser;
+    private final String normalizedRole;
 
+    /**
+     * Main Dashboard frame
+     * @param user logged in user
+     * @author methum
+     */
     public MainDashboard(User user) {
         this.currentUser = user;
+        this.normalizedRole = normalizeRole(user);
 
         setTitle("TEC-SIS | " + user.getRole() + " Dashboard");
         setSize(1100, 700);
@@ -51,71 +57,144 @@ public class MainDashboard extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        if (AppConfig.ROLE_ADMIN.equalsIgnoreCase(user.getRole())) {
-            sidebar = new AdminSidebar(this);
-        } else if (AppConfig.ROLE_STUDENT.equalsIgnoreCase(user.getRole())) {
-            sidebar = new StudentSidebar(this);
-        } else if (AppConfig.ROLE_LECTURER.equalsIgnoreCase(user.getRole()) || AppConfig.ROLE_DEAN.equalsIgnoreCase(user.getRole())) {
-            sidebar = new LecturerSidebar(this);
-        } else if (AppConfig.ROLE_TO.equalsIgnoreCase(user.getRole())) {
-            sidebar = new TOSidebar(this);
-        } else {
-            sidebar = new LecturerSidebar(this);
-        }
+        sidebar = createSidebar();
         add(sidebar, BorderLayout.WEST);
         cardLayout = new CardLayout();
         contentArea = new JPanel(cardLayout);
         contentArea.setBackground(Color.WHITE);
-
-        if (AppConfig.ROLE_LECTURER.equalsIgnoreCase(user.getRole())) {
-            contentArea.add(new LecturerHomePanel(user), AppConfig.MENU_HOME);
-            contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
-            contentArea.add(new LecturerCoursesPanel(user), AppConfig.MENU_COURSES);
-            contentArea.add(new LecturerAttendancePanel(user), AppConfig.MENU_ATTENDANCE);
-            contentArea.add(new LecturerMarksAndGradesPanel(user), AppConfig.MENU_MARKS);
-            contentArea.add(new LecturerExamEligibilityPanel(user), AppConfig.MENU_EXAM_ELIGIBILITY);
-            contentArea.add(new FeaturePlaceholderPanel(
-                    "Notices",
-                    "This section can show notices relevant to lecturers, including faculty-wide and course-related announcements."
-            ), AppConfig.MENU_NOTICES);
-            contentArea.add(new TimetablePanel(user), AppConfig.MENU_TIMETABLES);
-            contentArea.add(new StudentDetailsPanel(user),AppConfig.MENU_STUDENTS);
-            contentArea.add(new NoticePanel(user),AppConfig.MENU_NOTICES);
-        } else if (AppConfig.ROLE_STUDENT.equalsIgnoreCase(user.getRole())) {
-            contentArea.add(new StudentHomePanel(user), AppConfig.MENU_HOME);
-            contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
-            contentArea.add(new StudentMarksAndGradesPanel(user), AppConfig.MENU_MARKS);
-            contentArea.add(new StudentAttendanceMedicalPanel(user), AppConfig.MENU_ATTENDANCE);
-            contentArea.add(new NoticePanel(user), AppConfig.MENU_NOTICES);
-            contentArea.add(new StudentTimetablePanel(user), AppConfig.MENU_TIMETABLES);
-        } else if (AppConfig.ROLE_TO.equalsIgnoreCase(user.getRole())) {
-            contentArea.add(new TOHomePanel(user), AppConfig.MENU_HOME);
-            contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
-            contentArea.add(new TOAttendancePanel(user), AppConfig.MENU_ATTENDANCE);
-            contentArea.add(new TOMedicalPanel(user), AppConfig.MENU_MEDICALS);
-            contentArea.add(new TOTimetablePanel(user), AppConfig.MENU_TIMETABLES);
-            contentArea.add(new NoticePanel(user), AppConfig.MENU_NOTICES);
-        } else {
-            contentArea.add(new AdminHomePanel(user), AppConfig.MENU_HOME);
-            contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
-            contentArea.add(new ManageUsersPanel(user),AppConfig.MENU_MANAGE_USERS);
-            contentArea.add(new ManageCoursesPanel(user), AppConfig.MENU_MANAGE_COURSES);
-            contentArea.add(new ManageNoticesPanel(user), AppConfig.MENU_MANAGE_NOTICES);
-            contentArea.add(new TimetablePanel(user), AppConfig.MENU_TIMETABLES);
-
-
-        }
+        addRolePanels();
         add(contentArea, BorderLayout.CENTER);
-
-
     }
 
+    /**
+     * Create sidebar by user role
+     * @author methum
+     */
+    private BaseSidebar createSidebar() {
+        if (AppConfig.ROLE_ADMIN.equals(normalizedRole)) {
+            return new AdminSidebar(this);
+        }
+
+        if (AppConfig.ROLE_STUDENT.equals(normalizedRole)) {
+            return new StudentSidebar(this);
+        }
+
+        if (AppConfig.ROLE_TO.equals(normalizedRole)) {
+            return new TOSidebar(this);
+        }
+
+        if (AppConfig.ROLE_LECTURER.equals(normalizedRole) || AppConfig.ROLE_DEAN.equals(normalizedRole)) {
+            return new LecturerSidebar(this);
+        }
+
+        return new LecturerSidebar(this);
+    }
+
+    /**
+     * Register dashboard cards by role
+     * @author methum
+     */
+    private void addRolePanels() {
+        if (AppConfig.ROLE_LECTURER.equals(normalizedRole)) {
+            addLecturerPanels();
+            return;
+        }
+
+        if (AppConfig.ROLE_STUDENT.equals(normalizedRole)) {
+            addStudentPanels();
+            return;
+        }
+
+        if (AppConfig.ROLE_TO.equals(normalizedRole)) {
+            addTOPanels();
+            return;
+        }
+
+        addAdminPanels();
+    }
+
+    /**
+     * Add lecturer dashboard panels
+     * @author methum
+     */
+    private void addLecturerPanels() {
+        contentArea.add(new LecturerHomePanel(currentUser), AppConfig.MENU_HOME);
+        contentArea.add(UserProfilePanelFactory.create(currentUser), AppConfig.MENU_PROFILE);
+        contentArea.add(new LecturerCoursesPanel(currentUser), AppConfig.MENU_COURSES);
+        contentArea.add(new LecturerAttendancePanel(currentUser), AppConfig.MENU_ATTENDANCE);
+        contentArea.add(new LecturerMarksAndGradesPanel(currentUser), AppConfig.MENU_MARKS);
+        contentArea.add(new LecturerExamEligibilityPanel(currentUser), AppConfig.MENU_EXAM_ELIGIBILITY);
+        contentArea.add(new TimetablePanel(currentUser), AppConfig.MENU_TIMETABLES);
+        contentArea.add(new StudentDetailsPanel(currentUser), AppConfig.MENU_STUDENTS);
+        contentArea.add(new NoticePanel(currentUser), AppConfig.MENU_NOTICES);
+    }
+
+    /**
+     * Add student dashboard panels
+     * @author janith
+     */
+    private void addStudentPanels() {
+        contentArea.add(new StudentHomePanel(currentUser), AppConfig.MENU_HOME);
+        contentArea.add(UserProfilePanelFactory.create(currentUser), AppConfig.MENU_PROFILE);
+        contentArea.add(new StudentMarksAndGradesPanel(currentUser), AppConfig.MENU_MARKS);
+        contentArea.add(new StudentAttendanceMedicalPanel(currentUser), AppConfig.MENU_ATTENDANCE);
+        contentArea.add(new NoticePanel(currentUser), AppConfig.MENU_NOTICES);
+        contentArea.add(new StudentTimetablePanel(currentUser), AppConfig.MENU_TIMETABLES);
+    }
+
+    /**
+     * Add technical officer dashboard panels
+     * @author methum
+     */
+    private void addTOPanels() {
+        contentArea.add(new TOHomePanel(currentUser), AppConfig.MENU_HOME);
+        contentArea.add(UserProfilePanelFactory.create(currentUser), AppConfig.MENU_PROFILE);
+        contentArea.add(new TOAttendancePanel(currentUser), AppConfig.MENU_ATTENDANCE);
+        contentArea.add(new TOMedicalPanel(currentUser), AppConfig.MENU_MEDICALS);
+        contentArea.add(new TOTimetablePanel(currentUser), AppConfig.MENU_TIMETABLES);
+        contentArea.add(new NoticePanel(currentUser), AppConfig.MENU_NOTICES);
+    }
+
+    /**
+     * Add admin dashboard panels
+     * @author methum
+     */
+    private void addAdminPanels() {
+        contentArea.add(new AdminHomePanel(currentUser), AppConfig.MENU_HOME);
+        contentArea.add(UserProfilePanelFactory.create(currentUser), AppConfig.MENU_PROFILE);
+        contentArea.add(new ManageUsersPanel(currentUser), AppConfig.MENU_MANAGE_USERS);
+        contentArea.add(new ManageCoursesPanel(currentUser), AppConfig.MENU_MANAGE_COURSES);
+        contentArea.add(new ManageNoticesPanel(currentUser), AppConfig.MENU_MANAGE_NOTICES);
+        contentArea.add(new TimetablePanel(currentUser), AppConfig.MENU_TIMETABLES);
+    }
+
+    /**
+     * Normalize user role text to uppercase
+     * @param user logged in user
+     * @author methum
+     */
+    private String normalizeRole(User user) {
+        if (user == null || user.getRole() == null) {
+            return "";
+        }
+        return user.getRole().trim().toUpperCase();
+    }
+
+    /**
+     * Switch content panel by card name
+     * @param cardName panel card id
+     * @author methum
+     */
     public void switchPanel(String cardName) {
         cardLayout.show(contentArea, cardName);
         contentArea.revalidate();
         contentArea.repaint();
     }
 
+    /**
+     * Logout from dashboard and open login screen
+     * @author methum
+     */
     public void logout() {
         int choice = JOptionPane.showConfirmDialog(
                 this,
@@ -134,13 +213,12 @@ public class MainDashboard extends JFrame {
         dispose();
     }
 
+    /**
+     * Get development email by current role
+     * @author methum
+     */
     private String getDevEmailForRole() {
-        if (currentUser == null || currentUser.getRole() == null) {
-            return "";
-        }
-
-        String role = currentUser.getRole().trim().toUpperCase();
-        return switch (role) {
+        return switch (normalizedRole) {
             case "ADMIN" -> "admin@tec.ruh.ac.lk";
             case "STUDENT" -> "aruni@fot.ruh.ac.lk";
             case "LECTURER" -> "nimal@tec.ruh.ac.lk";
@@ -148,6 +226,4 @@ public class MainDashboard extends JFrame {
             default -> "";
         };
     }
-
-
 }
