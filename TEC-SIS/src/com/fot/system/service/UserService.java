@@ -134,7 +134,7 @@ public class UserService implements IUserService {
     /**
      * Checks whether a user email already exists.
      * @param email email to check
-     * @return {@code true} when the email already exists
+     * @author janith
      */
     public boolean emailExists(String email) {
         return userRepository.existsByEmail(email);
@@ -144,16 +144,16 @@ public class UserService implements IUserService {
      * Checks whether a user email exists for another user record.
      * @param email  email to check
      * @param userId current user id to exclude
-     * @return {@code true} when another user already has this email
+     * @author janith
      */
     public boolean emailExistsExcludingUserId(String email, int userId) {
-        return userRepository.existsByEmailExcludingUserId(email, userId);
+        return userRepository.existsByEmailAndUserId(email, userId);
     }
 
     /**
      * Checks whether a phone number already exists.
      * @param phone phone number to check
-     * @return {@code true} when the phone number already exists
+     * @author janith
      */
     public boolean phoneExists(String phone) {
         return userRepository.existsByPhone(phone);
@@ -163,7 +163,7 @@ public class UserService implements IUserService {
      * Checks whether a phone number exists for another user record.
      * @param phone  phone number to check
      * @param userId current user id to exclude
-     * @return {@code true} when another user already has this phone number
+     * @author janith
      */
     public boolean phoneExistsExcludingUserId(String phone, int userId) {
         return userRepository.existsByPhoneExcludingUserId(phone, userId);
@@ -172,7 +172,7 @@ public class UserService implements IUserService {
     /**
      * Checks whether a student registration number already exists.
      * @param registrationNo registration number to check
-     * @return {@code true} when the registration number already exists
+     * @author janith
      */
     public boolean registrationNoExists(String registrationNo) {
         return userRepository.existsByRegistrationNo(registrationNo);
@@ -182,7 +182,7 @@ public class UserService implements IUserService {
      * Checks whether a student registration number exists for another user record.
      * @param registrationNo registration number to check
      * @param userId         current user id to exclude
-     * @return {@code true} when another user already has this registration number
+     * @author janith
      */
     public boolean registrationNoExistsExcludingUserId(String registrationNo, int userId) {
         return userRepository.existsByRegistrationNoExcludingUserId(registrationNo, userId);
@@ -191,7 +191,7 @@ public class UserService implements IUserService {
     /**
      * Checks whether a staff code already exists.
      * @param staffCode staff code to check
-     * @return {@code true} when the staff code already exists
+     * @author janith
      */
     public boolean staffCodeExists(String staffCode) {
         return userRepository.existsByStaffCode(staffCode);
@@ -201,7 +201,7 @@ public class UserService implements IUserService {
      * Checks whether a staff code exists for another user record.
      * @param staffCode staff code to check
      * @param userId    current user id to exclude
-     * @return {@code true} when another user already has this staff code
+     * @author janith
      */
     public boolean staffCodeExistsExcludingUserId(String staffCode, int userId) {
         return userRepository.existsByStaffCodeExcludingUserId(staffCode, userId);
