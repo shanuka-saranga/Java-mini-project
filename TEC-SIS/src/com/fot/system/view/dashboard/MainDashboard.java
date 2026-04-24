@@ -66,6 +66,7 @@ public class MainDashboard extends JFrame {
         cardLayout = new CardLayout();
         contentArea = new JPanel(cardLayout);
         contentArea.setBackground(Color.WHITE);
+
         if (AppConfig.ROLE_LECTURER.equalsIgnoreCase(user.getRole())) {
             contentArea.add(new LecturerHomePanel(user), AppConfig.MENU_HOME);
             contentArea.add(UserProfilePanelFactory.create(user), AppConfig.MENU_PROFILE);
