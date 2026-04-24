@@ -77,7 +77,7 @@ public class ManageNoticesPanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("Notice Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        title.setFont(AppTheme.fontBold(26));
 
         CustomButton addBtn = new CustomButton(
                 "Add New Notice",

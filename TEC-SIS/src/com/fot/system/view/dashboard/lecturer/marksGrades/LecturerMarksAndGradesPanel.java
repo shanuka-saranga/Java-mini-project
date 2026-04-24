@@ -76,7 +76,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         lblSelectedCourse = createTitleLabel("-");
         lblSemesterSummary = createMetaLabel("-");
         lblOpenedCourseTab = new JLabel("Opened Course");
-        lblOpenedCourseTab.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblOpenedCourseTab.setFont(AppTheme.fontBold(16));
         lblOpenedCourseTab.setForeground(AppTheme.TEXT_DARK);
         detailsCardLayout = new CardLayout();
         detailsContentPanel = new JPanel(detailsCardLayout);
@@ -104,7 +104,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         summaryCardsPanel.setOpaque(false);
 
         txtGradeSearch = new JTextField();
-        txtGradeSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtGradeSearch.setFont(AppTheme.fontPlain(13));
         txtGradeSearch.setPreferredSize(new Dimension(420, 38));
         txtGradeSearch.setMinimumSize(new Dimension(220, 38));
         txtGradeSearch.setBorder(BorderFactory.createCompoundBorder(
@@ -129,7 +129,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         });
 
         cmbGradeBatch = new JComboBox<>();
-        cmbGradeBatch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        cmbGradeBatch.setFont(AppTheme.fontPlain(13));
         cmbGradeBatch.setPreferredSize(new Dimension(160, 38));
         cmbGradeBatch.addActionListener(e -> applyGradeFilters());
 
@@ -146,14 +146,14 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         gradeTable = new JTable(gradeTableModel);
         gradeTable.setAutoCreateRowSorter(true);
         gradeTable.setRowHeight(28);
-        gradeTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        gradeTable.setFont(AppTheme.fontPlain(13));
         gradeTable.setForeground(AppTheme.TEXT_DARK);
         gradeTable.setGridColor(AppTheme.BORDER_SOFT);
         gradeTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         gradeTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
         gradeTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         gradeTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        gradeTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        gradeTable.getTableHeader().setFont(AppTheme.fontBold(13));
         gradeTable.setFillsViewportHeight(true);
 
         gradeRowSorter = new TableRowSorter<>(gradeTableModel);
@@ -196,11 +196,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("Marks / Grades");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Open one of your assigned courses to review marks participation and assessment progress.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);
@@ -218,14 +218,14 @@ public class LecturerMarksAndGradesPanel extends JPanel {
 
     private JLabel createTitleLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        label.setFont(AppTheme.fontBold(22));
         label.setForeground(AppTheme.TEXT_DARK);
         return label;
     }
 
     private JLabel createMetaLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        label.setFont(AppTheme.fontPlain(14));
         label.setForeground(AppTheme.TEXT_SUBTLE);
         return label;
     }
@@ -261,7 +261,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
 
         if (assignedCourses == null || assignedCourses.isEmpty()) {
             JLabel empty = new JLabel("No assigned courses available.");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            empty.setFont(AppTheme.fontPlain(14));
             empty.setForeground(AppTheme.TEXT_SUBTLE);
             empty.setBorder(new EmptyBorder(12, 8, 12, 8));
             courseListPanel.add(empty);
@@ -369,7 +369,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
 
         if (summaries == null || summaries.isEmpty()) {
             JLabel empty = new JLabel("No assessment summary data available for the current year and semester.");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            empty.setFont(AppTheme.fontPlain(14));
             empty.setForeground(AppTheme.TEXT_SUBTLE);
             summaryCardsPanel.setLayout(new BorderLayout());
             summaryCardsPanel.add(empty, BorderLayout.CENTER);
@@ -405,7 +405,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         section.setLayout(new BoxLayout(section, BoxLayout.Y_AXIS));
 
         JLabel sectionTitle = new JLabel("Grades");
-        sectionTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        sectionTitle.setFont(AppTheme.fontBold(18));
         sectionTitle.setForeground(AppTheme.TEXT_DARK);
 
         JPanel controlsPanel = new JPanel(new BorderLayout(12, 0));
@@ -425,7 +425,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         batchFilterPanel.setPreferredSize(new Dimension(240, 38));
         batchFilterPanel.setMaximumSize(new Dimension(240, 38));
         JLabel batchLabel = new JLabel("Batch");
-        batchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        batchLabel.setFont(AppTheme.fontPlain(13));
         batchLabel.setForeground(AppTheme.TEXT_SUBTLE);
         batchFilterPanel.add(batchLabel, BorderLayout.WEST);
         batchFilterPanel.add(cmbGradeBatch, BorderLayout.CENTER);

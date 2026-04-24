@@ -64,11 +64,11 @@ public abstract class UserProfilePanel extends JPanel {
         header.setBorder(new EmptyBorder(0, 0, 18, 0));
 
         JLabel title = new JLabel("My Profile");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel(getSubtitleText());
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);

@@ -82,7 +82,7 @@ public class NoticeDetailsPanel extends JPanel {
         txtContent.setEditable(false);
         txtContent.setLineWrap(true);
         txtContent.setWrapStyleWord(true);
-        txtContent.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtContent.setFont(AppTheme.fontPlain(14));
         txtContent.setBackground(new Color(248, 251, 251));
         txtContent.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -251,7 +251,7 @@ public class NoticeDetailsPanel extends JPanel {
 
     private JLabel createStyledLabel(String text, FontAwesomeSolid icon) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        label.setFont(AppTheme.fontPlain(14));
         label.setIcon(FontIcon.of(icon, 16, tealColor));
         label.setIconTextGap(12);
         return label;

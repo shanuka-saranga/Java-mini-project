@@ -132,7 +132,7 @@ public class StudentDetailsPanel extends JPanel {
 
     private void styleTable(JTable table) {
         table.setRowHeight(35);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.setFont(AppTheme.fontPlain(13));
         table.setGridColor(AppTheme.BORDER_SOFT);
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
@@ -144,7 +144,7 @@ public class StudentDetailsPanel extends JPanel {
 
         table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        table.getTableHeader().setFont(AppTheme.fontBold(13));
         table.getTableHeader().setPreferredSize(new Dimension(0, 40));
     }
 
@@ -152,11 +152,11 @@ public class StudentDetailsPanel extends JPanel {
         JPanel p = new JPanel(new BorderLayout(0, 5));
         p.setOpaque(false);
         JLabel title = new JLabel("Student Overall Performance");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Comprehensive student profiles with contact information and academic GPA.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         p.add(title, BorderLayout.NORTH);

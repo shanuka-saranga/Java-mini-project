@@ -262,7 +262,7 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
 
     private JLabel createTitleLabel() {
         JLabel label = new JLabel("-");
-        label.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        label.setFont(AppTheme.fontBold(24));
         label.setForeground(AppTheme.TEXT_DARK);
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         return label;
@@ -270,7 +270,7 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
 
     private JLabel createMetaLabel() {
         JLabel label = new JLabel("-");
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_SUBTLE);
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         return label;
@@ -282,13 +282,13 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
         label.setBackground(AppTheme.BTN_EDIT_BG);
         label.setForeground(AppTheme.BTN_EDIT_FG);
         label.setBorder(new EmptyBorder(7, 14, 7, 14));
-        label.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        label.setFont(AppTheme.fontBold(12));
         return label;
     }
 
     private JLabel createValueLabel() {
         JLabel label = new JLabel("-");
-        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        label.setFont(AppTheme.fontBold(14));
         label.setForeground(AppTheme.TEXT_DARK);
         return label;
     }
@@ -331,7 +331,7 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
         ));
 
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        titleLabel.setFont(AppTheme.fontPlain(12));
         titleLabel.setForeground(AppTheme.TEXT_SUBTLE);
 
         row.add(titleLabel, BorderLayout.NORTH);

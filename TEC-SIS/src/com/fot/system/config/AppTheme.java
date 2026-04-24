@@ -3,6 +3,8 @@ package com.fot.system.config;
 import java.awt.*;
 
 public class AppTheme {
+    private AppTheme() {
+    }
 
     // Primary Colors
     public static final Color PRIMARY = new Color(0, 128, 128);      // Teal
@@ -48,9 +50,22 @@ public class AppTheme {
     public static final Color ACTION_DELETE_ICON_FG = new Color(198, 40, 40);
 
     // Fonts
-    public static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 22);
-    public static final Font MENU_FONT = new Font("Segoe UI", Font.PLAIN, 15);
-    public static final Font LABEL_FONT = new Font("Segoe UI", Font.PLAIN, 12);
+    public static final String FONT_FAMILY = "Segoe UI";
+    public static final Font TITLE_FONT = fontBold(22);
+    public static final Font MENU_FONT = fontPlain(15);
+    public static final Font LABEL_FONT = fontPlain(12);
+    public static final Font LOGIN_TITLE_FONT = fontBold(26);
+    public static final Font LOGIN_BUTTON_FONT = fontBold(16);
+    public static final Font FORM_LABEL_FONT = fontPlain(14);
+    public static final Font FORM_INPUT_FONT = fontPlain(15);
+
+    public static Font fontPlain(int size) {
+        return new Font(FONT_FAMILY, Font.PLAIN, size);
+    }
+
+    public static Font fontBold(int size) {
+        return new Font(FONT_FAMILY, Font.BOLD, size);
+    }
 
     // table
     public static final Color TABLE_HEADER_BG = PRIMARY;

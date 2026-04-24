@@ -1,5 +1,6 @@
 package com.fot.system.view.dashboard.admin;
 
+import com.fot.system.config.AppTheme;
 import com.fot.system.config.AppConfig;
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
@@ -59,10 +60,10 @@ public class AdminHomePanel extends JPanel {
         header.setOpaque(false);
 
         JLabel welcomeLabel = new JLabel("Welcome back, " + currentUser.getFullName() + "!");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        welcomeLabel.setFont(AppTheme.fontBold(28));
 
         JLabel subtitleLabel = new JLabel("Here is the current system overview with live counts and recent notices.");
-        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitleLabel.setFont(AppTheme.fontPlain(14));
         subtitleLabel.setForeground(new Color(110, 110, 110));
 
         header.add(welcomeLabel, BorderLayout.NORTH);
@@ -100,7 +101,7 @@ public class AdminHomePanel extends JPanel {
         ));
 
         JLabel title = new JLabel("Users Details");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        title.setFont(AppTheme.fontBold(20));
 
         JPanel list = new JPanel(new GridLayout(4, 1, 0, 12));
         list.setOpaque(false);
@@ -129,10 +130,10 @@ public class AdminHomePanel extends JPanel {
 
         JLabel iconLabel = new JLabel(org.kordamp.ikonli.swing.FontIcon.of(icon, 18, new Color(0, 121, 107)));
         JLabel textLabel = new JLabel(labelText);
-        textLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textLabel.setFont(AppTheme.fontPlain(14));
 
         JLabel countLabel = new JLabel("...");
-        countLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        countLabel.setFont(AppTheme.fontBold(16));
 
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         left.setOpaque(false);

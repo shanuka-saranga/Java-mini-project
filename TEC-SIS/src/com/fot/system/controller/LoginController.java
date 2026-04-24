@@ -34,7 +34,6 @@ public class LoginController {
                 User user = service.login(loginEmail, loginPassword);
 
                 if (user != null) {
-                    view.showSuccessMessage("Welcome " + user.getFullName());
                     openDashboard(user);
                     view.dispose();
                 } else {

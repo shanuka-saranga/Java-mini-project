@@ -31,7 +31,7 @@ public class FeedItemCard extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel(titleText);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        title.setFont(AppTheme.fontBold(15));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JTextArea body = new JTextArea(bodyText);
@@ -39,12 +39,12 @@ public class FeedItemCard extends JPanel {
         body.setLineWrap(true);
         body.setWrapStyleWord(true);
         body.setOpaque(false);
-        body.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        body.setFont(AppTheme.fontPlain(13));
         body.setForeground(AppTheme.TEXT_SUBTLE);
         body.setRows(2);
 
         JLabel meta = new JLabel(metaText);
-        meta.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        meta.setFont(AppTheme.fontPlain(12));
         meta.setForeground(AppTheme.TEXT_MUTED);
 
         header.add(title, BorderLayout.CENTER);

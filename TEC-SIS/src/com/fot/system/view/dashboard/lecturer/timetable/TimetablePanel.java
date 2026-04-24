@@ -49,11 +49,11 @@ public class TimetablePanel extends JPanel {
         titleBlock.setOpaque(false);
 
         JLabel title = new JLabel("Timetable Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        title.setFont(AppTheme.fontBold(26));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Manage timetable sessions in a clean editable table with add, edit, and delete actions.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         titleBlock.add(title, BorderLayout.NORTH);

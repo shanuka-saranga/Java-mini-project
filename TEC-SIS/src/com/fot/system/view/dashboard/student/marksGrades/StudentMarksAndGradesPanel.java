@@ -45,14 +45,14 @@ public class StudentMarksAndGradesPanel extends JPanel {
 
         marksTable = new JTable(tableModel);
         marksTable.setRowHeight(30);
-        marksTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        marksTable.setFont(AppTheme.fontPlain(13));
         marksTable.setForeground(AppTheme.TEXT_DARK);
         marksTable.setGridColor(AppTheme.BORDER_SOFT);
         marksTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         marksTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
         marksTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         marksTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        marksTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        marksTable.getTableHeader().setFont(AppTheme.fontBold(13));
         marksTable.setFillsViewportHeight(true);
         marksTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
@@ -85,11 +85,11 @@ public class StudentMarksAndGradesPanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("Marks / Grades");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Review your subject marks, final grades, current SGPA, and current CGPA.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);
@@ -99,7 +99,7 @@ public class StudentMarksAndGradesPanel extends JPanel {
 
     private JLabel createMetaLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        label.setFont(AppTheme.fontBold(14));
         label.setForeground(AppTheme.TEXT_DARK);
         return label;
     }

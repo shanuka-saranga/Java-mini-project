@@ -30,7 +30,7 @@ public abstract class BaseSidebar extends JPanel {
         add(Box.createVerticalStrut(30));
         JLabel title = new JLabel("TEC-SIS");
         title.setForeground(AppTheme.TEXT_LIGHT);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        title.setFont(AppTheme.fontBold(24));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(title);
 

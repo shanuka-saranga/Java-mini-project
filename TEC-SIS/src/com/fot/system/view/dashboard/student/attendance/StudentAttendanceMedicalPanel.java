@@ -82,11 +82,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("Attendance");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Review all recorded session attendance and submitted medical records for your student account.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);
@@ -99,11 +99,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         panel.setOpaque(false);
 
         lblAttendanceMeta = new JLabel("Loading attendance records...");
-        lblAttendanceMeta.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblAttendanceMeta.setFont(AppTheme.fontPlain(14));
         lblAttendanceMeta.setForeground(AppTheme.TEXT_SUBTLE);
 
         txtSearch = new JTextField();
-        txtSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtSearch.setFont(AppTheme.fontPlain(13));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
                 new EmptyBorder(8, 10, 8, 10)
@@ -186,7 +186,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
             }
         };
         lblMedicalDetailsMeta = new JLabel("Select a medical row to view its linked sessions.");
-        lblMedicalDetailsMeta.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        lblMedicalDetailsMeta.setFont(AppTheme.fontPlain(13));
         lblMedicalDetailsMeta.setForeground(AppTheme.TEXT_SUBTLE);
         medicalDetailsPanel = createMedicalDetailsPanel();
         medicalTable.getSelectionModel().addListSelectionListener(e -> {
@@ -218,7 +218,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
 
     private JLabel createSectionLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        label.setFont(AppTheme.fontBold(18));
         label.setForeground(AppTheme.TEXT_DARK);
         return label;
     }
@@ -226,14 +226,14 @@ public class StudentAttendanceMedicalPanel extends JPanel {
     private JTable createStyledTable(DefaultTableModel model) {
         JTable table = new JTable(model);
         table.setRowHeight(28);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.setFont(AppTheme.fontPlain(13));
         table.setForeground(AppTheme.TEXT_DARK);
         table.setGridColor(AppTheme.BORDER_SOFT);
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
         table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        table.getTableHeader().setFont(AppTheme.fontBold(13));
         table.setFillsViewportHeight(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         return table;
@@ -264,7 +264,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
 
         JLabel courseLabel = new JLabel(courseCode + " - " + courseName);
-        courseLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        courseLabel.setFont(AppTheme.fontBold(13));
         courseLabel.setForeground(AppTheme.TEXT_DARK);
 
         JProgressBar progressBar = new JProgressBar(0, 100);
@@ -322,7 +322,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         rangePanel.add(loadAbsentButton);
 
         lblAbsentSessionMeta = new JLabel("Enter the medical date range first.");
-        lblAbsentSessionMeta.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        lblAbsentSessionMeta.setFont(AppTheme.fontPlain(13));
         lblAbsentSessionMeta.setForeground(AppTheme.TEXT_SUBTLE);
 
         absentSessionTableModel = new DefaultTableModel(
@@ -392,7 +392,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
 
     private JTextField createCompactTextField() {
         JTextField field = new JTextField();
-        field.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        field.setFont(AppTheme.fontPlain(13));
         field.setPreferredSize(new Dimension(120, 38));
         field.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
@@ -473,7 +473,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
 
         if (rows == null || rows.isEmpty()) {
             JLabel empty = new JLabel("No course attendance percentages available.");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            empty.setFont(AppTheme.fontPlain(13));
             empty.setForeground(AppTheme.TEXT_SUBTLE);
             courseAttendanceSummaryPanel.add(empty);
             courseAttendanceSummaryPanel.revalidate();
@@ -501,7 +501,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
 
         if (aggregates.isEmpty()) {
             JLabel empty = new JLabel("No completed course sessions available yet.");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            empty.setFont(AppTheme.fontPlain(13));
             empty.setForeground(AppTheme.TEXT_SUBTLE);
             courseAttendanceSummaryPanel.add(empty);
         } else {

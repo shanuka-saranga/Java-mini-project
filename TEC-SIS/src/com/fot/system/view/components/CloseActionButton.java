@@ -11,7 +11,7 @@ public class CloseActionButton extends JButton {
 
     public CloseActionButton() {
         super("X");
-        setFont(new Font("Segoe UI", Font.BOLD, 18));
+        setFont(AppTheme.fontBold(18));
         setForeground(AppTheme.CLOSE_ACTION);
         setBorder(null);
         setOpaque(false);

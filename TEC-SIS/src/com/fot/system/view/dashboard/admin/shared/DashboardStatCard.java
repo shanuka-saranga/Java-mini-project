@@ -27,11 +27,11 @@ public class DashboardStatCard extends JPanel {
         textPanel.setOpaque(false);
 
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        titleLabel.setFont(AppTheme.fontPlain(14));
         titleLabel.setForeground(new Color(120, 120, 120));
 
         valueLabel = new JLabel(initialValue);
-        valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        valueLabel.setFont(AppTheme.fontBold(24));
         valueLabel.setForeground(new Color(40, 40, 40));
 
         textPanel.add(titleLabel);

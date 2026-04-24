@@ -254,7 +254,7 @@ public class UserDetailsPanel extends JPanel {
 
     private JLabel createStyledLabel(String text, FontAwesomeSolid icon) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        label.setFont(AppTheme.fontPlain(14));
         label.setIcon(FontIcon.of(icon, 16, TEAL_COLOR));
         label.setIconTextGap(12);
         return label;

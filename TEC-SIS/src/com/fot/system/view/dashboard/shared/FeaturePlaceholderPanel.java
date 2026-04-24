@@ -21,7 +21,7 @@ public class FeaturePlaceholderPanel extends JPanel {
         ));
 
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setFont(AppTheme.fontBold(28));
         titleLabel.setForeground(AppTheme.TEXT_DARK);
 
         JTextArea descriptionArea = new JTextArea(description);
@@ -29,7 +29,7 @@ public class FeaturePlaceholderPanel extends JPanel {
         descriptionArea.setLineWrap(true);
         descriptionArea.setEditable(false);
         descriptionArea.setOpaque(false);
-        descriptionArea.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        descriptionArea.setFont(AppTheme.fontPlain(15));
         descriptionArea.setForeground(AppTheme.TEXT_SUBTLE);
 
         card.add(titleLabel, BorderLayout.NORTH);

@@ -44,7 +44,7 @@ public class AssessmentSummaryCard extends JPanel {
     private JLabel createLabel(String text, int style, int size, Color color) {
         JLabel label = new JLabel(text);
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
-        label.setFont(new Font("Segoe UI", style, size));
+        label.setFont(new Font(AppTheme.FONT_FAMILY, style, size));
         label.setForeground(color);
         return label;
     }

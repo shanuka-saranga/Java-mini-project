@@ -59,10 +59,10 @@ public class AttendanceSessionDialog extends JDialog {
         panel.setOpaque(false);
 
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_DARK);
 
-        field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        field.setFont(AppTheme.fontPlain(14));
         panel.add(label, BorderLayout.NORTH);
         panel.add(field, BorderLayout.CENTER);
         return panel;

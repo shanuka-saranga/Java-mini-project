@@ -66,7 +66,7 @@ public class UserProfileEditPanel extends JPanel {
         styleTextField(txtProfilePicture);
 
         lblEditHint = new JLabel();
-        lblEditHint.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        lblEditHint.setFont(AppTheme.fontPlain(13));
         lblEditHint.setForeground(AppTheme.TEXT_SUBTLE);
         lblEditHint.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -294,7 +294,7 @@ public class UserProfileEditPanel extends JPanel {
         panel.setOpaque(false);
 
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_DARK);
 
         JPanel wrap = new JPanel(new BorderLayout());
@@ -315,7 +315,7 @@ public class UserProfileEditPanel extends JPanel {
         panel.setOpaque(false);
 
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_DARK);
 
         panel.add(label, BorderLayout.NORTH);
@@ -329,7 +329,7 @@ public class UserProfileEditPanel extends JPanel {
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
 
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_DARK);
 
         panel.add(label, BorderLayout.NORTH);
@@ -351,13 +351,13 @@ public class UserProfileEditPanel extends JPanel {
 
     private JLabel createValueLabel() {
         JLabel label = new JLabel("-");
-        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        label.setFont(AppTheme.fontBold(14));
         label.setForeground(AppTheme.TEXT_DARK);
         return label;
     }
 
     private void styleTextField(JTextField textField) {
-        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textField.setFont(AppTheme.fontPlain(14));
         textField.setPreferredSize(new Dimension(0, 40));
         textField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(AppTheme.BORDER_MUTED),
@@ -366,7 +366,7 @@ public class UserProfileEditPanel extends JPanel {
     }
 
     private void styleTextArea(JTextArea textArea) {
-        textArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textArea.setFont(AppTheme.fontPlain(14));
         textArea.setBorder(new EmptyBorder(9, 10, 9, 10));
     }
 

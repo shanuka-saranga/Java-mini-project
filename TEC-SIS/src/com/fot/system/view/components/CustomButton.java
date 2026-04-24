@@ -1,5 +1,6 @@
 package com.fot.system.view.components;
 
+import com.fot.system.config.AppTheme;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -26,7 +27,7 @@ public class CustomButton extends JButton {
         setPreferredSize(size);
         setMinimumSize(size);
 
-        setFont(new Font("Segoe UI", Font.BOLD, 14));
+        setFont(AppTheme.fontBold(14));
         setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         addMouseListener(new MouseAdapter() {

@@ -48,10 +48,10 @@ public class TOHomePanel extends JPanel {
         header.setOpaque(false);
 
         JLabel welcomeLabel = new JLabel("Welcome back, " + currentUser.getFullName() + "!");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        welcomeLabel.setFont(AppTheme.fontBold(28));
 
         JLabel subtitleLabel = new JLabel("Here is your technical officer overview with pending medical submissions and recent notices.");
-        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitleLabel.setFont(AppTheme.fontPlain(14));
         subtitleLabel.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(welcomeLabel, BorderLayout.NORTH);

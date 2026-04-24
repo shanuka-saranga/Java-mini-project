@@ -22,11 +22,11 @@ public class SectionCard extends JPanel {
         header.setOpaque(false);
 
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 17));
+        titleLabel.setFont(AppTheme.fontBold(17));
         titleLabel.setForeground(AppTheme.TEXT_DARK);
 
         JLabel descriptionLabel = new JLabel(description);
-        descriptionLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        descriptionLabel.setFont(AppTheme.fontPlain(13));
         descriptionLabel.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(titleLabel, BorderLayout.NORTH);

@@ -27,7 +27,7 @@ public class NoticeFeedPanel extends JPanel {
         ));
 
         titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        titleLabel.setFont(AppTheme.fontBold(20));
 
         listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
@@ -51,7 +51,7 @@ public class NoticeFeedPanel extends JPanel {
 
         if (notices == null || notices.isEmpty()) {
             JLabel emptyLabel = new JLabel("No notices available for this role.");
-            emptyLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            emptyLabel.setFont(AppTheme.fontPlain(14));
             emptyLabel.setForeground(AppTheme.TEXT_SUBTLE);
             emptyLabel.setBorder(new EmptyBorder(12, 8, 12, 8));
             listPanel.add(emptyLabel);

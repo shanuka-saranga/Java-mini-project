@@ -29,13 +29,13 @@ public abstract class  BaseAdminTablePanel extends JScrollPane {
 
     private void styleTable() {
         table.setRowHeight(45);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setFont(AppTheme.fontPlain(14));
         table.setGridColor(AppTheme.PRIMARY);
         table.setShowVerticalLines(false);
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TEXT_DARK);
 
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        table.getTableHeader().setFont(AppTheme.fontBold(14));
         table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         table.getTableHeader().setForeground(Color.WHITE);
         table.getTableHeader().setPreferredSize(new Dimension(0, 50));

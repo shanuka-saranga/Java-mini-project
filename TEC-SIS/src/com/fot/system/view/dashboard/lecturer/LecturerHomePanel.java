@@ -60,10 +60,10 @@ public class LecturerHomePanel extends JPanel {
         header.setOpaque(false);
 
         JLabel welcomeLabel = new JLabel("Welcome back, " + currentUser.getFullName() + "!");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        welcomeLabel.setFont(AppTheme.fontBold(28));
 
         JLabel subtitleLabel = new JLabel("Here is your teaching overview with assigned courses, workload details, and recent notices.");
-        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitleLabel.setFont(AppTheme.fontPlain(14));
         subtitleLabel.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(welcomeLabel, BorderLayout.NORTH);
@@ -101,7 +101,7 @@ public class LecturerHomePanel extends JPanel {
         ));
 
         JLabel title = new JLabel("Teaching Summary");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        title.setFont(AppTheme.fontBold(20));
 
         JPanel summaryList = new JPanel(new GridLayout(3, 1, 0, 12));
         summaryList.setOpaque(false);
@@ -142,10 +142,10 @@ public class LecturerHomePanel extends JPanel {
 
         JLabel iconLabel = new JLabel(FontIcon.of(icon, 18, AppTheme.ICON_ACCENT));
         JLabel textLabel = new JLabel(labelText);
-        textLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textLabel.setFont(AppTheme.fontPlain(14));
 
         JLabel countLabel = new JLabel("...");
-        countLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        countLabel.setFont(AppTheme.fontBold(16));
 
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         left.setOpaque(false);
@@ -240,13 +240,13 @@ public class LecturerHomePanel extends JPanel {
         assignedCoursesList.removeAll();
 
         JLabel sectionTitle = new JLabel("Assigned Courses");
-        sectionTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        sectionTitle.setFont(AppTheme.fontBold(16));
         sectionTitle.setBorder(new EmptyBorder(4, 0, 8, 0));
         assignedCoursesList.add(sectionTitle);
 
         if (courses == null || courses.isEmpty()) {
             JLabel emptyLabel = new JLabel("No courses are assigned to this lecturer yet.");
-            emptyLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            emptyLabel.setFont(AppTheme.fontPlain(14));
             emptyLabel.setForeground(AppTheme.TEXT_SUBTLE);
             emptyLabel.setBorder(new EmptyBorder(12, 8, 12, 8));
             assignedCoursesList.add(emptyLabel);

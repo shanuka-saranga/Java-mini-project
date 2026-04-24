@@ -140,7 +140,7 @@ public class ManageUsersPanel extends JPanel {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
         JLabel title = new JLabel("User Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        title.setFont(AppTheme.fontBold(26));
         CustomButton addBtn = new CustomButton(
                 "Add New User",
                 AppTheme.BTN_SAVE_BG,

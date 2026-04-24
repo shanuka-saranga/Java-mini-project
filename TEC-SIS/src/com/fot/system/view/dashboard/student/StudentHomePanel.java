@@ -66,7 +66,7 @@ public class StudentHomePanel extends JPanel {
         JPanel listView = createListView(courseListScrollPane);
 
         lblOpenedCourseTab = new JLabel("Opened Course");
-        lblOpenedCourseTab.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblOpenedCourseTab.setFont(AppTheme.fontBold(16));
         lblOpenedCourseTab.setForeground(AppTheme.TEXT_DARK);
 
         materialsListPanel = new JPanel();
@@ -86,11 +86,11 @@ public class StudentHomePanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("My Courses");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Open a course to view all active course materials shared for your learning.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);
@@ -147,11 +147,11 @@ public class StudentHomePanel extends JPanel {
         panelHeader.add(topActions, BorderLayout.EAST);
 
         JLabel materialsHeading = new JLabel("Course Materials");
-        materialsHeading.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        materialsHeading.setFont(AppTheme.fontBold(18));
         materialsHeading.setForeground(AppTheme.TEXT_DARK);
 
         JLabel materialsSubtext = new JLabel("All active materials for the selected course are shown below.");
-        materialsSubtext.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        materialsSubtext.setFont(AppTheme.fontPlain(14));
         materialsSubtext.setForeground(AppTheme.TEXT_SUBTLE);
 
         JPanel materialsHeader = new JPanel();
@@ -235,7 +235,7 @@ public class StudentHomePanel extends JPanel {
 
         if (studentCourses == null || studentCourses.isEmpty()) {
             JLabel empty = new JLabel("No courses are available for your student record yet.");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            empty.setFont(AppTheme.fontPlain(14));
             empty.setForeground(AppTheme.TEXT_SUBTLE);
             empty.setBorder(new EmptyBorder(12, 8, 12, 8));
             courseListPanel.add(empty);
@@ -312,7 +312,7 @@ public class StudentHomePanel extends JPanel {
     private void renderMaterialsEmpty(String message) {
         materialsListPanel.removeAll();
         JLabel empty = new JLabel(message);
-        empty.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        empty.setFont(AppTheme.fontPlain(14));
         empty.setForeground(AppTheme.TEXT_SUBTLE);
         empty.setBorder(new EmptyBorder(12, 8, 12, 8));
         materialsListPanel.add(empty);

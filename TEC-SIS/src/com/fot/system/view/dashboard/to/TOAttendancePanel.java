@@ -66,11 +66,11 @@ public class TOAttendancePanel extends JPanel {
         titleBlock.setOpaque(false);
 
         JLabel title = new JLabel("Attendance Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Manage all sessions, create new session records, and update student attendance statuses.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         titleBlock.add(title, BorderLayout.NORTH);
@@ -105,7 +105,7 @@ public class TOAttendancePanel extends JPanel {
         topSection.setOpaque(false);
 
         txtSessionSearch = new JTextField();
-        txtSessionSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtSessionSearch.setFont(AppTheme.fontPlain(13));
         txtSessionSearch.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
                 new EmptyBorder(8, 10, 8, 10)
@@ -195,14 +195,14 @@ public class TOAttendancePanel extends JPanel {
 
     private JLabel createSectionLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        label.setFont(AppTheme.fontBold(18));
         label.setForeground(AppTheme.TEXT_DARK);
         return label;
     }
 
     private JLabel createMetaLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        label.setFont(AppTheme.fontPlain(14));
         label.setForeground(AppTheme.TEXT_SUBTLE);
         return label;
     }
@@ -216,14 +216,14 @@ public class TOAttendancePanel extends JPanel {
     private JTable createStyledTable(DefaultTableModel model, boolean editable) {
         JTable table = new JTable(model);
         table.setRowHeight(28);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.setFont(AppTheme.fontPlain(13));
         table.setForeground(AppTheme.TEXT_DARK);
         table.setGridColor(AppTheme.BORDER_SOFT);
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
         table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        table.getTableHeader().setFont(AppTheme.fontBold(13));
         table.setFillsViewportHeight(true);
         if (!editable) {
             table.setDefaultEditor(Object.class, null);

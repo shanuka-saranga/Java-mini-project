@@ -29,7 +29,7 @@ public class AddCourseMaterialDialog extends JDialog {
         root.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         JLabel title = new JLabel("Add Material for " + course.getCourseCode());
-        title.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        title.setFont(AppTheme.fontBold(22));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JPanel form = new JPanel();
@@ -46,7 +46,7 @@ public class AddCourseMaterialDialog extends JDialog {
         txtDescription = new JTextArea(4, 20);
         txtDescription.setLineWrap(true);
         txtDescription.setWrapStyleWord(true);
-        txtDescription.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtDescription.setFont(AppTheme.fontPlain(14));
         txtDescription.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         txtFilePath = new JTextField();
@@ -102,7 +102,7 @@ public class AddCourseMaterialDialog extends JDialog {
         panel.setOpaque(false);
 
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_DARK);
 
         panel.add(label, BorderLayout.NORTH);
@@ -157,7 +157,7 @@ public class AddCourseMaterialDialog extends JDialog {
     }
 
     private void styleTextField(JTextField textField) {
-        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textField.setFont(AppTheme.fontPlain(14));
         textField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(AppTheme.BORDER_MUTED),
                 new EmptyBorder(10, 12, 10, 12)

@@ -57,7 +57,7 @@ public class CourseMaterialCard extends JPanel {
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
         JLabel title = new JLabel(material.getTitle());
-        title.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        title.setFont(AppTheme.fontBold(15));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JTextArea body = new JTextArea(buildBody(material));
@@ -65,12 +65,12 @@ public class CourseMaterialCard extends JPanel {
         body.setLineWrap(true);
         body.setWrapStyleWord(true);
         body.setOpaque(false);
-        body.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        body.setFont(AppTheme.fontPlain(13));
         body.setForeground(AppTheme.TEXT_SUBTLE);
         body.setRows(2);
 
         JLabel meta = new JLabel(buildMeta(material));
-        meta.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        meta.setFont(AppTheme.fontPlain(12));
         meta.setForeground(AppTheme.TEXT_MUTED);
 
         content.add(title);

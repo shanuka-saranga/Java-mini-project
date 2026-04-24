@@ -67,11 +67,11 @@ public class LecturerAttendancePanel extends JPanel {
         courseListScrollPane.getViewport().setBackground(AppTheme.SURFACE_SOFT);
 
         lblOpenedCourseTab = new JLabel("Opened Course");
-        lblOpenedCourseTab.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblOpenedCourseTab.setFont(AppTheme.fontBold(16));
         lblOpenedCourseTab.setForeground(AppTheme.TEXT_DARK);
 
         lblHeldProgress = new JLabel("Course Progress: 0/0 hours held");
-        lblHeldProgress.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblHeldProgress.setFont(AppTheme.fontPlain(14));
         lblHeldProgress.setForeground(AppTheme.TEXT_SUBTLE);
 
         heldProgressBar = new JProgressBar(0, 100);
@@ -104,11 +104,11 @@ public class LecturerAttendancePanel extends JPanel {
         searchPanel.setOpaque(false);
 
         JLabel searchLabel = new JLabel("Search");
-        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        searchLabel.setFont(AppTheme.fontPlain(13));
         searchLabel.setForeground(AppTheme.TEXT_SUBTLE);
 
         txtSearch = new JTextField();
-        txtSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtSearch.setFont(AppTheme.fontPlain(13));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
                 new EmptyBorder(8, 10, 8, 10)
@@ -153,14 +153,14 @@ public class LecturerAttendancePanel extends JPanel {
         attendanceTable = new JTable(tableModel);
         attendanceTable.setAutoCreateRowSorter(true);
         attendanceTable.setRowHeight(28);
-        attendanceTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        attendanceTable.setFont(AppTheme.fontPlain(13));
         attendanceTable.setForeground(AppTheme.TEXT_DARK);
         attendanceTable.setGridColor(AppTheme.BORDER_SOFT);
         attendanceTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         attendanceTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
         attendanceTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         attendanceTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        attendanceTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        attendanceTable.getTableHeader().setFont(AppTheme.fontBold(13));
         attendanceTable.setFillsViewportHeight(true);
 
         rowSorter = new TableRowSorter<>(tableModel);
@@ -184,14 +184,14 @@ public class LecturerAttendancePanel extends JPanel {
         studentSummaryTable = new JTable(studentSummaryTableModel);
         studentSummaryTable.setAutoCreateRowSorter(true);
         studentSummaryTable.setRowHeight(28);
-        studentSummaryTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        studentSummaryTable.setFont(AppTheme.fontPlain(13));
         studentSummaryTable.setForeground(AppTheme.TEXT_DARK);
         studentSummaryTable.setGridColor(AppTheme.BORDER_SOFT);
         studentSummaryTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         studentSummaryTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
         studentSummaryTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         studentSummaryTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        studentSummaryTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        studentSummaryTable.getTableHeader().setFont(AppTheme.fontBold(13));
         studentSummaryTable.setFillsViewportHeight(true);
 
         summaryRowSorter = new TableRowSorter<>(studentSummaryTableModel);
@@ -203,7 +203,7 @@ public class LecturerAttendancePanel extends JPanel {
         summaryTableScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         JLabel summaryTableTitle = new JLabel("Current Student Attendance");
-        summaryTableTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        summaryTableTitle.setFont(AppTheme.fontBold(16));
         summaryTableTitle.setForeground(AppTheme.TEXT_DARK);
 
         JPanel lowerSection = new JPanel();
@@ -242,11 +242,11 @@ public class LecturerAttendancePanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("Attendance");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Open one of your assigned courses to review the recorded attendance by session.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);
@@ -293,7 +293,7 @@ public class LecturerAttendancePanel extends JPanel {
 
         if (assignedCourses == null || assignedCourses.isEmpty()) {
             JLabel empty = new JLabel("No assigned courses available.");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            empty.setFont(AppTheme.fontPlain(14));
             empty.setForeground(AppTheme.TEXT_SUBTLE);
             empty.setBorder(new EmptyBorder(12, 8, 12, 8));
             courseListPanel.add(empty);

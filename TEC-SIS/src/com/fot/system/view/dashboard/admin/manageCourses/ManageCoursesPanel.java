@@ -76,7 +76,7 @@ public class ManageCoursesPanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("Course Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        title.setFont(AppTheme.fontBold(26));
 
         CustomButton addBtn = new CustomButton(
                 "Add New Course",

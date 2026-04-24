@@ -43,11 +43,11 @@ public class StudentTimetablePanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("Timetable");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        title.setFont(AppTheme.fontBold(26));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("View the weekly timetable in a real timetable layout with weekdays across the top.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);
@@ -84,7 +84,7 @@ public class StudentTimetablePanel extends JPanel {
 
         if (sessions == null || sessions.isEmpty()) {
             JLabel empty = new JLabel("No timetable sessions available.");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            empty.setFont(AppTheme.fontPlain(14));
             empty.setForeground(AppTheme.TEXT_SUBTLE);
             timetableContainer.add(empty, BorderLayout.NORTH);
             timetableContainer.revalidate();
@@ -175,7 +175,7 @@ public class StudentTimetablePanel extends JPanel {
         ));
 
         JLabel label = new JLabel("Time");
-        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        label.setFont(AppTheme.fontBold(14));
         label.setForeground(AppTheme.TEXT_DARK);
         panel.add(label, BorderLayout.CENTER);
         return panel;
@@ -190,7 +190,7 @@ public class StudentTimetablePanel extends JPanel {
         ));
 
         JLabel label = new JLabel(toTitle(day));
-        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        label.setFont(AppTheme.fontBold(14));
         label.setForeground(AppTheme.TEXT_LIGHT);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(label, BorderLayout.CENTER);
@@ -207,7 +207,7 @@ public class StudentTimetablePanel extends JPanel {
         panel.setPreferredSize(new Dimension(135, 92));
 
         JLabel label = new JLabel(timeSlot);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        label.setFont(AppTheme.fontBold(13));
         label.setForeground(AppTheme.TEXT_DARK);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(label, BorderLayout.CENTER);
@@ -226,7 +226,7 @@ public class StudentTimetablePanel extends JPanel {
 
         if (sessions == null || sessions.isEmpty()) {
             JLabel empty = new JLabel("-");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            empty.setFont(AppTheme.fontPlain(13));
             empty.setForeground(AppTheme.TEXT_MUTED);
             empty.setAlignmentX(Component.CENTER_ALIGNMENT);
             panel.add(Box.createVerticalGlue());
@@ -247,19 +247,19 @@ public class StudentTimetablePanel extends JPanel {
             ));
 
             JLabel courseCode = new JLabel(valueOrDash(session.getCourseCode()));
-            courseCode.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            courseCode.setFont(AppTheme.fontBold(13));
             courseCode.setForeground(AppTheme.TEXT_DARK);
 
             JLabel courseName = new JLabel("<html><body style='width:160px'>" + valueOrDash(session.getCourseName()) + "</body></html>");
-            courseName.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            courseName.setFont(AppTheme.fontPlain(12));
             courseName.setForeground(AppTheme.TEXT_DARK);
 
             JLabel venue = new JLabel(valueOrDash(session.getVenue()));
-            venue.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            venue.setFont(AppTheme.fontPlain(12));
             venue.setForeground(AppTheme.TEXT_SUBTLE);
 
             JLabel type = new JLabel(valueOrDash(session.getSessionType()));
-            type.setFont(new Font("Segoe UI", Font.BOLD, 11));
+            type.setFont(AppTheme.fontBold(11));
             type.setForeground(AppTheme.TEXT_SUBTLE);
 
             card.add(courseCode);
