@@ -9,6 +9,8 @@ import com.fot.system.service.StudentMarksGradesService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -96,11 +98,34 @@ public class StudentMarksAndGradesPanel extends JPanel {
         marksTable.setGridColor(AppTheme.BORDER_SOFT);
         marksTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         marksTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        marksTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        marksTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        marksTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        configureTableHeader();
         marksTable.setFillsViewportHeight(true);
         marksTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+    }
+
+    private void configureTableHeader() {
+        JTableHeader tableHeader = marksTable.getTableHeader();
+        tableHeader.setBackground(AppTheme.TABLE_HEADER_BG);
+        tableHeader.setForeground(AppTheme.TABLE_HEADER_FG);
+        tableHeader.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        tableHeader.setReorderingAllowed(false);
+        tableHeader.setPreferredSize(new Dimension(0, 34));
+        tableHeader.setDefaultRenderer(createHeaderRenderer());
+    }
+
+    private TableCellRenderer createHeaderRenderer() {
+        return (table, value, isSelected, hasFocus, row, column) -> {
+            JLabel label = new JLabel(value == null ? "" : value.toString(), SwingConstants.CENTER);
+            label.setOpaque(true);
+            label.setBackground(AppTheme.TABLE_HEADER_BG);
+            label.setForeground(AppTheme.TABLE_HEADER_FG);
+            label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            label.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(AppTheme.PRIMARY_ACTIVE, 1),
+                    new EmptyBorder(6, 8, 6, 8)
+            ));
+            return label;
+        };
     }
 
     private JLabel createMetaLabel(String text) {
