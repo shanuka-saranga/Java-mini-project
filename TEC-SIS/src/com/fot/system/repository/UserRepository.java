@@ -17,6 +17,11 @@ public class UserRepository {
         this.conn = DBConnection.getInstance().getConnection();
     }
 
+    /**
+     * find user by id
+     * @param email user email
+     * @author methum
+     */
     public User findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
 
@@ -35,6 +40,11 @@ public class UserRepository {
         return null;
     }
 
+    /**
+     * find user by id
+     * @param email user email
+     * @author methum
+     */
     public boolean existsByEmail(String email) {
         return exists("SELECT 1 FROM users WHERE email = ?", email);
     }

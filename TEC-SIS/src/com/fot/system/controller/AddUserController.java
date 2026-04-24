@@ -2,7 +2,6 @@ package com.fot.system.controller;
 
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
-import com.fot.system.repository.UserRepository;
 import com.fot.system.service.UserService;
 import com.fot.system.view.dashboard.admin.manageUsers.AddNewUserPanel;
 
@@ -13,13 +12,11 @@ public class AddUserController {
 
     private final AddNewUserPanel view;
     private final UserService userService;
-    private final UserRepository userRepository;
     private final Runnable onSuccessAction;
 
     public AddUserController(AddNewUserPanel view, Runnable onSuccessAction) {
         this.view = view;
         this.userService = new UserService();
-        this.userRepository = new UserRepository();
         this.onSuccessAction = onSuccessAction;
         this.view.setOnSaveAction(this::handleSaveUser);
     }
@@ -66,11 +63,11 @@ public class AddUserController {
         requireValue(request.getDepartmentId(), "Department ID is required.");
         requireValue(request.getStatus(), "Status is required.");
 
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userService.emailExists(request.getEmail())) {
             throw new RuntimeException("Email already exists.");
         }
 
-        if (userRepository.existsByPhone(request.getPhone())) {
+        if (userService.phoneExists(request.getPhone())) {
             throw new RuntimeException("Phone number already exists.");
         }
 
@@ -79,13 +76,13 @@ public class AddUserController {
             requireValue(request.getRegistrationYear(), "Registration year is required.");
             requireValue(request.getStudentType(), "Student type is required.");
 
-            if (userRepository.existsByRegistrationNo(request.getRegistrationNo())) {
+            if (userService.registrationNoExists(request.getRegistrationNo())) {
                 throw new RuntimeException("Registration number already exists.");
             }
         } else {
             requireValue(request.getStaffCode(), "Staff code is required.");
 
-            if (userRepository.existsByStaffCode(request.getStaffCode())) {
+            if (userService.staffCodeExists(request.getStaffCode())) {
                 throw new RuntimeException("Staff code already exists.");
             }
         }
