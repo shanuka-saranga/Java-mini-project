@@ -18,6 +18,12 @@ public class UserService implements IUserService {
         this.profilePictureStorageService = new ProfilePictureStorageService();
     }
 
+    /**
+     * login users
+     * @param email user email
+     * @param password user password
+     * @author methum
+     */
     public User login(String email, String password) {
         email = email == null ? null : email.trim();
 
@@ -33,6 +39,7 @@ public class UserService implements IUserService {
         if (user == null) {
             return null;
         }
+
         if (!user.getPasswordHash().equals(password)) {
             return null;
         }
@@ -45,23 +52,45 @@ public class UserService implements IUserService {
         return user;
     }
 
+    /**
+     * get all users
+     * @author janith
+     */
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    /**
+     * get user by id
+     * @param id user id
+     * @author janith , methum, poornika , shaanuka
+     */
     public User getUserById(int id) {
         return userRepository.findById(id);
     }
 
+    /**
+     * get user count
+     * @author janith
+     */
     public int getUserCount() {
         return userRepository.countAll();
     }
 
+    /**
+     * get user count for each role
+     * @param role user role (ADMIN / DEAN / LECTURER / STUDENT / TO)
+     * @author janith
+     */
     public int getUserCountByRole(String role) {
         return userRepository.countByRole(role);
     }
 
-
+    /**
+     * add new user
+     * @param request user details to add
+     * @author janith
+     */
     public User addUser(AddUserRequest request) {
         User user = createUserByRole(request);
         boolean saved = userRepository.save(user);
@@ -73,6 +102,11 @@ public class UserService implements IUserService {
         return user;
     }
 
+    /**
+     * update user details
+     * @param request user details to update
+     * @author janith
+     */
     public User updateUser(EditUserRequest request) {
         User user = createUserByRole(request);
         boolean updated = userRepository.update(user);
@@ -84,6 +118,11 @@ public class UserService implements IUserService {
         return userRepository.findById(user.getId());
     }
 
+    /**
+     * delete user
+     * @param userId id of the user to delete
+     * @author janith
+     */
     public boolean deleteUser(int userId) {
         if (userId <= 0) {
             throw new RuntimeException("Invalid user ID.");
@@ -92,6 +131,11 @@ public class UserService implements IUserService {
         return userRepository.deleteById(userId);
     }
 
+    /**
+     * create user considering user role
+     * @param request AdduserRequest object
+     * @author janith
+     */
     private User createUserByRole(AddUserRequest request) {
         if (request.isStudentRole()) {
             Student student = new Student();
@@ -109,6 +153,11 @@ public class UserService implements IUserService {
         return staff;
     }
 
+    /**
+     * create user considering user role
+     * @param request EditUserRequest object
+     * @author janith
+     */
     private User createUserByRole(EditUserRequest request) {
         if (request.isStudentRole()) {
             Student student = new Student();
@@ -128,6 +177,12 @@ public class UserService implements IUserService {
         return staff;
     }
 
+    /**
+     * populate common user fields for add operation
+     * @param user user entity to populate
+     * @param request AddUserRequest object containing user details
+     * @author janith
+     */
     private void populateCommonFields(User user, AddUserRequest request) {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
@@ -146,6 +201,12 @@ public class UserService implements IUserService {
         user.setDepartmentId(parseDepartmentId(request.getDepartmentId()));
     }
 
+    /**
+     * populate common user fields for edit operation
+     * @param user user entity to populate
+     * @param request EditUserRequest object containing user details
+     * @author janith
+     */
     private void populateCommonFields(User user, EditUserRequest request) {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
@@ -164,6 +225,11 @@ public class UserService implements IUserService {
         user.setDepartmentId(parseDepartmentId(request.getDepartmentId()));
     }
 
+    /**
+     * parse department id from string to int
+     * @param departmentId department id as string
+     * @author janith
+     */
     private int parseDepartmentId(String departmentId) {
         try {
             return Integer.parseInt(departmentId.trim());
@@ -172,6 +238,11 @@ public class UserService implements IUserService {
         }
     }
 
+    /**
+     * parse date of birth from string to Date
+     * @param dob date of birth as string
+     * @author janith
+     */
     private Date parseDob(String dob) {
         try {
             return Date.valueOf(dob.trim());
@@ -180,6 +251,11 @@ public class UserService implements IUserService {
         }
     }
 
+    /**
+     * parse registration year from string to int
+     * @param registrationYear registration year as string
+     * @author janith
+     */
     private int parseRegistrationYear(String registrationYear) {
         try {
             return Integer.parseInt(registrationYear.trim());
@@ -188,6 +264,11 @@ public class UserService implements IUserService {
         }
     }
 
+    /**
+     * normalize user status to allowed values (ACTIVE, SUSPENDED, BLOCKED)
+     * @param status user status as string
+     * @author janith
+     */
     private String normalizeStatus(String status) {
         if ("SUSPENDED".equalsIgnoreCase(status)) {
             return "SUSPENDED";
@@ -198,6 +279,13 @@ public class UserService implements IUserService {
         return AppConfig.STATUS_ACTIVE;
     }
 
+    /**
+     * save profile picture if a path is provided, otherwise return null
+     * @param sourcePath original path of the profile picture
+     * @param email user email (used for naming the stored picture)
+     * @param role user role (used for organizing stored pictures)
+     * @author janith
+     */
     private String saveProfilePictureIfPresent(String sourcePath, String email, String role) {
         if (sourcePath == null || sourcePath.trim().isEmpty()) {
             return null;
@@ -205,6 +293,14 @@ public class UserService implements IUserService {
         return profilePictureStorageService.saveProfilePicture(sourcePath, email, role);
     }
 
+    /**
+     * resolve profile picture path for update - if the provided path is already managed, return it as is, otherwise save the new picture and return the new path
+     * @param picturePath provided profile picture path
+     * @param email user email (used for naming the stored picture if saving is needed)
+     * @param role user role (used for organizing stored pictures if saving is needed)
+     *
+     * @author janith
+     */
     private String resolveProfilePicturePathForUpdate(String picturePath, String email, String role) {
         if (picturePath == null || picturePath.trim().isEmpty()) {
             return null;
