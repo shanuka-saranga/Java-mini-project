@@ -9,8 +9,11 @@ import com.fot.system.view.login.LoginView;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LoginController {
+    private static final Logger LOGGER = Logger.getLogger(LoginController.class.getName());
 
     private final LoginView view;
     private final UserService service;
@@ -44,8 +47,9 @@ public class LoginController {
                 }
 
             } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, "Login process failed", ex);
                 JOptionPane.showMessageDialog(view,
-                        ex.getMessage(),
+                        "Login failed. Please try again.",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
             }
