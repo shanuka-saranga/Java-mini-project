@@ -16,102 +16,97 @@ import java.util.List;
 
 public class TOHomePanel extends JPanel {
 
-    private final User currentUser;
-    private final AttendanceService attendanceService;
-    private final NoticeService noticeService;
+    private final User user;
+    private final AttendanceService attendanceService = new AttendanceService();
+    private final NoticeService noticeService = new NoticeService();
 
-    private final DashboardStatCard pendingMedicalsCard;
-    private final DashboardStatCard visibleNoticesCard;
-    private final NoticeFeedPanel noticeFeedPanel;
+    private final DashboardStatCard medicalCard =
+            new DashboardStatCard("Pending Medicals", "...", FontAwesomeSolid.FILE_MEDICAL);
+
+    private final DashboardStatCard noticeCard =
+            new DashboardStatCard("Visible Notices", "...", FontAwesomeSolid.BULLHORN);
+
+    private final NoticeFeedPanel noticeFeedPanel = new NoticeFeedPanel("TO Notices");
 
     public TOHomePanel(User user) {
-        this.currentUser = user;
-        this.attendanceService = new AttendanceService();
-        this.noticeService = new NoticeService();
+        this.user = user;
 
-        setBackground(AppTheme.SURFACE_SOFT);
         setLayout(new BorderLayout(20, 20));
+        setBackground(AppTheme.SURFACE_SOFT);
         setBorder(new EmptyBorder(30, 30, 30, 30));
 
-        pendingMedicalsCard = new DashboardStatCard("Pending Medicals", "...", FontAwesomeSolid.FILE_MEDICAL);
-        visibleNoticesCard = new DashboardStatCard("Visible Notices", "...", FontAwesomeSolid.BULLHORN);
-        noticeFeedPanel = new NoticeFeedPanel("TO Notices");
-
         add(createHeader(), BorderLayout.NORTH);
-        add(createContent(), BorderLayout.CENTER);
+        add(createBody(), BorderLayout.CENTER);
 
-        loadDashboardData();
+        loadData();
     }
 
     private JPanel createHeader() {
-        JPanel header = new JPanel(new BorderLayout(0, 8));
-        header.setOpaque(false);
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(false);
 
-        JLabel welcomeLabel = new JLabel("Welcome back, " + currentUser.getFullName() + "!");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        JLabel title = new JLabel("Welcome back, " + user.getFullName() + "!");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
 
-        JLabel subtitleLabel = new JLabel("Here is your technical officer overview with pending medical submissions and recent notices.");
-        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitleLabel.setForeground(AppTheme.TEXT_SUBTLE);
+        JLabel sub = new JLabel(
+                "Technical officer overview with pending medical submissions and notices."
+        );
+        sub.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        sub.setForeground(AppTheme.TEXT_SUBTLE);
 
-        header.add(welcomeLabel, BorderLayout.NORTH);
-        header.add(subtitleLabel, BorderLayout.SOUTH);
-        return header;
+        panel.add(title, BorderLayout.NORTH);
+        panel.add(sub, BorderLayout.SOUTH);
+
+        return panel;
     }
 
-    private JPanel createContent() {
-        JPanel content = new JPanel(new BorderLayout(20, 20));
-        content.setOpaque(false);
+    private JPanel createBody() {
+        JPanel panel = new JPanel(new BorderLayout(20, 20));
+        panel.setOpaque(false);
 
-        JPanel statsGrid = new JPanel(new GridLayout(1, 2, 16, 0));
-        statsGrid.setOpaque(false);
-        statsGrid.add(pendingMedicalsCard);
-        statsGrid.add(visibleNoticesCard);
+        JPanel stats = new JPanel(new GridLayout(1, 2, 16, 0));
+        stats.setOpaque(false);
 
-        content.add(statsGrid, BorderLayout.NORTH);
-        content.add(noticeFeedPanel, BorderLayout.CENTER);
-        return content;
+        stats.add(medicalCard);
+        stats.add(noticeCard);
+
+        panel.add(stats, BorderLayout.NORTH);
+        panel.add(noticeFeedPanel, BorderLayout.CENTER);
+
+        return panel;
     }
 
-    private void loadDashboardData() {
-        SwingWorker<DashboardData, Void> worker = new SwingWorker<>() {
+    private void loadData() {
+        new SwingWorker<DashboardData, Void>() {
+
             @Override
             protected DashboardData doInBackground() {
-                int pendingMedicals = attendanceService.getPendingMedicalSubmissionCount();
-                int visibleNoticeCount = noticeService.getVisibleNoticeCountForRole(currentUser.getRole());
-                List<Notice> visibleNotices = noticeService.getRecentVisibleNoticesForRole(currentUser.getRole(), 8);
-                return new DashboardData(pendingMedicals, visibleNoticeCount, visibleNotices);
+                int med = attendanceService.getPendingMedicalSubmissionCount();
+                int notices = noticeService.getVisibleNoticeCountForRole(user.getRole());
+                List<Notice> list =
+                        noticeService.getRecentVisibleNoticesForRole(user.getRole(), 8);
+
+                return new DashboardData(med, notices, list);
             }
 
             @Override
             protected void done() {
                 try {
-                    DashboardData data = get();
-                    pendingMedicalsCard.setValue(String.valueOf(data.pendingMedicals));
-                    visibleNoticesCard.setValue(String.valueOf(data.visibleNotices));
-                    noticeFeedPanel.setNotices(data.notices);
+                    DashboardData d = get();
+                    medicalCard.setValue(String.valueOf(d.medicals));
+                    noticeCard.setValue(String.valueOf(d.notices));
+                    noticeFeedPanel.setNotices(d.noticeList);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
                             TOHomePanel.this,
-                            "Failed to load technical officer dashboard data.",
-                            "Dashboard Error",
+                            "Failed to load dashboard data.",
+                            "Error",
                             JOptionPane.ERROR_MESSAGE
                     );
                 }
             }
-        };
-        worker.execute();
+        }.execute();
     }
 
-    private static class DashboardData {
-        private final int pendingMedicals;
-        private final int visibleNotices;
-        private final List<Notice> notices;
-
-        private DashboardData(int pendingMedicals, int visibleNotices, List<Notice> notices) {
-            this.pendingMedicals = pendingMedicals;
-            this.visibleNotices = visibleNotices;
-            this.notices = notices;
-        }
-    }
+    private record DashboardData(int medicals, int notices, List<Notice> noticeList) {}
 }
