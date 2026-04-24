@@ -298,7 +298,6 @@ public class UserService implements IUserService {
      * @param picturePath provided profile picture path
      * @param email user email (used for naming the stored picture if saving is needed)
      * @param role user role (used for organizing stored pictures if saving is needed)
-     *
      * @author janith
      */
     private String resolveProfilePicturePathForUpdate(String picturePath, String email, String role) {
