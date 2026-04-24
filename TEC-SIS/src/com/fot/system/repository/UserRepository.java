@@ -2,7 +2,6 @@ package com.fot.system.repository;
 
 import com.fot.system.config.AppConfig;
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 
 import java.sql.*;
@@ -13,6 +12,10 @@ public class UserRepository {
 
     private final Connection conn;
 
+    /**
+     * initialize user repository and get database connection
+     * @author janith
+     */
     public UserRepository() {
         this.conn = DBConnection.getInstance().getConnection();
     }
@@ -41,42 +44,85 @@ public class UserRepository {
     }
 
     /**
-     * find user by id
+     * check if user exists by email
      * @param email user email
-     * @author methum
+     * @author janith
      */
     public boolean existsByEmail(String email) {
         return exists("SELECT 1 FROM users WHERE email = ?", email);
     }
 
-    public boolean existsByEmailExcludingUserId(String email, int userId) {
+    /**
+     * check if user exists by email and user id
+     * @param email user email
+     * @author janith
+     */
+    public boolean existsByEmailAndUserId(String email, int userId) {
         return exists("SELECT 1 FROM users WHERE email = ? AND id <> ?", email, userId);
     }
 
+    /**
+     * check phone number is already exist
+     * @param phone user phone
+     * @author janith
+     */
     public boolean existsByPhone(String phone) {
         return exists("SELECT 1 FROM users WHERE phone = ?", phone);
     }
 
+    /**
+     * check user phone number is already exist
+     * @param phone user phone
+     * @param userId user id to exclude from check
+     * @author janith
+     */
     public boolean existsByPhoneExcludingUserId(String phone, int userId) {
         return exists("SELECT 1 FROM users WHERE phone = ? AND id <> ?", phone, userId);
     }
 
+    /**
+     * check registration number is already exist
+     * @param registrationNo student String type registration number
+     * @author janith
+     */
     public boolean existsByRegistrationNo(String registrationNo) {
         return exists("SELECT 1 FROM student WHERE registration_no = ?", registrationNo);
     }
 
+    /**
+     * check user registration number is already exist
+     * @param registrationNo student String type registration number
+     * @param userId int Specific user id
+     * @author janith
+     */
     public boolean existsByRegistrationNoExcludingUserId(String registrationNo, int userId) {
         return exists("SELECT 1 FROM student WHERE registration_no = ? AND user_id <> ?", registrationNo, userId);
     }
 
+    /**
+     * check staff Code is already exist
+     * @param staffCode String specific staff code
+     * @author janith
+     */
     public boolean existsByStaffCode(String staffCode) {
         return exists("SELECT 1 FROM staff WHERE staff_code = ?", staffCode);
     }
 
+    /**
+     * check user staff Code is already exist
+     * @param staffCode String specific staff code
+     * @param userId int Specific user id
+     * @author janith
+     */
     public boolean existsByStaffCodeExcludingUserId(String staffCode, int userId) {
         return exists("SELECT 1 FROM staff WHERE staff_code = ? AND user_id <> ?", staffCode, userId);
     }
 
+    /**
+     * save user to database
+     * @param user User object
+     * @author janith
+     */
     public boolean save(User user) {
         String sqlUser = "INSERT INTO users (first_name, last_name, role, dob, email, phone, address, profile_picture_path, department_id, password_hash, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -125,6 +171,11 @@ public class UserRepository {
         return false;
     }
 
+    /**
+     * update user details in database
+     * @param user User object
+     * @author janith
+     */
     public boolean update(User user) {
         String sqlUser = "UPDATE users SET first_name = ?, last_name = ?, role = ?, dob = ?, email = ?, phone = ?, address = ?, profile_picture_path = ?, department_id = ?, password_hash = ?, status = ? WHERE id = ?";
 
@@ -164,6 +215,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * delete user from database by id
+     * @param userId int user id to delete
+     * @author janith
+     */
     public boolean deleteById(int userId) {
         String sql = "DELETE FROM users WHERE id = ?";
 
@@ -175,6 +231,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * save student details to database
+     * @param s Student object (student table data)
+     * @author janith
+     */
     private void saveStudentDetails(Student s) throws SQLException {
         String sql = "INSERT INTO student (user_id, registration_no, registration_year, student_type) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -186,6 +247,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * save staff details to database
+     * @param s Staff object (staff table data)
+     * @author janith
+     */
     private void saveStaffDetails(Staff s) throws SQLException {
         String sql = "INSERT INTO staff (user_id, staff_code, designation) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -196,6 +262,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * update role specific details in database
+     * @param user User object
+     * @author janith
+     */
     private void updateRoleSpecificDetails(User user) throws SQLException {
         if (user instanceof Student) {
             updateStudentDetails((Student) user);
@@ -204,6 +275,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * update student details in database
+     * @param student Student object (student table data)
+     * @author janith
+     */
     private void updateStudentDetails(Student student) throws SQLException {
         String sql = "UPDATE student SET registration_no = ?, registration_year = ?, student_type = ? WHERE user_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -215,6 +291,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * update user details in database
+     * @param staff Staff object (staff table data)
+     * @author janith
+     */
     private void updateStaffDetails(Staff staff) throws SQLException {
         String sql = "UPDATE staff SET staff_code = ?, designation = ? WHERE user_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -225,6 +306,10 @@ public class UserRepository {
         }
     }
 
+    /**
+     * get all users from database
+     * @author janith
+     */
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
 
@@ -250,10 +335,19 @@ public class UserRepository {
         return users;
     }
 
+    /**
+     * count all users in database
+     * @author janith
+     */
     public int countAll() {
         return countBySql("SELECT COUNT(*) FROM users");
     }
 
+    /**
+     * count users by role
+     * @param role user role
+     * @author janith
+     */
     public int countByRole(String role) {
         String sql = "SELECT COUNT(*) FROM users WHERE role = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -269,6 +363,11 @@ public class UserRepository {
         return 0;
     }
 
+    /**
+     * map query result to specific user type (student or staff)
+     * @param rs ResultSet object
+     * @author janith
+     */
     private User mapToSpecificUser(ResultSet rs) throws SQLException {
         String role = rs.getString("role");
         User user;
@@ -300,6 +399,11 @@ public class UserRepository {
         return user;
     }
 
+    /**
+     * map user table result to basic user object
+     * @param rs ResultSet object
+     * @author janith
+     */
     private User mapToUser(ResultSet rs) throws SQLException {
         String role = rs.getString("role");
         User user;
@@ -326,6 +430,11 @@ public class UserRepository {
         return user;
     }
 
+    /**
+     * find user by id
+     * @param id user id
+     * @author janith
+     */
     public User findById(int id) {
         String sql = "SELECT u.*, s.registration_no, s.registration_year, s.student_type, " +
                 "st.staff_code, st.designation " +
@@ -347,6 +456,12 @@ public class UserRepository {
         return null;
     }
 
+    /**
+     * execute generic existence check by single value
+     * @param sql sql query with one parameter
+     * @param value value to bind
+     * @author janith
+     */
     private boolean exists(String sql, String value) {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, value);
@@ -358,6 +473,13 @@ public class UserRepository {
         }
     }
 
+    /**
+     * execute generic existence check by value and excluded user id
+     * @param sql sql query with two parameters
+     * @param value value to bind
+     * @param userId user id to exclude
+     * @author janith
+     */
     private boolean exists(String sql, String value, int userId) {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, value);
@@ -370,6 +492,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * execute generic count query
+     * @param sql count sql query
+     * @author janith
+     */
     private int countBySql(String sql) {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
