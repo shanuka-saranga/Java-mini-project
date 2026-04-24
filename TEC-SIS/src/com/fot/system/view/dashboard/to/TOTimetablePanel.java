@@ -8,22 +8,18 @@ import com.fot.system.service.TimetableService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class TOTimetablePanel extends JPanel {
-    private static final List<String> WEEKDAYS = List.of("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY");
 
-    private final TimetableService timetableService;
-    private final JPanel timetableContainer;
+    private static final List<String> WEEKDAYS =
+            List.of("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY");
+
+    private final TimetableService timetableService = new TimetableService();
+    private final JPanel timetableContainer = new JPanel(new BorderLayout());
 
     public TOTimetablePanel(User user) {
-        this.timetableService = new TimetableService();
 
         setLayout(new BorderLayout(20, 20));
         setBackground(AppTheme.SURFACE_SOFT);
@@ -31,38 +27,35 @@ public class TOTimetablePanel extends JPanel {
 
         add(createHeader(), BorderLayout.NORTH);
 
-        timetableContainer = new JPanel(new BorderLayout());
         timetableContainer.setOpaque(false);
         add(timetableContainer, BorderLayout.CENTER);
 
         loadTimetableData();
     }
 
+    // ---------------- HEADER ----------------
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
 
-        JLabel title = new JLabel("Timetable");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        title.setForeground(AppTheme.TEXT_DARK);
-
-        JLabel subtitle = new JLabel("View the weekly timetable for all courses in a real timetable layout.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitle.setForeground(AppTheme.TEXT_SUBTLE);
+        JLabel title = label("Timetable", 26, Font.BOLD, AppTheme.TEXT_DARK);
+        JLabel subtitle = label(
+                "View the weekly timetable for all courses in a real timetable layout.",
+                14, Font.PLAIN, AppTheme.TEXT_SUBTLE
+        );
 
         header.add(title, BorderLayout.NORTH);
         header.add(subtitle, BorderLayout.SOUTH);
         return header;
     }
 
+
     private void loadTimetableData() {
         SwingWorker<List<TimetableSession>, Void> worker = new SwingWorker<>() {
-            @Override
             protected List<TimetableSession> doInBackground() {
                 return timetableService.getAllTimetableSessions();
             }
 
-            @Override
             protected void done() {
                 try {
                     renderTimetable(get());
@@ -79,230 +72,167 @@ public class TOTimetablePanel extends JPanel {
         worker.execute();
     }
 
+
     private void renderTimetable(List<TimetableSession> sessions) {
+
         timetableContainer.removeAll();
 
         if (sessions == null || sessions.isEmpty()) {
-            JLabel empty = new JLabel("No timetable sessions available.");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            empty.setForeground(AppTheme.TEXT_SUBTLE);
-            timetableContainer.add(empty, BorderLayout.NORTH);
-            timetableContainer.revalidate();
-            timetableContainer.repaint();
+            timetableContainer.add(label("No timetable sessions available.",
+                    14, Font.PLAIN, AppTheme.TEXT_SUBTLE), BorderLayout.NORTH);
+            refresh();
             return;
         }
 
-        List<TimetableSession> weekdaySessions = sessions.stream()
-                .filter(session -> WEEKDAYS.contains(normalize(session.getDay())))
+        List<TimetableSession> filtered = sessions.stream()
+                .filter(s -> WEEKDAYS.contains(norm(s.getDay())))
                 .sorted(Comparator
-                        .comparing((TimetableSession session) -> WEEKDAYS.indexOf(normalize(session.getDay())))
-                        .thenComparing(session -> normalizeTime(session.getStartTime()))
-                        .thenComparing(session -> normalize(session.getCourseCode())))
+                        .comparing((TimetableSession s) -> WEEKDAYS.indexOf(norm(s.getDay())))
+                        .thenComparing(s -> normTime(s.getStartTime()))
+                        .thenComparing(s -> norm(s.getCourseCode())))
                 .toList();
 
-        List<String> timeSlots = buildTimeSlots(weekdaySessions);
-        Map<String, Map<String, List<TimetableSession>>> groupedSessions = groupSessions(weekdaySessions);
+        List<String> timeSlots = buildTimeSlots(filtered);
+        Map<String, Map<String, List<TimetableSession>>> grouped = group(filtered);
 
         JPanel grid = new JPanel(new GridLayout(timeSlots.size() + 1, WEEKDAYS.size() + 1, 8, 8));
         grid.setOpaque(false);
 
-        grid.add(createCornerCell());
-        for (String day : WEEKDAYS) {
-            grid.add(createDayHeader(day));
-        }
+        grid.add(cell("Time", AppTheme.CARD_BG, true));
 
-        for (String timeSlot : timeSlots) {
-            grid.add(createTimeCell(timeSlot));
+        for (String d : WEEKDAYS)
+            grid.add(cell(toTitle(d), AppTheme.TABLE_HEADER_BG, true));
+
+        for (String time : timeSlots) {
+            grid.add(cell(time, AppTheme.CARD_BG, true));
+
             for (String day : WEEKDAYS) {
-                List<TimetableSession> cellSessions = groupedSessions
-                        .getOrDefault(timeSlot, Map.of())
-                        .getOrDefault(day, List.of());
-                grid.add(createSessionCell(cellSessions));
+                grid.add(sessionCell(
+                        grouped.getOrDefault(time, Map.of())
+                                .getOrDefault(day, List.of())
+                ));
             }
         }
 
-        JScrollPane scrollPane = new JScrollPane(grid);
-        scrollPane.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
-                BorderFactory.createEmptyBorder(0, 0, 0, 0)
-        ));
-        scrollPane.getViewport().setBackground(AppTheme.SURFACE_SOFT);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        JScrollPane scroll = new JScrollPane(grid);
+        scroll.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        scroll.getViewport().setBackground(AppTheme.SURFACE_SOFT);
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
 
-        JPanel contentCard = new JPanel(new BorderLayout());
-        contentCard.setBackground(AppTheme.CARD_BG);
-        contentCard.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
-                new EmptyBorder(18, 18, 18, 18)
-        ));
-        contentCard.add(scrollPane, BorderLayout.CENTER);
+        JPanel card = new JPanel(new BorderLayout());
+        card.setBackground(AppTheme.CARD_BG);
+        card.setBorder(new EmptyBorder(18, 18, 18, 18));
+        card.add(scroll);
 
-        timetableContainer.add(contentCard, BorderLayout.CENTER);
-        timetableContainer.revalidate();
-        timetableContainer.repaint();
+        timetableContainer.add(card);
+        refresh();
     }
 
+    // ---------------- GROUPING ----------------
     private List<String> buildTimeSlots(List<TimetableSession> sessions) {
-        Set<String> slots = new LinkedHashSet<>();
-        for (TimetableSession session : sessions) {
-            slots.add(formatTime(normalizeTime(session.getStartTime())) + " - " + formatTime(normalizeTime(session.getEndTime())));
+        LinkedHashSet<String> slots = new LinkedHashSet<>();
+
+        for (TimetableSession s : sessions) {
+            slots.add(format(s.getStartTime()) + " - " + format(s.getEndTime()));
         }
         return new ArrayList<>(slots);
     }
 
-    private Map<String, Map<String, List<TimetableSession>>> groupSessions(List<TimetableSession> sessions) {
-        Map<String, Map<String, List<TimetableSession>>> grouped = new LinkedHashMap<>();
+    private Map<String, Map<String, List<TimetableSession>>> group(List<TimetableSession> sessions) {
+        Map<String, Map<String, List<TimetableSession>>> map = new LinkedHashMap<>();
 
-        for (TimetableSession session : sessions) {
-            String timeSlot = formatTime(normalizeTime(session.getStartTime())) + " - " + formatTime(normalizeTime(session.getEndTime()));
-            String day = normalize(session.getDay());
+        for (TimetableSession s : sessions) {
+            String time = format(s.getStartTime()) + " - " + format(s.getEndTime());
+            String day = norm(s.getDay());
 
-            grouped
-                    .computeIfAbsent(timeSlot, ignored -> new LinkedHashMap<>())
-                    .computeIfAbsent(day, ignored -> new ArrayList<>())
-                    .add(session);
+            map.computeIfAbsent(time, k -> new LinkedHashMap<>())
+                    .computeIfAbsent(day, k -> new ArrayList<>())
+                    .add(s);
         }
-
-        return grouped;
+        return map;
     }
 
-    private JComponent createCornerCell() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(AppTheme.CARD_BG);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
-                new EmptyBorder(14, 14, 14, 14)
-        ));
 
-        JLabel label = new JLabel("Time");
-        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        label.setForeground(AppTheme.TEXT_DARK);
-        panel.add(label, BorderLayout.CENTER);
-        return panel;
-    }
+    private JPanel sessionCell(List<TimetableSession> sessions) {
 
-    private JComponent createDayHeader(String day) {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(AppTheme.TABLE_HEADER_BG);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.PRIMARY_ACTIVE, 1, true),
-                new EmptyBorder(14, 14, 14, 14)
-        ));
+        JPanel panel = boxPanel(210, 92);
 
-        JLabel label = new JLabel(toTitle(day));
-        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        label.setForeground(AppTheme.TEXT_LIGHT);
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        panel.add(label, BorderLayout.CENTER);
-        return panel;
-    }
-
-    private JComponent createTimeCell(String timeSlot) {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(AppTheme.CARD_BG);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
-                new EmptyBorder(14, 10, 14, 10)
-        ));
-        panel.setPreferredSize(new Dimension(135, 92));
-
-        JLabel label = new JLabel(timeSlot);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        label.setForeground(AppTheme.TEXT_DARK);
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        panel.add(label, BorderLayout.CENTER);
-        return panel;
-    }
-
-    private JComponent createSessionCell(List<TimetableSession> sessions) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(AppTheme.CARD_BG);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
-                new EmptyBorder(10, 10, 10, 10)
-        ));
-        panel.setPreferredSize(new Dimension(210, 92));
-
-        if (sessions == null || sessions.isEmpty()) {
-            JLabel empty = new JLabel("-");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-            empty.setForeground(AppTheme.TEXT_MUTED);
-            empty.setAlignmentX(Component.CENTER_ALIGNMENT);
-            panel.add(Box.createVerticalGlue());
-            panel.add(empty);
-            panel.add(Box.createVerticalGlue());
+        if (sessions.isEmpty()) {
+            panel.add(centerLabel("-"));
             return panel;
         }
 
-        for (int i = 0; i < sessions.size(); i++) {
-            TimetableSession session = sessions.get(i);
-
-            JPanel card = new JPanel();
-            card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        for (TimetableSession s : sessions) {
+            JPanel card = boxPanel(0, 0);
             card.setBackground(AppTheme.CARD_MUTED_BG);
-            card.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
-                    new EmptyBorder(8, 8, 8, 8)
+
+            card.add(label(value(s.getCourseCode()), 13, Font.BOLD, AppTheme.TEXT_DARK));
+            card.add(label(value(s.getCourseName()), 12, Font.PLAIN, AppTheme.TEXT_DARK));
+            card.add(label(value(s.getVenue()), 12, Font.PLAIN, AppTheme.TEXT_SUBTLE));
+            card.add(label(
+                    value(s.getSessionType()) + " | " + value(s.getLecturerName()),
+                    11, Font.PLAIN, AppTheme.TEXT_SUBTLE
             ));
 
-            JLabel courseCode = new JLabel(valueOrDash(session.getCourseCode()));
-            courseCode.setFont(new Font("Segoe UI", Font.BOLD, 13));
-            courseCode.setForeground(AppTheme.TEXT_DARK);
-
-            JLabel courseName = new JLabel("<html><body style='width:160px'>" + valueOrDash(session.getCourseName()) + "</body></html>");
-            courseName.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-            courseName.setForeground(AppTheme.TEXT_DARK);
-
-            JLabel venue = new JLabel(valueOrDash(session.getVenue()));
-            venue.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-            venue.setForeground(AppTheme.TEXT_SUBTLE);
-
-            JLabel meta = new JLabel(valueOrDash(session.getSessionType()) + " | " + valueOrDash(session.getLecturerName()));
-            meta.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-            meta.setForeground(AppTheme.TEXT_SUBTLE);
-
-            card.add(courseCode);
-            card.add(Box.createVerticalStrut(4));
-            card.add(courseName);
-            card.add(Box.createVerticalStrut(4));
-            card.add(venue);
-            card.add(Box.createVerticalStrut(4));
-            card.add(meta);
-
             panel.add(card);
-            if (i < sessions.size() - 1) {
-                panel.add(Box.createVerticalStrut(8));
-            }
+            panel.add(Box.createVerticalStrut(6));
         }
 
         return panel;
     }
 
-    private String normalize(String value) {
-        return value == null ? "" : value.trim().toUpperCase();
+    private JPanel cell(String text, Color bg, boolean center) {
+        JPanel p = boxPanel(135, 92);
+        p.setBackground(bg);
+        p.add(center ? centerLabel(text) : label(text, 13, Font.BOLD, AppTheme.TEXT_DARK));
+        return p;
     }
 
-    private String normalizeTime(String value) {
-        return value == null ? "" : value.trim();
+    private JPanel boxPanel(int w, int h) {
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        p.setBorder(new EmptyBorder(10, 10, 10, 10));
+        if (w > 0 && h > 0) p.setPreferredSize(new Dimension(w, h));
+        return p;
     }
 
-    private String formatTime(String value) {
-        if (value == null || value.isEmpty()) {
-            return "-";
-        }
-        return value.length() >= 5 ? value.substring(0, 5) : value;
+    private JLabel label(String t, int size, int style, Color c) {
+        JLabel l = new JLabel(t);
+        l.setFont(new Font("Segoe UI", style, size));
+        l.setForeground(c);
+        return l;
     }
 
-    private String valueOrDash(String value) {
-        return value == null || value.trim().isEmpty() ? "-" : value.trim();
+    private JLabel centerLabel(String t) {
+        JLabel l = label(t, 13, Font.PLAIN, AppTheme.TEXT_MUTED);
+        l.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return l;
     }
 
-    private String toTitle(String value) {
-        String normalized = normalize(value).toLowerCase();
-        if (normalized.isEmpty()) {
-            return "-";
-        }
-        return Character.toUpperCase(normalized.charAt(0)) + normalized.substring(1);
+    private void refresh() {
+        timetableContainer.revalidate();
+        timetableContainer.repaint();
+    }
+
+    private String norm(String v) {
+        return v == null ? "" : v.trim().toUpperCase();
+    }
+
+    private String normTime(String v) {
+        return v == null ? "" : v.trim();
+    }
+
+    private String format(String v) {
+        if (v == null || v.isEmpty()) return "-";
+        return v.length() >= 5 ? v.substring(0, 5) : v;
+    }
+
+    private String value(String v) {
+        return (v == null || v.isBlank()) ? "-" : v.trim();
+    }
+
+    private String toTitle(String v) {
+        String s = norm(v).toLowerCase();
+        return s.isEmpty() ? "-" : Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 }
