@@ -1,9 +1,12 @@
 package com.fot.system.model.dto;
 
-import com.fot.system.model.entity.*;
 
 import java.util.List;
 
+/**
+ * aggregate lecturer attendance page data sections for one course
+ * @author poornika
+ */
 public class CourseAttendanceViewData {
     private AttendanceCourseProgress courseProgress;
     private List<AttendanceTableRow> attendanceRows;

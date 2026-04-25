@@ -2,6 +2,10 @@ package com.fot.system.model.dto;
 
 import com.fot.system.model.entity.*;
 
+/**
+ * hold computed course attendance progress values
+ * @author poornika
+ */
 public class AttendanceCourseProgress {
     private int heldHours;
     private int totalHours;
