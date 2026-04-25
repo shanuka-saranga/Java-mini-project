@@ -1,4 +1,4 @@
-package com.fot.system.view.dashboard.shared;
+package com.fot.system.view.dashboard.shared_components;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.model.dto.*;
@@ -22,8 +22,6 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
     private final JLabel lblRoleBadge;
     private final JLabel lblDepartment;
     private final JLabel lblStatus;
-    private final JLabel lblAccessHint;
-
     private final JLabel lblAccountEmail;
     private final JLabel lblAccountRole;
     private final JLabel lblAccountDepartment;
@@ -31,8 +29,6 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
     private final JLabel lblPersonalDob;
     private final JLabel lblPersonalPhone;
     private final JLabel lblPersonalAddress;
-    private final JLabel lblRolePrimary;
-    private final JLabel lblRoleSecondary;
     private final ProfileSectionCard profileCard;
     private final ProfileSectionCard sideRoleCard;
     private final JPanel rightStack;
@@ -42,7 +38,7 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
         setOpaque(false);
         setLayout(new BorderLayout());
 
-        profileCard = new ProfileSectionCard("Profile Card", "Your basic profile summary.");
+        profileCard = new ProfileSectionCard("Profile Card", "");
         JPanel profileContent = new JPanel();
         profileContent.setOpaque(false);
         profileContent.setLayout(new BoxLayout(profileContent, BoxLayout.Y_AXIS));
@@ -57,7 +53,6 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
         lblRoleBadge = createBadgeLabel();
         lblDepartment = createMetaLabel();
         lblStatus = createMetaLabel();
-        lblAccessHint = createMetaLabel();
 
         JPanel badgeWrap = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         badgeWrap.setOpaque(false);
@@ -72,30 +67,19 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
         profileContent.add(Box.createVerticalStrut(10));
         profileContent.add(badgeWrap);
         profileContent.add(Box.createVerticalStrut(16));
-        profileContent.add(lblDepartment);
-        profileContent.add(Box.createVerticalStrut(8));
-        profileContent.add(lblStatus);
-        profileContent.add(Box.createVerticalStrut(8));
-        profileContent.add(lblAccessHint);
-        profileContent.add(Box.createVerticalStrut(4));
         profileCard.setContent(profileContent);
         profileCard.setPreferredSize(new Dimension(PROFILE_CARD_WIDTH, 360));
         profileCard.setMinimumSize(new Dimension(PROFILE_CARD_WIDTH, 330));
         profileCard.setMaximumSize(new Dimension(PROFILE_CARD_WIDTH, Integer.MAX_VALUE));
 
-        lblRolePrimary = createValueLabel();
-        lblRoleSecondary = createValueLabel();
         sideRoleCard = new ProfileSectionCard(
                 "Role Specific Information",
                 "These values come from your academic or staff record and are shown here for reference."
         );
-        sideRoleCard.setContent(createInfoStack(
+        applyRoleSpecificDetails(
                 new String[]{"Primary Detail", "Secondary Detail"},
-                new JLabel[]{lblRolePrimary, lblRoleSecondary}
-        ));
-        sideRoleCard.setPreferredSize(new Dimension(PROFILE_CARD_WIDTH, 220));
-        sideRoleCard.setMinimumSize(new Dimension(PROFILE_CARD_WIDTH, 200));
-        sideRoleCard.setMaximumSize(new Dimension(PROFILE_CARD_WIDTH, Integer.MAX_VALUE));
+                new String[]{"-", "-"}
+        );
 
         rightStack = new JPanel(new BorderLayout(0, 18));
         rightStack.setOpaque(false);
@@ -146,15 +130,11 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
         refreshLayoutMode();
     }
 
-    public void bind(User user, String departmentName, String accessHint, String primaryRoleInfo, String secondaryRoleInfo, String dob, String phone, String address) {
+    public void bind(User user, String departmentName, String[] roleTitles, String[] roleValues, String dob, String phone, String address) {
         photoFrame.setImagePath(user.getProfilePicturePath());
         lblName.setText(user.getFullName());
         lblEmail.setText(user.getEmail());
         lblRoleBadge.setText(valueOrDash(user.getRole()));
-        lblDepartment.setText("Department: " + valueOrDash(departmentName));
-        lblStatus.setText("Account Status: " + valueOrDash(user.getStatus()));
-        lblAccessHint.setText(accessHint);
-
         lblAccountEmail.setText(valueOrDash(user.getEmail()));
         lblAccountRole.setText(valueOrDash(user.getRole()));
         lblAccountDepartment.setText(valueOrDash(departmentName));
@@ -162,8 +142,7 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
         lblPersonalDob.setText(valueOrDash(dob));
         lblPersonalPhone.setText(valueOrDash(phone));
         lblPersonalAddress.setText(formatMultiline(address));
-        lblRolePrimary.setText(valueOrDash(primaryRoleInfo));
-        lblRoleSecondary.setText(valueOrDash(secondaryRoleInfo));
+        applyRoleSpecificDetails(roleTitles, roleValues);
     }
 
     @Override
@@ -347,4 +326,33 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
     private String valueOrDash(String value) {
         return value == null || value.trim().isEmpty() ? "-" : value.trim();
     }
+
+    private void applyRoleSpecificDetails(String[] titles, String[] values) {
+        String[] safeTitles = titles == null || titles.length == 0 ? new String[]{"Primary Detail"} : titles;
+        String[] safeValues = values == null || values.length == 0 ? new String[]{"-"} : values;
+        int size = Math.min(safeTitles.length, safeValues.length);
+
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        for (int i = 0; i < size; i++) {
+            JLabel valueLabel = createValueLabel();
+            valueLabel.setText(valueOrDash(safeValues[i]));
+            JPanel row = createInfoRow(safeTitles[i], valueLabel);
+            row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 84));
+            panel.add(row);
+            if (i < size - 1) {
+                panel.add(Box.createVerticalStrut(12));
+            }
+        }
+
+        sideRoleCard.setContent(panel);
+        int cardHeight = 96 + (size * 84) + Math.max(0, size - 1) * 12;
+        Dimension roleCardDim = new Dimension(PROFILE_CARD_WIDTH, cardHeight);
+        sideRoleCard.setPreferredSize(roleCardDim);
+        sideRoleCard.setMinimumSize(roleCardDim);
+        sideRoleCard.setMaximumSize(roleCardDim);
+    }
+
 }

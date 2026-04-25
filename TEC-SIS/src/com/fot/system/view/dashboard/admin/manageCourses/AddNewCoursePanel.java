@@ -47,7 +47,6 @@ public class AddNewCoursePanel extends JPanel {
         scrollPane.setBorder(null);
         scrollPane.getViewport().setBackground(Color.WHITE);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-
         add(scrollPane, BorderLayout.CENTER);
         add(createBottomActions(), BorderLayout.SOUTH);
     }

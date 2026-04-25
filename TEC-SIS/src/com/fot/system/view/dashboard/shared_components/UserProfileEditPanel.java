@@ -1,7 +1,6 @@
-package com.fot.system.view.dashboard.shared;
+package com.fot.system.view.dashboard.shared_components;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.ProfilePhotoFrame;
@@ -157,7 +156,7 @@ public class UserProfileEditPanel extends JPanel {
         add(content, BorderLayout.CENTER);
     }
 
-    public void bind(User user, String departmentName, String roleInfo, String accessHint, String dob, boolean canEditDob, boolean canEditPassword) {
+    public void bind(User user, String departmentName, String roleInfo, String dob, boolean canEditDob, boolean canEditPassword) {
         currentProfilePicturePath = user.getProfilePicturePath() == null ? "" : user.getProfilePicturePath();
         txtProfilePicture.setText(currentProfilePicturePath);
         photoFrame.setImagePath(currentProfilePicturePath);
@@ -177,7 +176,6 @@ public class UserProfileEditPanel extends JPanel {
         lblRoleValue.setText(valueOrDash(user.getRole()));
         lblDepartmentValue.setText(valueOrDash(departmentName));
         lblRoleInfoValue.setText(valueOrDash(roleInfo));
-        lblEditHint.setText(accessHint);
         revalidate();
         repaint();
     }

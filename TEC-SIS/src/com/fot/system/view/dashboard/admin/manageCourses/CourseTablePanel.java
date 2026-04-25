@@ -5,13 +5,25 @@ import com.fot.system.view.dashboard.admin.components.BaseAdminTablePanel;
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
 
+/**
+ * render course listing table with tuned column sizing
+ * @author janith
+ */
 public class CourseTablePanel extends BaseAdminTablePanel {
 
+    /**
+     * initialize course table panel
+     * @author janith
+     */
     public CourseTablePanel() {
         super(new String[]{"ID", "Code", "Course Name", "Department", "Credits", "Hours", "Session", "Quizzes", "Assignments", "Lecturer"});
         configureTableSizing();
     }
 
+    /**
+     * apply default table behavior and column widths
+     * @author janith
+     */
     private void configureTableSizing() {
         JTable table = getTable();
         table.setFillsViewportHeight(true);

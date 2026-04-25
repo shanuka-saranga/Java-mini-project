@@ -13,14 +13,26 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * handle database operations for courses
+ * @author janith
+ */
 public class CourseRepository {
 
     private final Connection conn;
 
+    /**
+     * initialize course repository
+     * @author janith
+     */
     public CourseRepository() {
         this.conn = DBConnection.getInstance().getConnection();
     }
 
+    /**
+     * find all courses with lookup details
+     * @author janith
+     */
     public List<Course> findAll() {
         List<Course> courses = new ArrayList<>();
         String sql = baseCourseSelect() + " ORDER BY c.course_code";
@@ -38,6 +50,11 @@ public class CourseRepository {
         return courses;
     }
 
+    /**
+     * find course by course code
+     * @param courseCode course code
+     * @author janith
+     */
     public Course findByCourseCode(String courseCode) {
         String sql = baseCourseSelect() + " WHERE c.course_code = ?";
 
@@ -55,6 +72,11 @@ public class CourseRepository {
         return null;
     }
 
+    /**
+     * find course by id
+     * @param courseId course id
+     * @author janith
+     */
     public Course findById(int courseId) {
         String sql = baseCourseSelect() + " WHERE c.id = ?";
 
@@ -72,6 +94,11 @@ public class CourseRepository {
         return null;
     }
 
+    /**
+     * find courses by lecturer id
+     * @param lecturerId lecturer user id
+     * @author janith
+     */
     public List<Course> findByLecturerId(int lecturerId) {
         List<Course> courses = new ArrayList<>();
         String sql = baseCourseSelect() + " WHERE c.lecturer_in_charge_id = ? ORDER BY c.course_code";
@@ -90,6 +117,11 @@ public class CourseRepository {
         return courses;
     }
 
+    /**
+     * find courses by student user id
+     * @param studentUserId student user id
+     * @author janith
+     */
     public List<Course> findByStudentUserId(int studentUserId) {
         List<Course> courses = new ArrayList<>();
         String sql = baseCourseSelect() + """
@@ -116,6 +148,11 @@ public class CourseRepository {
         return courses;
     }
 
+    /**
+     * save new course record
+     * @param course course entity
+     * @author janith
+     */
     public boolean save(Course course) {
         String sql = "INSERT INTO courses (course_code, course_name, credits, total_hours, session_type, no_of_quizzes, no_of_assignments, department_id, lecturer_in_charge_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -128,6 +165,11 @@ public class CourseRepository {
         }
     }
 
+    /**
+     * update existing course record
+     * @param course course entity
+     * @author janith
+     */
     public boolean update(Course course) {
         String sql = "UPDATE courses SET course_code = ?, course_name = ?, credits = ?, total_hours = ?, session_type = ?, no_of_quizzes = ?, no_of_assignments = ?, department_id = ?, lecturer_in_charge_id = ? WHERE id = ?";
 
@@ -140,6 +182,11 @@ public class CourseRepository {
         }
     }
 
+    /**
+     * delete course by id
+     * @param courseId course id
+     * @author janith
+     */
     public boolean deleteById(int courseId) {
         String sql = "DELETE FROM courses WHERE id = ?";
 
@@ -151,14 +198,29 @@ public class CourseRepository {
         }
     }
 
+    /**
+     * check course code existence
+     * @param courseCode course code
+     * @author janith
+     */
     public boolean existsByCourseCode(String courseCode) {
         return exists("SELECT 1 FROM courses WHERE course_code = ?", courseCode);
     }
 
+    /**
+     * check course code existence excluding one id
+     * @param courseCode course code
+     * @param courseId course id to exclude
+     * @author janith
+     */
     public boolean existsByCourseCodeExcludingId(String courseCode, int courseId) {
         return exists("SELECT 1 FROM courses WHERE course_code = ? AND id <> ?", courseCode, courseId);
     }
 
+    /**
+     * get all lecturer users for course assignment
+     * @author janith
+     */
     public List<Staff> findAllLecturers() {
         List<Staff> lecturers = new ArrayList<>();
         String sql = "SELECT id, first_name, last_name, department_id FROM users WHERE role = ? ORDER BY first_name, last_name";
@@ -184,6 +246,10 @@ public class CourseRepository {
         return lecturers;
     }
 
+    /**
+     * count all course records
+     * @author janith
+     */
     public int countAll() {
         String sql = "SELECT COUNT(*) FROM courses";
 

@@ -1,4 +1,4 @@
-package com.fot.system.view.dashboard.shared;
+package com.fot.system.view.dashboard.shared_components;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.EditUserController;
@@ -156,9 +156,8 @@ public abstract class UserProfilePanel extends JPanel {
         viewPanel.bind(
                 currentUser,
                 departmentName,
-                getViewAccessHint(),
-                roleInfo.primaryValue,
-                roleInfo.secondaryValue,
+                roleInfo.titles,
+                roleInfo.values,
                 dob,
                 currentUser.getPhone(),
                 currentUser.getAddress()
@@ -167,8 +166,7 @@ public abstract class UserProfilePanel extends JPanel {
         editPanel.bind(
                 currentUser,
                 departmentName,
-                roleInfo.primaryValue + " | " + roleInfo.secondaryValue,
-                getEditAccessHint(),
+                roleInfo.summary,
                 dob,
                 canEditDob(),
                 canEditPassword()
@@ -253,20 +251,32 @@ public abstract class UserProfilePanel extends JPanel {
         if (user instanceof Student) {
             Student student = (Student) user;
             return new RoleInfo(
-                    "Registration No: " + valueOrDash(student.getRegistrationNo()),
-                    "Student Type: " + valueOrDash(student.getStudentType()) + " | Registration Year: " + student.getRegistrationYear()
+                    new String[]{"Registration No", "Student Type", "Registration Year"},
+                    new String[]{
+                            valueOrDash(student.getRegistrationNo()),
+                            valueOrDash(student.getStudentType()),
+                            String.valueOf(student.getRegistrationYear())
+                    },
+                    "Registration No: " + valueOrDash(student.getRegistrationNo())
+                            + " | Student Type: " + valueOrDash(student.getStudentType())
+                            + " | Registration Year: " + student.getRegistrationYear()
             );
         }
 
         if (user instanceof Staff) {
             Staff staff = (Staff) user;
             return new RoleInfo(
-                    "Staff Code: " + valueOrDash(staff.getStaffCode()),
-                    "Designation: " + valueOrDash(staff.getDesignation())
+                    new String[]{"Staff Code", "Designation"},
+                    new String[]{valueOrDash(staff.getStaffCode()), valueOrDash(staff.getDesignation())},
+                    "Staff Code: " + valueOrDash(staff.getStaffCode()) + " | Designation: " + valueOrDash(staff.getDesignation())
             );
         }
 
-        return new RoleInfo("-", "-");
+        return new RoleInfo(
+                new String[]{"Primary Detail"},
+                new String[]{"-"},
+                "-"
+        );
     }
 
     private String resolveDepartmentName(int departmentId) {
@@ -288,21 +298,16 @@ public abstract class UserProfilePanel extends JPanel {
 
     protected abstract String getSubtitleText();
 
-    protected abstract String getViewAccessHint();
-
-    protected abstract String getEditAccessHint();
-
-    protected User getCurrentUser() {
-        return currentUser;
-    }
 
     private static class RoleInfo {
-        private final String primaryValue;
-        private final String secondaryValue;
+        private final String[] titles;
+        private final String[] values;
+        private final String summary;
 
-        private RoleInfo(String primaryValue, String secondaryValue) {
-            this.primaryValue = primaryValue;
-            this.secondaryValue = secondaryValue;
+        private RoleInfo(String[] titles, String[] values, String summary) {
+            this.titles = titles;
+            this.values = values;
+            this.summary = summary;
         }
     }
 }
