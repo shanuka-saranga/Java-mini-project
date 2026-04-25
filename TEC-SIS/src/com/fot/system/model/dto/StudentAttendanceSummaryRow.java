@@ -1,7 +1,10 @@
 package com.fot.system.model.dto;
 
-import com.fot.system.model.entity.*;
 
+/**
+ * represent summarized attendance counters per student
+ * @author poornika
+ */
 public class StudentAttendanceSummaryRow {
     private String registrationNo;
     private String studentName;

@@ -17,10 +17,10 @@
           <mxGeometry height="20" width="120" x="10" y="1125" as="geometry" />
         </mxCell>
         <mxCell id="200" parent="1" style="shape=line;strokeWidth=7;strokeColor=#005700;fillColor=#008a00;fontColor=#ffffff;" value="" vertex="1">
-          <mxGeometry height="1" width="5130" x="190" y="-610" as="geometry" />
+          <mxGeometry height="1" width="6810" x="190" y="-610" as="geometry" />
         </mxCell>
         <mxCell id="201" parent="1" style="shape=line;strokeWidth=6;strokeColor=#006EAF;fillColor=#1ba1e2;fontColor=#ffffff;" value="" vertex="1">
-          <mxGeometry height="1" width="5190" x="160" y="290" as="geometry" />
+          <mxGeometry height="1" width="7030" x="160" y="290" as="geometry" />
         </mxCell>
         <mxCell id="202" parent="1" style="shape=line;strokeWidth=5;strokeColor=#A50040;fillColor=#d80073;fontColor=#ffffff;" value="" vertex="1">
           <mxGeometry height="1" width="5210" x="160" y="600" as="geometry" />
