@@ -253,10 +253,10 @@ public class TOMedicalPanel extends JPanel {
             protected void done() {
                 try {
                     MedicalPanelData data = get();
-                    pendingRows = data.pendingRows;
-                    approvedRows = data.approvedRows;
-                    renderPendingRows(data.pendingRows);
-                    renderApprovedRows(data.approvedRows);
+                    pendingRows = data.getPendingRows();
+                    approvedRows = data.getApprovedRows();
+                    renderPendingRows(data.getPendingRows());
+                    renderApprovedRows(data.getApprovedRows());
                     clearDetails(lblPendingDetailsMeta, pendingDetailsTableModel, pendingDetailsPanel);
                     clearDetails(lblApprovedDetailsMeta, approvedDetailsTableModel, approvedDetailsPanel);
                 } catch (Exception e) {
@@ -384,16 +384,6 @@ public class TOMedicalPanel extends JPanel {
             Desktop.getDesktop().open(new File(path));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Unable to open document.", "Medical", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private static class MedicalPanelData {
-        private final List<MedicalApprovalRow> pendingRows;
-        private final List<MedicalApprovalRow> approvedRows;
-
-        private MedicalPanelData(List<MedicalApprovalRow> pendingRows, List<MedicalApprovalRow> approvedRows) {
-            this.pendingRows = pendingRows;
-            this.approvedRows = approvedRows;
         }
     }
 

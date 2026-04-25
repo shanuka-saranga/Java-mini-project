@@ -105,7 +105,7 @@ public class EditCourseDetailsPanel extends JPanel {
     private String getLecturerId() {
         Object selectedItem = cmbLecturer.getSelectedItem();
         if (selectedItem instanceof LecturerOption) {
-            return ((LecturerOption) selectedItem).id;
+            return ((LecturerOption) selectedItem).getId();
         }
         return "";
     }
@@ -128,7 +128,7 @@ public class EditCourseDetailsPanel extends JPanel {
 
         for (int i = 0; i < cmbLecturer.getItemCount(); i++) {
             LecturerOption option = cmbLecturer.getItemAt(i);
-            if (option != null && String.valueOf(lecturerId).equals(option.id)) {
+            if (option != null && String.valueOf(lecturerId).equals(option.getId())) {
                 cmbLecturer.setSelectedIndex(i);
                 return;
             }
@@ -148,18 +148,4 @@ public class EditCourseDetailsPanel extends JPanel {
         add(component, gbc);
     }
 
-    private static class LecturerOption {
-        private final String id;
-        private final String name;
-
-        private LecturerOption(String id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
 }
