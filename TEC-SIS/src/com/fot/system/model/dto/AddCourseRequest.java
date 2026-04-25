@@ -1,7 +1,5 @@
 package com.fot.system.model.dto;
 
-import com.fot.system.model.entity.*;
-
 /**
  * carry add course form input values
  * @author janith
