@@ -1,8 +1,7 @@
 package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
+import com.fot.system.model.entity.Department;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

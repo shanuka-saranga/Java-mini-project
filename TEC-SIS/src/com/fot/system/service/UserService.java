@@ -1,18 +1,29 @@
 package com.fot.system.service;
 
 import com.fot.system.config.AppConfig;
-import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
+import com.fot.system.model.dto.AddUserRequest;
+import com.fot.system.model.dto.EditUserRequest;
+import com.fot.system.model.entity.Staff;
+import com.fot.system.model.entity.Student;
+import com.fot.system.model.entity.User;
 import com.fot.system.repository.UserRepository;
 
 import java.sql.Date;
 import java.util.List;
 
+/**
+ * handle user-related business logic used by profile and user management flows
+ * @author janith
+ */
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final ProfilePictureStorageService profilePictureStorageService;
 
+    /**
+     * initialize user service dependencies
+     * @author janith
+     */
     public UserService() {
         this.userRepository = new UserRepository();
         this.profilePictureStorageService = new ProfilePictureStorageService();
@@ -66,6 +77,9 @@ public class UserService implements IUserService {
      * @author janith , methum, poornika , shaanuka
      */
     public User getUserById(int id) {
+        if (id <= 0) {
+            throw new RuntimeException("Invalid user ID.");
+        }
         return userRepository.findById(id);
     }
 
@@ -260,19 +274,19 @@ public class UserService implements IUserService {
      * @author janith
      */
     private void populateCommonFields(User user, AddUserRequest request) {
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setPasswordHash(request.getPassword());
-        user.setPhone(request.getPhone());
-        user.setAddress(request.getAddress());
+        user.setFirstName(normalizeRequired(request.getFirstName()));
+        user.setLastName(normalizeRequired(request.getLastName()));
+        user.setEmail(normalizeRequired(request.getEmail()));
+        user.setPasswordHash(normalizeRequired(request.getPassword()));
+        user.setPhone(normalizeRequired(request.getPhone()));
+        user.setAddress(normalizeNullable(request.getAddress()));
         user.setProfilePicturePath(saveProfilePictureIfPresent(
                 request.getProfilePicturePath(),
                 request.getEmail(),
                 request.getRole()
         ));
         user.setDob(parseDob(request.getDob()));
-        user.setRole(request.getRole());
+        user.setRole(normalizeRequired(request.getRole()).toUpperCase());
         user.setStatus(normalizeStatus(request.getStatus()));
         user.setDepartmentId(parseDepartmentId(request.getDepartmentId()));
     }
@@ -284,19 +298,19 @@ public class UserService implements IUserService {
      * @author janith
      */
     private void populateCommonFields(User user, EditUserRequest request) {
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setPasswordHash(request.getPassword());
-        user.setPhone(request.getPhone());
-        user.setAddress(request.getAddress());
+        user.setFirstName(normalizeRequired(request.getFirstName()));
+        user.setLastName(normalizeRequired(request.getLastName()));
+        user.setEmail(normalizeRequired(request.getEmail()));
+        user.setPasswordHash(normalizeRequired(request.getPassword()));
+        user.setPhone(normalizeRequired(request.getPhone()));
+        user.setAddress(normalizeNullable(request.getAddress()));
         user.setProfilePicturePath(resolveProfilePicturePathForUpdate(
                 request.getProfilePicturePath(),
                 request.getEmail(),
                 request.getRole()
         ));
         user.setDob(parseDob(request.getDob()));
-        user.setRole(request.getRole());
+        user.setRole(normalizeRequired(request.getRole()).toUpperCase());
         user.setStatus(normalizeStatus(request.getStatus()));
         user.setDepartmentId(parseDepartmentId(request.getDepartmentId()));
     }
@@ -308,7 +322,11 @@ public class UserService implements IUserService {
      */
     private int parseDepartmentId(String departmentId) {
         try {
-            return Integer.parseInt(departmentId.trim());
+            int parsed = Integer.parseInt(departmentId.trim());
+            if (parsed <= 0) {
+                throw new RuntimeException("Department ID must be a valid number.");
+            }
+            return parsed;
         } catch (NumberFormatException e) {
             throw new RuntimeException("Department ID must be a valid number.");
         }
@@ -386,6 +404,31 @@ public class UserService implements IUserService {
         }
 
         return profilePictureStorageService.saveProfilePicture(picturePath, email, role);
+    }
+
+    /**
+     * normalize required string values
+     * @param value input value
+     * @author janith
+     */
+    private String normalizeRequired(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.trim();
+    }
+
+    /**
+     * normalize optional string values
+     * @param value input value
+     * @author janith
+     */
+    private String normalizeNullable(String value) {
+        if (value == null) {
+            return null;
+        }
+        String normalized = value.trim();
+        return normalized.isEmpty() ? null : normalized;
     }
 
 }

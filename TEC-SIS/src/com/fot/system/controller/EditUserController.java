@@ -1,8 +1,8 @@
 package com.fot.system.controller;
 
 import com.fot.system.config.AppConfig;
-import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
+import com.fot.system.model.dto.EditUserRequest;
+import com.fot.system.model.entity.User;
 import com.fot.system.service.UserService;
 
 import java.sql.Date;
@@ -11,6 +11,10 @@ import java.time.Year;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+/**
+ * validate and process user edit requests before service execution
+ * @author janith
+ */
 public class EditUserController {
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     private static final Pattern PHONE_PATTERN = Pattern.compile("^0\\d{9}$");
@@ -33,15 +37,29 @@ public class EditUserController {
 
     private final UserService userService;
 
+    /**
+     * initialize edit user controller dependencies
+     * @author janith
+     */
     public EditUserController() {
         this.userService = new UserService();
     }
 
+    /**
+     * validate and update user details
+     * @param request user edit payload
+     * @author janith
+     */
     public User updateUser(EditUserRequest request) {
         validateEditUserRequest(request);
         return userService.updateUser(request);
     }
 
+    /**
+     * validate and delete user by id
+     * @param userId target user id
+     * @author janith
+     */
     public void deleteUser(int userId) {
         if (userId <= 0) {
             throw new RuntimeException("Invalid user ID.");
@@ -163,42 +181,42 @@ public class EditUserController {
     }
 
     private void validateRole(String role) {
-        String normalized = role.trim().toUpperCase();
+        String normalized = normalize(role).toUpperCase();
         if (!VALID_ROLES.contains(normalized)) {
             throw new RuntimeException("Invalid user role.");
         }
     }
 
     private void validateStatus(String status) {
-        String normalized = status.trim().toUpperCase();
+        String normalized = normalize(status).toUpperCase();
         if (!VALID_STATUSES.contains(normalized)) {
             throw new RuntimeException("Invalid user status.");
         }
     }
 
     private void validateEmail(String email) {
-        String normalized = email.trim();
+        String normalized = normalize(email);
         if (!EMAIL_PATTERN.matcher(normalized).matches() || normalized.length() > 100) {
             throw new RuntimeException("Email format is invalid.");
         }
     }
 
     private void validatePhone(String phone) {
-        String normalized = phone.trim();
+        String normalized = normalize(phone);
         if (!PHONE_PATTERN.matcher(normalized).matches()) {
             throw new RuntimeException("Phone number must be 10 digits and start with 0.");
         }
     }
 
     private void validateName(String name, String message) {
-        String normalized = name.trim();
+        String normalized = normalize(name);
         if (!NAME_PATTERN.matcher(normalized).matches()) {
             throw new RuntimeException(message);
         }
     }
 
     private void validatePassword(String password) {
-        String normalized = password.trim();
+        String normalized = normalize(password);
         if (normalized.length() < 4 || normalized.length() > 255) {
             throw new RuntimeException("Password must be between 4 and 255 characters.");
         }
@@ -223,21 +241,21 @@ public class EditUserController {
     }
 
     private void validateRegistrationNo(String registrationNo) {
-        String normalized = registrationNo.trim();
+        String normalized = normalize(registrationNo);
         if (!REG_NO_PATTERN.matcher(normalized).matches()) {
             throw new RuntimeException("Registration number format is invalid.");
         }
     }
 
     private void validateStudentType(String studentType) {
-        String normalized = studentType.trim().toUpperCase();
+        String normalized = normalize(studentType).toUpperCase();
         if (!VALID_STUDENT_TYPES.contains(normalized)) {
             throw new RuntimeException("Invalid student type.");
         }
     }
 
     private void validateStaffCode(String staffCode) {
-        String normalized = staffCode.trim();
+        String normalized = normalize(staffCode);
         if (!STAFF_CODE_PATTERN.matcher(normalized).matches()) {
             throw new RuntimeException("Staff code format is invalid.");
         }
@@ -250,5 +268,14 @@ public class EditUserController {
         if (designation.trim().length() > 50) {
             throw new RuntimeException("Designation must be 50 characters or less.");
         }
+    }
+
+    /**
+     * normalize string by trimming leading and trailing spaces
+     * @param value input value
+     * @author janith
+     */
+    private String normalize(String value) {
+        return value == null ? "" : value.trim();
     }
 }
