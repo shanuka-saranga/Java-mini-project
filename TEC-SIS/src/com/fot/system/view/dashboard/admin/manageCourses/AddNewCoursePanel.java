@@ -5,6 +5,9 @@ import com.fot.system.config.AppTheme;
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.components.ThemedComboBox;
+import com.fot.system.view.components.ThemedRadioButton;
+import com.fot.system.view.components.ThemedTextField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +20,10 @@ public class AddNewCoursePanel extends JPanel {
     private JTextField txtTotalHours;
     private JTextField txtNoOfQuizzes;
     private JTextField txtNoOfAssignments;
-    private JComboBox<String> cmbSessionType;
+    private ButtonGroup sessionTypeGroup;
+    private ThemedRadioButton rdoTheory;
+    private ThemedRadioButton rdoPractical;
+    private ThemedRadioButton rdoBoth;
     private JComboBox<Department> cmbDepartment;
     private JComboBox<LecturerOption> cmbLecturer;
     private Runnable onCloseAction;
@@ -65,15 +71,14 @@ public class AddNewCoursePanel extends JPanel {
         txtTotalHours = createTextField();
         txtNoOfQuizzes = createTextField();
         txtNoOfAssignments = createTextField();
-        cmbSessionType = new JComboBox<>(AppConfig.COURSE_SESSION_TYPES);
-        cmbDepartment = new JComboBox<>();
-        cmbLecturer = new JComboBox<>();
+        cmbDepartment = new ThemedComboBox<>();
+        cmbLecturer = new ThemedComboBox<>();
 
         addFormRow(formPanel, "Course Code:", txtCourseCode, 0, gbc);
         addFormRow(formPanel, "Course Name:", txtCourseName, 1, gbc);
         addFormRow(formPanel, "Credits:", txtCredits, 2, gbc);
         addFormRow(formPanel, "Total Hours:", txtTotalHours, 3, gbc);
-        addFormRow(formPanel, "Session Type:", cmbSessionType, 4, gbc);
+        addFormRow(formPanel, "Session Type:", createSessionTypePanel(), 4, gbc);
         addFormRow(formPanel, "No. of Quizzes:", txtNoOfQuizzes, 5, gbc);
         addFormRow(formPanel, "No. of Assignments:", txtNoOfAssignments, 6, gbc);
         addFormRow(formPanel, "Department:", cmbDepartment, 7, gbc);
@@ -87,7 +92,30 @@ public class AddNewCoursePanel extends JPanel {
      * @author janith
      */
     private JTextField createTextField() {
-        return new JTextField(15);
+        return new ThemedTextField(15);
+    }
+
+    /**
+     * create session type radio options panel
+     * @author janith
+     */
+    private JPanel createSessionTypePanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
+        panel.setOpaque(false);
+
+        sessionTypeGroup = new ButtonGroup();
+        rdoTheory = new ThemedRadioButton("THEORY", true);
+        rdoPractical = new ThemedRadioButton("PRACTICAL");
+        rdoBoth = new ThemedRadioButton("BOTH");
+
+        sessionTypeGroup.add(rdoTheory);
+        sessionTypeGroup.add(rdoPractical);
+        sessionTypeGroup.add(rdoBoth);
+
+        panel.add(rdoTheory);
+        panel.add(rdoPractical);
+        panel.add(rdoBoth);
+        return panel;
     }
 
     /**
@@ -166,7 +194,7 @@ public class AddNewCoursePanel extends JPanel {
         txtTotalHours.setText("");
         txtNoOfQuizzes.setText(AppConfig.DEFAULT_QUIZ_COUNT);
         txtNoOfAssignments.setText(AppConfig.DEFAULT_ASSIGNMENT_COUNT);
-        cmbSessionType.setSelectedItem(AppConfig.DEFAULT_COURSE_SESSION_TYPE);
+        selectSessionType(AppConfig.DEFAULT_COURSE_SESSION_TYPE);
 
         if (cmbDepartment.getItemCount() > 0) {
             cmbDepartment.setSelectedIndex(0);
@@ -186,7 +214,7 @@ public class AddNewCoursePanel extends JPanel {
                 txtCourseName.getText().trim(),
                 txtCredits.getText().trim(),
                 txtTotalHours.getText().trim(),
-                cmbSessionType.getSelectedItem() == null ? "" : cmbSessionType.getSelectedItem().toString(),
+                getSelectedSessionType(),
                 txtNoOfQuizzes.getText().trim(),
                 txtNoOfAssignments.getText().trim(),
                 getDepartmentId(),
@@ -288,4 +316,34 @@ public class AddNewCoursePanel extends JPanel {
         panel.add(component, gbc);
     }
 
+    /**
+     * get selected session type from radio buttons
+     * @author janith
+     */
+    private String getSelectedSessionType() {
+        if (rdoPractical.isSelected()) {
+            return "PRACTICAL";
+        }
+        if (rdoBoth.isSelected()) {
+            return "BOTH";
+        }
+        return "THEORY";
+    }
+
+    /**
+     * select session type radio based on value
+     * @param sessionType session type text
+     * @author janith
+     */
+    private void selectSessionType(String sessionType) {
+        if ("PRACTICAL".equalsIgnoreCase(sessionType)) {
+            rdoPractical.setSelected(true);
+            return;
+        }
+        if ("BOTH".equalsIgnoreCase(sessionType)) {
+            rdoBoth.setSelected(true);
+            return;
+        }
+        rdoTheory.setSelected(true);
+    }
 }
