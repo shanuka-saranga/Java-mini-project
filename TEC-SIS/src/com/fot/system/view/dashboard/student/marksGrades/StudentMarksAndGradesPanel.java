@@ -57,7 +57,7 @@ public class StudentMarksAndGradesPanel extends JPanel {
         marksTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         JScrollPane tableScrollPane = new JScrollPane(marksTable);
-        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         tableScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         tableScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 

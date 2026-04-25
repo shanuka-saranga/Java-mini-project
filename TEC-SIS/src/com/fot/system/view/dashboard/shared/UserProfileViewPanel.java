@@ -326,7 +326,7 @@ public class UserProfileViewPanel extends JPanel implements Scrollable {
         JPanel row = new JPanel(new BorderLayout(0, 6));
         row.setBackground(AppTheme.SURFACE_MUTED);
         row.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(12, 12, 12, 12)
         ));
 

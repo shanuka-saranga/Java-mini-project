@@ -300,7 +300,7 @@ public class UserProfileEditPanel extends JPanel {
         JPanel wrap = new JPanel(new BorderLayout());
         wrap.setBackground(AppTheme.SURFACE_MUTED);
         wrap.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(11, 12, 11, 12)
         ));
         wrap.add(valueLabel, BorderLayout.CENTER);

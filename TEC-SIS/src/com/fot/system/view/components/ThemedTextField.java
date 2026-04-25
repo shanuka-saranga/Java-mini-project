@@ -22,10 +22,7 @@ public class ThemedTextField extends JTextField {
         setForeground(AppTheme.TEXT_DARK);
         setBackground(AppTheme.BG_LIGHT);
         setCaretColor(AppTheme.PRIMARY);
-        setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
+        setBorder(AppTheme.inputBorder());
         setPreferredSize(new Dimension(0, DEFAULT_HEIGHT));
     }
 }

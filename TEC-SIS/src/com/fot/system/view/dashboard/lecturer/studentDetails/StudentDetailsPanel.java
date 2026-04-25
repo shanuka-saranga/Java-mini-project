@@ -41,7 +41,7 @@ public class StudentDetailsPanel extends JPanel {
         txtSearch = new JTextField();
         txtSearch.setPreferredSize(new Dimension(400, 40));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(0, 10, 0, 10)
         ));
         txtSearch.setToolTipText("Search by Name, Reg No or Email...");
@@ -74,7 +74,7 @@ public class StudentDetailsPanel extends JPanel {
         studentTable.setRowSorter(rowSorter);
 
         JScrollPane scrollPane = new JScrollPane(studentTable);
-        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         scrollPane.getViewport().setBackground(AppTheme.CARD_BG);
 
         contentPanel.add(controlsPanel, BorderLayout.NORTH);

@@ -107,7 +107,7 @@ public class TOAttendancePanel extends JPanel {
         txtSessionSearch = new JTextField();
         txtSessionSearch.setFont(AppTheme.fontPlain(13));
         txtSessionSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         txtSessionSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -233,7 +233,7 @@ public class TOAttendancePanel extends JPanel {
 
     private JScrollPane createScrollPane(JTable table, int preferredHeight) {
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         scrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setPreferredSize(new Dimension(0, preferredHeight));

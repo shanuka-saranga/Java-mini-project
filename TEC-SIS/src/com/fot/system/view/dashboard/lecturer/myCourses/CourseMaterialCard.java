@@ -23,7 +23,7 @@ public class CourseMaterialCard extends JPanel {
         setLayout(new BorderLayout(14, 0));
         setBackground(AppTheme.CARD_MUTED_BG);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.CARD_BORDER, 1, true),
+                BorderFactory.createLineBorder(AppTheme.CARD_BORDER, 1, false),
                 new EmptyBorder(14, 14, 14, 14)
         ));
         setPreferredSize(new Dimension(0, 118));

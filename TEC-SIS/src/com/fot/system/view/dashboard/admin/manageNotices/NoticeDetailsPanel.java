@@ -252,7 +252,7 @@ public class NoticeDetailsPanel extends JPanel {
     private JLabel createStyledLabel(String text, FontAwesomeSolid icon) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontPlain(14));
-        label.setIcon(FontIcon.of(icon, 16, tealColor));
+        label.setIcon(FontIcon.of(icon, 16, AppTheme.ICON_ACCENT));
         label.setIconTextGap(12);
         return label;
     }

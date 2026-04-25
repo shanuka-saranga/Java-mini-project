@@ -16,7 +16,7 @@ public class FeaturePlaceholderPanel extends JPanel {
         JPanel card = new JPanel(new BorderLayout(0, 12));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(24, 24, 24, 24)
         ));
 

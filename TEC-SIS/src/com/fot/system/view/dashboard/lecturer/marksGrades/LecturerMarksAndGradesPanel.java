@@ -88,7 +88,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         JPanel openedCoursePanel = new JPanel(new BorderLayout(0, 16));
         openedCoursePanel.setBackground(AppTheme.CARD_BG);
         openedCoursePanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(22, 22, 22, 22)
         ));
 
@@ -108,7 +108,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         txtGradeSearch.setPreferredSize(new Dimension(420, 38));
         txtGradeSearch.setMinimumSize(new Dimension(220, 38));
         txtGradeSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         txtGradeSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -432,7 +432,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         controlsPanel.add(batchFilterPanel, BorderLayout.EAST);
 
         JScrollPane tableScrollPane = new JScrollPane(gradeTable);
-        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         tableScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         tableScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         tableScrollPane.setPreferredSize(new Dimension(0, 280));

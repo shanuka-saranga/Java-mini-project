@@ -96,7 +96,7 @@ public class LecturerHomePanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout(0, 14));
         panel.setBackground(AppTheme.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(18, 18, 18, 18)
         ));
 
@@ -136,7 +136,7 @@ public class LecturerHomePanel extends JPanel {
         JPanel row = new JPanel(new BorderLayout(12, 0));
         row.setOpaque(false);
         row.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_SOFT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_SOFT, 1, false),
                 new EmptyBorder(10, 12, 10, 12)
         ));
 

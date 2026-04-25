@@ -16,7 +16,7 @@ public class AssessmentSummaryCard extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(AppTheme.CARD_BG);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BASE_COLOR, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BASE_COLOR, 1, false),
                 new EmptyBorder(16, 16, 16, 16)
         ));
 

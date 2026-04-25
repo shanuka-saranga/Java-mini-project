@@ -35,7 +35,7 @@ public class AddCourseMaterialDialog extends JDialog {
         JPanel form = new JPanel();
         form.setBackground(AppTheme.CARD_BG);
         form.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(18, 18, 18, 18)
         ));
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));

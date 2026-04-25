@@ -131,7 +131,7 @@ public class StudentHomePanel extends JPanel {
         JPanel openedCoursePanel = new JPanel(new BorderLayout(0, 16));
         openedCoursePanel.setBackground(AppTheme.CARD_BG);
         openedCoursePanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(22, 22, 22, 22)
         ));
 

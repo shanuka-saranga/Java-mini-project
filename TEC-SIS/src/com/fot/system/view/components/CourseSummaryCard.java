@@ -24,7 +24,7 @@ public class CourseSummaryCard extends FeedItemCard {
 
         if (selected) {
             setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(AppTheme.PRIMARY, 2, true),
+                    BorderFactory.createLineBorder(AppTheme.PRIMARY, 2, false),
                     BorderFactory.createEmptyBorder(13, 13, 13, 13)
             ));
         }
