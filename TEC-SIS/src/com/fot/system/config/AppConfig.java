@@ -1,5 +1,6 @@
 package com.fot.system.config;
 
+import java.awt.Dimension;
 import java.nio.file.Path;
 
 public class AppConfig {
@@ -38,5 +39,12 @@ public class AppConfig {
     public static final String MENU_TIMETABLES = "TIMETABLES";
     public static final String MENU_REPORTS = "REPORTS";
     public static final String MENU_MEDICALS = "MEDICALS";
+
+    public static final String DEFAULT_COURSE_SESSION_TYPE = "THEORY";
+    public static final String DEFAULT_QUIZ_COUNT = "3";
+    public static final String DEFAULT_ASSIGNMENT_COUNT = "1";
+    public static final Dimension BUTTON_SIZE_CLOSE = new Dimension(120, 40);
+    public static final Dimension BUTTON_SIZE_SAVE = new Dimension(150, 40);
+    public static final String[] COURSE_SESSION_TYPES = {"THEORY", "PRACTICAL", "BOTH"};
 
 }

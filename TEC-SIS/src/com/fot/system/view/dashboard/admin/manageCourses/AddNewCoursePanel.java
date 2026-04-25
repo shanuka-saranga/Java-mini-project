@@ -1,5 +1,6 @@
 package com.fot.system.view.dashboard.admin.manageCourses;
 
+import com.fot.system.config.AppConfig;
 import com.fot.system.config.AppTheme;
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
@@ -10,13 +11,6 @@ import java.awt.*;
 import java.util.List;
 
 public class AddNewCoursePanel extends JPanel {
-    private static final String DEFAULT_SESSION_TYPE = "THEORY";
-    private static final String DEFAULT_QUIZ_COUNT = "3";
-    private static final String DEFAULT_ASSIGNMENT_COUNT = "1";
-    private static final Dimension CLOSE_BUTTON_SIZE = new Dimension(120, 40);
-    private static final Dimension SAVE_BUTTON_SIZE = new Dimension(150, 40);
-    private static final String[] SESSION_TYPES = {"THEORY", "PRACTICAL", "BOTH"};
-
     private JTextField txtCourseCode;
     private JTextField txtCourseName;
     private JTextField txtCredits;
@@ -71,7 +65,7 @@ public class AddNewCoursePanel extends JPanel {
         txtTotalHours = createTextField();
         txtNoOfQuizzes = createTextField();
         txtNoOfAssignments = createTextField();
-        cmbSessionType = new JComboBox<>(SESSION_TYPES);
+        cmbSessionType = new JComboBox<>(AppConfig.COURSE_SESSION_TYPES);
         cmbDepartment = new JComboBox<>();
         cmbLecturer = new JComboBox<>();
 
@@ -143,7 +137,7 @@ public class AddNewCoursePanel extends JPanel {
                 AppTheme.BTN_CANCEL_BG,
                 AppTheme.BTN_CANCEL_FG,
                 AppTheme.BTN_CANCEL_HOVER,
-                CLOSE_BUTTON_SIZE
+                AppConfig.BUTTON_SIZE_CLOSE
         );
     }
 
@@ -157,7 +151,7 @@ public class AddNewCoursePanel extends JPanel {
                 AppTheme.BTN_SAVE_BG,
                 AppTheme.BTN_SAVE_FG,
                 AppTheme.BTN_SAVE_HOVER,
-                SAVE_BUTTON_SIZE
+                AppConfig.BUTTON_SIZE_SAVE
         );
     }
 
@@ -170,9 +164,9 @@ public class AddNewCoursePanel extends JPanel {
         txtCourseName.setText("");
         txtCredits.setText("");
         txtTotalHours.setText("");
-        txtNoOfQuizzes.setText(DEFAULT_QUIZ_COUNT);
-        txtNoOfAssignments.setText(DEFAULT_ASSIGNMENT_COUNT);
-        cmbSessionType.setSelectedItem(DEFAULT_SESSION_TYPE);
+        txtNoOfQuizzes.setText(AppConfig.DEFAULT_QUIZ_COUNT);
+        txtNoOfAssignments.setText(AppConfig.DEFAULT_ASSIGNMENT_COUNT);
+        cmbSessionType.setSelectedItem(AppConfig.DEFAULT_COURSE_SESSION_TYPE);
 
         if (cmbDepartment.getItemCount() > 0) {
             cmbDepartment.setSelectedIndex(0);
@@ -268,7 +262,7 @@ public class AddNewCoursePanel extends JPanel {
     private String getLecturerId() {
         Object selectedItem = cmbLecturer.getSelectedItem();
         if (selectedItem instanceof LecturerOption) {
-            return ((LecturerOption) selectedItem).id;
+            return ((LecturerOption) selectedItem).getId();
         }
         return "";
     }
@@ -294,18 +288,4 @@ public class AddNewCoursePanel extends JPanel {
         panel.add(component, gbc);
     }
 
-    private static class LecturerOption {
-        private final String id;
-        private final String name;
-
-        private LecturerOption(String id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
 }
