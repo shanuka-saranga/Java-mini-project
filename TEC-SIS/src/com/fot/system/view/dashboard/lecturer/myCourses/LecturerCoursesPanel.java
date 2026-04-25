@@ -31,13 +31,8 @@ public class LecturerCoursesPanel extends JPanel {
     private final JPanel cardPanel;
     private final JPanel courseListPanel;
     private final JPanel materialsListPanel;
-    private final JLabel lblSelectedCourse;
-    private final JLabel lblCourseMeta;
-    private final JLabel lblCourseLecturer;
-    private final JLabel lblCourseDepartment;
     private final JLabel lblOpenedCourseTab;
     private final CustomButton addNewButton;
-
     private List<Course> assignedCourses;
     private Course selectedCourse;
 
@@ -56,20 +51,13 @@ public class LecturerCoursesPanel extends JPanel {
         setBorder(new EmptyBorder(24, 24, 24, 24));
 
         add(createHeader(), BorderLayout.NORTH);
-
         cardPanel.setOpaque(false);
-
         courseListPanel = new JPanel();
         courseListPanel.setOpaque(true);
         courseListPanel.setBackground(AppTheme.SURFACE_SOFT);
         courseListPanel.setLayout(new BoxLayout(courseListPanel, BoxLayout.Y_AXIS));
         JScrollPane courseListScrollPane = createScrollPane(courseListPanel);
         courseListScrollPane.getViewport().setBackground(AppTheme.SURFACE_SOFT);
-
-        lblSelectedCourse = createTitleLabel("-");
-        lblCourseMeta = createMetaLabel("-");
-        lblCourseLecturer = createMetaLabel("-");
-        lblCourseDepartment = createMetaLabel("-");
 
         lblOpenedCourseTab = new JLabel("Opened Course");
         lblOpenedCourseTab.setFont(AppTheme.fontBold(16));
@@ -124,13 +112,6 @@ public class LecturerCoursesPanel extends JPanel {
         JPanel courseInfoPanel = new JPanel();
         courseInfoPanel.setOpaque(false);
         courseInfoPanel.setLayout(new BoxLayout(courseInfoPanel, BoxLayout.Y_AXIS));
-        courseInfoPanel.add(lblSelectedCourse);
-        courseInfoPanel.add(Box.createVerticalStrut(8));
-        courseInfoPanel.add(lblCourseMeta);
-        courseInfoPanel.add(Box.createVerticalStrut(6));
-        courseInfoPanel.add(lblCourseLecturer);
-        courseInfoPanel.add(Box.createVerticalStrut(6));
-        courseInfoPanel.add(lblCourseDepartment);
 
         JLabel materialsHeading = new JLabel("Course Materials");
         materialsHeading.setFont(AppTheme.fontBold(18));
@@ -267,10 +248,6 @@ public class LecturerCoursesPanel extends JPanel {
     private void openCourse(Course course) {
         selectedCourse = course;
         updateOpenedCourseTabTitle(course);
-        lblSelectedCourse.setText(course.getCourseCode() + " - " + course.getCourseName());
-        lblCourseMeta.setText("Session: " + valueOrDash(course.getSessionType()) + "  |  Credits: " + course.getCredits() + "  |  Hours: " + course.getTotalHours());
-        lblCourseLecturer.setText("Lecturer: " + valueOrDash(course.getLecturerInChargeName()));
-        lblCourseDepartment.setText("Department: " + valueOrDash(course.getDepartmentName()));
         addNewButton.setEnabled(true);
         loadMaterialsForSelectedCourse();
         cardLayout.show(cardPanel, DETAILS_CARD);
