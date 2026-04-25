@@ -1,12 +1,11 @@
 package com.fot.system.view.dashboard.to;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.service.AttendanceService;
 import com.fot.system.service.NoticeService;
-import com.fot.system.view.dashboard.admin.shared.DashboardStatCard;
-import com.fot.system.view.dashboard.admin.shared.NoticeFeedPanel;
+import com.fot.system.view.dashboard.admin.components.DashboardStatCard;
+import com.fot.system.view.dashboard.admin.components.NoticeFeedPanel;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import javax.swing.*;

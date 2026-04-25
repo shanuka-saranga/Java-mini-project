@@ -1,4 +1,4 @@
-package com.fot.system.view.dashboard.admin.shared;
+package com.fot.system.view.dashboard.admin.components;
 
 import com.fot.system.config.AppTheme;
 
