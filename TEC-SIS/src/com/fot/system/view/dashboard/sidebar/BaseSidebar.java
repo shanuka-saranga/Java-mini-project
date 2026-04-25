@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class BaseSidebar extends JPanel {
+    private static final int SIDEBAR_ICON_SIZE = 18;
+    private static final int SIDEBAR_ICON_SLOT_WIDTH = 28;
     protected final MainDashboard parentFrame;
 
     /**
@@ -96,8 +98,7 @@ public abstract class BaseSidebar extends JPanel {
 
         JButton button = new JButton(text);
 
-        FontIcon icon = FontIcon.of(iconCode, 18, AppTheme.TEXT_LIGHT);
-        button.setIcon(icon);
+        button.setIcon(createAlignedIcon(iconCode));
 
         button.setMaximumSize(new Dimension(210, 45));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -137,5 +138,31 @@ public abstract class BaseSidebar extends JPanel {
         });
 
         return button;
+    }
+
+    /**
+     * create fixed-width icon so all menu text starts at same x position
+     * @param iconCode font awesome icon code
+     * @author methum
+     */
+    private Icon createAlignedIcon(FontAwesomeSolid iconCode) {
+        FontIcon baseIcon = FontIcon.of(iconCode, SIDEBAR_ICON_SIZE, AppTheme.TEXT_LIGHT);
+        return new Icon() {
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+                int offsetX = x + (SIDEBAR_ICON_SLOT_WIDTH - baseIcon.getIconWidth()) / 2;
+                baseIcon.paintIcon(c, g, offsetX, y);
+            }
+
+            @Override
+            public int getIconWidth() {
+                return SIDEBAR_ICON_SLOT_WIDTH;
+            }
+
+            @Override
+            public int getIconHeight() {
+                return baseIcon.getIconHeight();
+            }
+        };
     }
 }
