@@ -185,6 +185,9 @@ public class MainDashboard extends JFrame {
      * @author methum
      */
     public void switchPanel(String cardName) {
+        if (sidebar != null) {
+            sidebar.setActiveMenu(cardName);
+        }
         cardLayout.show(contentArea, cardName);
         contentArea.revalidate();
         contentArea.repaint();

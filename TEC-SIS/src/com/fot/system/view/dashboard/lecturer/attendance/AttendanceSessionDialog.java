@@ -4,6 +4,7 @@ import com.fot.system.config.AppTheme;
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.components.ThemedDatePicker;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -14,7 +15,7 @@ import java.util.List;
 public class AttendanceSessionDialog extends JDialog {
     private final JComboBox<CourseOption> cmbCourse;
     private final JComboBox<TimetableOption> cmbTimetableSession;
-    private final JTextField txtSessionDate;
+    private final ThemedDatePicker txtSessionDate;
     private AddAttendanceSessionRequest request;
 
     public AttendanceSessionDialog(Window owner, List<Course> courses, List<TimetableSession> timetableSessions) {
@@ -33,7 +34,8 @@ public class AttendanceSessionDialog extends JDialog {
         }
 
         cmbTimetableSession = new JComboBox<>();
-        txtSessionDate = new JTextField(LocalDate.now().toString());
+        txtSessionDate = new ThemedDatePicker();
+        txtSessionDate.setText(LocalDate.now().toString());
 
         form.add(createField("Course", cmbCourse));
         form.add(createField("Timetable Session", cmbTimetableSession));

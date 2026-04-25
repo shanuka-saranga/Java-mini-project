@@ -56,7 +56,6 @@ public class UserService implements IUserService {
         }
 
         if (!AppConfig.STATUS_ACTIVE.equalsIgnoreCase(user.getStatus())) {
-            System.out.println("user status is = "+ user.getStatus());
             throw new RuntimeException("User account is blocked");
         }
 

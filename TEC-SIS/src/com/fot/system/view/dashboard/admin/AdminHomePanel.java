@@ -16,6 +16,10 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * render admin dashboard home with system metrics and notices
+ * @author janith
+ */
 public class AdminHomePanel extends JPanel {
     private final User currentUser;
     private final UserService userService;

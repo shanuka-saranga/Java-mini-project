@@ -9,11 +9,17 @@ import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class BaseSidebar extends JPanel {
     private static final int SIDEBAR_ICON_SIZE = 18;
     private static final int SIDEBAR_ICON_SLOT_WIDTH = 28;
+    private static final int PROFILE_AVATAR_SIZE = 40;
     protected final MainDashboard parentFrame;
+    private final Map<String, JButton> menuButtons = new HashMap<>();
+    private String activeCardName = AppConfig.MENU_HOME;
 
     /**
      * initialize base sidebar with shared layout and controls
@@ -123,25 +129,66 @@ public abstract class BaseSidebar extends JPanel {
         button.setVerticalTextPosition(SwingConstants.CENTER);
         button.setIconTextGap(15);
 
+        menuButtons.put(cardName, button);
+        applyMenuButtonStyle(button, AppConfig.MENU_HOME.equals(cardName), false);
+
         button.addActionListener(e -> {
             if (AppConfig.MENU_LOGOUT.equals(cardName)) {
                 parentFrame.logout();
             } else {
+                setActiveMenu(cardName);
                 parentFrame.switchPanel(cardName);
             }
         });
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(AppTheme.PRIMARY_HOVER);
+                applyMenuButtonStyle(button, cardName.equals(activeCardName), true);
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(AppTheme.PRIMARY);
+                applyMenuButtonStyle(button, cardName.equals(activeCardName), false);
             }
         });
 
         return button;
+    }
+
+    /**
+     * set active sidebar menu item highlight
+     * @param cardName active content card name
+     * @author methum
+     */
+    public void setActiveMenu(String cardName) {
+        if (cardName == null || cardName.isBlank()) {
+            return;
+        }
+
+        JButton target = menuButtons.get(cardName);
+        if (target == null) {
+            return;
+        }
+
+        activeCardName = cardName;
+        for (Map.Entry<String, JButton> entry : menuButtons.entrySet()) {
+            boolean isActive = cardName.equals(entry.getKey());
+            applyMenuButtonStyle(entry.getValue(), isActive, false);
+        }
+    }
+
+    /**
+     * apply visual style for default, hover and active menu states
+     * @param button sidebar menu button
+     * @param isActive whether this is selected menu
+     * @param isHover whether hover state is active
+     * @author methum
+     */
+    private void applyMenuButtonStyle(JButton button, boolean isActive, boolean isHover) {
+        if (isActive) {
+            button.setBackground(AppTheme.PRIMARY_ACTIVE);
+            return;
+        }
+        button.setBackground(isHover ? AppTheme.PRIMARY_HOVER : AppTheme.PRIMARY);
     }
 
     /**
@@ -177,8 +224,8 @@ public abstract class BaseSidebar extends JPanel {
     private JPanel createUserProfileCard() {
         User user = parentFrame.getCurrentUser();
         JPanel card = new JPanel(new BorderLayout(10, 0));
-        card.setMaximumSize(new Dimension(210, 58));
-        card.setPreferredSize(new Dimension(210, 58));
+        card.setMaximumSize(new Dimension(210, 68));
+        card.setPreferredSize(new Dimension(210, 68));
         card.setBackground(AppTheme.PRIMARY_HOVER);
         card.setBorder(BorderFactory.createCompoundBorder(
                 AppTheme.lineBorder(AppTheme.PRIMARY_ACTIVE),
@@ -186,8 +233,10 @@ public abstract class BaseSidebar extends JPanel {
         ));
         card.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JComponent avatar = createCircleAvatar(getInitial(user));
-        avatar.setPreferredSize(new Dimension(32, 32));
+        JComponent avatar = createCircleAvatar(user);
+        avatar.setPreferredSize(new Dimension(PROFILE_AVATAR_SIZE, PROFILE_AVATAR_SIZE));
+        avatar.setMinimumSize(new Dimension(PROFILE_AVATAR_SIZE, PROFILE_AVATAR_SIZE));
+        avatar.setMaximumSize(new Dimension(PROFILE_AVATAR_SIZE, PROFILE_AVATAR_SIZE));
 
         JPanel details = new JPanel();
         details.setOpaque(false);
@@ -201,9 +250,11 @@ public abstract class BaseSidebar extends JPanel {
         roleLabel.setForeground(AppTheme.TEXT_MUTED);
         roleLabel.setFont(AppTheme.fontPlain(11));
 
+        details.add(Box.createVerticalGlue());
         details.add(nameLabel);
         details.add(Box.createVerticalStrut(2));
         details.add(roleLabel);
+        details.add(Box.createVerticalGlue());
 
         card.add(avatar, BorderLayout.WEST);
         card.add(details, BorderLayout.CENTER);
@@ -211,36 +262,91 @@ public abstract class BaseSidebar extends JPanel {
     }
 
     /**
-     * create small circular avatar component
-     * @param text initial letter text
+     * create circular avatar component with profile image fallback
+     * @param user current user
      * @author methum
      */
-    private JComponent createCircleAvatar(String text) {
+    private JComponent createCircleAvatar(User user) {
+        String text = getInitial(user);
+        Image image = resolveAvatarImage(user);
         return new JComponent() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
                 int size = Math.min(getWidth(), getHeight()) - 2;
                 int x = (getWidth() - size) / 2;
                 int y = (getHeight() - size) / 2;
                 Ellipse2D circle = new Ellipse2D.Double(x, y, size, size);
 
-                g2.setColor(AppTheme.PRIMARY_ACTIVE);
+                g2.setColor(AppTheme.AVATAR_BG);
                 g2.fill(circle);
+
+                Shape previousClip = g2.getClip();
+                g2.setClip(circle);
+                if (image != null) {
+                    drawCoverImage(g2, image, new Rectangle(x, y, size, size));
+                }
+                g2.setClip(previousClip);
+
                 g2.setColor(AppTheme.TEXT_LIGHT);
                 g2.draw(circle);
 
-                g2.setFont(AppTheme.fontBold(13));
-                FontMetrics metrics = g2.getFontMetrics();
-                int textX = x + (size - metrics.stringWidth(text)) / 2;
-                int textY = y + ((size - metrics.getHeight()) / 2) + metrics.getAscent();
-                g2.drawString(text, textX, textY);
+                if (image == null) {
+                    g2.setFont(AppTheme.fontBold(13));
+                    FontMetrics metrics = g2.getFontMetrics();
+                    int textX = x + (size - metrics.stringWidth(text)) / 2;
+                    int textY = y + ((size - metrics.getHeight()) / 2) + metrics.getAscent();
+                    g2.drawString(text, textX, textY);
+                }
                 g2.dispose();
             }
         };
+    }
+
+    /**
+     * resolve profile image if available on disk
+     * @param user current user
+     * @author methum
+     */
+    private Image resolveAvatarImage(User user) {
+        if (user == null || user.getProfilePicturePath() == null || user.getProfilePicturePath().trim().isEmpty()) {
+            return null;
+        }
+        String imagePath = user.getProfilePicturePath().trim();
+        File imageFile = new File(imagePath);
+        if (!imageFile.exists()) {
+            return null;
+        }
+        return new ImageIcon(imagePath).getImage();
+    }
+
+    /**
+     * draw image using cover mode inside avatar bounds
+     * @param g2 graphics context
+     * @param sourceImage image to draw
+     * @param bounds draw bounds
+     * @author methum
+     */
+    private void drawCoverImage(Graphics2D g2, Image sourceImage, Rectangle bounds) {
+        int imageWidth = sourceImage.getWidth(null);
+        int imageHeight = sourceImage.getHeight(null);
+        if (imageWidth <= 0 || imageHeight <= 0) {
+            return;
+        }
+
+        double scale = Math.max(
+                (double) bounds.width / imageWidth,
+                (double) bounds.height / imageHeight
+        );
+        int drawWidth = (int) Math.round(imageWidth * scale);
+        int drawHeight = (int) Math.round(imageHeight * scale);
+        int drawX = bounds.x + (bounds.width - drawWidth) / 2;
+        int drawY = bounds.y + (bounds.height - drawHeight) / 2;
+        g2.drawImage(sourceImage, drawX, drawY, drawWidth, drawHeight, null);
     }
 
     /**

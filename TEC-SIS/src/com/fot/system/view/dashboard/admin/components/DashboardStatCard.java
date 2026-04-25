@@ -7,10 +7,21 @@ import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * render a single metric card for admin dashboard
+ * @author janith
+ */
 public class DashboardStatCard extends JPanel {
 
     private final JLabel valueLabel;
 
+    /**
+     * initialize dashboard stat card
+     * @param title card title
+     * @param initialValue initial metric value
+     * @param iconCode ikonli icon code
+     * @author janith
+     */
     public DashboardStatCard(String title, String initialValue, FontAwesomeSolid iconCode) {
         setLayout(new BorderLayout(15, 0));
         setBackground(Color.WHITE);
@@ -41,6 +52,11 @@ public class DashboardStatCard extends JPanel {
         add(textPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * update displayed metric value
+     * @param value latest metric value
+     * @author janith
+     */
     public void setValue(String value) {
         valueLabel.setText(value);
     }

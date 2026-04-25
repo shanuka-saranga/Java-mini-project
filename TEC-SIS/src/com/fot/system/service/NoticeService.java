@@ -8,6 +8,10 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * manage notice business logic and validation
+ * @author janith
+ */
 public class NoticeService implements INoticeService {
 
     private static final Set<String> VALID_AUDIENCE = Set.of("ALL", "STUDENT", "LECTURER", "TO");
@@ -16,27 +20,55 @@ public class NoticeService implements INoticeService {
 
     private final NoticeRepository noticeRepository;
 
+    /**
+     * initialize notice service dependencies
+     * @author janith
+     */
     public NoticeService() {
         this.noticeRepository = new NoticeRepository();
     }
 
+    /**
+     * get all notices
+     * @author janith
+     */
     public List<Notice> getAllNotices() {
         return noticeRepository.findAll();
     }
 
+    /**
+     * get active notice count
+     * @author janith
+     */
     public int getActiveNoticeCount() {
         return noticeRepository.countActive();
     }
 
+    /**
+     * get visible notice count for given role
+     * @param role target role
+     * @author janith
+     */
     public int getVisibleNoticeCountForRole(String role) {
         return noticeRepository.countVisibleByRole(role);
     }
 
+    /**
+     * get recent visible notices for given role
+     * @param role target role
+     * @param limit requested maximum count
+     * @author janith
+     */
     public List<Notice> getRecentVisibleNoticesForRole(String role, int limit) {
         int safeLimit = limit <= 0 ? 5 : limit;
         return noticeRepository.findRecentVisibleByRole(role, safeLimit);
     }
 
+    /**
+     * get notice by id
+     * @param noticeId notice id
+     * @author janith
+     */
     public Notice getNoticeById(int noticeId) {
         if (noticeId <= 0) {
             throw new RuntimeException("Invalid notice ID.");
@@ -44,6 +76,11 @@ public class NoticeService implements INoticeService {
         return noticeRepository.findById(noticeId);
     }
 
+    /**
+     * add notice after validation
+     * @param request add notice request payload
+     * @author janith
+     */
     public Notice addNotice(AddNoticeRequest request) {
         Notice notice = validate(createNotice(request), false);
         if (!noticeRepository.save(notice)) {
@@ -52,6 +89,11 @@ public class NoticeService implements INoticeService {
         return noticeRepository.findById(notice.getId());
     }
 
+    /**
+     * update notice after validation
+     * @param request edit notice request payload
+     * @author janith
+     */
     public Notice updateNotice(EditNoticeRequest request) {
         Notice notice = createNotice(request);
         notice.setId(request.getNoticeId());
@@ -62,6 +104,11 @@ public class NoticeService implements INoticeService {
         return noticeRepository.findById(validatedNotice.getId());
     }
 
+    /**
+     * delete notice by id
+     * @param noticeId notice id
+     * @author janith
+     */
     public void deleteNotice(int noticeId) {
         if (noticeId <= 0) {
             throw new RuntimeException("Invalid notice ID.");
@@ -71,6 +118,11 @@ public class NoticeService implements INoticeService {
         }
     }
 
+    /**
+     * create notice entity from add/edit request payload
+     * @param request add notice request
+     * @author janith
+     */
     private Notice createNotice(AddNoticeRequest request) {
         Notice notice = new Notice();
         notice.setTitle(request.getTitle());
@@ -84,6 +136,12 @@ public class NoticeService implements INoticeService {
         return notice;
     }
 
+    /**
+     * validate and normalize notice entity fields
+     * @param notice notice entity
+     * @param requireId require positive notice id
+     * @author janith
+     */
     private Notice validate(Notice notice, boolean requireId) {
         if (notice == null) {
             throw new RuntimeException("Notice details are required.");
@@ -128,6 +186,12 @@ public class NoticeService implements INoticeService {
         return notice;
     }
 
+    /**
+     * parse required date value
+     * @param value date text value
+     * @param message validation message
+     * @author janith
+     */
     private Date parseDate(String value, String message) {
         try {
             return Date.valueOf(normalize(value));
@@ -136,6 +200,11 @@ public class NoticeService implements INoticeService {
         }
     }
 
+    /**
+     * parse optional date value
+     * @param value date text value
+     * @author janith
+     */
     private Date parseOptionalDate(String value) {
         String normalizedValue = normalize(value);
         if (normalizedValue.isEmpty()) {
@@ -148,6 +217,11 @@ public class NoticeService implements INoticeService {
         }
     }
 
+    /**
+     * normalize string values by trimming spaces
+     * @param value input value
+     * @author janith
+     */
     private String normalize(String value) {
         return value == null ? "" : value.trim();
     }
