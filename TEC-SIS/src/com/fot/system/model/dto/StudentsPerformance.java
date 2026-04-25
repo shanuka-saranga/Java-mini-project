@@ -10,7 +10,6 @@ public class StudentsPerformance extends Student {
     private List<CourseMarksAndAttendanceDetail> courseMarks = new ArrayList<>();
 
     public List<CourseMarksAndAttendanceDetail> getCourseMarks() { return courseMarks; }
-    public void setCourseMarks(List<CourseMarksAndAttendanceDetail> courseMarks) { this.courseMarks = courseMarks; }
 
     public static class CourseMarksAndAttendanceDetail {
         private String courseCode;

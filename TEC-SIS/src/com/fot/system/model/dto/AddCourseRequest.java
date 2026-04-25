@@ -17,6 +17,15 @@ public class AddCourseRequest {
 
     /**
      * initialize add course request payload
+     * @param courseCode course code
+     * @param courseName course name
+     * @param credits course credits
+     * @param totalHours total hours
+     * @param sessionType session type
+     * @param noOfQuizzes number of quizzes
+     * @param noOfAssignments number of assignments
+     * @param departmentId department id
+     * @param lecturerInChargeId lecturer in charge id
      * @author janith
      */
     public AddCourseRequest(String courseCode, String courseName, String credits, String totalHours,

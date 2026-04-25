@@ -47,7 +47,7 @@ public class CourseService {
     /**
      * get courses assigned to lecturer
      * @param lecturerId lecturer user id
-     * @author janith
+     * @author poornika
      */
     public List<Course> getCoursesByLecturerId(int lecturerId) {
         if (lecturerId <= 0) {
@@ -59,7 +59,7 @@ public class CourseService {
     /**
      * get total course count for lecturer
      * @param lecturerId lecturer user id
-     * @author janith
+     * @author poornika
      */
     public int getCourseCountByLecturerId(int lecturerId) {
         return getCoursesByLecturerId(lecturerId).size();

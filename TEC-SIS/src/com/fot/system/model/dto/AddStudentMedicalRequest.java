@@ -1,7 +1,4 @@
 package com.fot.system.model.dto;
-
-import com.fot.system.model.entity.*;
-
 import java.util.List;
 
 public class AddStudentMedicalRequest {
