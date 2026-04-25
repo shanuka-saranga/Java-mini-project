@@ -126,63 +126,6 @@ public class LecturerMarksRepository {
         return summary;
     }
 
-    public List<StudentMarksOverviewRow> findStudentMarksOverviewByCourse(int courseId) {
-        return findStudentMarksOverviewByCourse(courseId, 0);
-    }
-
-    public List<StudentMarksOverviewRow> findStudentMarksOverviewByCourse(int courseId, int semesterYear) {
-        List<StudentMarksOverviewRow> rows = new ArrayList<>();
-        boolean filterByYear = semesterYear > 0;
-        String sql = """
-                SELECT
-                    m.student_reg_no,
-                    s.student_type,
-                    m.attempt_no,
-                    COUNT(DISTINCT CASE WHEN q.status = 'PRESENT' THEN q.id END) AS quizzes_completed,
-                    COUNT(DISTINCT CASE WHEN a.status = 'SUBMITTED' THEN a.id END) AS assignments_completed,
-                    COALESCE(MAX(CASE WHEN me.exam_type = 'THEORY' THEN me.status END), 'PENDING') AS mid_theory_status,
-                    COALESCE(MAX(CASE WHEN me.exam_type = 'PRACTICAL' THEN me.status END), 'PENDING') AS mid_practical_status,
-                    COALESCE(MAX(CASE WHEN ee.exam_type = 'THEORY' THEN ee.status END), 'PENDING') AS end_theory_status,
-                    COALESCE(MAX(CASE WHEN ee.exam_type = 'PRACTICAL' THEN ee.status END), 'PENDING') AS end_practical_status
-                FROM marks m
-                INNER JOIN student s ON s.registration_no = m.student_reg_no
-                LEFT JOIN quizzes q ON q.mark_id = m.id
-                LEFT JOIN assignments a ON a.mark_id = m.id
-                LEFT JOIN mid_exams me ON me.mark_id = m.id
-                LEFT JOIN end_exams ee ON ee.mark_id = m.id
-                WHERE m.course_id = ?
-                """ + (filterByYear ? " AND m.semester_year = ? " : "") + """
-                GROUP BY m.id, m.student_reg_no, s.student_type, m.attempt_no
-                ORDER BY m.student_reg_no, m.attempt_no
-                """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, courseId);
-            if (filterByYear) {
-                stmt.setInt(2, semesterYear);
-            }
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    StudentMarksOverviewRow row = new StudentMarksOverviewRow();
-                    row.setRegistrationNo(rs.getString("student_reg_no"));
-                    row.setStudentType(rs.getString("student_type"));
-                    row.setAttemptNo(rs.getInt("attempt_no"));
-                    row.setQuizzesCompleted(rs.getInt("quizzes_completed"));
-                    row.setAssignmentsCompleted(rs.getInt("assignments_completed"));
-                    row.setMidTheoryStatus(rs.getString("mid_theory_status"));
-                    row.setMidPracticalStatus(rs.getString("mid_practical_status"));
-                    row.setEndTheoryStatus(rs.getString("end_theory_status"));
-                    row.setEndPracticalStatus(rs.getString("end_practical_status"));
-                    rows.add(row);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to load student marks overview: " + e.getMessage(), e);
-        }
-
-        return rows;
-    }
-
     public List<AssessmentStudentMarkRow> findAssessmentRows(String assessmentType, int courseId, int semesterYear, int itemNo) {
         ensureMarksRowsForRegisteredStudents(courseId, semesterYear);
         return switch (assessmentType) {
