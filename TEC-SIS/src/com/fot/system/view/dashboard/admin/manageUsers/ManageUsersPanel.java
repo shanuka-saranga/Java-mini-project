@@ -11,8 +11,13 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ManageUsersPanel extends JPanel {
     private static final String DETAILS_CARD = "DETAILS";
@@ -35,6 +40,8 @@ public class ManageUsersPanel extends JPanel {
     private int lockedSelectionRow = -1;
     private boolean restoringSelection;
     private boolean initialLoadPending = true;
+    private final TableRowSorter<DefaultTableModel> userTableSorter;
+    private JTextField txtSearch;
 
     public ManageUsersPanel(User currentUser) {
         setLayout(new BorderLayout(20, 20));
@@ -43,6 +50,8 @@ public class ManageUsersPanel extends JPanel {
 
         add(createHeader(), BorderLayout.NORTH);
         userTableComp = new UserTablePanel();
+        userTableSorter = new TableRowSorter<>(userTableComp.getModel());
+        userTableComp.getTable().setRowSorter(userTableSorter);
         userDetailsComp = new UserDetailsPanel();
         userDetailsComp.setOnCloseAction(this::collapseBottomPanel);
         userDetailsComp.setOnUserUpdatedAction(this::loadDataFromDatabase);
@@ -180,9 +189,57 @@ public class ManageUsersPanel extends JPanel {
         addBtn.setIcon(FontIcon.of(FontAwesomeSolid.USER_PLUS, 15, AppTheme.BTN_SAVE_FG));
         addBtn.setPreferredSize(new Dimension(160, 40));
         addBtn.addActionListener(e -> showAddUserPanel());
+
+        txtSearch = new JTextField();
+        txtSearch.setPreferredSize(new Dimension(320, 40));
+        txtSearch.setFont(AppTheme.fontPlain(14));
+        txtSearch.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
+                BorderFactory.createEmptyBorder(0, 12, 0, 12)
+        ));
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                applySearchFilter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                applySearchFilter();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                applySearchFilter();
+            }
+        });
+
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        centerPanel.setOpaque(false);
+        centerPanel.add(txtSearch);
+
         header.add(title, BorderLayout.WEST);
+        header.add(centerPanel, BorderLayout.CENTER);
         header.add(addBtn, BorderLayout.EAST);
         return header;
+    }
+
+    private void applySearchFilter() {
+        String keyword = txtSearch == null ? "" : txtSearch.getText().trim();
+        if (keyword.isEmpty()) {
+            userTableSorter.setRowFilter(null);
+            return;
+        }
+
+        userTableSorter.setRowFilter(RowFilter.regexFilter("(?i)" + Pattern.quote(keyword)));
+
+        JTable table = userTableComp.getTable();
+        if (table.getSelectedRow() == -1) {
+            selectionLocked = false;
+            lockedSelectionRow = -1;
+            userDetailsComp.clearDetails();
+            collapseBottomPanel();
+        }
     }
 
     private void showAddUserPanel() {
