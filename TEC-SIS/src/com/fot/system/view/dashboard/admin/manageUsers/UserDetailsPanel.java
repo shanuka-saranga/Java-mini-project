@@ -96,9 +96,6 @@ public class UserDetailsPanel extends JPanel {
     private JPanel createBottomActions() {
         JPanel mainActionPanel = new JPanel(new BorderLayout());
         mainActionPanel.setOpaque(false);
-
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        leftPanel.setOpaque(false);
         CustomButton btnClose = new CustomButton(
                 "Close",
                 AppTheme.BTN_CANCEL_BG,
@@ -107,8 +104,11 @@ public class UserDetailsPanel extends JPanel {
                 new Dimension(120, 40)
         );
 
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        rightPanel.setOpaque(false);
+        JPanel leftActions = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        leftActions.setOpaque(false);
+
+        JPanel rightActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        rightActions.setOpaque(false);
 
         CustomButton btnEdit = new CustomButton(
                 "Edit Profile",
@@ -193,15 +193,15 @@ public class UserDetailsPanel extends JPanel {
             }
         });
 
-        leftPanel.add(btnClose);
+        leftActions.add(btnClose);
 
-        rightPanel.add(btnDelete);
-        rightPanel.add(btnEdit);
-        rightPanel.add(btnSave);
-        rightPanel.add(btnCancel);
+        rightActions.add(btnDelete);
+        rightActions.add(btnEdit);
+        rightActions.add(btnSave);
+        rightActions.add(btnCancel);
 
-        mainActionPanel.add(leftPanel, BorderLayout.WEST);
-        mainActionPanel.add(rightPanel, BorderLayout.EAST);
+        mainActionPanel.add(leftActions, BorderLayout.WEST);
+        mainActionPanel.add(rightActions, BorderLayout.EAST);
 
         return mainActionPanel;
     }
