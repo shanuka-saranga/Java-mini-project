@@ -19,6 +19,10 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+/**
+ * render edit-user form and build edit request payload
+ * @author janith
+ */
 public class EditUserDetailsPanel extends JPanel {
     private static final String STUDENT_CARD = "STUDENT";
     private static final String STAFF_CARD = "STAFF";
@@ -46,6 +50,10 @@ public class EditUserDetailsPanel extends JPanel {
     private JTextField txtStaffCode;
     private JTextField txtDesignation;
 
+    /**
+     * initialize edit form panel
+     * @author janith
+     */
     public EditUserDetailsPanel() {
         setLayout(new BorderLayout());
         setBackground(AppTheme.SURFACE_SOFT);
@@ -57,6 +65,10 @@ public class EditUserDetailsPanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
     }
 
+    /**
+     * create editable form content
+     * @author janith
+     */
     private JPanel createFormPanel() {
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(AppTheme.SURFACE_SOFT);
@@ -118,6 +130,10 @@ public class EditUserDetailsPanel extends JPanel {
         return formPanel;
     }
 
+    /**
+     * initialize student/staff role-specific form cards
+     * @author janith
+     */
     private void initializeRoleSpecificPanel() {
         roleSpecificPanel.setBackground(AppTheme.SURFACE_SOFT);
 
@@ -151,6 +167,10 @@ public class EditUserDetailsPanel extends JPanel {
         roleSpecificPanel.add(staffPanel, STAFF_CARD);
     }
 
+    /**
+     * create profile image path selector
+     * @author janith
+     */
     private JPanel createProfilePictureSelector() {
         JPanel panel = new JPanel(new BorderLayout(8, 0));
         panel.setOpaque(false);
@@ -184,6 +204,10 @@ public class EditUserDetailsPanel extends JPanel {
         return panel;
     }
 
+    /**
+     * select profile picture and update preview
+     * @author janith
+     */
     private void chooseProfilePicture() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select Profile Picture");
@@ -198,12 +222,21 @@ public class EditUserDetailsPanel extends JPanel {
         }
     }
 
+    /**
+     * clear selected profile picture and preview
+     * @author janith
+     */
     private void clearProfilePicture() {
         currentProfilePicturePath = "";
         txtProfilePicture.setText("");
         profilePhotoFrame.clearImage();
     }
 
+    /**
+     * update profile picture preview from path
+     * @param imagePath image path
+     * @author janith
+     */
     private void updateImagePreview(String imagePath) {
         if (imagePath == null || imagePath.trim().isEmpty()) {
             clearProfilePicture();
@@ -212,6 +245,11 @@ public class EditUserDetailsPanel extends JPanel {
         profilePhotoFrame.setImagePath(imagePath);
     }
 
+    /**
+     * set available department options
+     * @param departments department list
+     * @author janith
+     */
     public void setDepartments(List<Department> departments) {
         DefaultComboBoxModel<Department> model = new DefaultComboBoxModel<>();
         for (Department department : departments) {
@@ -220,6 +258,11 @@ public class EditUserDetailsPanel extends JPanel {
         cmbDepartment.setModel(model);
     }
 
+    /**
+     * bind selected user values to edit form
+     * @param user selected user
+     * @author janith
+     */
     public void setUserData(User user) {
         currentUserId = user.getId();
         cmbRole.setSelectedItem(user.getRole());
@@ -255,6 +298,10 @@ public class EditUserDetailsPanel extends JPanel {
         updateRoleSpecificFields();
     }
 
+    /**
+     * build edit-user request from form values
+     * @author janith
+     */
     public EditUserRequest buildRequest() {
         return new EditUserRequest(
                 currentUserId,
@@ -342,6 +389,10 @@ public class EditUserDetailsPanel extends JPanel {
         return AppConfig.ROLE_STUDENT.equals(getRole());
     }
 
+    /**
+     * switch visible role-specific card based on selected role
+     * @author janith
+     */
     private void updateRoleSpecificFields() {
         if (isStudentRole()) {
             roleCardLayout.show(roleSpecificPanel, STUDENT_CARD);
@@ -350,6 +401,10 @@ public class EditUserDetailsPanel extends JPanel {
         }
     }
 
+    /**
+     * add labeled row to the form grid
+     * @author janith
+     */
     private void addFormRow(JPanel panel, String label, Component component, int row, GridBagConstraints gbc) {
         gbc.gridy = row;
         gbc.gridx = 0;
@@ -366,6 +421,10 @@ public class EditUserDetailsPanel extends JPanel {
         panel.add(component, gbc);
     }
 
+    /**
+     * resolve selected department object
+     * @author janith
+     */
     private Department getSelectedDepartment() {
         Object selectedItem = cmbDepartment.getSelectedItem();
         if (selectedItem instanceof Department) {
@@ -374,6 +433,11 @@ public class EditUserDetailsPanel extends JPanel {
         return null;
     }
 
+    /**
+     * select department combo item by department id
+     * @param departmentId department id
+     * @author janith
+     */
     private void selectDepartment(int departmentId) {
         ComboBoxModel<Department> model = cmbDepartment.getModel();
         for (int i = 0; i < model.getSize(); i++) {
@@ -385,6 +449,10 @@ public class EditUserDetailsPanel extends JPanel {
         }
     }
 
+    /**
+     * apply consistent form styling for text, combo and composite components
+     * @author janith
+     */
     private void styleFormComponent(Component component) {
         if (component instanceof JTextField) {
             JTextField field = (JTextField) component;

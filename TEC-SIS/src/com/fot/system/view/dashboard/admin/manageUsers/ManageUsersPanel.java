@@ -19,6 +19,10 @@ import java.awt.*;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * manage admin user table interactions and details/edit panel flow
+ * @author janith
+ */
 public class ManageUsersPanel extends JPanel {
     private static final String DETAILS_CARD = "DETAILS";
     private static final String ADD_USER_CARD = "ADD_USER";
@@ -43,6 +47,11 @@ public class ManageUsersPanel extends JPanel {
     private final TableRowSorter<DefaultTableModel> userTableSorter;
     private JTextField txtSearch;
 
+    /**
+     * initialize manage users view and wire table/detail events
+     * @param currentUser current logged-in user
+     * @author janith
+     */
     public ManageUsersPanel(User currentUser) {
         setLayout(new BorderLayout(20, 20));
         setBackground(Color.WHITE);
@@ -102,7 +111,12 @@ public class ManageUsersPanel extends JPanel {
         SwingUtilities.invokeLater(this::collapseBottomPanel);
     }
 
+    /**
+     * load all users and refresh table data without changing ui structure
+     * @author janith
+     */
     private void loadDataFromDatabase() {
+        final Integer selectedUserId = getSelectedUserId();
         SwingWorker<List<User>, Void> worker = new SwingWorker<>() {
             @Override
             protected List<User> doInBackground() {
@@ -134,6 +148,17 @@ public class ManageUsersPanel extends JPanel {
                         userDetailsComp.setVisible(false);
                         collapseBottomPanel();
                         initialLoadPending = false;
+                        return;
+                    }
+
+                    if (selectedUserId != null && restoreSelectionByUserId(selectedUserId)) {
+                        return;
+                    }
+
+                    JTable table = userTableComp.getTable();
+                    if (table.getSelectedRow() == -1) {
+                        userDetailsComp.clearDetails();
+                        collapseBottomPanel();
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
@@ -148,6 +173,10 @@ public class ManageUsersPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * load department list for add and edit user forms
+     * @author janith
+     */
     private void loadDepartments() {
         SwingWorker<List<Department>, Void> worker = new SwingWorker<>() {
             @Override
@@ -174,6 +203,10 @@ public class ManageUsersPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * build header with title, search input and add user action
+     * @author janith
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
@@ -224,7 +257,15 @@ public class ManageUsersPanel extends JPanel {
         return header;
     }
 
+    /**
+     * apply table row filtering across all visible columns
+     * @author janith
+     */
     private void applySearchFilter() {
+        if (userTableSorter == null || userTableComp == null) {
+            return;
+        }
+
         String keyword = txtSearch == null ? "" : txtSearch.getText().trim();
         if (keyword.isEmpty()) {
             userTableSorter.setRowFilter(null);
@@ -242,6 +283,10 @@ public class ManageUsersPanel extends JPanel {
         }
     }
 
+    /**
+     * show add-user form card in lower panel
+     * @author janith
+     */
     private void showAddUserPanel() {
         addNewUserPanel.resetForm();
         bottomCardLayout.show(bottomContentPanel, ADD_USER_CARD);
@@ -250,6 +295,10 @@ public class ManageUsersPanel extends JPanel {
         SwingUtilities.invokeLater(this::showBottomPanel);
     }
 
+    /**
+     * load and show selected user details card
+     * @author janith
+     */
     private void updateDetailsView() {
         JTable table = userTableComp.getTable();
         int viewRow = table.getSelectedRow();
@@ -290,6 +339,10 @@ public class ManageUsersPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * expand lower split region for details/add form
+     * @author janith
+     */
     private void showBottomPanel() {
         if (bottomExpanded) {
             splitPane.setDividerSize(EXPANDED_DIVIDER_SIZE);
@@ -305,6 +358,10 @@ public class ManageUsersPanel extends JPanel {
         splitPane.repaint();
     }
 
+    /**
+     * collapse lower split region and keep table focused
+     * @author janith
+     */
     private void collapseBottomPanel() {
         bottomExpanded = false;
         splitPane.setDividerSize(COLLAPSED_DIVIDER_SIZE);
@@ -313,16 +370,29 @@ public class ManageUsersPanel extends JPanel {
         splitPane.repaint();
     }
 
+    /**
+     * refresh table after user add and collapse lower region
+     * @author janith
+     */
     private void afterUserAdded() {
         loadDataFromDatabase();
         collapseBottomPanel();
     }
 
+    /**
+     * refresh table after user delete and collapse lower region
+     * @author janith
+     */
     private void afterUserDeleted() {
         loadDataFromDatabase();
         collapseBottomPanel();
     }
 
+    /**
+     * lock current row while edit mode is active
+     * @param editing current edit-mode state from details panel
+     * @author janith
+     */
     private void onEditModeChanged(boolean editing) {
         JTable table = userTableComp.getTable();
         if (editing) {
@@ -335,11 +405,21 @@ public class ManageUsersPanel extends JPanel {
         lockedSelectionRow = table.getSelectedRow();
     }
 
+    /**
+     * keep selection fixed to locked row while editing
+     * @author janith
+     */
     private void maintainLockedSelection() {
         JTable table = userTableComp.getTable();
         int selectedRow = table.getSelectedRow();
+        int rowCount = table.getRowCount();
 
         if (lockedSelectionRow == -1) {
+            return;
+        }
+        if (lockedSelectionRow >= rowCount) {
+            selectionLocked = false;
+            lockedSelectionRow = -1;
             return;
         }
         if (selectedRow == lockedSelectionRow) {
@@ -352,5 +432,66 @@ public class ManageUsersPanel extends JPanel {
         } finally {
             restoringSelection = false;
         }
+    }
+
+    /**
+     * resolve selected user id from current table selection
+     * @author janith
+     */
+    private Integer getSelectedUserId() {
+        JTable table = userTableComp.getTable();
+        int viewRow = table.getSelectedRow();
+        if (viewRow < 0) {
+            return null;
+        }
+
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        Object idValue = userTableComp.getModel().getValueAt(modelRow, 0);
+        if (idValue == null) {
+            return null;
+        }
+
+        try {
+            return Integer.parseInt(idValue.toString());
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * restore selection to a user row by id after table refresh
+     * @param userId target user id
+     * @author janith
+     */
+    private boolean restoreSelectionByUserId(int userId) {
+        JTable table = userTableComp.getTable();
+        DefaultTableModel model = userTableComp.getModel();
+
+        for (int modelRow = 0; modelRow < model.getRowCount(); modelRow++) {
+            Object value = model.getValueAt(modelRow, 0);
+            if (value == null) {
+                continue;
+            }
+            if (!String.valueOf(userId).equals(value.toString())) {
+                continue;
+            }
+
+            int viewRow = table.convertRowIndexToView(modelRow);
+            if (viewRow < 0) {
+                return false;
+            }
+
+            restoringSelection = true;
+            try {
+                table.getSelectionModel().setSelectionInterval(viewRow, viewRow);
+            } finally {
+                restoringSelection = false;
+            }
+
+            updateDetailsView();
+            return true;
+        }
+
+        return false;
     }
 }

@@ -14,6 +14,10 @@ import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * show selected user details and handle edit/delete actions
+ * @author janith
+ */
 public class UserDetailsPanel extends JPanel {
     private static final String VIEW_CARD = "VIEW";
     private static final String EDIT_CARD = "EDIT";
@@ -32,6 +36,10 @@ public class UserDetailsPanel extends JPanel {
     private Runnable onUserDeletedAction;
     private Consumer<Boolean> onEditModeChangedAction;
 
+    /**
+     * initialize user details panel cards and footer actions
+     * @author janith
+     */
     public UserDetailsPanel() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
@@ -51,6 +59,10 @@ public class UserDetailsPanel extends JPanel {
     }
 
 
+    /**
+     * create view mode details panel
+     * @author janith
+     */
     private JPanel createViewPanel() {
         JPanel panel = new JPanel(new BorderLayout(20, 0));
         panel.setBackground(Color.WHITE);
@@ -93,6 +105,10 @@ public class UserDetailsPanel extends JPanel {
 
 
 
+    /**
+     * create action button area for close/edit/delete/save flow
+     * @author janith
+     */
     private JPanel createBottomActions() {
         JPanel mainActionPanel = new JPanel(new BorderLayout());
         mainActionPanel.setOpaque(false);
@@ -175,6 +191,8 @@ public class UserDetailsPanel extends JPanel {
                 editUserDetailsPanel.setUserData(currentUser);
             }
             cardLayout.show(container, VIEW_CARD);
+            container.revalidate();
+            container.repaint();
             btnSave.setVisible(false);
             btnCancel.setVisible(false);
             btnEdit.setVisible(true);
@@ -185,6 +203,8 @@ public class UserDetailsPanel extends JPanel {
         btnSave.addActionListener(e -> {
             if (saveUpdatedData()) {
                 cardLayout.show(container, VIEW_CARD);
+                container.revalidate();
+                container.repaint();
                 btnSave.setVisible(false);
                 btnCancel.setVisible(false);
                 btnEdit.setVisible(true);
@@ -206,6 +226,10 @@ public class UserDetailsPanel extends JPanel {
         return mainActionPanel;
     }
 
+    /**
+     * validate and persist edited user values
+     * @author janith
+     */
     private boolean saveUpdatedData() {
         if (currentUser == null) {
             return false;
@@ -225,6 +249,10 @@ public class UserDetailsPanel extends JPanel {
         }
     }
 
+    /**
+     * delete current user record after confirmation
+     * @author janith
+     */
     private void deleteCurrentUser() {
         if (currentUser == null) {
             return;
@@ -257,11 +285,19 @@ public class UserDetailsPanel extends JPanel {
         }
     }
 
+    /**
+     * add detail field component to grid
+     * @author janith
+     */
     private void addToGrid(JPanel p, Component c, int x, int y, GridBagConstraints gbc) {
         gbc.gridx = x; gbc.gridy = y; gbc.weightx = 1.0;
         p.add(c, gbc);
     }
 
+    /**
+     * create styled label with icon
+     * @author janith
+     */
     private JLabel createStyledLabel(String text, FontAwesomeSolid icon) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontPlain(14));
@@ -270,6 +306,11 @@ public class UserDetailsPanel extends JPanel {
         return label;
     }
 
+    /**
+     * bind selected user values into details view
+     * @param user selected user
+     * @author janith
+     */
     public void updateDetails(User user) {
         if (user == null) {
             clearDetails();
@@ -301,8 +342,16 @@ public class UserDetailsPanel extends JPanel {
 
         cardLayout.show(container, VIEW_CARD);
         setVisible(true);
+        container.revalidate();
+        container.repaint();
+        revalidate();
+        repaint();
     }
 
+    /**
+     * clear current details state and hide panel
+     * @author janith
+     */
     public void clearDetails() {
         currentUser = null;
         if (profilePhotoFrame != null) {
@@ -311,30 +360,65 @@ public class UserDetailsPanel extends JPanel {
         setVisible(false);
     }
 
+    /**
+     * register close callback
+     * @param onCloseAction callback function
+     * @author janith
+     */
     public void setOnCloseAction(Runnable onCloseAction) {
         this.onCloseAction = onCloseAction;
     }
 
+    /**
+     * register callback after update success
+     * @param onUserUpdatedAction callback function
+     * @author janith
+     */
     public void setOnUserUpdatedAction(Runnable onUserUpdatedAction) {
         this.onUserUpdatedAction = onUserUpdatedAction;
     }
 
+    /**
+     * register callback after delete success
+     * @param onUserDeletedAction callback function
+     * @author janith
+     */
     public void setOnUserDeletedAction(Runnable onUserDeletedAction) {
         this.onUserDeletedAction = onUserDeletedAction;
     }
 
+    /**
+     * register callback for edit mode state changes
+     * @param onEditModeChangedAction callback function
+     * @author janith
+     */
     public void setOnEditModeChangedAction(Consumer<Boolean> onEditModeChangedAction) {
         this.onEditModeChangedAction = onEditModeChangedAction;
     }
 
+    /**
+     * pass departments to embedded edit form
+     * @param departments department list
+     * @author janith
+     */
     public void setDepartments(List<Department> departments) {
         editUserDetailsPanel.setDepartments(departments);
     }
 
+    /**
+     * update profile image preview
+     * @param imagePath image path value
+     * @author janith
+     */
     private void updateProfileImage(String imagePath) {
         profilePhotoFrame.setImagePath(imagePath);
     }
 
+    /**
+     * notify parent panel when edit mode toggles
+     * @param editing edit mode state
+     * @author janith
+     */
     private void notifyEditModeChanged(boolean editing) {
         if (onEditModeChangedAction != null) {
             onEditModeChangedAction.accept(editing);
