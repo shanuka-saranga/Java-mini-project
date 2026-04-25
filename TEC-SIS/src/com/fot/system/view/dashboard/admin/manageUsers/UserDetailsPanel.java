@@ -12,6 +12,7 @@ import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class UserDetailsPanel extends JPanel {
     private static final String VIEW_CARD = "VIEW";
@@ -25,19 +26,21 @@ public class UserDetailsPanel extends JPanel {
     private JLabel lblFirstName, lblLastName, lblEmail, lblRole, lblStatus, lblPhone, lblAddress, lblExtra;
     private ProfilePhotoFrame profilePhotoFrame;
 
-    private final Color TEAL_COLOR = new Color(0, 121, 107);
     private User currentUser;
     private Runnable onCloseAction;
     private Runnable onUserUpdatedAction;
     private Runnable onUserDeletedAction;
+    private Consumer<Boolean> onEditModeChangedAction;
 
     public UserDetailsPanel() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
-        setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(TEAL_COLOR), " User Profile Details "),
-                BorderFactory.createEmptyBorder(10, 20, 10, 20)
-        ));
+        javax.swing.border.TitledBorder titledBorder = BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT),
+                " User Profile Details "
+        );
+        titledBorder.setTitleColor(AppTheme.TEXT_DARK);
+        setBorder(BorderFactory.createCompoundBorder(titledBorder, BorderFactory.createEmptyBorder(10, 20, 10, 20)));
         setVisible(false);
 
         container.add(createViewPanel(), VIEW_CARD);
@@ -142,6 +145,7 @@ public class UserDetailsPanel extends JPanel {
 
         btnClose.addActionListener(e -> {
             setVisible(false);
+            notifyEditModeChanged(false);
             if (onCloseAction != null) {
                 onCloseAction.run();
             }
@@ -158,6 +162,7 @@ public class UserDetailsPanel extends JPanel {
             btnClose.setVisible(false);
             btnSave.setVisible(true);
             btnCancel.setVisible(true);
+            notifyEditModeChanged(true);
         });
 
         btnDelete.addActionListener(e -> deleteCurrentUser());
@@ -171,6 +176,7 @@ public class UserDetailsPanel extends JPanel {
             btnCancel.setVisible(false);
             btnEdit.setVisible(true);
             btnClose.setVisible(true);
+            notifyEditModeChanged(false);
         });
 
         btnSave.addActionListener(e -> {
@@ -180,6 +186,7 @@ public class UserDetailsPanel extends JPanel {
                 btnCancel.setVisible(false);
                 btnEdit.setVisible(true);
                 btnClose.setVisible(true);
+                notifyEditModeChanged(false);
             }
         });
 
@@ -255,13 +262,12 @@ public class UserDetailsPanel extends JPanel {
     private JLabel createStyledLabel(String text, FontAwesomeSolid icon) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontPlain(14));
-        label.setIcon(FontIcon.of(icon, 16, TEAL_COLOR));
+        label.setIcon(FontIcon.of(icon, 16, AppTheme.ICON_ACCENT));
         label.setIconTextGap(12);
         return label;
     }
 
     public void updateDetails(User user) {
-        System.out.println(user.toString());
         this.currentUser = user;
 
         lblFirstName.setText("First Name: " + user.getFirstName());
@@ -302,11 +308,21 @@ public class UserDetailsPanel extends JPanel {
         this.onUserDeletedAction = onUserDeletedAction;
     }
 
+    public void setOnEditModeChangedAction(Consumer<Boolean> onEditModeChangedAction) {
+        this.onEditModeChangedAction = onEditModeChangedAction;
+    }
+
     public void setDepartments(List<Department> departments) {
         editUserDetailsPanel.setDepartments(departments);
     }
 
     private void updateProfileImage(String imagePath) {
         profilePhotoFrame.setImagePath(imagePath);
+    }
+
+    private void notifyEditModeChanged(boolean editing) {
+        if (onEditModeChangedAction != null) {
+            onEditModeChangedAction.accept(editing);
+        }
     }
 }

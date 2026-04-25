@@ -2,10 +2,14 @@ package com.fot.system.view.dashboard.admin.manageUsers;
 
 import com.fot.system.config.AppConfig;
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
+import com.fot.system.model.dto.EditUserRequest;
+import com.fot.system.model.entity.Department;
+import com.fot.system.model.entity.Staff;
+import com.fot.system.model.entity.Student;
+import com.fot.system.model.entity.User;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.ProfilePhotoFrame;
+import com.fot.system.view.components.ThemedComboBox;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -17,6 +21,7 @@ import java.util.List;
 public class EditUserDetailsPanel extends JPanel {
     private static final String STUDENT_CARD = "STUDENT";
     private static final String STAFF_CARD = "STAFF";
+    private static final Dimension INPUT_SIZE = new Dimension(0, 38);
 
     private int currentUserId = -1;
     private JTextField txtFirstName;
@@ -42,18 +47,19 @@ public class EditUserDetailsPanel extends JPanel {
 
     public EditUserDetailsPanel() {
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
+        setBackground(AppTheme.SURFACE_SOFT);
 
         JScrollPane scrollPane = new JScrollPane(createFormPanel());
         scrollPane.setBorder(null);
-        scrollPane.getViewport().setBackground(Color.WHITE);
+        scrollPane.getViewport().setBackground(AppTheme.SURFACE_SOFT);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
     }
 
     private JPanel createFormPanel() {
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(Color.WHITE);
+        formPanel.setBackground(AppTheme.SURFACE_SOFT);
+        formPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
@@ -69,9 +75,11 @@ public class EditUserDetailsPanel extends JPanel {
         txtProfilePicture.setEditable(false);
         profilePhotoFrame = new ProfilePhotoFrame("No image selected");
         txtDob = new JTextField(15);
-        cmbDepartment = new JComboBox<>();
+        cmbDepartment = new ThemedComboBox<>();
 
-        cmbRole = new JComboBox<>(new String[]{
+        cmbRole = new ThemedComboBox<>(new String[]{
+                AppConfig.ROLE_ADMIN,
+                AppConfig.ROLE_DEAN,
                 AppConfig.ROLE_STUDENT,
                 AppConfig.ROLE_LECTURER,
                 AppConfig.ROLE_TO
@@ -79,7 +87,7 @@ public class EditUserDetailsPanel extends JPanel {
         cmbRole.setEnabled(false);
         cmbRole.addActionListener(e -> updateRoleSpecificFields());
 
-        cmbStatus = new JComboBox<>(new String[]{
+        cmbStatus = new ThemedComboBox<>(new String[]{
                 AppConfig.STATUS_ACTIVE,
                 AppConfig.STATUS_BLOCKED,
                 "SUSPENDED"
@@ -110,24 +118,24 @@ public class EditUserDetailsPanel extends JPanel {
     }
 
     private void initializeRoleSpecificPanel() {
-        roleSpecificPanel.setBackground(Color.WHITE);
+        roleSpecificPanel.setBackground(AppTheme.SURFACE_SOFT);
 
         JPanel studentPanel = new JPanel(new GridBagLayout());
-        studentPanel.setBackground(Color.WHITE);
+        studentPanel.setBackground(AppTheme.SURFACE_SOFT);
         GridBagConstraints studentGbc = new GridBagConstraints();
         studentGbc.insets = new Insets(5, 10, 5, 10);
         studentGbc.fill = GridBagConstraints.HORIZONTAL;
 
         txtRegistrationNo = new JTextField(15);
         txtRegistrationYear = new JTextField(15);
-        cmbStudentType = new JComboBox<>(new String[]{"PROPER", "REPEAT"});
+        cmbStudentType = new ThemedComboBox<>(new String[]{"PROPER", "REPEAT", "BATCH_MISSED"});
 
         addFormRow(studentPanel, "Registration No:", txtRegistrationNo, 0, studentGbc);
         addFormRow(studentPanel, "Registration Year:", txtRegistrationYear, 1, studentGbc);
         addFormRow(studentPanel, "Student Type:", cmbStudentType, 2, studentGbc);
 
         JPanel staffPanel = new JPanel(new GridBagLayout());
-        staffPanel.setBackground(Color.WHITE);
+        staffPanel.setBackground(AppTheme.SURFACE_SOFT);
         GridBagConstraints staffGbc = new GridBagConstraints();
         staffGbc.insets = new Insets(5, 10, 5, 10);
         staffGbc.fill = GridBagConstraints.HORIZONTAL;
@@ -345,11 +353,15 @@ public class EditUserDetailsPanel extends JPanel {
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 1;
-        gbc.weightx = 0.2;
-        panel.add(new JLabel(label), gbc);
+        gbc.weightx = 0.24;
+        JLabel fieldLabel = new JLabel(label);
+        fieldLabel.setFont(AppTheme.fontPlain(13));
+        fieldLabel.setForeground(AppTheme.TEXT_DARK);
+        panel.add(fieldLabel, gbc);
 
         gbc.gridx = 1;
-        gbc.weightx = 0.8;
+        gbc.weightx = 0.76;
+        styleFormComponent(component);
         panel.add(component, gbc);
     }
 
@@ -369,6 +381,25 @@ public class EditUserDetailsPanel extends JPanel {
                 cmbDepartment.setSelectedItem(department);
                 return;
             }
+        }
+    }
+
+    private void styleFormComponent(Component component) {
+        if (component instanceof JTextField) {
+            JTextField field = (JTextField) component;
+            field.setFont(AppTheme.fontPlain(14));
+            field.setPreferredSize(INPUT_SIZE);
+            field.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
+                    BorderFactory.createEmptyBorder(7, 10, 7, 10)
+            ));
+        } else if (component instanceof JComboBox) {
+            JComboBox<?> combo = (JComboBox<?>) component;
+            combo.setFont(AppTheme.fontPlain(14));
+            combo.setPreferredSize(INPUT_SIZE);
+            combo.setMinimumSize(INPUT_SIZE);
+        } else if (component instanceof JPanel) {
+            component.setPreferredSize(new Dimension(0, 40));
         }
     }
 }

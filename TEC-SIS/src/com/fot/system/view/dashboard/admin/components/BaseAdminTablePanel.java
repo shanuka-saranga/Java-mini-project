@@ -24,20 +24,20 @@ public abstract class  BaseAdminTablePanel extends JScrollPane {
         styleTable();
         setViewportView(table);
         setBackground(Color.WHITE);
-        setBorder(BorderFactory.createLineBorder(new Color(0, 121, 107), 1));
+        setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
     }
 
     private void styleTable() {
         table.setRowHeight(45);
         table.setFont(AppTheme.fontPlain(14));
-        table.setGridColor(AppTheme.PRIMARY);
+        table.setGridColor(AppTheme.BORDER_SOFT);
         table.setShowVerticalLines(false);
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
-        table.setSelectionForeground(AppTheme.TEXT_DARK);
+        table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
 
         table.getTableHeader().setFont(AppTheme.fontBold(14));
         table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        table.getTableHeader().setForeground(Color.WHITE);
+        table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
         table.getTableHeader().setPreferredSize(new Dimension(0, 50));
         table.getTableHeader().setReorderingAllowed(false);
 
@@ -56,7 +56,7 @@ public abstract class  BaseAdminTablePanel extends JScrollPane {
                 }
 
                 if (!isSelected) {
-                    component.setBackground(row % 2 == 0 ? Color.WHITE : new Color(250, 252, 252));
+                    component.setBackground(row % 2 == 0 ? AppTheme.TABLE_ROW_BG : AppTheme.TABLE_ROW_ALT_BG);
                 }
 
                 return component;

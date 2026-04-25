@@ -6,6 +6,7 @@ import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.ProfilePhotoFrame;
+import com.fot.system.view.components.ThemedComboBox;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -82,10 +83,10 @@ public class AddNewUserPanel extends JPanel {
         txtProfilePicture = new JTextField(15);
         txtProfilePicture.setEditable(false);
         txtDob = new JTextField(15);
-        cmbDepartment = new JComboBox<>();
+        cmbDepartment = new ThemedComboBox<>();
         profilePhotoFrame = new ProfilePhotoFrame("No image selected");
 
-        cmbRole = new JComboBox<>(new String[]{
+        cmbRole = new ThemedComboBox<>(new String[]{
                 AppConfig.ROLE_STUDENT,
                 AppConfig.ROLE_LECTURER,
                 AppConfig.ROLE_TO,
@@ -93,7 +94,7 @@ public class AddNewUserPanel extends JPanel {
         });
         cmbRole.addActionListener(e -> updateRoleSpecificFields());
 
-        cmbStatus = new JComboBox<>(new String[]{
+        cmbStatus = new ThemedComboBox<>(new String[]{
                 AppConfig.STATUS_ACTIVE,
                 AppConfig.STATUS_BLOCKED,
                 "SUSPENDED"
@@ -135,7 +136,7 @@ public class AddNewUserPanel extends JPanel {
 
         txtRegistrationNo = new JTextField(15);
         txtRegistrationYear = new JTextField(15);
-        cmbStudentType = new JComboBox<>(new String[]{"PROPER", "REPEAT"});
+        cmbStudentType = new ThemedComboBox<>(new String[]{"PROPER", "REPEAT", "BATCH_MISSED"});
 
         addFormRow(studentPanel, "Registration No:", txtRegistrationNo, 0, studentGbc);
         addFormRow(studentPanel, "Registration Year:", txtRegistrationYear, 1, studentGbc);
