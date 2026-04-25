@@ -1,6 +1,5 @@
 package com.fot.system.model.dto;
 
-import com.fot.system.model.entity.*;
 
 public class AssessmentStudentMarkRow {
     private int markId;
