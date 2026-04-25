@@ -91,10 +91,23 @@ public class AdminHomePanel extends JPanel {
         statsGrid.add(coursesCard);
         statsGrid.add(noticesCard);
 
-        JPanel lowerSection = new JPanel(new GridLayout(1, 2, 20, 0));
+        JPanel lowerSection = new JPanel(new GridBagLayout());
         lowerSection.setOpaque(false);
-        lowerSection.add(createRoleSummaryPanel());
-        lowerSection.add(noticeFeedPanel);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1.0;
+
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        lowerSection.add(createRoleSummaryPanel(), gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 3.0;
+        gbc.insets = new Insets(0, 10, 0, 0);
+        lowerSection.add(noticeFeedPanel, gbc);
 
         content.add(statsGrid, BorderLayout.NORTH);
         content.add(lowerSection, BorderLayout.CENTER);
