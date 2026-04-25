@@ -1,7 +1,6 @@
-package com.fot.system.view.dashboard.shared;
+package com.fot.system.view.dashboard.shared_components;
 
 import com.fot.system.config.AppConfig;
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.view.dashboard.student.profile.StudentProfilePanel;
 

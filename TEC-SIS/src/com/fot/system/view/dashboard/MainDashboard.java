@@ -1,7 +1,6 @@
 package com.fot.system.view.dashboard;
 
 import com.fot.system.config.AppConfig;
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.view.login.LoginView;
 import com.fot.system.view.dashboard.admin.manageCourses.ManageCoursesPanel;
@@ -24,7 +23,7 @@ import com.fot.system.view.dashboard.to.TOHomePanel;
 import com.fot.system.view.dashboard.to.TOAttendancePanel;
 import com.fot.system.view.dashboard.to.TOMedicalPanel;
 import com.fot.system.view.dashboard.to.TOTimetablePanel;
-import com.fot.system.view.dashboard.shared.UserProfilePanelFactory;
+import com.fot.system.view.dashboard.shared_components.UserProfilePanelFactory;
 import com.fot.system.view.dashboard.sidebar.AdminSidebar;
 import com.fot.system.view.dashboard.sidebar.BaseSidebar;
 import com.fot.system.view.dashboard.sidebar.LecturerSidebar;
@@ -189,6 +188,14 @@ public class MainDashboard extends JFrame {
         cardLayout.show(contentArea, cardName);
         contentArea.revalidate();
         contentArea.repaint();
+    }
+
+    /**
+     * get currently logged in user
+     * @author methum
+     */
+    public User getCurrentUser() {
+        return currentUser;
     }
 
     /**

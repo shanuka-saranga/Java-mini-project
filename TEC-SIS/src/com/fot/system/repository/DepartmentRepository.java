@@ -1,8 +1,7 @@
 package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
+import com.fot.system.model.entity.Department;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,14 +10,26 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * handle department lookup queries
+ * @author janith
+ */
 public class DepartmentRepository {
 
     private final Connection conn;
 
+    /**
+     * initialize department repository
+     * @author janith
+     */
     public DepartmentRepository() {
         this.conn = DBConnection.getInstance().getConnection();
     }
 
+    /**
+     * find all departments
+     * @author janith
+     */
     public List<Department> findAll() {
         List<Department> departments = new ArrayList<>();
         String sql = "SELECT id, dept_code, dept_name FROM departments ORDER BY dept_name";

@@ -123,7 +123,7 @@ public class StudentTimetablePanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(grid);
         scrollPane.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 BorderFactory.createEmptyBorder(0, 0, 0, 0)
         ));
         scrollPane.getViewport().setBackground(AppTheme.SURFACE_SOFT);
@@ -132,7 +132,7 @@ public class StudentTimetablePanel extends JPanel {
         JPanel contentCard = new JPanel(new BorderLayout());
         contentCard.setBackground(AppTheme.CARD_BG);
         contentCard.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(18, 18, 18, 18)
         ));
         contentCard.add(scrollPane, BorderLayout.CENTER);
@@ -170,7 +170,7 @@ public class StudentTimetablePanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(AppTheme.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(14, 14, 14, 14)
         ));
 
@@ -185,7 +185,7 @@ public class StudentTimetablePanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(AppTheme.TABLE_HEADER_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.PRIMARY_ACTIVE, 1, true),
+                BorderFactory.createLineBorder(AppTheme.PRIMARY_ACTIVE, 1, false),
                 new EmptyBorder(14, 14, 14, 14)
         ));
 
@@ -201,7 +201,7 @@ public class StudentTimetablePanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(AppTheme.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(14, 10, 14, 10)
         ));
         panel.setPreferredSize(new Dimension(135, 92));
@@ -219,7 +219,7 @@ public class StudentTimetablePanel extends JPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(AppTheme.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(10, 10, 10, 10)
         ));
         panel.setPreferredSize(new Dimension(210, 92));
@@ -242,7 +242,7 @@ public class StudentTimetablePanel extends JPanel {
             card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
             card.setBackground(AppTheme.CARD_MUTED_BG);
             card.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                    BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                     new EmptyBorder(8, 8, 8, 8)
             ));
 

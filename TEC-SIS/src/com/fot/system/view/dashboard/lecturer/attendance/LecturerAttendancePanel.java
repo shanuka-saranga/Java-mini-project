@@ -80,7 +80,7 @@ public class LecturerAttendancePanel extends JPanel {
         heldProgressBar.setString("0.00%");
         heldProgressBar.setForeground(AppTheme.PRIMARY);
         heldProgressBar.setBackground(AppTheme.SURFACE_MUTED);
-        heldProgressBar.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        heldProgressBar.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
 
         JPanel detailsView = new JPanel(new BorderLayout());
         detailsView.setOpaque(false);
@@ -88,7 +88,7 @@ public class LecturerAttendancePanel extends JPanel {
         JPanel openedCoursePanel = new JPanel(new BorderLayout(0, 16));
         openedCoursePanel.setBackground(AppTheme.CARD_BG);
         openedCoursePanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(22, 22, 22, 22)
         ));
 
@@ -110,7 +110,7 @@ public class LecturerAttendancePanel extends JPanel {
         txtSearch = new JTextField();
         txtSearch.setFont(AppTheme.fontPlain(13));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -167,7 +167,7 @@ public class LecturerAttendancePanel extends JPanel {
         attendanceTable.setRowSorter(rowSorter);
 
         JScrollPane tableScrollPane = new JScrollPane(attendanceTable);
-        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         tableScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         tableScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -198,7 +198,7 @@ public class LecturerAttendancePanel extends JPanel {
         studentSummaryTable.setRowSorter(summaryRowSorter);
 
         JScrollPane summaryTableScrollPane = new JScrollPane(studentSummaryTable);
-        summaryTableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        summaryTableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         summaryTableScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         summaryTableScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 

@@ -13,6 +13,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * manage course dashboard section with table and detail forms
+ * @author janith
+ */
 public class ManageCoursesPanel extends JPanel {
     private static final String DETAILS_CARD = "DETAILS";
     private static final String ADD_COURSE_CARD = "ADD_COURSE";
@@ -32,7 +36,13 @@ public class ManageCoursesPanel extends JPanel {
     private boolean selectionLocked;
     private int lockedSelectionRow = -1;
     private boolean restoringSelection;
+    private boolean initialLoadPending = true;
 
+    /**
+     * initialize manage courses panel
+     * @param currentUser logged in user
+     * @author janith
+     */
     public ManageCoursesPanel(User currentUser) {
         setLayout(new BorderLayout(20, 20));
         setBackground(Color.WHITE);
@@ -71,6 +81,9 @@ public class ManageCoursesPanel extends JPanel {
             if (e.getValueIsAdjusting() || restoringSelection) {
                 return;
             }
+            if (initialLoadPending) {
+                return;
+            }
 
             if (selectionLocked) {
                 maintainLockedSelection();
@@ -87,6 +100,10 @@ public class ManageCoursesPanel extends JPanel {
         SwingUtilities.invokeLater(this::collapseBottomPanel);
     }
 
+    /**
+     * create panel header with title and add button
+     * @author janith
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
@@ -109,6 +126,10 @@ public class ManageCoursesPanel extends JPanel {
         return header;
     }
 
+    /**
+     * load course table data from database
+     * @author janith
+     */
     private void loadDataFromDatabase() {
         SwingWorker<List<Course>, Void> worker = new SwingWorker<>() {
             @Override
@@ -137,6 +158,16 @@ public class ManageCoursesPanel extends JPanel {
                         };
                         courseTablePanel.addRow(rowData);
                     }
+
+                    if (initialLoadPending) {
+                        JTable table = courseTablePanel.getTable();
+                        table.clearSelection();
+                        selectionLocked = false;
+                        lockedSelectionRow = -1;
+                        courseDetailsPanel.setVisible(false);
+                        collapseBottomPanel();
+                        initialLoadPending = false;
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Error loading courses!");
@@ -146,6 +177,10 @@ public class ManageCoursesPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * load department and lecturer lookup data
+     * @author janith
+     */
     private void loadLookupData() {
         SwingWorker<ManageCoursesLookupData, Void> worker = new SwingWorker<>() {
             @Override
@@ -175,6 +210,10 @@ public class ManageCoursesPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * show add new course form
+     * @author janith
+     */
     private void showAddCoursePanel() {
         addNewCoursePanel.resetForm();
         bottomCardLayout.show(bottomContentPanel, ADD_COURSE_CARD);
@@ -183,6 +222,10 @@ public class ManageCoursesPanel extends JPanel {
         SwingUtilities.invokeLater(this::showBottomPanel);
     }
 
+    /**
+     * load selected row course details view
+     * @author janith
+     */
     private void updateDetailsView() {
         JTable table = courseTablePanel.getTable();
         int viewRow = table.getSelectedRow();
@@ -226,6 +269,10 @@ public class ManageCoursesPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * expand bottom section with active card
+     * @author janith
+     */
     private void showBottomPanel() {
         if (bottomExpanded) {
             splitPane.setDividerSize(EXPANDED_DIVIDER_SIZE);
@@ -241,6 +288,10 @@ public class ManageCoursesPanel extends JPanel {
         splitPane.repaint();
     }
 
+    /**
+     * collapse bottom section
+     * @author janith
+     */
     private void collapseBottomPanel() {
         bottomExpanded = false;
         splitPane.setDividerSize(COLLAPSED_DIVIDER_SIZE);
@@ -249,16 +300,29 @@ public class ManageCoursesPanel extends JPanel {
         splitPane.repaint();
     }
 
+    /**
+     * refresh table after add action
+     * @author janith
+     */
     private void afterCourseAdded() {
         loadDataFromDatabase();
         collapseBottomPanel();
     }
 
+    /**
+     * refresh table after delete action
+     * @author janith
+     */
     private void afterCourseDeleted() {
         loadDataFromDatabase();
         collapseBottomPanel();
     }
 
+    /**
+     * toggle course table selection lock in edit mode
+     * @param editing edit mode status
+     * @author janith
+     */
     private void onEditModeChanged(boolean editing) {
         JTable table = courseTablePanel.getTable();
         if (editing) {
@@ -271,6 +335,10 @@ public class ManageCoursesPanel extends JPanel {
         lockedSelectionRow = table.getSelectedRow();
     }
 
+    /**
+     * keep current row selected while edit mode lock is active
+     * @author janith
+     */
     private void maintainLockedSelection() {
         JTable table = courseTablePanel.getTable();
         int selectedRow = table.getSelectedRow();

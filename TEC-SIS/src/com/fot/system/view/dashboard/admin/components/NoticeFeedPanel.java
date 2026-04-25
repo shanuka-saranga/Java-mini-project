@@ -21,7 +21,7 @@ public class NoticeFeedPanel extends JPanel {
         setLayout(new BorderLayout(0, 15));
         setBackground(AppTheme.CARD_BG);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(18, 18, 18, 18)
         ));
 

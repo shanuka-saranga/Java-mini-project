@@ -8,9 +8,9 @@ import java.awt.event.MouseEvent;
 
 public class CustomButton extends JButton {
 
-    private int radius = 15;
-    private Color normalColor;
-    private Color hoverColor;
+    private final int radius = AppTheme.CORNER_RADIUS;
+    private final Color normalColor;
+    private final Color hoverColor;
 
     public CustomButton(String text, Color bg, Color fg, Color hover, Dimension size) {
         super(text);
@@ -42,13 +42,16 @@ public class CustomButton extends JButton {
         });
     }
 
-    // දාර රවුම් කර පින්තාරු කිරීම
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(getBackground());
-        g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+        if (radius <= 0) {
+            g2.fillRect(0, 0, getWidth(), getHeight());
+        } else {
+            g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+        }
         g2.dispose();
         super.paintComponent(g);
     }

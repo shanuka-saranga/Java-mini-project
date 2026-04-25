@@ -12,6 +12,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * render editable course form for details panel
+ * @author janith
+ */
 public class EditCourseDetailsPanel extends JPanel {
     private static final int LABEL_COLUMN_WIDTH = 170;
     private static final Dimension INPUT_SIZE = new Dimension(280, 34);
@@ -32,6 +36,10 @@ public class EditCourseDetailsPanel extends JPanel {
     private JComboBox<LecturerOption> cmbLecturer;
     private int courseId;
 
+    /**
+     * initialize edit course form panel
+     * @author janith
+     */
     public EditCourseDetailsPanel() {
         setLayout(new GridBagLayout());
         setBackground(AppTheme.BG_LIGHT);
@@ -71,6 +79,11 @@ public class EditCourseDetailsPanel extends JPanel {
         add(Box.createVerticalGlue(), gbc);
     }
 
+    /**
+     * bind selected course values to form controls
+     * @param course selected course
+     * @author janith
+     */
     public void setCourseData(Course course) {
         this.courseId = course.getId();
         txtCourseCode.setText(course.getCourseCode());
@@ -84,6 +97,10 @@ public class EditCourseDetailsPanel extends JPanel {
         selectLecturerById(course.getLecturerInChargeId());
     }
 
+    /**
+     * build edit course request from form values
+     * @author janith
+     */
     public EditCourseRequest buildRequest() {
         return new EditCourseRequest(
                 courseId,
@@ -99,6 +116,11 @@ public class EditCourseDetailsPanel extends JPanel {
         );
     }
 
+    /**
+     * set department lookup list
+     * @param departments department list
+     * @author janith
+     */
     public void setDepartments(List<Department> departments) {
         DefaultComboBoxModel<Department> model = new DefaultComboBoxModel<>();
         for (Department department : departments) {
@@ -107,6 +129,11 @@ public class EditCourseDetailsPanel extends JPanel {
         cmbDepartment.setModel(model);
     }
 
+    /**
+     * set lecturer lookup list
+     * @param lecturers lecturer list
+     * @author janith
+     */
     public void setLecturers(List<Staff> lecturers) {
         DefaultComboBoxModel<LecturerOption> model = new DefaultComboBoxModel<>();
         model.addElement(new LecturerOption("", "Not Assigned"));

@@ -105,7 +105,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         txtSearch = new JTextField();
         txtSearch.setFont(AppTheme.fontPlain(13));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -241,7 +241,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
 
     private JScrollPane createScrollPane(JTable table, int preferredHeight) {
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         scrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setPreferredSize(new Dimension(0, preferredHeight));
@@ -258,7 +258,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         JPanel item = new JPanel(new BorderLayout(12, 0));
         item.setBackground(AppTheme.CARD_BG);
         item.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(10, 12, 10, 12)
         ));
         item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
@@ -273,7 +273,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         progressBar.setStringPainted(true);
         progressBar.setForeground(AppTheme.PRIMARY);
         progressBar.setBackground(AppTheme.SURFACE_MUTED);
-        progressBar.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        progressBar.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         progressBar.setPreferredSize(new Dimension(220, 22));
 
         item.add(courseLabel, BorderLayout.WEST);
@@ -286,7 +286,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout(0, 10));
         panel.setBackground(AppTheme.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(14, 14, 14, 14)
         ));
         panel.add(lblMedicalDetailsMeta, BorderLayout.NORTH);
@@ -395,7 +395,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         field.setFont(AppTheme.fontPlain(13));
         field.setPreferredSize(new Dimension(120, 38));
         field.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         return field;

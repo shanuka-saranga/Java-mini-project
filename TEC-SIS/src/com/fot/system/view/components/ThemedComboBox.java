@@ -22,7 +22,7 @@ public class ThemedComboBox<T> extends JComboBox<T> {
         setFont(AppTheme.FORM_INPUT_FONT);
         setForeground(AppTheme.TEXT_DARK);
         setBackground(AppTheme.BG_LIGHT);
-        setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_MUTED));
+        setBorder(AppTheme.lineBorder(AppTheme.BORDER_MUTED));
         setPreferredSize(new Dimension(0, DEFAULT_HEIGHT));
     }
 }

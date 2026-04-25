@@ -75,7 +75,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
         JPanel openedCoursePanel = new JPanel(new BorderLayout(0, 16));
         openedCoursePanel.setBackground(AppTheme.CARD_BG);
         openedCoursePanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(22, 22, 22, 22)
         ));
 
@@ -106,7 +106,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
         txtSearch.setPreferredSize(new Dimension(420, 38));
         txtSearch.setMinimumSize(new Dimension(220, 38));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -176,7 +176,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
         eligibilityTable.setRowSorter(rowSorter);
 
         JScrollPane tableScrollPane = new JScrollPane(eligibilityTable);
-        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         tableScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         tableScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -236,7 +236,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
         JPanel card = new JPanel(new BorderLayout(0, 8));
         card.setBackground(AppTheme.CARD_BG);
         card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BASE_COLOR, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BASE_COLOR, 1, false),
                 new EmptyBorder(14, 14, 14, 14)
         ));
 

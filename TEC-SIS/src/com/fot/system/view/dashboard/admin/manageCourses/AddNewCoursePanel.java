@@ -20,7 +20,6 @@ public class AddNewCoursePanel extends JPanel {
     private JTextField txtTotalHours;
     private JTextField txtNoOfQuizzes;
     private JTextField txtNoOfAssignments;
-    private ButtonGroup sessionTypeGroup;
     private ThemedRadioButton rdoTheory;
     private ThemedRadioButton rdoPractical;
     private ThemedRadioButton rdoBoth;
@@ -48,7 +47,6 @@ public class AddNewCoursePanel extends JPanel {
         scrollPane.setBorder(null);
         scrollPane.getViewport().setBackground(Color.WHITE);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-
         add(scrollPane, BorderLayout.CENTER);
         add(createBottomActions(), BorderLayout.SOUTH);
     }
@@ -103,7 +101,7 @@ public class AddNewCoursePanel extends JPanel {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         panel.setOpaque(false);
 
-        sessionTypeGroup = new ButtonGroup();
+        ButtonGroup sessionTypeGroup = new ButtonGroup();
         rdoTheory = new ThemedRadioButton("THEORY", true);
         rdoPractical = new ThemedRadioButton("PRACTICAL");
         rdoBoth = new ThemedRadioButton("BOTH");

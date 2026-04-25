@@ -14,6 +14,10 @@ import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * show selected course details and edit/delete actions
+ * @author janith
+ */
 public class CourseDetailsPanel extends JPanel {
     private static final String VIEW_CARD = "VIEW";
     private static final String EDIT_CARD = "EDIT";
@@ -40,6 +44,10 @@ public class CourseDetailsPanel extends JPanel {
     private Runnable onCourseDeletedAction;
     private Consumer<Boolean> onEditModeChangedAction;
 
+    /**
+     * initialize course details panel
+     * @author janith
+     */
     public CourseDetailsPanel() {
         setLayout(new BorderLayout());
         setBackground(AppTheme.BG_LIGHT);
@@ -56,6 +64,10 @@ public class CourseDetailsPanel extends JPanel {
         add(createBottomActions(), BorderLayout.SOUTH);
     }
 
+    /**
+     * create read only details card
+     * @author janith
+     */
     private JPanel createViewPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(AppTheme.BG_LIGHT);
@@ -95,6 +107,10 @@ public class CourseDetailsPanel extends JPanel {
         return panel;
     }
 
+    /**
+     * create details panel action button section
+     * @author janith
+     */
     private JPanel createBottomActions() {
         JPanel mainActionPanel = new JPanel(new BorderLayout());
         mainActionPanel.setOpaque(false);
@@ -207,6 +223,10 @@ public class CourseDetailsPanel extends JPanel {
         return mainActionPanel;
     }
 
+    /**
+     * save updated course data from edit form
+     * @author janith
+     */
     private boolean saveUpdatedData() {
         if (currentCourse == null) {
             return false;
@@ -226,6 +246,10 @@ public class CourseDetailsPanel extends JPanel {
         }
     }
 
+    /**
+     * delete currently selected course
+     * @author janith
+     */
     private void deleteCurrentCourse() {
         if (currentCourse == null) {
             return;
@@ -277,6 +301,11 @@ public class CourseDetailsPanel extends JPanel {
         return label;
     }
 
+    /**
+     * apply selected course values to details card
+     * @param course selected course
+     * @author janith
+     */
     public void updateDetails(Course course) {
         this.currentCourse = course;
 
@@ -296,26 +325,56 @@ public class CourseDetailsPanel extends JPanel {
         setVisible(true);
     }
 
+    /**
+     * set close action callback
+     * @param onCloseAction close callback
+     * @author janith
+     */
     public void setOnCloseAction(Runnable onCloseAction) {
         this.onCloseAction = onCloseAction;
     }
 
+    /**
+     * set course updated callback
+     * @param onCourseUpdatedAction update callback
+     * @author janith
+     */
     public void setOnCourseUpdatedAction(Runnable onCourseUpdatedAction) {
         this.onCourseUpdatedAction = onCourseUpdatedAction;
     }
 
+    /**
+     * set course deleted callback
+     * @param onCourseDeletedAction delete callback
+     * @author janith
+     */
     public void setOnCourseDeletedAction(Runnable onCourseDeletedAction) {
         this.onCourseDeletedAction = onCourseDeletedAction;
     }
 
+    /**
+     * set edit mode state callback
+     * @param onEditModeChangedAction edit mode callback
+     * @author janith
+     */
     public void setOnEditModeChangedAction(Consumer<Boolean> onEditModeChangedAction) {
         this.onEditModeChangedAction = onEditModeChangedAction;
     }
 
+    /**
+     * set department lookup data for edit form
+     * @param departments department list
+     * @author janith
+     */
     public void setDepartments(List<Department> departments) {
         editCourseDetailsPanel.setDepartments(departments);
     }
 
+    /**
+     * set lecturer lookup data for edit form
+     * @param lecturers lecturer list
+     * @author janith
+     */
     public void setLecturers(List<Staff> lecturers) {
         editCourseDetailsPanel.setLecturers(lecturers);
     }
