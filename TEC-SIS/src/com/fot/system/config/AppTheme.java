@@ -117,10 +117,13 @@ public class AppTheme {
 
         UIManager.put("Panel.background", BG_LIGHT);
         UIManager.put("Label.foreground", TEXT_DARK);
-        UIManager.put("Button.background", BTN_SAVE_BG);
-        UIManager.put("Button.foreground", BTN_SAVE_FG);
-        UIManager.put("Button.font", fontBold(14));
+        UIManager.put("Button.background", new Color(238, 241, 245));
+        UIManager.put("Button.foreground", TEXT_DARK);
+        UIManager.put("Button.font", fontPlain(13));
         UIManager.put("Button.border", lineBorder(BORDER_MUTED));
+        UIManager.put("OptionPane.background", BG_LIGHT);
+        UIManager.put("OptionPane.messageForeground", TEXT_DARK);
+        UIManager.put("OptionPane.buttonFont", fontPlain(13));
         UIManager.put("TextField.background", BG_LIGHT);
         UIManager.put("TextField.foreground", TEXT_DARK);
         UIManager.put("TextField.caretForeground", PRIMARY);

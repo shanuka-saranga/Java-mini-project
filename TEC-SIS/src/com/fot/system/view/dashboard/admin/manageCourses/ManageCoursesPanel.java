@@ -32,6 +32,7 @@ public class ManageCoursesPanel extends JPanel {
     private boolean selectionLocked;
     private int lockedSelectionRow = -1;
     private boolean restoringSelection;
+    private boolean initialLoadPending = true;
 
     public ManageCoursesPanel(User currentUser) {
         setLayout(new BorderLayout(20, 20));
@@ -69,6 +70,9 @@ public class ManageCoursesPanel extends JPanel {
 
         courseTablePanel.getTable().getSelectionModel().addListSelectionListener(e -> {
             if (e.getValueIsAdjusting() || restoringSelection) {
+                return;
+            }
+            if (initialLoadPending) {
                 return;
             }
 
@@ -136,6 +140,16 @@ public class ManageCoursesPanel extends JPanel {
                                 course.getLecturerInChargeName() == null ? "-" : course.getLecturerInChargeName()
                         };
                         courseTablePanel.addRow(rowData);
+                    }
+
+                    if (initialLoadPending) {
+                        JTable table = courseTablePanel.getTable();
+                        table.clearSelection();
+                        selectionLocked = false;
+                        lockedSelectionRow = -1;
+                        courseDetailsPanel.setVisible(false);
+                        collapseBottomPanel();
+                        initialLoadPending = false;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

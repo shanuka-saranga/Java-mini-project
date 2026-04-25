@@ -2,11 +2,13 @@ package com.fot.system.view.dashboard.sidebar;
 
 import com.fot.system.config.AppConfig;
 import com.fot.system.config.AppTheme;
+import com.fot.system.model.entity.User;
 import com.fot.system.view.dashboard.MainDashboard;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 
 public abstract class BaseSidebar extends JPanel {
     private static final int SIDEBAR_ICON_SIZE = 18;
@@ -82,6 +84,8 @@ public abstract class BaseSidebar extends JPanel {
      */
     private void addFooter() {
         add(Box.createVerticalGlue());
+        add(createUserProfileCard());
+        add(Box.createVerticalStrut(12));
         JButton logoutBtn = createMenuButton("Logout", FontAwesomeSolid.SIGN_OUT_ALT, AppConfig.MENU_LOGOUT);
         add(logoutBtn);
         add(Box.createVerticalStrut(25));
@@ -164,5 +168,104 @@ public abstract class BaseSidebar extends JPanel {
                 return baseIcon.getIconHeight();
             }
         };
+    }
+
+    /**
+     * create compact profile card shown above logout button
+     * @author methum
+     */
+    private JPanel createUserProfileCard() {
+        User user = parentFrame.getCurrentUser();
+        JPanel card = new JPanel(new BorderLayout(10, 0));
+        card.setMaximumSize(new Dimension(210, 58));
+        card.setPreferredSize(new Dimension(210, 58));
+        card.setBackground(AppTheme.PRIMARY_HOVER);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                AppTheme.lineBorder(AppTheme.PRIMARY_ACTIVE),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)
+        ));
+        card.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JComponent avatar = createCircleAvatar(getInitial(user));
+        avatar.setPreferredSize(new Dimension(32, 32));
+
+        JPanel details = new JPanel();
+        details.setOpaque(false);
+        details.setLayout(new BoxLayout(details, BoxLayout.Y_AXIS));
+
+        JLabel nameLabel = new JLabel(getDisplayName(user));
+        nameLabel.setForeground(AppTheme.TEXT_LIGHT);
+        nameLabel.setFont(AppTheme.fontBold(12));
+
+        JLabel roleLabel = new JLabel(user == null || user.getRole() == null ? "-" : user.getRole());
+        roleLabel.setForeground(AppTheme.TEXT_MUTED);
+        roleLabel.setFont(AppTheme.fontPlain(11));
+
+        details.add(nameLabel);
+        details.add(Box.createVerticalStrut(2));
+        details.add(roleLabel);
+
+        card.add(avatar, BorderLayout.WEST);
+        card.add(details, BorderLayout.CENTER);
+        return card;
+    }
+
+    /**
+     * create small circular avatar component
+     * @param text initial letter text
+     * @author methum
+     */
+    private JComponent createCircleAvatar(String text) {
+        return new JComponent() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int size = Math.min(getWidth(), getHeight()) - 2;
+                int x = (getWidth() - size) / 2;
+                int y = (getHeight() - size) / 2;
+                Ellipse2D circle = new Ellipse2D.Double(x, y, size, size);
+
+                g2.setColor(AppTheme.PRIMARY_ACTIVE);
+                g2.fill(circle);
+                g2.setColor(AppTheme.TEXT_LIGHT);
+                g2.draw(circle);
+
+                g2.setFont(AppTheme.fontBold(13));
+                FontMetrics metrics = g2.getFontMetrics();
+                int textX = x + (size - metrics.stringWidth(text)) / 2;
+                int textY = y + ((size - metrics.getHeight()) / 2) + metrics.getAscent();
+                g2.drawString(text, textX, textY);
+                g2.dispose();
+            }
+        };
+    }
+
+    /**
+     * get display name with basic fallback
+     * @param user current user
+     * @author methum
+     */
+    private String getDisplayName(User user) {
+        if (user == null) {
+            return "User";
+        }
+        String name = user.getFullName();
+        if (name == null || name.trim().isEmpty()) {
+            return user.getEmail() == null || user.getEmail().trim().isEmpty() ? "User" : user.getEmail();
+        }
+        return name;
+    }
+
+    /**
+     * get avatar initial character
+     * @param user current user
+     * @author methum
+     */
+    private String getInitial(User user) {
+        String name = getDisplayName(user);
+        return name.isEmpty() ? "U" : String.valueOf(Character.toUpperCase(name.charAt(0)));
     }
 }

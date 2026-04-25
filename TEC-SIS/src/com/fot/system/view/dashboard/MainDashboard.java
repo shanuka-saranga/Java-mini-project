@@ -192,6 +192,14 @@ public class MainDashboard extends JFrame {
     }
 
     /**
+     * get currently logged in user
+     * @author methum
+     */
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    /**
      * Logout from dashboard and open login screen
      * @author methum
      */
