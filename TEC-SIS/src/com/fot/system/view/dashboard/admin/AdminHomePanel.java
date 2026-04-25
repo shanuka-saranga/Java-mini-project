@@ -2,13 +2,13 @@ package com.fot.system.view.dashboard.admin;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.config.AppConfig;
-import com.fot.system.model.dto.*;
+import com.fot.system.model.dto.AdminDashboardData;
 import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.NoticeService;
 import com.fot.system.service.UserService;
-import com.fot.system.view.dashboard.admin.shared.DashboardStatCard;
-import com.fot.system.view.dashboard.admin.shared.NoticeFeedPanel;
+import com.fot.system.view.dashboard.admin.components.DashboardStatCard;
+import com.fot.system.view.dashboard.admin.components.NoticeFeedPanel;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import javax.swing.*;
@@ -17,6 +17,11 @@ import java.awt.*;
 import java.util.List;
 
 public class AdminHomePanel extends JPanel {
+    private static final Color PANEL_BG = new Color(245, 248, 248);
+    private static final Color TEXT_SUBTLE = new Color(110, 110, 110);
+    private static final Color CARD_BORDER = new Color(235, 235, 235);
+    private static final Color ROW_BORDER = new Color(240, 240, 240);
+    private static final Color ICON_ACCENT = new Color(0, 121, 107);
 
     private final User currentUser;
     private final UserService userService;
@@ -33,13 +38,18 @@ public class AdminHomePanel extends JPanel {
     private JLabel technicalOfficerCountLabel;
     private JLabel adminCountLabel;
 
+    /**
+     * initialize admin home dashboard panel
+     * @param user logged in user
+     * @author janith
+     */
     public AdminHomePanel(User user) {
         this.currentUser = user;
         this.userService = new UserService();
         this.courseService = new CourseService();
         this.noticeService = new NoticeService();
 
-        setBackground(new Color(245, 248, 248));
+        setBackground(PANEL_BG);
         setLayout(new BorderLayout(20, 20));
         setBorder(new EmptyBorder(30, 30, 30, 30));
 
@@ -55,22 +65,27 @@ public class AdminHomePanel extends JPanel {
         loadDashboardData();
     }
 
+    /**
+     * create dashboard header section
+     * @author janith
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
-
         JLabel welcomeLabel = new JLabel("Welcome back, " + currentUser.getFullName() + "!");
         welcomeLabel.setFont(AppTheme.fontBold(28));
-
         JLabel subtitleLabel = new JLabel("Here is the current system overview with live counts and recent notices.");
         subtitleLabel.setFont(AppTheme.fontPlain(14));
-        subtitleLabel.setForeground(new Color(110, 110, 110));
-
+        subtitleLabel.setForeground(TEXT_SUBTLE);
         header.add(welcomeLabel, BorderLayout.NORTH);
         header.add(subtitleLabel, BorderLayout.SOUTH);
         return header;
     }
 
+    /**
+     * create dashboard content section
+     * @author janith
+     */
     private JPanel createContent() {
         JPanel content = new JPanel(new BorderLayout(20, 20));
         content.setOpaque(false);
@@ -92,11 +107,15 @@ public class AdminHomePanel extends JPanel {
         return content;
     }
 
+    /**
+     * create user role summary panel
+     * @author janith
+     */
     private JPanel createRoleSummaryPanel() {
         JPanel panel = new JPanel(new BorderLayout(0, 14));
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(235, 235, 235), 1, true),
+                BorderFactory.createLineBorder(CARD_BORDER, 1, true),
                 new EmptyBorder(18, 18, 18, 18)
         ));
 
@@ -120,15 +139,21 @@ public class AdminHomePanel extends JPanel {
         return panel;
     }
 
+    /**
+     * create mini summary row for role breakdown
+     * @param labelText row label
+     * @param icon row icon
+     * @author janith
+     */
     private JLabel createMiniSummaryRow(String labelText, FontAwesomeSolid icon) {
         JPanel row = new JPanel(new BorderLayout(12, 0));
         row.setOpaque(false);
         row.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(240, 240, 240), 1, true),
+                BorderFactory.createLineBorder(ROW_BORDER, 1, true),
                 new EmptyBorder(10, 12, 10, 12)
         ));
 
-        JLabel iconLabel = new JLabel(org.kordamp.ikonli.swing.FontIcon.of(icon, 18, new Color(0, 121, 107)));
+        JLabel iconLabel = new JLabel(org.kordamp.ikonli.swing.FontIcon.of(icon, 18, ICON_ACCENT));
         JLabel textLabel = new JLabel(labelText);
         textLabel.setFont(AppTheme.fontPlain(14));
 
@@ -145,23 +170,26 @@ public class AdminHomePanel extends JPanel {
         return countLabel;
     }
 
+    /**
+     * load dashboard metrics and recent notices
+     * @author janith
+     */
     private void loadDashboardData() {
-        SwingWorker<DashboardData, Void> worker = new SwingWorker<>() {
+        SwingWorker<AdminDashboardData, Void> worker = new SwingWorker<>() {
             @Override
-            protected DashboardData doInBackground() {
+            protected AdminDashboardData doInBackground() {
                 int totalUsers = userService.getUserCount();
                 int lecturerCount = userService.getUserCountByRole(AppConfig.ROLE_LECTURER);
                 int courseCount = courseService.getCourseCount();
                 int visibleNoticeCount = noticeService.getVisibleNoticeCountForRole(currentUser.getRole());
                 List<Notice> visibleNotices = noticeService.getRecentVisibleNoticesForRole(currentUser.getRole(), 6);
 
-                return new DashboardData(
+                return new AdminDashboardData(
                         totalUsers,
                         lecturerCount,
                         courseCount,
                         visibleNoticeCount,
                         userService.getUserCountByRole(AppConfig.ROLE_STUDENT),
-                        lecturerCount,
                         userService.getUserCountByRole(AppConfig.ROLE_TO),
                         userService.getUserCountByRole(AppConfig.ROLE_ADMIN),
                         visibleNotices
@@ -171,15 +199,14 @@ public class AdminHomePanel extends JPanel {
             @Override
             protected void done() {
                 try {
-                    DashboardData data = get();
-                    totalUsersCard.setValue(String.valueOf(data.totalUsers));
-                    lecturerCard.setValue(String.valueOf(data.lecturers));
-                    coursesCard.setValue(String.valueOf(data.courses));
-                    noticesCard.setValue(String.valueOf(data.visibleNoticesCount));
+                    AdminDashboardData data = get();
+                    totalUsersCard.setValue(String.valueOf(data.getTotalUsers()));
+                    lecturerCard.setValue(String.valueOf(data.getLecturers()));
+                    coursesCard.setValue(String.valueOf(data.getCourses()));
+                    noticesCard.setValue(String.valueOf(data.getVisibleNoticesCount()));
                     applyRoleBreakdown(data);
-                    noticeFeedPanel.setNotices(data.notices);
+                    noticeFeedPanel.setNotices(data.getNotices());
                 } catch (Exception e) {
-                    e.printStackTrace();
                     JOptionPane.showMessageDialog(
                             AdminHomePanel.this,
                             "Failed to load dashboard data.",
@@ -192,41 +219,26 @@ public class AdminHomePanel extends JPanel {
         worker.execute();
     }
 
-    private void applyRoleBreakdown(DashboardData data) {
-        studentCountLabel.setText(String.valueOf(data.students));
-        lecturerCountLabel.setText(String.valueOf(data.lecturers));
-        technicalOfficerCountLabel.setText(String.valueOf(data.technicalOfficers));
-        adminCountLabel.setText(String.valueOf(data.admins));
+    /**
+     * apply role count values to summary section
+     * @param data dashboard data object
+     * @author janith
+     */
+    private void applyRoleBreakdown(AdminDashboardData data) {
+        studentCountLabel.setText(String.valueOf(data.getStudents()));
+        lecturerCountLabel.setText(String.valueOf(data.getLecturers()));
+        technicalOfficerCountLabel.setText(String.valueOf(data.getTechnicalOfficers()));
+        adminCountLabel.setText(String.valueOf(data.getAdmins()));
     }
 
+    /**
+     * build notice section title by role
+     * @author janith
+     */
     private String buildNoticePanelTitle() {
         if (AppConfig.ROLE_ADMIN.equalsIgnoreCase(currentUser.getRole())) {
             return "Recent Active Notices";
         }
         return currentUser.getRole() + " Notices";
-    }
-
-    private static class DashboardData {
-        private final int totalUsers;
-        private final int lecturers;
-        private final int courses;
-        private final int visibleNoticesCount;
-        private final int students;
-        private final int technicalOfficers;
-        private final int admins;
-        private final List<Notice> notices;
-
-        private DashboardData(int totalUsers, int lecturers, int courses, int visibleNoticesCount,
-                              int students, int lecturerTotal, int technicalOfficers, int admins,
-                              List<Notice> notices) {
-            this.totalUsers = totalUsers;
-            this.lecturers = lecturerTotal;
-            this.courses = courses;
-            this.visibleNoticesCount = visibleNoticesCount;
-            this.students = students;
-            this.technicalOfficers = technicalOfficers;
-            this.admins = admins;
-            this.notices = notices;
-        }
     }
 }
