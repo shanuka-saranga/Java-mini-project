@@ -1673,7 +1673,7 @@ CREATE TABLE `student_course_registrations` (
   `course_id` int(11) NOT NULL,
   `semester_year` year(4) NOT NULL,
   `attempt_no` tinyint(4) NOT NULL DEFAULT 1,
-  `registration_status` enum('REGISTERED','UNREGISTERED') NOT NULL DEFAULT 'REGISTERED',
+  `registration_status` enum('REGISTERED','DROPPED') NOT NULL DEFAULT 'REGISTERED',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
