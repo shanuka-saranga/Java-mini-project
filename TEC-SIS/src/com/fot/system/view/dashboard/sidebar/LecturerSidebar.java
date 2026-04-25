@@ -8,10 +8,19 @@ import javax.swing.*;
 
 public class LecturerSidebar extends BaseSidebar {
 
+    /**
+     * initialize lecturer sidebar
+     * @param frame MainDashboard parent frame
+     * @author methum
+     */
     public LecturerSidebar(MainDashboard frame) {
         super(frame, "LECTURER");
     }
 
+    /**
+     * add lecturer specific menu buttons
+     * @author methum
+     */
     @Override
     protected void addRoleSpecificButtons() {
         add(createMenuButton("My Courses", FontAwesomeSolid.BOOK_OPEN, AppConfig.MENU_COURSES));

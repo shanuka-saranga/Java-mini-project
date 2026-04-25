@@ -11,6 +11,12 @@ import java.awt.*;
 public abstract class BaseSidebar extends JPanel {
     protected final MainDashboard parentFrame;
 
+    /**
+     * initialize base sidebar with shared layout and controls
+     * @param frame MainDashboard parent frame
+     * @param roleName role display name
+     * @author methum
+     */
     public BaseSidebar(MainDashboard frame, String roleName) {
         this.parentFrame = frame;
         setupPanel();
@@ -20,12 +26,21 @@ public abstract class BaseSidebar extends JPanel {
         addFooter();
     }
 
+    /**
+     * setup sidebar panel styles and layout
+     * @author methum
+     */
     private void setupPanel() {
         setPreferredSize(new Dimension(240, 0));
         setBackground(AppTheme.SIDEBAR_BG);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     }
 
+    /**
+     * add sidebar header with title and role label
+     * @param roleName role display name
+     * @author methum
+     */
     private void addHeader(String roleName) {
         add(Box.createVerticalStrut(30));
         JLabel title = new JLabel("TEC-SIS");
@@ -42,6 +57,10 @@ public abstract class BaseSidebar extends JPanel {
         add(Box.createVerticalStrut(40));
     }
 
+    /**
+     * add common menu buttons for all roles
+     * @author methum
+     */
     private void addCommonButtons() {
         add(createMenuButton("Home", FontAwesomeSolid.HOME, AppConfig.MENU_HOME));
         add(Box.createVerticalStrut(10));
@@ -49,8 +68,16 @@ public abstract class BaseSidebar extends JPanel {
         add(Box.createVerticalStrut(10));
     }
 
+    /**
+     * add role specific menu buttons from child sidebar classes
+     * @author methum
+     */
     protected abstract void addRoleSpecificButtons();
 
+    /**
+     * add sidebar footer with logout button
+     * @author methum
+     */
     private void addFooter() {
         add(Box.createVerticalGlue());
         JButton logoutBtn = createMenuButton("Logout", FontAwesomeSolid.SIGN_OUT_ALT, AppConfig.MENU_LOGOUT);
@@ -58,6 +85,13 @@ public abstract class BaseSidebar extends JPanel {
         add(Box.createVerticalStrut(25));
     }
 
+    /**
+     * create styled sidebar menu button with icon and action
+     * @param text button display text
+     * @param iconCode font awesome icon code
+     * @param cardName target card name
+     * @author methum
+     */
     protected JButton createMenuButton(String text, FontAwesomeSolid iconCode, String cardName) {
 
         JButton button = new JButton(text);

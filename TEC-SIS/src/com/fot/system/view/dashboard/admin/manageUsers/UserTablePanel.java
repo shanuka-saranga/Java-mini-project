@@ -1,8 +1,6 @@
 package com.fot.system.view.dashboard.admin.manageUsers;
 
-import com.fot.system.view.dashboard.admin.shared.BaseAdminTablePanel;
-
-import javax.swing.table.DefaultTableModel;
+import com.fot.system.view.dashboard.admin.components.BaseAdminTablePanel;
 
 public class UserTablePanel extends BaseAdminTablePanel {
 

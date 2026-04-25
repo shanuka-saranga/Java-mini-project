@@ -10,6 +10,12 @@ import java.awt.*;
 import java.util.List;
 
 public class AddNewCoursePanel extends JPanel {
+    private static final String DEFAULT_SESSION_TYPE = "THEORY";
+    private static final String DEFAULT_QUIZ_COUNT = "3";
+    private static final String DEFAULT_ASSIGNMENT_COUNT = "1";
+    private static final Dimension CLOSE_BUTTON_SIZE = new Dimension(120, 40);
+    private static final Dimension SAVE_BUTTON_SIZE = new Dimension(150, 40);
+    private static final String[] SESSION_TYPES = {"THEORY", "PRACTICAL", "BOTH"};
 
     private JTextField txtCourseCode;
     private JTextField txtCourseName;
@@ -20,10 +26,13 @@ public class AddNewCoursePanel extends JPanel {
     private JComboBox<String> cmbSessionType;
     private JComboBox<Department> cmbDepartment;
     private JComboBox<LecturerOption> cmbLecturer;
-
     private Runnable onCloseAction;
     private Runnable onSaveAction;
 
+    /**
+     * initialize add new course form panel
+     * @author janith
+     */
     public AddNewCoursePanel() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
@@ -44,6 +53,10 @@ public class AddNewCoursePanel extends JPanel {
         add(createBottomActions(), BorderLayout.SOUTH);
     }
 
+    /**
+     * create course form content panel
+     * @author janith
+     */
     private JPanel createFormPanel() {
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
@@ -52,13 +65,13 @@ public class AddNewCoursePanel extends JPanel {
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        txtCourseCode = new JTextField(15);
-        txtCourseName = new JTextField(15);
-        txtCredits = new JTextField(15);
-        txtTotalHours = new JTextField(15);
-        txtNoOfQuizzes = new JTextField(15);
-        txtNoOfAssignments = new JTextField(15);
-        cmbSessionType = new JComboBox<>(new String[]{"THEORY", "PRACTICAL", "BOTH"});
+        txtCourseCode = createTextField();
+        txtCourseName = createTextField();
+        txtCredits = createTextField();
+        txtTotalHours = createTextField();
+        txtNoOfQuizzes = createTextField();
+        txtNoOfAssignments = createTextField();
+        cmbSessionType = new JComboBox<>(SESSION_TYPES);
         cmbDepartment = new JComboBox<>();
         cmbLecturer = new JComboBox<>();
 
@@ -75,6 +88,18 @@ public class AddNewCoursePanel extends JPanel {
         return formPanel;
     }
 
+    /**
+     * create default text input field
+     * @author janith
+     */
+    private JTextField createTextField() {
+        return new JTextField(15);
+    }
+
+    /**
+     * create bottom action buttons panel
+     * @author janith
+     */
     private JPanel createBottomActions() {
         JPanel mainActionPanel = new JPanel(new BorderLayout());
         mainActionPanel.setOpaque(false);
@@ -82,13 +107,7 @@ public class AddNewCoursePanel extends JPanel {
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftPanel.setOpaque(false);
 
-        CustomButton btnClose = new CustomButton(
-                "Close",
-                AppTheme.BTN_CANCEL_BG,
-                AppTheme.BTN_CANCEL_FG,
-                AppTheme.BTN_CANCEL_HOVER,
-                new Dimension(120, 40)
-        );
+        CustomButton btnClose = createCloseButton();
         btnClose.addActionListener(e -> {
             if (onCloseAction != null) {
                 onCloseAction.run();
@@ -98,13 +117,7 @@ public class AddNewCoursePanel extends JPanel {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         rightPanel.setOpaque(false);
 
-        CustomButton btnSave = new CustomButton(
-                "Save Changes",
-                AppTheme.BTN_SAVE_BG,
-                AppTheme.BTN_SAVE_FG,
-                AppTheme.BTN_SAVE_HOVER,
-                new Dimension(150, 40)
-        );
+        CustomButton btnSave = createSaveButton();
         btnSave.addActionListener(e -> {
             if (onSaveAction != null) {
                 onSaveAction.run();
@@ -120,14 +133,46 @@ public class AddNewCoursePanel extends JPanel {
         return mainActionPanel;
     }
 
+    /**
+     * create close button for form
+     * @author janith
+     */
+    private CustomButton createCloseButton() {
+        return new CustomButton(
+                "Close",
+                AppTheme.BTN_CANCEL_BG,
+                AppTheme.BTN_CANCEL_FG,
+                AppTheme.BTN_CANCEL_HOVER,
+                CLOSE_BUTTON_SIZE
+        );
+    }
+
+    /**
+     * create save button for form
+     * @author janith
+     */
+    private CustomButton createSaveButton() {
+        return new CustomButton(
+                "Save Changes",
+                AppTheme.BTN_SAVE_BG,
+                AppTheme.BTN_SAVE_FG,
+                AppTheme.BTN_SAVE_HOVER,
+                SAVE_BUTTON_SIZE
+        );
+    }
+
+    /**
+     * clear all form fields and reset defaults
+     * @author janith
+     */
     public void resetForm() {
         txtCourseCode.setText("");
         txtCourseName.setText("");
         txtCredits.setText("");
         txtTotalHours.setText("");
-        txtNoOfQuizzes.setText("3");
-        txtNoOfAssignments.setText("1");
-        cmbSessionType.setSelectedItem("THEORY");
+        txtNoOfQuizzes.setText(DEFAULT_QUIZ_COUNT);
+        txtNoOfAssignments.setText(DEFAULT_ASSIGNMENT_COUNT);
+        cmbSessionType.setSelectedItem(DEFAULT_SESSION_TYPE);
 
         if (cmbDepartment.getItemCount() > 0) {
             cmbDepartment.setSelectedIndex(0);
@@ -137,6 +182,10 @@ public class AddNewCoursePanel extends JPanel {
         }
     }
 
+    /**
+     * build course request object from form values
+     * @author janith
+     */
     public AddCourseRequest buildRequest() {
         return new AddCourseRequest(
                 txtCourseCode.getText().trim(),
@@ -151,6 +200,11 @@ public class AddNewCoursePanel extends JPanel {
         );
     }
 
+    /**
+     * set department list to department combo
+     * @param departments department list
+     * @author janith
+     */
     public void setDepartments(List<Department> departments) {
         DefaultComboBoxModel<Department> model = new DefaultComboBoxModel<>();
         for (Department department : departments) {
@@ -162,6 +216,11 @@ public class AddNewCoursePanel extends JPanel {
         }
     }
 
+    /**
+     * set lecturer list to lecturer combo
+     * @param lecturers lecturer staff list
+     * @author janith
+     */
     public void setLecturers(List<Staff> lecturers) {
         DefaultComboBoxModel<LecturerOption> model = new DefaultComboBoxModel<>();
         model.addElement(new LecturerOption("", "Not Assigned"));
@@ -172,14 +231,28 @@ public class AddNewCoursePanel extends JPanel {
         cmbLecturer.setSelectedIndex(0);
     }
 
+    /**
+     * set close button callback action
+     * @param onCloseAction close action callback
+     * @author janith
+     */
     public void setOnCloseAction(Runnable onCloseAction) {
         this.onCloseAction = onCloseAction;
     }
 
+    /**
+     * set save button callback action
+     * @param onSaveAction save action callback
+     * @author janith
+     */
     public void setOnSaveAction(Runnable onSaveAction) {
         this.onSaveAction = onSaveAction;
     }
 
+    /**
+     * get selected department id from combo box
+     * @author janith
+     */
     private String getDepartmentId() {
         Object selectedItem = cmbDepartment.getSelectedItem();
         if (selectedItem instanceof Department) {
@@ -188,6 +261,10 @@ public class AddNewCoursePanel extends JPanel {
         return "";
     }
 
+    /**
+     * get selected lecturer id from combo box
+     * @author janith
+     */
     private String getLecturerId() {
         Object selectedItem = cmbLecturer.getSelectedItem();
         if (selectedItem instanceof LecturerOption) {
@@ -196,6 +273,15 @@ public class AddNewCoursePanel extends JPanel {
         return "";
     }
 
+    /**
+     * add one label + field row to form grid
+     * @param panel target form panel
+     * @param label row label text
+     * @param component row input component
+     * @param row grid row index
+     * @param gbc shared grid bag constraints
+     * @author janith
+     */
     private void addFormRow(JPanel panel, String label, Component component, int row, GridBagConstraints gbc) {
         gbc.gridy = row;
         gbc.gridx = 0;

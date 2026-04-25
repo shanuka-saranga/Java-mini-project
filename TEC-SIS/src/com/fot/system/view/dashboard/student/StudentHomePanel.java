@@ -1,7 +1,6 @@
 package com.fot.system.view.dashboard.student;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseMaterialService;
 import com.fot.system.service.CourseService;
@@ -9,7 +8,7 @@ import com.fot.system.service.FileOpenService;
 import com.fot.system.service.NoticeService;
 import com.fot.system.view.components.CloseActionButton;
 import com.fot.system.view.components.CourseSummaryCard;
-import com.fot.system.view.dashboard.admin.shared.NoticeFeedPanel;
+import com.fot.system.view.dashboard.admin.components.NoticeFeedPanel;
 import com.fot.system.view.dashboard.lecturer.myCourses.CourseMaterialCard;
 
 import javax.swing.*;
