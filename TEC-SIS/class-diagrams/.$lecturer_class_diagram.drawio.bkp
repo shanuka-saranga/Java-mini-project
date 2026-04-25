@@ -204,7 +204,11 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="351" edge="1" parent="1" source="330" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="335" value="">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2160" y="80" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="352" edge="1" parent="1" source="330" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" target="336" value="">
           <mxGeometry relative="1" as="geometry">

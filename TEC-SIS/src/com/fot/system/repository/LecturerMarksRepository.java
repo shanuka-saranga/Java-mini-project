@@ -184,11 +184,20 @@ public class LecturerMarksRepository {
     }
 
     public List<AssessmentStudentMarkRow> findAssessmentRows(String assessmentType, int courseId, int semesterYear, int itemNo) {
+        ensureMarksRowsForRegisteredStudents(courseId, semesterYear);
         return switch (assessmentType) {
             case "QUIZ" -> runAssessmentRowsQuery(
                     """
-                    SELECT m.id AS mark_id, m.student_reg_no, m.attempt_no, NULL AS exam_type, q.status, q.quiz_mark AS mark_value
+                    SELECT m.id AS mark_id, m.student_reg_no, scr.attempt_no AS attempt_no, NULL AS exam_type, q.status, q.quiz_mark AS mark_value
                     FROM marks m
+                    INNER JOIN student st
+                        ON st.registration_no = m.student_reg_no
+                    INNER JOIN student_course_registrations scr
+                        ON scr.student_user_id = st.user_id
+                       AND scr.course_id = m.course_id
+                       AND scr.semester_year = m.semester_year
+                       AND scr.attempt_no = m.attempt_no
+                       AND scr.registration_status = 'REGISTERED'
                     LEFT JOIN quizzes q ON q.mark_id = m.id AND q.quiz_no = ?
                     WHERE m.course_id = ? AND m.semester_year = ?
                     ORDER BY m.student_reg_no, m.attempt_no
@@ -197,8 +206,16 @@ public class LecturerMarksRepository {
             );
             case "ASSIGNMENT" -> runAssessmentRowsQuery(
                     """
-                    SELECT m.id AS mark_id, m.student_reg_no, m.attempt_no, NULL AS exam_type, a.status, a.assignment_mark AS mark_value
+                    SELECT m.id AS mark_id, m.student_reg_no, scr.attempt_no AS attempt_no, NULL AS exam_type, a.status, a.assignment_mark AS mark_value
                     FROM marks m
+                    INNER JOIN student st
+                        ON st.registration_no = m.student_reg_no
+                    INNER JOIN student_course_registrations scr
+                        ON scr.student_user_id = st.user_id
+                       AND scr.course_id = m.course_id
+                       AND scr.semester_year = m.semester_year
+                       AND scr.attempt_no = m.attempt_no
+                       AND scr.registration_status = 'REGISTERED'
                     LEFT JOIN assignments a ON a.mark_id = m.id AND a.assignment_no = ?
                     WHERE m.course_id = ? AND m.semester_year = ?
                     ORDER BY m.student_reg_no, m.attempt_no
@@ -207,8 +224,16 @@ public class LecturerMarksRepository {
             );
             case "MID" -> runAssessmentRowsQuery(
                     """
-                    SELECT m.id AS mark_id, m.student_reg_no, m.attempt_no, exam_types.exam_type, me.status, me.mid_exam_mark AS mark_value
+                    SELECT m.id AS mark_id, m.student_reg_no, scr.attempt_no AS attempt_no, exam_types.exam_type, me.status, me.mid_exam_mark AS mark_value
                     FROM marks m
+                    INNER JOIN student st
+                        ON st.registration_no = m.student_reg_no
+                    INNER JOIN student_course_registrations scr
+                        ON scr.student_user_id = st.user_id
+                       AND scr.course_id = m.course_id
+                       AND scr.semester_year = m.semester_year
+                       AND scr.attempt_no = m.attempt_no
+                       AND scr.registration_status = 'REGISTERED'
                     INNER JOIN courses c ON c.id = m.course_id
                     INNER JOIN (
                         SELECT 'THEORY' AS exam_type
@@ -226,8 +251,16 @@ public class LecturerMarksRepository {
             );
             case "END" -> runAssessmentRowsQuery(
                     """
-                    SELECT m.id AS mark_id, m.student_reg_no, m.attempt_no, exam_types.exam_type, ee.status, ee.end_exam_mark AS mark_value
+                    SELECT m.id AS mark_id, m.student_reg_no, scr.attempt_no AS attempt_no, exam_types.exam_type, ee.status, ee.end_exam_mark AS mark_value
                     FROM marks m
+                    INNER JOIN student st
+                        ON st.registration_no = m.student_reg_no
+                    INNER JOIN student_course_registrations scr
+                        ON scr.student_user_id = st.user_id
+                       AND scr.course_id = m.course_id
+                       AND scr.semester_year = m.semester_year
+                       AND scr.attempt_no = m.attempt_no
+                       AND scr.registration_status = 'REGISTERED'
                     INNER JOIN courses c ON c.id = m.course_id
                     INNER JOIN (
                         SELECT 'THEORY' AS exam_type
@@ -245,6 +278,42 @@ public class LecturerMarksRepository {
             );
             default -> new ArrayList<>();
         };
+    }
+
+    private void ensureMarksRowsForRegisteredStudents(int courseId, int semesterYear) {
+        String sql = """
+                INSERT INTO marks (student_reg_no, course_id, semester_year, attempt_no, created_at, updated_at)
+                SELECT
+                    st.registration_no,
+                    scr.course_id,
+                    scr.semester_year,
+                    scr.attempt_no,
+                    CURRENT_TIMESTAMP,
+                    CURRENT_TIMESTAMP
+                FROM student_course_registrations scr
+                INNER JOIN users u
+                    ON u.id = scr.student_user_id
+                INNER JOIN student st
+                    ON st.user_id = u.id
+                LEFT JOIN marks m
+                    ON m.student_reg_no = st.registration_no
+                   AND m.course_id = scr.course_id
+                   AND m.semester_year = scr.semester_year
+                   AND m.attempt_no = scr.attempt_no
+                WHERE scr.course_id = ?
+                  AND scr.semester_year = ?
+                  AND scr.registration_status = 'REGISTERED'
+                  AND u.role = 'STUDENT'
+                  AND m.id IS NULL
+                """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, courseId);
+            stmt.setInt(2, semesterYear);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to initialize marks rows for registered students: " + e.getMessage(), e);
+        }
     }
 
     private AssessmentCardSummary findNumberedSummary(String sql, int courseId, int semesterYear, int itemNo, String title) {
