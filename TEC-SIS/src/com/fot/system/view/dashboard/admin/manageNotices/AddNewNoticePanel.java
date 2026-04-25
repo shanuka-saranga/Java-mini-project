@@ -4,24 +4,35 @@ import com.fot.system.config.AppTheme;
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.components.ThemedComboBox;
 import com.fot.system.view.components.ThemedDatePicker;
+import com.fot.system.view.components.ThemedTextField;
 
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * render add-notice form used in admin notice management
+ * @author janith
+ */
 public class AddNewNoticePanel extends JPanel {
 
     private final int currentUserId;
-    private JTextField txtTitle;
+    private ThemedTextField txtTitle;
     private JTextArea txtContent;
-    private JComboBox<String> cmbAudience;
-    private JComboBox<String> cmbPriority;
-    private JComboBox<String> cmbStatus;
+    private ThemedComboBox<String> cmbAudience;
+    private ThemedComboBox<String> cmbPriority;
+    private ThemedComboBox<String> cmbStatus;
     private ThemedDatePicker txtPublishedDate;
     private ThemedDatePicker txtExpiryDate;
     private Runnable onCloseAction;
     private Runnable onSaveAction;
 
+    /**
+     * initialize add notice panel and default form values
+     * @param currentUserId logged-in user id
+     * @author janith
+     */
     public AddNewNoticePanel(int currentUserId) {
         this.currentUserId = currentUserId;
 
@@ -45,6 +56,10 @@ public class AddNewNoticePanel extends JPanel {
         resetForm();
     }
 
+    /**
+     * create notice input form content
+     * @author janith
+     */
     private JPanel createFormPanel() {
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
@@ -53,13 +68,13 @@ public class AddNewNoticePanel extends JPanel {
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        txtTitle = new JTextField(15);
+        txtTitle = new ThemedTextField(15);
         txtContent = new JTextArea(6, 15);
         txtContent.setLineWrap(true);
         txtContent.setWrapStyleWord(true);
-        cmbAudience = new JComboBox<>(new String[]{"ALL", "STUDENT", "LECTURER", "TO"});
-        cmbPriority = new JComboBox<>(new String[]{"LOW", "MEDIUM", "HIGH"});
-        cmbStatus = new JComboBox<>(new String[]{"ACTIVE", "INACTIVE"});
+        cmbAudience = new ThemedComboBox<>(new String[]{"ALL", "STUDENT", "LECTURER", "TO"});
+        cmbPriority = new ThemedComboBox<>(new String[]{"LOW", "MEDIUM", "HIGH"});
+        cmbStatus = new ThemedComboBox<>(new String[]{"ACTIVE", "INACTIVE"});
         txtPublishedDate = new ThemedDatePicker();
         txtExpiryDate = new ThemedDatePicker();
 
@@ -74,6 +89,10 @@ public class AddNewNoticePanel extends JPanel {
         return formPanel;
     }
 
+    /**
+     * create footer actions for close and save
+     * @author janith
+     */
     private JPanel createBottomActions() {
         JPanel mainActionPanel = new JPanel(new BorderLayout());
         mainActionPanel.setOpaque(false);
@@ -115,6 +134,10 @@ public class AddNewNoticePanel extends JPanel {
         return mainActionPanel;
     }
 
+    /**
+     * reset form fields to defaults
+     * @author janith
+     */
     public void resetForm() {
         txtTitle.setText("");
         txtContent.setText("");
@@ -125,6 +148,10 @@ public class AddNewNoticePanel extends JPanel {
         txtExpiryDate.setText("");
     }
 
+    /**
+     * build add notice request from form values
+     * @author janith
+     */
     public AddNoticeRequest buildRequest() {
         return new AddNoticeRequest(
                 txtTitle.getText().trim(),
@@ -138,14 +165,28 @@ public class AddNewNoticePanel extends JPanel {
         );
     }
 
+    /**
+     * register close callback
+     * @param onCloseAction callback
+     * @author janith
+     */
     public void setOnCloseAction(Runnable onCloseAction) {
         this.onCloseAction = onCloseAction;
     }
 
+    /**
+     * register save callback
+     * @param onSaveAction callback
+     * @author janith
+     */
     public void setOnSaveAction(Runnable onSaveAction) {
         this.onSaveAction = onSaveAction;
     }
 
+    /**
+     * add labeled component row to form
+     * @author janith
+     */
     private void addFormRow(JPanel panel, String label, Component component, int row, GridBagConstraints gbc) {
         gbc.gridy = row;
         gbc.gridx = 0;
@@ -160,6 +201,10 @@ public class AddNewNoticePanel extends JPanel {
         panel.add(component, gbc);
     }
 
+    /**
+     * resolve selected combo box value safely
+     * @author janith
+     */
     private String selected(JComboBox<String> comboBox) {
         return comboBox.getSelectedItem() == null ? "" : comboBox.getSelectedItem().toString();
     }

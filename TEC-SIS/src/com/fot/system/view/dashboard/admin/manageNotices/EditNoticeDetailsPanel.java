@@ -2,23 +2,33 @@ package com.fot.system.view.dashboard.admin.manageNotices;
 
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
+import com.fot.system.view.components.ThemedComboBox;
 import com.fot.system.view.components.ThemedDatePicker;
+import com.fot.system.view.components.ThemedTextField;
 
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * render notice edit form and build update request payload
+ * @author janith
+ */
 public class EditNoticeDetailsPanel extends JPanel {
 
-    private JTextField txtTitle;
+    private ThemedTextField txtTitle;
     private JTextArea txtContent;
-    private JComboBox<String> cmbAudience;
-    private JComboBox<String> cmbPriority;
-    private JComboBox<String> cmbStatus;
+    private ThemedComboBox<String> cmbAudience;
+    private ThemedComboBox<String> cmbPriority;
+    private ThemedComboBox<String> cmbStatus;
     private ThemedDatePicker txtPublishedDate;
     private ThemedDatePicker txtExpiryDate;
     private int noticeId;
     private int createdBy;
 
+    /**
+     * initialize edit notice form
+     * @author janith
+     */
     public EditNoticeDetailsPanel() {
         setLayout(new GridBagLayout());
         setBackground(Color.WHITE);
@@ -27,13 +37,13 @@ public class EditNoticeDetailsPanel extends JPanel {
         gbc.insets = new Insets(5, 10, 5, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        txtTitle = new JTextField(15);
+        txtTitle = new ThemedTextField(15);
         txtContent = new JTextArea(6, 15);
         txtContent.setLineWrap(true);
         txtContent.setWrapStyleWord(true);
-        cmbAudience = new JComboBox<>(new String[]{"ALL", "STUDENT", "LECTURER", "TO"});
-        cmbPriority = new JComboBox<>(new String[]{"LOW", "MEDIUM", "HIGH"});
-        cmbStatus = new JComboBox<>(new String[]{"ACTIVE", "INACTIVE"});
+        cmbAudience = new ThemedComboBox<>(new String[]{"ALL", "STUDENT", "LECTURER", "TO"});
+        cmbPriority = new ThemedComboBox<>(new String[]{"LOW", "MEDIUM", "HIGH"});
+        cmbStatus = new ThemedComboBox<>(new String[]{"ACTIVE", "INACTIVE"});
         txtPublishedDate = new ThemedDatePicker();
         txtExpiryDate = new ThemedDatePicker();
 
@@ -46,6 +56,11 @@ public class EditNoticeDetailsPanel extends JPanel {
         addFormRow("Expiry Date:", txtExpiryDate, 6, gbc);
     }
 
+    /**
+     * bind selected notice values to edit form
+     * @param notice selected notice
+     * @author janith
+     */
     public void setNoticeData(Notice notice) {
         this.noticeId = notice.getId();
         this.createdBy = notice.getCreatedBy();
@@ -56,8 +71,14 @@ public class EditNoticeDetailsPanel extends JPanel {
         cmbStatus.setSelectedItem(notice.getStatus());
         txtPublishedDate.setText(notice.getPublishedDate() == null ? "" : new java.sql.Date(notice.getPublishedDate().getTime()).toString());
         txtExpiryDate.setText(notice.getExpiryDate() == null ? "" : new java.sql.Date(notice.getExpiryDate().getTime()).toString());
+        revalidate();
+        repaint();
     }
 
+    /**
+     * build edit notice request from current form values
+     * @author janith
+     */
     public EditNoticeRequest buildRequest() {
         return new EditNoticeRequest(
                 noticeId,
@@ -72,6 +93,10 @@ public class EditNoticeDetailsPanel extends JPanel {
         );
     }
 
+    /**
+     * add labeled row to form grid
+     * @author janith
+     */
     private void addFormRow(String label, Component component, int row, GridBagConstraints gbc) {
         gbc.gridy = row;
         gbc.gridx = 0;
@@ -86,6 +111,10 @@ public class EditNoticeDetailsPanel extends JPanel {
         add(component, gbc);
     }
 
+    /**
+     * resolve selected combo box value safely
+     * @author janith
+     */
     private String selected(JComboBox<String> comboBox) {
         return comboBox.getSelectedItem() == null ? "" : comboBox.getSelectedItem().toString();
     }
