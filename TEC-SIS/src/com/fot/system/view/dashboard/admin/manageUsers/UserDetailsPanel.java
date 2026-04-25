@@ -56,6 +56,9 @@ public class UserDetailsPanel extends JPanel {
         panel.setBackground(Color.WHITE);
 
         profilePhotoFrame = new ProfilePhotoFrame("No Image");
+        JPanel photoWrap = new JPanel(new GridBagLayout());
+        photoWrap.setOpaque(false);
+        photoWrap.add(profilePhotoFrame);
 
         JPanel detailsGrid = new JPanel(new GridBagLayout());
         detailsGrid.setBackground(Color.WHITE);
@@ -83,7 +86,7 @@ public class UserDetailsPanel extends JPanel {
         addToGrid(detailsGrid, lblAddress, 0, 3, gbc);
         addToGrid(detailsGrid, lblExtra, 0, 4, gbc);
 
-        panel.add(profilePhotoFrame, BorderLayout.WEST);
+        panel.add(photoWrap, BorderLayout.WEST);
         panel.add(detailsGrid, BorderLayout.CENTER);
         return panel;
     }
@@ -144,7 +147,7 @@ public class UserDetailsPanel extends JPanel {
 
 
         btnClose.addActionListener(e -> {
-            setVisible(false);
+            clearDetails();
             notifyEditModeChanged(false);
             if (onCloseAction != null) {
                 onCloseAction.run();
@@ -268,6 +271,10 @@ public class UserDetailsPanel extends JPanel {
     }
 
     public void updateDetails(User user) {
+        if (user == null) {
+            clearDetails();
+            return;
+        }
         this.currentUser = user;
 
         lblFirstName.setText("First Name: " + user.getFirstName());
@@ -294,6 +301,14 @@ public class UserDetailsPanel extends JPanel {
 
         cardLayout.show(container, VIEW_CARD);
         setVisible(true);
+    }
+
+    public void clearDetails() {
+        currentUser = null;
+        if (profilePhotoFrame != null) {
+            profilePhotoFrame.clearImage();
+        }
+        setVisible(false);
     }
 
     public void setOnCloseAction(Runnable onCloseAction) {

@@ -5,6 +5,7 @@ import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.ProfilePhotoFrame;
 import com.fot.system.view.components.ProfileSectionCard;
+import com.fot.system.view.components.ThemedDatePicker;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,7 +26,7 @@ public class UserProfileEditPanel extends JPanel {
     private final JLabel lblRoleInfoValue;
     private final JTextField txtPhone;
     private final JTextArea txtAddress;
-    private final JTextField txtDob;
+    private final ThemedDatePicker txtDob;
     private final JPasswordField txtPassword;
     private final JPanel dobFieldPanel;
     private final JPanel passwordFieldPanel;
@@ -114,8 +115,7 @@ public class UserProfileEditPanel extends JPanel {
         txtAddress.setWrapStyleWord(true);
         styleTextArea(txtAddress);
 
-        txtDob = new JTextField();
-        styleTextField(txtDob);
+        txtDob = new ThemedDatePicker();
 
         txtPassword = new JPasswordField();
         styleTextField(txtPassword);

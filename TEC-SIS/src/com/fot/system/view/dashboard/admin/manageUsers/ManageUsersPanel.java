@@ -196,33 +196,41 @@ public class ManageUsersPanel extends JPanel {
     private void updateDetailsView() {
         JTable table = userTableComp.getTable();
         int viewRow = table.getSelectedRow();
-        if (viewRow != -1) {
-            int modelRow = table.convertRowIndexToModel(viewRow);
-            int userId = Integer.parseInt(userTableComp.getModel().getValueAt(modelRow, 0).toString());
-
-            SwingWorker<User, Void> worker = new SwingWorker<>() {
-                @Override
-                protected User doInBackground() {
-                    return userService.getUserById(userId);
-                }
-
-                @Override
-                protected void done() {
-                    try {
-                        User fullUser = get();
-                        if (fullUser == null) {
-                            return;
-                        }
-                        bottomCardLayout.show(bottomContentPanel, DETAILS_CARD);
-                        userDetailsComp.updateDetails(fullUser);
-                        SwingUtilities.invokeLater(ManageUsersPanel.this::showBottomPanel);
-                        userDetailsComp.setVisible(true);
-                    } catch (Exception ignored) {
-                    }
-                }
-            };
-            worker.execute();
+        if (viewRow == -1) {
+            userDetailsComp.clearDetails();
+            collapseBottomPanel();
+            return;
         }
+
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        int userId = Integer.parseInt(userTableComp.getModel().getValueAt(modelRow, 0).toString());
+
+        SwingWorker<User, Void> worker = new SwingWorker<>() {
+            @Override
+            protected User doInBackground() {
+                return userService.getUserById(userId);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    User fullUser = get();
+                    if (fullUser == null) {
+                        userDetailsComp.clearDetails();
+                        collapseBottomPanel();
+                        return;
+                    }
+                    bottomCardLayout.show(bottomContentPanel, DETAILS_CARD);
+                    userDetailsComp.updateDetails(fullUser);
+                    SwingUtilities.invokeLater(ManageUsersPanel.this::showBottomPanel);
+                    userDetailsComp.setVisible(true);
+                } catch (Exception ignored) {
+                    userDetailsComp.clearDetails();
+                    collapseBottomPanel();
+                }
+            }
+        };
+        worker.execute();
     }
 
     private void showBottomPanel() {

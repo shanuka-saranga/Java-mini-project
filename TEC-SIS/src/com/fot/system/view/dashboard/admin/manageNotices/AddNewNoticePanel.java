@@ -4,6 +4,7 @@ import com.fot.system.config.AppTheme;
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.components.ThemedDatePicker;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +17,8 @@ public class AddNewNoticePanel extends JPanel {
     private JComboBox<String> cmbAudience;
     private JComboBox<String> cmbPriority;
     private JComboBox<String> cmbStatus;
-    private JTextField txtPublishedDate;
-    private JTextField txtExpiryDate;
+    private ThemedDatePicker txtPublishedDate;
+    private ThemedDatePicker txtExpiryDate;
     private Runnable onCloseAction;
     private Runnable onSaveAction;
 
@@ -59,8 +60,8 @@ public class AddNewNoticePanel extends JPanel {
         cmbAudience = new JComboBox<>(new String[]{"ALL", "STUDENT", "LECTURER", "TO"});
         cmbPriority = new JComboBox<>(new String[]{"LOW", "MEDIUM", "HIGH"});
         cmbStatus = new JComboBox<>(new String[]{"ACTIVE", "INACTIVE"});
-        txtPublishedDate = new JTextField(15);
-        txtExpiryDate = new JTextField(15);
+        txtPublishedDate = new ThemedDatePicker();
+        txtExpiryDate = new ThemedDatePicker();
 
         addFormRow(formPanel, "Title:", txtTitle, 0, gbc);
         addFormRow(formPanel, "Content:", new JScrollPane(txtContent), 1, gbc);

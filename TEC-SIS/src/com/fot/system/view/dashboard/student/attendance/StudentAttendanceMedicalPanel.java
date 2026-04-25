@@ -8,6 +8,7 @@ import com.fot.system.service.AttendanceService;
 import com.fot.system.service.FileOpenService;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.MaterialActionButton;
+import com.fot.system.view.components.ThemedDatePicker;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import javax.swing.*;
@@ -42,8 +43,8 @@ public class StudentAttendanceMedicalPanel extends JPanel {
     private JLabel lblMedicalDetailsMeta;
     private JTextField txtSearch;
     private JLabel lblAttendanceMeta;
-    private JTextField txtMedicalStartDate;
-    private JTextField txtMedicalEndDate;
+    private ThemedDatePicker txtMedicalStartDate;
+    private ThemedDatePicker txtMedicalEndDate;
     private JTextField txtMedicalDocument;
     private JPanel medicalUploadPanel;
     private JLabel lblAbsentSessionMeta;
@@ -303,8 +304,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         JPanel rangePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         rangePanel.setOpaque(false);
 
-        txtMedicalStartDate = createCompactTextField();
-        txtMedicalEndDate = createCompactTextField();
+        txtMedicalStartDate = new ThemedDatePicker();
+        txtMedicalEndDate = new ThemedDatePicker();
+        txtMedicalStartDate.setPreferredSize(new Dimension(140, 38));
+        txtMedicalEndDate.setPreferredSize(new Dimension(140, 38));
 
         rangePanel.add(new JLabel("Start Date"));
         rangePanel.add(txtMedicalStartDate);

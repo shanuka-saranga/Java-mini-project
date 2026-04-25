@@ -7,6 +7,7 @@ import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.ProfilePhotoFrame;
 import com.fot.system.view.components.ThemedComboBox;
+import com.fot.system.view.components.ThemedDatePicker;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -25,7 +26,7 @@ public class AddNewUserPanel extends JPanel {
     private JTextField txtPhone;
     private JTextField txtAddress;
     private JTextField txtProfilePicture;
-    private JTextField txtDob;
+    private ThemedDatePicker txtDob;
     private JComboBox<Department> cmbDepartment;
     private ProfilePhotoFrame profilePhotoFrame;
 
@@ -82,7 +83,7 @@ public class AddNewUserPanel extends JPanel {
         txtAddress = new JTextField(15);
         txtProfilePicture = new JTextField(15);
         txtProfilePicture.setEditable(false);
-        txtDob = new JTextField(15);
+        txtDob = new ThemedDatePicker();
         cmbDepartment = new ThemedComboBox<>();
         profilePhotoFrame = new ProfilePhotoFrame("No image selected");
 

@@ -10,6 +10,7 @@ import com.fot.system.model.entity.User;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.ProfilePhotoFrame;
 import com.fot.system.view.components.ThemedComboBox;
+import com.fot.system.view.components.ThemedDatePicker;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -33,7 +34,7 @@ public class EditUserDetailsPanel extends JPanel {
     private JTextField txtProfilePicture;
     private String currentProfilePicturePath;
     private ProfilePhotoFrame profilePhotoFrame;
-    private JTextField txtDob;
+    private ThemedDatePicker txtDob;
     private JComboBox<Department> cmbDepartment;
     private JComboBox<String> cmbRole;
     private JComboBox<String> cmbStatus;
@@ -74,7 +75,7 @@ public class EditUserDetailsPanel extends JPanel {
         txtProfilePicture = new JTextField(15);
         txtProfilePicture.setEditable(false);
         profilePhotoFrame = new ProfilePhotoFrame("No image selected");
-        txtDob = new JTextField(15);
+        txtDob = new ThemedDatePicker();
         cmbDepartment = new ThemedComboBox<>();
 
         cmbRole = new ThemedComboBox<>(new String[]{

@@ -2,6 +2,7 @@ package com.fot.system.view.dashboard.admin.manageNotices;
 
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
+import com.fot.system.view.components.ThemedDatePicker;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +14,8 @@ public class EditNoticeDetailsPanel extends JPanel {
     private JComboBox<String> cmbAudience;
     private JComboBox<String> cmbPriority;
     private JComboBox<String> cmbStatus;
-    private JTextField txtPublishedDate;
-    private JTextField txtExpiryDate;
+    private ThemedDatePicker txtPublishedDate;
+    private ThemedDatePicker txtExpiryDate;
     private int noticeId;
     private int createdBy;
 
@@ -33,8 +34,8 @@ public class EditNoticeDetailsPanel extends JPanel {
         cmbAudience = new JComboBox<>(new String[]{"ALL", "STUDENT", "LECTURER", "TO"});
         cmbPriority = new JComboBox<>(new String[]{"LOW", "MEDIUM", "HIGH"});
         cmbStatus = new JComboBox<>(new String[]{"ACTIVE", "INACTIVE"});
-        txtPublishedDate = new JTextField(15);
-        txtExpiryDate = new JTextField(15);
+        txtPublishedDate = new ThemedDatePicker();
+        txtExpiryDate = new ThemedDatePicker();
 
         addFormRow("Title:", txtTitle, 0, gbc);
         addFormRow("Content:", new JScrollPane(txtContent), 1, gbc);
