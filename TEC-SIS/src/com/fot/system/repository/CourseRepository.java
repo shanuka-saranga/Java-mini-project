@@ -97,7 +97,7 @@ public class CourseRepository {
     /**
      * find courses by lecturer id
      * @param lecturerId lecturer user id
-     * @author janith
+     * @author poornika
      */
     public List<Course> findByLecturerId(int lecturerId) {
         List<Course> courses = new ArrayList<>();

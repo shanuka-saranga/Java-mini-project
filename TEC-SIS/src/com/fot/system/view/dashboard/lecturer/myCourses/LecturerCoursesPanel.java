@@ -3,8 +3,11 @@ package com.fot.system.view.dashboard.lecturer.myCourses;
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.AddCourseMaterialController;
 import com.fot.system.controller.EditCourseMaterialController;
-import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
+import com.fot.system.model.dto.AddCourseMaterialRequest;
+import com.fot.system.model.dto.EditCourseMaterialRequest;
+import com.fot.system.model.entity.Course;
+import com.fot.system.model.entity.CourseMaterial;
+import com.fot.system.model.entity.User;
 import com.fot.system.service.CourseMaterialService;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.FileOpenService;
@@ -36,6 +39,11 @@ public class LecturerCoursesPanel extends JPanel {
     private List<Course> assignedCourses;
     private Course selectedCourse;
 
+    /**
+     * initialize lecturer courses panel with list and details cards
+     * @param user logged-in lecturer
+     * @author poornika
+     */
     public LecturerCoursesPanel(User user) {
         this.currentUser = user;
         this.courseService = new CourseService();
@@ -65,11 +73,10 @@ public class LecturerCoursesPanel extends JPanel {
 
         JPanel topActions = new JPanel();
         topActions.setOpaque(false);
-        topActions.setLayout(new BoxLayout(topActions, BoxLayout.Y_AXIS));
+        topActions.setLayout(new FlowLayout(FlowLayout.RIGHT, 8, 0));
 
         CloseActionButton closeButton = new CloseActionButton();
-        closeButton.addActionListener(e -> cardLayout.show(cardPanel, LIST_CARD));
-        closeButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        closeButton.addActionListener(e -> showCourseListView());
 
         addNewButton = new CustomButton(
                 "Add New",
@@ -79,11 +86,10 @@ public class LecturerCoursesPanel extends JPanel {
                 new Dimension(120, 40)
         );
         addNewButton.addActionListener(e -> openAddMaterialDialog());
-        addNewButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        addNewButton.setEnabled(false);
 
-        topActions.add(closeButton);
-        topActions.add(Box.createVerticalStrut(10));
         topActions.add(addNewButton);
+        topActions.add(closeButton);
 
         materialsListPanel = new JPanel();
         materialsListPanel.setOpaque(false);
@@ -109,10 +115,6 @@ public class LecturerCoursesPanel extends JPanel {
         panelHeader.add(tabLabelWrap, BorderLayout.WEST);
         panelHeader.add(topActions, BorderLayout.EAST);
 
-        JPanel courseInfoPanel = new JPanel();
-        courseInfoPanel.setOpaque(false);
-        courseInfoPanel.setLayout(new BoxLayout(courseInfoPanel, BoxLayout.Y_AXIS));
-
         JLabel materialsHeading = new JLabel("Course Materials");
         materialsHeading.setFont(AppTheme.fontBold(18));
         materialsHeading.setForeground(AppTheme.TEXT_DARK);
@@ -131,8 +133,6 @@ public class LecturerCoursesPanel extends JPanel {
         JPanel contentStack = new JPanel();
         contentStack.setOpaque(false);
         contentStack.setLayout(new BoxLayout(contentStack, BoxLayout.Y_AXIS));
-        contentStack.add(courseInfoPanel);
-        contentStack.add(Box.createVerticalStrut(22));
         contentStack.add(materialsHeader);
         contentStack.add(Box.createVerticalStrut(14));
         contentStack.add(materialsListPanel);
@@ -152,6 +152,10 @@ public class LecturerCoursesPanel extends JPanel {
         loadAssignedCourses();
     }
 
+    /**
+     * create page title and subtitle section
+     * @author poornika
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
@@ -169,6 +173,11 @@ public class LecturerCoursesPanel extends JPanel {
         return header;
     }
 
+    /**
+     * create a shared scroll pane style for this panel
+     * @param content inner panel
+     * @author poornika
+     */
     private JScrollPane createScrollPane(JPanel content) {
         JScrollPane scrollPane = new JScrollPane(content);
         scrollPane.setBorder(null);
@@ -177,20 +186,10 @@ public class LecturerCoursesPanel extends JPanel {
         return scrollPane;
     }
 
-    private JLabel createTitleLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(AppTheme.fontBold(22));
-        label.setForeground(AppTheme.TEXT_DARK);
-        return label;
-    }
-
-    private JLabel createMetaLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(AppTheme.fontPlain(14));
-        label.setForeground(AppTheme.TEXT_SUBTLE);
-        return label;
-    }
-
+    /**
+     * load assigned courses without blocking the UI thread
+     * @author poornika
+     */
     private void loadAssignedCourses() {
         SwingWorker<List<Course>, Void> worker = new SwingWorker<List<Course>, Void>() {
             @Override
@@ -217,6 +216,10 @@ public class LecturerCoursesPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * render course cards in lecturer assigned list
+     * @author poornika
+     */
     private void renderCourseList() {
         courseListPanel.removeAll();
 
@@ -245,6 +248,11 @@ public class LecturerCoursesPanel extends JPanel {
         courseListPanel.repaint();
     }
 
+    /**
+     * open selected course in details card and load materials
+     * @param course selected course
+     * @author poornika
+     */
     private void openCourse(Course course) {
         selectedCourse = course;
         updateOpenedCourseTabTitle(course);
@@ -253,6 +261,21 @@ public class LecturerCoursesPanel extends JPanel {
         cardLayout.show(cardPanel, DETAILS_CARD);
     }
 
+    /**
+     * return to list card and reset details header state
+     * @author poornika
+     */
+    private void showCourseListView() {
+        selectedCourse = null;
+        lblOpenedCourseTab.setText("Opened Course");
+        addNewButton.setEnabled(false);
+        cardLayout.show(cardPanel, LIST_CARD);
+    }
+
+    /**
+     * load materials for currently selected course
+     * @author poornika
+     */
     private void loadMaterialsForSelectedCourse() {
         if (selectedCourse == null) {
             renderMaterialsEmpty("Select a course to view materials.");
@@ -277,6 +300,11 @@ public class LecturerCoursesPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * render material cards list for selected course
+     * @param materials material records
+     * @author poornika
+     */
     private void renderMaterials(List<CourseMaterial> materials) {
         materialsListPanel.removeAll();
 
@@ -299,6 +327,11 @@ public class LecturerCoursesPanel extends JPanel {
         materialsListPanel.repaint();
     }
 
+    /**
+     * render empty-state message in materials area
+     * @param message empty state text
+     * @author poornika
+     */
     private void renderMaterialsEmpty(String message) {
         materialsListPanel.removeAll();
         JLabel empty = new JLabel(message);
@@ -310,6 +343,10 @@ public class LecturerCoursesPanel extends JPanel {
         materialsListPanel.repaint();
     }
 
+    /**
+     * open add-material dialog and persist new record
+     * @author poornika
+     */
     private void openAddMaterialDialog() {
         if (selectedCourse == null) {
             return;
@@ -340,6 +377,11 @@ public class LecturerCoursesPanel extends JPanel {
         }
     }
 
+    /**
+     * open material file using platform file handler
+     * @param material selected material
+     * @author poornika
+     */
     private void openMaterial(CourseMaterial material) {
         try {
             fileOpenService.openFile(material.getFilePath());
@@ -348,6 +390,11 @@ public class LecturerCoursesPanel extends JPanel {
         }
     }
 
+    /**
+     * open edit dialog and update selected material
+     * @param material selected material
+     * @author poornika
+     */
     private void openEditMaterialDialog(CourseMaterial material) {
         if (selectedCourse == null || material == null) {
             return;
@@ -379,6 +426,11 @@ public class LecturerCoursesPanel extends JPanel {
         }
     }
 
+    /**
+     * delete selected material after confirmation
+     * @param material selected material
+     * @author poornika
+     */
     private void deleteMaterial(CourseMaterial material) {
         if (material == null) {
             return;
@@ -405,14 +457,21 @@ public class LecturerCoursesPanel extends JPanel {
         }
     }
 
-    private String valueOrDash(String value) {
-        return value == null || value.trim().isEmpty() ? "-" : value.trim();
-    }
-
+    /**
+     * update details tab title with selected course values
+     * @param course selected course
+     * @author poornika
+     */
     private void updateOpenedCourseTabTitle(Course course) {
         lblOpenedCourseTab.setText(course.getCourseCode() + " - " + course.getCourseName());
     }
 
+    /**
+     * bind same click handler recursively for card and children
+     * @param component root component
+     * @param adapter click listener
+     * @author poornika
+     */
     private void attachClickHandler(Component component, MouseAdapter adapter) {
         component.addMouseListener(adapter);
         if (component instanceof Container) {
