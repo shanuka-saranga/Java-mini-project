@@ -131,20 +131,20 @@ public class ManageCoursesPanel extends JPanel {
     }
 
     private void loadLookupData() {
-        SwingWorker<LookupData, Void> worker = new SwingWorker<>() {
+        SwingWorker<ManageCoursesLookupData, Void> worker = new SwingWorker<>() {
             @Override
-            protected LookupData doInBackground() {
-                return new LookupData(courseService.getAllDepartments(), courseService.getAllLecturers());
+            protected ManageCoursesLookupData doInBackground() {
+                return new ManageCoursesLookupData(courseService.getAllDepartments(), courseService.getAllLecturers());
             }
 
             @Override
             protected void done() {
                 try {
-                    LookupData lookupData = get();
-                    addNewCoursePanel.setDepartments(lookupData.departments);
-                    addNewCoursePanel.setLecturers(lookupData.lecturers);
-                    courseDetailsPanel.setDepartments(lookupData.departments);
-                    courseDetailsPanel.setLecturers(lookupData.lecturers);
+                    ManageCoursesLookupData lookupData = get();
+                    addNewCoursePanel.setDepartments(lookupData.getDepartments());
+                    addNewCoursePanel.setLecturers(lookupData.getLecturers());
+                    courseDetailsPanel.setDepartments(lookupData.getDepartments());
+                    courseDetailsPanel.setLecturers(lookupData.getLecturers());
                 } catch (Exception e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(
@@ -239,15 +239,5 @@ public class ManageCoursesPanel extends JPanel {
     private void afterCourseDeleted() {
         loadDataFromDatabase();
         collapseBottomPanel();
-    }
-
-    private static class LookupData {
-        private final List<Department> departments;
-        private final List<Staff> lecturers;
-
-        private LookupData(List<Department> departments, List<Staff> lecturers) {
-            this.departments = departments;
-            this.lecturers = lecturers;
-        }
     }
 }

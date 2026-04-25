@@ -17,12 +17,6 @@ import java.awt.*;
 import java.util.List;
 
 public class AdminHomePanel extends JPanel {
-    private static final Color PANEL_BG = new Color(245, 248, 248);
-    private static final Color TEXT_SUBTLE = new Color(110, 110, 110);
-    private static final Color CARD_BORDER = new Color(235, 235, 235);
-    private static final Color ROW_BORDER = new Color(240, 240, 240);
-    private static final Color ICON_ACCENT = new Color(0, 121, 107);
-
     private final User currentUser;
     private final UserService userService;
     private final CourseService courseService;
@@ -49,7 +43,7 @@ public class AdminHomePanel extends JPanel {
         this.courseService = new CourseService();
         this.noticeService = new NoticeService();
 
-        setBackground(PANEL_BG);
+        setBackground(AppTheme.SURFACE_SOFT);
         setLayout(new BorderLayout(20, 20));
         setBorder(new EmptyBorder(30, 30, 30, 30));
 
@@ -76,7 +70,7 @@ public class AdminHomePanel extends JPanel {
         welcomeLabel.setFont(AppTheme.fontBold(28));
         JLabel subtitleLabel = new JLabel("Here is the current system overview with live counts and recent notices.");
         subtitleLabel.setFont(AppTheme.fontPlain(14));
-        subtitleLabel.setForeground(TEXT_SUBTLE);
+        subtitleLabel.setForeground(AppTheme.TEXT_SUBTLE);
         header.add(welcomeLabel, BorderLayout.NORTH);
         header.add(subtitleLabel, BorderLayout.SOUTH);
         return header;
@@ -113,9 +107,9 @@ public class AdminHomePanel extends JPanel {
      */
     private JPanel createRoleSummaryPanel() {
         JPanel panel = new JPanel(new BorderLayout(0, 14));
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(AppTheme.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(CARD_BORDER, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
                 new EmptyBorder(18, 18, 18, 18)
         ));
 
@@ -149,11 +143,11 @@ public class AdminHomePanel extends JPanel {
         JPanel row = new JPanel(new BorderLayout(12, 0));
         row.setOpaque(false);
         row.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(ROW_BORDER, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_SOFT, 1, true),
                 new EmptyBorder(10, 12, 10, 12)
         ));
 
-        JLabel iconLabel = new JLabel(org.kordamp.ikonli.swing.FontIcon.of(icon, 18, ICON_ACCENT));
+        JLabel iconLabel = new JLabel(org.kordamp.ikonli.swing.FontIcon.of(icon, 18, AppTheme.ICON_ACCENT));
         JLabel textLabel = new JLabel(labelText);
         textLabel.setFont(AppTheme.fontPlain(14));
 
