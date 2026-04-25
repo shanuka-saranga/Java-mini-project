@@ -1,13 +1,22 @@
 package com.fot.system.view.dashboard.admin.manageCourses;
 
+import com.fot.system.config.AppConfig;
+import com.fot.system.config.AppTheme;
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
+import com.fot.system.view.components.ThemedComboBox;
+import com.fot.system.view.components.ThemedRadioButton;
+import com.fot.system.view.components.ThemedTextField;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
 public class EditCourseDetailsPanel extends JPanel {
+    private static final int LABEL_COLUMN_WIDTH = 170;
+    private static final Dimension INPUT_SIZE = new Dimension(280, 34);
+    private static final Dimension INPUT_MIN_SIZE = new Dimension(220, 34);
+
 
     private JTextField txtCourseCode;
     private JTextField txtCourseName;
@@ -15,38 +24,51 @@ public class EditCourseDetailsPanel extends JPanel {
     private JTextField txtTotalHours;
     private JTextField txtNoOfQuizzes;
     private JTextField txtNoOfAssignments;
-    private JComboBox<String> cmbSessionType;
+    private ButtonGroup sessionTypeGroup;
+    private ThemedRadioButton rdoTheory;
+    private ThemedRadioButton rdoPractical;
+    private ThemedRadioButton rdoBoth;
     private JComboBox<Department> cmbDepartment;
     private JComboBox<LecturerOption> cmbLecturer;
     private int courseId;
 
     public EditCourseDetailsPanel() {
         setLayout(new GridBagLayout());
-        setBackground(Color.WHITE);
+        setBackground(AppTheme.BG_LIGHT);
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.insets = new Insets(8, 10, 8, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        txtCourseCode = new JTextField(15);
-        txtCourseName = new JTextField(15);
-        txtCredits = new JTextField(15);
-        txtTotalHours = new JTextField(15);
-        txtNoOfQuizzes = new JTextField(15);
-        txtNoOfAssignments = new JTextField(15);
-        cmbSessionType = new JComboBox<>(new String[]{"THEORY", "PRACTICAL", "BOTH"});
-        cmbDepartment = new JComboBox<>();
-        cmbLecturer = new JComboBox<>();
+        txtCourseCode = createTextField();
+        txtCourseName = createTextField();
+        txtCredits = createTextField();
+        txtTotalHours = createTextField();
+        txtNoOfQuizzes = createTextField();
+        txtNoOfAssignments = createTextField();
+        cmbDepartment = new ThemedComboBox<>();
+        cmbLecturer = new ThemedComboBox<>();
+
+        styleInputComponent(cmbDepartment);
+        styleInputComponent(cmbLecturer);
 
         addFormRow("Course Code:", txtCourseCode, 0, gbc);
         addFormRow("Course Name:", txtCourseName, 1, gbc);
         addFormRow("Credits:", txtCredits, 2, gbc);
         addFormRow("Total Hours:", txtTotalHours, 3, gbc);
-        addFormRow("Session Type:", cmbSessionType, 4, gbc);
+        addFormRow("Session Type:", createSessionTypePanel(), 4, gbc);
         addFormRow("No. of Quizzes:", txtNoOfQuizzes, 5, gbc);
         addFormRow("No. of Assignments:", txtNoOfAssignments, 6, gbc);
         addFormRow("Department:", cmbDepartment, 7, gbc);
         addFormRow("Lecturer in Charge:", cmbLecturer, 8, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 9;
+        gbc.gridwidth = 2;
+        gbc.weighty = 1.0;
+        add(Box.createVerticalGlue(), gbc);
     }
 
     public void setCourseData(Course course) {
@@ -55,7 +77,7 @@ public class EditCourseDetailsPanel extends JPanel {
         txtCourseName.setText(course.getCourseName());
         txtCredits.setText(String.valueOf(course.getCredits()));
         txtTotalHours.setText(String.valueOf(course.getTotalHours()));
-        cmbSessionType.setSelectedItem(course.getSessionType());
+        selectSessionType(course.getSessionType());
         txtNoOfQuizzes.setText(String.valueOf(course.getNoOfQuizzes()));
         txtNoOfAssignments.setText(String.valueOf(course.getNoOfAssignments()));
         selectDepartmentById(course.getDepartmentId());
@@ -69,7 +91,7 @@ public class EditCourseDetailsPanel extends JPanel {
                 txtCourseName.getText().trim(),
                 txtCredits.getText().trim(),
                 txtTotalHours.getText().trim(),
-                cmbSessionType.getSelectedItem() == null ? "" : cmbSessionType.getSelectedItem().toString(),
+                getSelectedSessionType(),
                 txtNoOfQuizzes.getText().trim(),
                 txtNoOfAssignments.getText().trim(),
                 getDepartmentId(),
@@ -140,12 +162,73 @@ public class EditCourseDetailsPanel extends JPanel {
         gbc.gridy = row;
         gbc.gridx = 0;
         gbc.gridwidth = 1;
-        gbc.weightx = 0.2;
-        add(new JLabel(label), gbc);
+        gbc.weightx = 0.0;
+
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(AppTheme.FORM_LABEL_FONT);
+        lbl.setForeground(AppTheme.TEXT_DARK);
+        lbl.setHorizontalAlignment(SwingConstants.RIGHT);
+        lbl.setPreferredSize(new Dimension(LABEL_COLUMN_WIDTH, INPUT_SIZE.height));
+        lbl.setMinimumSize(new Dimension(LABEL_COLUMN_WIDTH, INPUT_SIZE.height));
+        add(lbl, gbc);
 
         gbc.gridx = 1;
-        gbc.weightx = 0.8;
+        gbc.weightx = 1.0;
         add(component, gbc);
     }
 
+    private JTextField createTextField() {
+        JTextField textField = new ThemedTextField(18);
+        styleInputComponent(textField);
+        return textField;
+    }
+
+    private JPanel createSessionTypePanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
+        panel.setOpaque(false);
+        panel.setPreferredSize(INPUT_SIZE);
+        panel.setMinimumSize(INPUT_MIN_SIZE);
+
+        sessionTypeGroup = new ButtonGroup();
+        rdoTheory = new ThemedRadioButton("THEORY", true);
+        rdoPractical = new ThemedRadioButton("PRACTICAL");
+        rdoBoth = new ThemedRadioButton("BOTH");
+
+        sessionTypeGroup.add(rdoTheory);
+        sessionTypeGroup.add(rdoPractical);
+        sessionTypeGroup.add(rdoBoth);
+
+        panel.add(rdoTheory);
+        panel.add(rdoPractical);
+        panel.add(rdoBoth);
+        return panel;
+    }
+
+    private String getSelectedSessionType() {
+        if (rdoPractical.isSelected()) {
+            return AppConfig.COURSE_SESSION_TYPES[1];
+        }
+        if (rdoBoth.isSelected()) {
+            return AppConfig.COURSE_SESSION_TYPES[2];
+        }
+        return AppConfig.COURSE_SESSION_TYPES[0];
+    }
+
+    private void selectSessionType(String sessionType) {
+        if (AppConfig.COURSE_SESSION_TYPES[1].equalsIgnoreCase(sessionType)) {
+            rdoPractical.setSelected(true);
+            return;
+        }
+        if (AppConfig.COURSE_SESSION_TYPES[2].equalsIgnoreCase(sessionType)) {
+            rdoBoth.setSelected(true);
+            return;
+        }
+        rdoTheory.setSelected(true);
+    }
+
+    private void styleInputComponent(JComponent component) {
+        component.setFont(AppTheme.FORM_INPUT_FONT);
+        component.setPreferredSize(INPUT_SIZE);
+        component.setMinimumSize(INPUT_MIN_SIZE);
+    }
 }
