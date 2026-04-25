@@ -143,6 +143,10 @@ public class EditCourseDetailsPanel extends JPanel {
         cmbLecturer.setModel(model);
     }
 
+    /**
+     * get selected department id value
+     * @author janith
+     */
     private String getDepartmentId() {
         Object selectedItem = cmbDepartment.getSelectedItem();
         if (selectedItem instanceof Department) {
@@ -151,6 +155,10 @@ public class EditCourseDetailsPanel extends JPanel {
         return "";
     }
 
+    /**
+     * get selected lecturer id value
+     * @author janith
+     */
     private String getLecturerId() {
         Object selectedItem = cmbLecturer.getSelectedItem();
         if (selectedItem instanceof LecturerOption) {
@@ -159,6 +167,11 @@ public class EditCourseDetailsPanel extends JPanel {
         return "";
     }
 
+    /**
+     * select department item by id
+     * @param departmentId department id
+     * @author janith
+     */
     private void selectDepartmentById(int departmentId) {
         for (int i = 0; i < cmbDepartment.getItemCount(); i++) {
             Department department = cmbDepartment.getItemAt(i);
@@ -169,6 +182,11 @@ public class EditCourseDetailsPanel extends JPanel {
         }
     }
 
+    /**
+     * select lecturer item by id
+     * @param lecturerId lecturer id
+     * @author janith
+     */
     private void selectLecturerById(Integer lecturerId) {
         if (lecturerId == null) {
             cmbLecturer.setSelectedIndex(0);
@@ -185,6 +203,10 @@ public class EditCourseDetailsPanel extends JPanel {
         cmbLecturer.setSelectedIndex(0);
     }
 
+    /**
+     * add labeled component row into form layout
+     * @author janith
+     */
     private void addFormRow(String label, Component component, int row, GridBagConstraints gbc) {
         gbc.gridy = row;
         gbc.gridx = 0;
@@ -204,12 +226,20 @@ public class EditCourseDetailsPanel extends JPanel {
         add(component, gbc);
     }
 
+    /**
+     * create themed text field input
+     * @author janith
+     */
     private JTextField createTextField() {
         JTextField textField = new ThemedTextField(18);
         styleInputComponent(textField);
         return textField;
     }
 
+    /**
+     * create course session type radio options
+     * @author janith
+     */
     private JPanel createSessionTypePanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         panel.setOpaque(false);
@@ -231,6 +261,10 @@ public class EditCourseDetailsPanel extends JPanel {
         return panel;
     }
 
+    /**
+     * resolve selected session type
+     * @author janith
+     */
     private String getSelectedSessionType() {
         if (rdoPractical.isSelected()) {
             return AppConfig.COURSE_SESSION_TYPES[1];
@@ -241,6 +275,11 @@ public class EditCourseDetailsPanel extends JPanel {
         return AppConfig.COURSE_SESSION_TYPES[0];
     }
 
+    /**
+     * select session type radio by value
+     * @param sessionType session type value
+     * @author janith
+     */
     private void selectSessionType(String sessionType) {
         if (AppConfig.COURSE_SESSION_TYPES[1].equalsIgnoreCase(sessionType)) {
             rdoPractical.setSelected(true);
@@ -253,6 +292,11 @@ public class EditCourseDetailsPanel extends JPanel {
         rdoTheory.setSelected(true);
     }
 
+    /**
+     * apply shared input sizing and font
+     * @param component input component
+     * @author janith
+     */
     private void styleInputComponent(JComponent component) {
         component.setFont(AppTheme.FORM_INPUT_FONT);
         component.setPreferredSize(INPUT_SIZE);

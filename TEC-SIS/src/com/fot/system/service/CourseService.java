@@ -173,6 +173,12 @@ public class CourseService {
         }
     }
 
+    /**
+     * validate and normalize course entity values
+     * @param course course entity
+     * @param requireId require valid id for update flow
+     * @author janith
+     */
     private Course validate(Course course, boolean requireId) {
         if (course == null) {
             throw new RuntimeException("Course details are required.");
@@ -223,6 +229,11 @@ public class CourseService {
         return course;
     }
 
+    /**
+     * create course entity from add/edit request payload
+     * @param request add course request payload
+     * @author janith
+     */
     private Course createCourse(AddCourseRequest request) {
         Course course = new Course();
         course.setCourseCode(request.getCourseCode());
@@ -237,6 +248,12 @@ public class CourseService {
         return course;
     }
 
+    /**
+     * parse positive integer value
+     * @param value input value
+     * @param message validation message
+     * @author janith
+     */
     private int parsePositiveInt(String value, String message) {
         try {
             int parsedValue = Integer.parseInt(normalize(value));
@@ -249,6 +266,11 @@ public class CourseService {
         }
     }
 
+    /**
+     * parse optional integer value
+     * @param value input value
+     * @author janith
+     */
     private Integer parseOptionalInt(String value) {
         String normalizedValue = normalize(value);
         if (normalizedValue.isEmpty()) {
@@ -266,6 +288,12 @@ public class CourseService {
         }
     }
 
+    /**
+     * parse non-negative integer value
+     * @param value input value
+     * @param message validation message
+     * @author janith
+     */
     private int parseNonNegativeInt(String value, String message) {
         try {
             int parsedValue = Integer.parseInt(normalize(value));
@@ -278,6 +306,11 @@ public class CourseService {
         }
     }
 
+    /**
+     * normalize text by trimming spaces
+     * @param value input value
+     * @author janith
+     */
     private String normalize(String value) {
         return value == null ? "" : value.trim();
     }

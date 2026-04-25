@@ -370,71 +370,139 @@ public class AddNewUserPanel extends JPanel {
         );
     }
 
+    /**
+     * get selected role value
+     * @author janith
+     */
     public String getRole() {
         return cmbRole.getSelectedItem() == null ? "" : cmbRole.getSelectedItem().toString();
     }
 
+    /**
+     * get first name input value
+     * @author janith
+     */
     public String getFirstName() {
         return txtFirstName.getText().trim();
     }
 
+    /**
+     * get last name input value
+     * @author janith
+     */
     public String getLastName() {
         return txtLastName.getText().trim();
     }
 
+    /**
+     * get email input value
+     * @author janith
+     */
     public String getEmail() {
         return txtEmail.getText().trim();
     }
 
+    /**
+     * get password input value
+     * @author janith
+     */
     public String getPassword() {
         return new String(txtPassword.getPassword()).trim();
     }
 
+    /**
+     * get phone input value
+     * @author janith
+     */
     public String getPhone() {
         return txtPhone.getText().trim();
     }
 
+    /**
+     * get address input value
+     * @author janith
+     */
     public String getAddress() {
         return txtAddress.getText().trim();
     }
 
+    /**
+     * get selected profile image path
+     * @author janith
+     */
     public String getProfilePicturePath() {
         return txtProfilePicture.getText().trim();
     }
 
+    /**
+     * get date of birth input value
+     * @author janith
+     */
     public String getDob() {
         return txtDob.getText().trim();
     }
 
+    /**
+     * get selected department id value
+     * @author janith
+     */
     public String getDepartmentId() {
         Department department = getSelectedDepartment();
         return department == null ? "" : String.valueOf(department.getDepartmentId());
     }
 
+    /**
+     * get selected status value
+     * @author janith
+     */
     public String getStatus() {
         return cmbStatus.getSelectedItem() == null ? "" : cmbStatus.getSelectedItem().toString();
     }
 
+    /**
+     * get registration number input value
+     * @author janith
+     */
     public String getRegistrationNo() {
         return txtRegistrationNo.getText().trim();
     }
 
+    /**
+     * get registration year input value
+     * @author janith
+     */
     public String getRegistrationYear() {
         return txtRegistrationYear.getText().trim();
     }
 
+    /**
+     * get selected student type value
+     * @author janith
+     */
     public String getStudentType() {
         return cmbStudentType.getSelectedItem() == null ? "" : cmbStudentType.getSelectedItem().toString();
     }
 
+    /**
+     * get staff code input value
+     * @author janith
+     */
     public String getStaffCode() {
         return txtStaffCode.getText().trim();
     }
 
+    /**
+     * get designation input value
+     * @author janith
+     */
     public String getDesignation() {
         return txtDesignation.getText().trim();
     }
 
+    /**
+     * check whether selected role is student
+     * @author janith
+     */
     public boolean isStudentRole() {
         return AppConfig.ROLE_STUDENT.equals(getRole());
     }

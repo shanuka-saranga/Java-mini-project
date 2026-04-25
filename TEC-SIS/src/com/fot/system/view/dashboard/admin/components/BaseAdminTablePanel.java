@@ -7,11 +7,20 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+/**
+ * base reusable admin table panel with shared styling
+ * @author janith
+ */
 public abstract class  BaseAdminTablePanel extends JScrollPane {
 
     private final JTable table;
     private final DefaultTableModel tableModel;
 
+    /**
+     * initialize base admin table panel
+     * @param columns table column names
+     * @author janith
+     */
     public BaseAdminTablePanel(String[] columns) {
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -27,6 +36,10 @@ public abstract class  BaseAdminTablePanel extends JScrollPane {
         setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
     }
 
+    /**
+     * apply common table styles for admin tables
+     * @author janith
+     */
     private void styleTable() {
         table.setRowHeight(45);
         table.setFont(AppTheme.fontPlain(14));
@@ -68,14 +81,27 @@ public abstract class  BaseAdminTablePanel extends JScrollPane {
         }
     }
 
+    /**
+     * append row into table model
+     * @param data row values
+     * @author janith
+     */
     public void addRow(Object[] data) {
         tableModel.addRow(data);
     }
 
+    /**
+     * get table instance
+     * @author janith
+     */
     public JTable getTable() {
         return table;
     }
 
+    /**
+     * get table model instance
+     * @author janith
+     */
     public DefaultTableModel getModel() {
         return tableModel;
     }
