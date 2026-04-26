@@ -430,6 +430,159 @@
             </Array>
           </mxGeometry>
         </mxCell>
+        <mxCell id="marksGradesLabel" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;" value="Lecturer Marks and Grades" vertex="1">
+          <mxGeometry height="20" width="300" x="3700" y="-80" as="geometry" />
+        </mxCell>
+        <mxCell id="lecturerMarksGradesPanelNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;LecturerMarksAndGradesPanel&lt;/b&gt;&lt;hr/&gt;- currentUser: User&lt;br/&gt;- selectedCourse: Course&lt;br/&gt;- assessmentMarksDetailPanel: AssessmentMarksDetailPanel&lt;hr/&gt;+ loadAssignedCourses(): void&lt;br/&gt;+ loadMarksOverview(): void&lt;br/&gt;+ openAssessmentDetails(summary): void&lt;br/&gt;+ saveAssessmentDetailRows(): void&lt;br/&gt;+ updateGradeView(viewData): void" vertex="1">
+          <mxGeometry height="220" width="410" x="3700" y="-20" as="geometry" />
+        </mxCell>
+        <mxCell id="assessmentMarksDetailPanelNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AssessmentMarksDetailPanel&lt;/b&gt;&lt;hr/&gt;- currentRows: List&lt;AssessmentStudentMarkRow&gt;&lt;br/&gt;- currentAssessmentType: String&lt;hr/&gt;+ setAssessmentTitle(title): void&lt;br/&gt;+ setAssessmentType(type): void&lt;br/&gt;+ setRows(rows): void&lt;br/&gt;+ getEditedRows(): List&lt;AssessmentStudentMarkRow&gt;" vertex="1">
+          <mxGeometry height="170" width="350" x="4150" y="-20" as="geometry" />
+        </mxCell>
+        <mxCell id="assessmentCardSummaryNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AssessmentCardSummary&lt;/b&gt;&lt;hr/&gt;- title: String&lt;br/&gt;- assessmentType: String&lt;br/&gt;- itemNo: int&lt;br/&gt;- averageMark: double&lt;br/&gt;- attemptCount: int" vertex="1">
+          <mxGeometry height="140" width="250" x="3700" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="courseSemesterContextNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;CourseSemesterContext&lt;/b&gt;&lt;hr/&gt;- semesterYear: int" vertex="1">
+          <mxGeometry height="85" width="180" x="3990" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="assessmentStudentMarkRowNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AssessmentStudentMarkRow&lt;/b&gt;&lt;hr/&gt;- registrationNo: String&lt;br/&gt;- attemptNo: int&lt;br/&gt;- examType: String&lt;br/&gt;- status: String&lt;br/&gt;- mark: Double" vertex="1">
+          <mxGeometry height="145" width="260" x="4210" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="courseGradeViewDataNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;CourseGradeViewData&lt;/b&gt;&lt;hr/&gt;- rows: List&lt;StudentGradeRow&gt;&lt;br/&gt;- registrationYears: List&lt;Integer&gt;" vertex="1">
+          <mxGeometry height="105" width="260" x="3700" y="825" as="geometry" />
+        </mxCell>
+        <mxCell id="studentGradeRowNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;StudentGradeRow&lt;/b&gt;&lt;hr/&gt;- registrationNo: String&lt;br/&gt;- studentName: String&lt;br/&gt;- caAverage: double&lt;br/&gt;- endExamAverage: double&lt;br/&gt;- finalMark: Double&lt;br/&gt;- grade: String" vertex="1">
+          <mxGeometry height="155" width="250" x="4000" y="815" as="geometry" />
+        </mxCell>
+        <mxCell id="studentCourseGradeRecordNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;StudentCourseGradeRecord&lt;/b&gt;&lt;hr/&gt;- registrationNo: String&lt;br/&gt;- studentName: String&lt;br/&gt;- sessionType: String&lt;br/&gt;- quizTotal: double&lt;br/&gt;- assignmentTotal: double&lt;br/&gt;- midExamTotal: double&lt;br/&gt;- endExamTotal: double&lt;br/&gt;- quizCount: int" vertex="1">
+          <mxGeometry height="185" width="310" x="4290" y="805" as="geometry" />
+        </mxCell>
+        <mxCell id="lecturerMarksServiceNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;LecturerMarksService&lt;/b&gt;&lt;hr/&gt;- lecturerMarksRepository: LecturerMarksRepository&lt;hr/&gt;+ getCurrentSemesterContext(...): CourseSemesterContext&lt;br/&gt;+ getQuizCardSummaries(...): List&lt;AssessmentCardSummary&gt;&lt;br/&gt;+ getAssessmentRows(...): List&lt;AssessmentStudentMarkRow&gt;&lt;br/&gt;+ saveAssessmentRows(...): void" vertex="1">
+          <mxGeometry height="160" width="300" x="3700" y="1187.5" as="geometry" />
+        </mxCell>
+        <mxCell id="lecturerGradesServiceNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;LecturerGradesService&lt;/b&gt;&lt;hr/&gt;- lecturerGradesRepository: MarksRepository&lt;br/&gt;- academicPerformance: AcademicPerformance&lt;hr/&gt;+ getCourseGradeViewData(courseId): CourseGradeViewData" vertex="1">
+          <mxGeometry height="130" width="300" x="4050" y="1187.5" as="geometry" />
+        </mxCell>
+        <mxCell id="academicPerformanceNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AcademicPerformance&lt;/b&gt;&lt;hr/&gt;+ calculateCaAverage(record): double&lt;br/&gt;+ calculateEndExamAverage(record): double&lt;br/&gt;+ calculateFinalMark(...): double&lt;br/&gt;+ resolveSpecialGrade(...): String&lt;br/&gt;+ resolveGrade(finalMark): String" vertex="1">
+          <mxGeometry height="170" width="310" x="4400" y="1187.5" as="geometry" />
+        </mxCell>
+        <mxCell id="lecturerMarksRepositoryNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;LecturerMarksRepository&lt;/b&gt;&lt;hr/&gt;+ findCurrentSemesterContext(...): CourseSemesterContext&lt;br/&gt;+ findQuizCardSummaries(...): List&lt;AssessmentCardSummary&gt;&lt;br/&gt;+ findMidExamSummary(...): AssessmentCardSummary&lt;br/&gt;+ findAssessmentRows(...): List&lt;AssessmentStudentMarkRow&gt;&lt;br/&gt;+ saveAssessmentRows(...): void" vertex="1">
+          <mxGeometry height="145" width="320" x="3700" y="1930" as="geometry" />
+        </mxCell>
+        <mxCell id="marksRepositoryNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;MarksRepository&lt;/b&gt;&lt;hr/&gt;+ findStudentCourseGradeRecords(...): List&lt;StudentCourseGradeRecord&gt;&lt;br/&gt;+ findLatestGradeRecordsByStudentUserId(...): List&lt;StudentCourseGradeRecord&gt;" vertex="1">
+          <mxGeometry height="120" width="320" x="4080" y="1930" as="geometry" />
+        </mxCell>
+        <mxCell id="mainDashboardToLecturerMarksEdge" edge="1" parent="1" source="6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="lecturerMarksGradesPanelNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="920" y="65" />
+              <mxPoint x="920" y="65" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="marksPanelToDetailEdge" edge="1" parent="1" source="lecturerMarksGradesPanelNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;startArrow=diamond;startFill=1;endArrow=none;" target="assessmentMarksDetailPanelNode" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="marksPanelToMarksServiceEdge" edge="1" parent="1" source="lecturerMarksGradesPanelNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="lecturerMarksServiceNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3810" y="280" />
+              <mxPoint x="3810" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="marksPanelToGradesServiceEdge" edge="1" parent="1" source="lecturerMarksGradesPanelNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="lecturerGradesServiceNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3950" y="320" />
+              <mxPoint x="4200" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="marksPanelToSummaryDtoEdge" edge="1" parent="1" source="lecturerMarksGradesPanelNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="assessmentCardSummaryNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3760" y="340" />
+              <mxPoint x="3760" y="340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="marksPanelToGradeViewDataEdge" edge="1" parent="1" source="lecturerMarksGradesPanelNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="courseGradeViewDataNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3880" y="370" />
+              <mxPoint x="3880" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="detailPanelToRowDtoEdge" edge="1" parent="1" source="assessmentMarksDetailPanelNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="assessmentStudentMarkRowNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="4380" y="220" />
+              <mxPoint x="4380" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="marksServiceToRepositoryEdge" edge="1" parent="1" source="lecturerMarksServiceNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="lecturerMarksRepositoryNode" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="marksServiceToContextEdge" edge="1" parent="1" source="lecturerMarksServiceNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="courseSemesterContextNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3950" y="1030" />
+              <mxPoint x="4100" y="1030" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="marksServiceToSummaryEdge" edge="1" parent="1" source="lecturerMarksServiceNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="assessmentCardSummaryNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3820" y="1030" />
+              <mxPoint x="3820" y="1030" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="marksServiceToRowsEdge" edge="1" parent="1" source="lecturerMarksServiceNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="assessmentStudentMarkRowNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3910" y="1040" />
+              <mxPoint x="4330" y="1040" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gradesServiceToRepositoryEdge" edge="1" parent="1" source="lecturerGradesServiceNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="marksRepositoryNode" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gradesServiceToViewDataEdge" edge="1" parent="1" source="lecturerGradesServiceNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="courseGradeViewDataNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="4170" y="1020" />
+              <mxPoint x="3880" y="1020" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gradesServiceToAcademicPerformanceEdge" edge="1" parent="1" source="lecturerGradesServiceNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="academicPerformanceNode" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="courseGradeViewDataToRowEdge" edge="1" parent="1" source="courseGradeViewDataNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;startArrow=diamond;startFill=1;endArrow=none;" target="studentGradeRowNode" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="marksRepositoryToGradeRecordEdge" edge="1" parent="1" source="marksRepositoryNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="studentCourseGradeRecordNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="4350" y="1800" />
+              <mxPoint x="4445" y="1800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="academicPerformanceToGradeRecordEdge" edge="1" parent="1" source="academicPerformanceNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="studentCourseGradeRecordNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="4590" y="1080" />
+              <mxPoint x="4590" y="1080" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
         <mxCell id="O7oSLQPEnLjm-vzvtWjA-369" parent="1" style="shape=line;strokeWidth=5;strokeColor=#BD7000;fillColor=#f0a30a;fontColor=#000000;" value="" vertex="1">
           <mxGeometry height="1" width="5260" x="-10" y="1141" as="geometry" />
         </mxCell>
