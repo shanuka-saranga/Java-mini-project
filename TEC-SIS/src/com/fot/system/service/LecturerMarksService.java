@@ -14,6 +14,12 @@ public class LecturerMarksService {
         this.lecturerMarksRepository = new LecturerMarksRepository();
     }
 
+    /**
+     * Gets the semester context used to load lecturer marks for the selected course.
+     * @param courseId selected course id
+     * @param currentYear current calendar year
+     * @author janith
+     */
     public CourseSemesterContext getCurrentSemesterContext(int courseId, int currentYear) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
@@ -37,27 +43,28 @@ public class LecturerMarksService {
         return lecturerMarksRepository.findEndExamSummary(courseId, semesterYear);
     }
 
-    public List<StudentMarksOverviewRow> getStudentMarksOverviewByCourse(int courseId) {
-        if (courseId <= 0) {
-            throw new RuntimeException("Invalid course ID.");
-        }
-        return lecturerMarksRepository.findStudentMarksOverviewByCourse(courseId);
-    }
-
-    public List<StudentMarksOverviewRow> getStudentMarksOverviewByCourse(int courseId, int semesterYear) {
-        if (courseId <= 0) {
-            throw new RuntimeException("Invalid course ID.");
-        }
-        return lecturerMarksRepository.findStudentMarksOverviewByCourse(courseId, semesterYear);
-    }
-
+    /**
+     * Gets editable student marks rows for the selected assessment item.
+     * @param assessmentType type of the assessment
+     * @param courseId selected course id
+     * @param semesterYear selected semester year
+     * @param itemNo assessment item number
+     * @author janith
+     */
     public List<AssessmentStudentMarkRow> getAssessmentRows(String assessmentType, int courseId, int semesterYear, int itemNo) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
         }
+
         return lecturerMarksRepository.findAssessmentRows(assessmentType, courseId, semesterYear, itemNo);
     }
-
+    /**
+     * Validates and saves lecturer-entered marks rows for the selected assessment item.
+     * @param assessmentType type of the assessment
+     * @param itemNo assessment item number
+     * @param rows edited student marks rows
+     * @author janith
+     */
     public void saveAssessmentRows(String assessmentType, int itemNo, List<AssessmentStudentMarkRow> rows) {
         for (AssessmentStudentMarkRow row : rows) {
             String status = row.getStatus() == null ? "" : row.getStatus().trim();
@@ -76,4 +83,5 @@ public class LecturerMarksService {
         }
         lecturerMarksRepository.saveAssessmentRows(assessmentType, itemNo, rows);
     }
+
 }

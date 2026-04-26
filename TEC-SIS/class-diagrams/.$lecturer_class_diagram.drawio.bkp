@@ -188,7 +188,12 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="349" edge="1" parent="1" source="330" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="333" value="">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2260" y="65" />
+              <mxPoint x="2260" y="65" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="350" edge="1" parent="1" source="330" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="334" value="">
           <mxGeometry relative="1" as="geometry">
@@ -199,7 +204,11 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="351" edge="1" parent="1" source="330" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="335" value="">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2160" y="80" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="352" edge="1" parent="1" source="330" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" target="336" value="">
           <mxGeometry relative="1" as="geometry">
@@ -346,7 +355,7 @@
           <mxGeometry height="120" width="180" x="3340" y="810" as="geometry" />
         </mxCell>
         <mxCell id="387" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AttendanceRepository&lt;/b&gt;&lt;hr/&gt;+ findAttendanceRowsByCourse(courseId): List&lt;AttendanceTableRow&gt;" vertex="1">
-          <mxGeometry height="110" width="340" x="2730" y="1930" as="geometry" />
+          <mxGeometry height="110" width="270" x="2730" y="1930" as="geometry" />
         </mxCell>
         <mxCell id="388" edge="1" parent="1" source="6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="381" value="">
           <mxGeometry relative="1" as="geometry">

@@ -1,8 +1,8 @@
 package com.fot.system.model.dto;
 
-import com.fot.system.model.entity.*;
 
 public class AssessmentStudentMarkRow {
+
     private int markId;
     private String registrationNo;
     private int attemptNo;
@@ -56,5 +56,17 @@ public class AssessmentStudentMarkRow {
 
     public void setMark(Double mark) {
         this.mark = mark;
+    }
+
+    @Override
+    public String toString() {
+        return "AssessmentStudentMarkRow{" +
+                "markId=" + markId +
+                ", registrationNo='" + registrationNo + '\'' +
+                ", attemptNo=" + attemptNo +
+                ", examType='" + examType + '\'' +
+                ", status='" + status + '\'' +
+                ", mark=" + mark +
+                '}';
     }
 }
