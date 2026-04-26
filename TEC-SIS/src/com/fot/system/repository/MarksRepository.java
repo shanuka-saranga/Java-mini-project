@@ -20,6 +20,12 @@ public class MarksRepository {
         this.academicPerformance = new AcademicPerformance();
     }
 
+    /**
+     * Loads latest-attempt CA records for exam eligibility using quiz, assignment, and mid exam data only.
+     * @param courseId selected course id
+     * @param semesterYear selected semester year
+     * @author janith
+     */
     public List<StudentCourseCaRecord> findStudentCourseCaRecords(int courseId, int semesterYear) {
         List<StudentCourseCaRecord> rows = new ArrayList<>();
         String sql = """
@@ -37,60 +43,68 @@ public class MarksRepository {
                     c.no_of_quizzes,
                     c.no_of_assignments,
                     CASE WHEN c.session_type = 'BOTH' THEN 2 ELSE 1 END AS mid_exam_count
-                FROM student st
-                INNER JOIN users u ON u.id = st.user_id
-                INNER JOIN courses c ON c.id = ?
-                LEFT JOIN (
-                    SELECT m.student_reg_no, m.id
-                    FROM marks m
-                    INNER JOIN (
-                        SELECT student_reg_no, MAX(attempt_no) AS max_attempt
-                        FROM marks
-                        WHERE course_id = ? AND semester_year = ?
-                        GROUP BY student_reg_no
-                    ) latest
-                        ON latest.student_reg_no = m.student_reg_no
-                       AND latest.max_attempt = m.attempt_no
-                    WHERE m.course_id = ? AND m.semester_year = ?
-                ) latest_marks
-                    ON latest_marks.student_reg_no = st.registration_no
+                FROM student_course_registrations scr
+                INNER JOIN (
+                    SELECT student_user_id, MAX(attempt_no) AS max_attempt
+                    FROM student_course_registrations
+                    WHERE course_id = ?
+                      AND semester_year = ?
+                      AND registration_status = 'REGISTERED'
+                    GROUP BY student_user_id
+                ) latest_scr
+                    ON latest_scr.student_user_id = scr.student_user_id
+                   AND latest_scr.max_attempt = scr.attempt_no
+                INNER JOIN users u
+                    ON u.id = scr.student_user_id
+                   AND u.role = 'STUDENT'
+                INNER JOIN student st
+                    ON st.user_id = scr.student_user_id
+                INNER JOIN courses c
+                    ON c.id = scr.course_id
+                LEFT JOIN marks m
+                    ON m.student_reg_no = st.registration_no
+                   AND m.course_id = scr.course_id
+                   AND m.semester_year = scr.semester_year
+                   AND m.attempt_no = scr.attempt_no
                 LEFT JOIN (
                     SELECT
-                        mark_id,
-                        SUM(CASE WHEN status = 'PRESENT' THEN quiz_mark ELSE 0 END) AS quiz_total,
-                        SUM(CASE WHEN status = 'PRESENT' THEN 1 ELSE 0 END) AS present_count,
-                        MIN(CASE WHEN status = 'PRESENT' THEN quiz_mark END) AS lowest_present_mark
+                        q.mark_id,
+                        SUM(CASE WHEN q.status = 'PRESENT' THEN q.quiz_mark ELSE 0 END) AS quiz_total,
+                        SUM(CASE WHEN q.status = 'PRESENT' THEN 1 ELSE 0 END) AS present_count,
+                        MIN(CASE WHEN q.status = 'PRESENT' THEN q.quiz_mark END) AS lowest_present_mark
                     FROM quizzes q
-                    GROUP BY mark_id
+                    GROUP BY q.mark_id
                 ) q
-                    ON q.mark_id = latest_marks.id
+                    ON q.mark_id = m.id
                 LEFT JOIN (
                     SELECT
-                        mark_id,
-                        SUM(CASE WHEN status = 'SUBMITTED' THEN assignment_mark ELSE 0 END) AS assignment_total,
-                        SUM(CASE WHEN status = 'SUBMITTED' THEN 1 ELSE 0 END) AS submitted_count
+                        a.mark_id,
+                        SUM(CASE WHEN a.status = 'SUBMITTED' THEN assignment_mark ELSE 0 END) AS assignment_total,
+                        SUM(CASE WHEN a.status = 'SUBMITTED' THEN 1 ELSE 0 END) AS submitted_count
                     FROM assignments a
-                    GROUP BY mark_id
+                    GROUP BY a.mark_id
                 ) a
-                    ON a.mark_id = latest_marks.id
+                    ON a.mark_id = m.id
                 LEFT JOIN (
                     SELECT
-                        mark_id,
-                        SUM(CASE WHEN status = 'PRESENT' THEN mid_exam_mark ELSE 0 END) AS mid_exam_total,
-                        SUM(CASE WHEN status = 'PRESENT' THEN 1 ELSE 0 END) AS present_count
+                        me.mark_id,
+                        SUM(CASE WHEN me.status = 'PRESENT' THEN mid_exam_mark ELSE 0 END) AS mid_exam_total,
+                        SUM(CASE WHEN me.status = 'PRESENT' THEN 1 ELSE 0 END) AS present_count
                     FROM mid_exams me
-                    GROUP BY mark_id
+                    GROUP BY me.mark_id
                 ) me
-                    ON me.mark_id = latest_marks.id
+                    ON me.mark_id = m.id
+                WHERE scr.course_id = ?
+                  AND scr.semester_year = ?
+                  AND scr.registration_status = 'REGISTERED'
                 ORDER BY st.registration_year, st.registration_no
                 """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, courseId);
-            stmt.setInt(2, courseId);
-            stmt.setInt(3, semesterYear);
-            stmt.setInt(4, courseId);
-            stmt.setInt(5, semesterYear);
+            stmt.setInt(2, semesterYear);
+            stmt.setInt(3, courseId);
+            stmt.setInt(4, semesterYear);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     StudentCourseCaRecord row = new StudentCourseCaRecord();
@@ -116,7 +130,6 @@ public class MarksRepository {
 
         return rows;
     }
-
 
     public List<StudentCourseGradeRecord> findStudentCourseGradeRecords(int courseId, int semesterYear) {
         List<StudentCourseGradeRecord> rows = new ArrayList<>();
@@ -528,10 +541,6 @@ public class MarksRepository {
         }
 
         return snapshots;
-    }
-
-    public List<StudentCoursePerformance> findSemesterSnapshotsByStudent(String regNo, int year) {
-        return new ArrayList<>();
     }
 
     private StudentCourseGradeRecord mapStudentCourseGradeRecord(ResultSet rs) throws SQLException {
