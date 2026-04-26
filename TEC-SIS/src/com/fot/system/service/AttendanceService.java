@@ -21,7 +21,6 @@ public class AttendanceService implements IAttendanceService {
     private static final String STATUS_PRESENT = "PRESENT";
     private static final String STATUS_MEDICAL = "MEDICAL";
     private static final String STATUS_ABSENT = "ABSENT";
-    private static final String MEDICAL_APPROVED = "APPROVED";
     private static final double ELIGIBILITY_THRESHOLD_PERCENT = 79.0;
 
     private final AttendanceRepository attendanceRepository;
@@ -237,9 +236,6 @@ public class AttendanceService implements IAttendanceService {
                 accumulator.presentCount++;
             } else if (equalsIgnoreCase(row.getAttendanceStatus(), STATUS_MEDICAL)) {
                 accumulator.medicalCount++;
-                if (equalsIgnoreCase(row.getMedicalApprovalStatus(), MEDICAL_APPROVED)) {
-                    accumulator.approvedMedicalCount++;
-                }
             } else if (equalsIgnoreCase(row.getAttendanceStatus(), STATUS_ABSENT)) {
                 accumulator.absentCount++;
             }
@@ -249,7 +245,7 @@ public class AttendanceService implements IAttendanceService {
         for (StudentAttendanceAccumulator accumulator : accumulators.values()) {
             double attendancePercentage = accumulator.totalHeldSessions == 0
                     ? 0
-                    : ((accumulator.presentCount + accumulator.approvedMedicalCount) * 100.0) / accumulator.totalHeldSessions;
+                    : ((accumulator.presentCount + accumulator.medicalCount) * 100.0) / accumulator.totalHeldSessions;
 
             StudentAttendanceSummaryRow row = new StudentAttendanceSummaryRow();
             row.setRegistrationNo(accumulator.registrationNo);
@@ -275,7 +271,6 @@ public class AttendanceService implements IAttendanceService {
         private int totalHeldSessions;
         private int presentCount;
         private int medicalCount;
-        private int approvedMedicalCount;
         private int absentCount;
 
         private StudentAttendanceAccumulator(String registrationNo, String studentName) {
