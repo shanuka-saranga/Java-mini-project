@@ -10,27 +10,36 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * collect inputs required to create a new attendance session
- * @author poornika
+ * Collects the inputs required to create an attendance session from a timetable entry.
+ * @author methum
  */
 public class AttendanceSessionDialog extends JDialog {
+    private static final String WARNING_TITLE = "Attendance";
+
     private final JComboBox<CourseOption> cmbCourse;
     private final JComboBox<TimetableOption> cmbTimetableSession;
     private final ThemedDatePicker txtSessionDate;
+    private final List<Course> allCourses;
+    private final List<TimetableSession> allTimetableSessions;
     private AddAttendanceSessionRequest request;
+    private boolean updatingSelectionState;
 
     /**
-     * initialize add-attendance-session dialog
+     * Initializes the add-attendance-session dialog.
      * @param owner parent window
-     * @param courses lecturer courses
-     * @param timetableSessions matching timetable sessions
-     * @author poornika
+     * @param courses available courses
+     * @param timetableSessions available timetable sessions
+     * @author methum
      */
     public AttendanceSessionDialog(Window owner, List<Course> courses, List<TimetableSession> timetableSessions) {
         super(owner, "Add Attendance Session", ModalityType.APPLICATION_MODAL);
+        this.allCourses = courses == null ? List.of() : new ArrayList<>(courses);
+        this.allTimetableSessions = timetableSessions == null ? List.of() : new ArrayList<>(timetableSessions);
 
         setLayout(new BorderLayout(0, 16));
         getContentPane().setBackground(AppTheme.CARD_BG);
@@ -40,10 +49,6 @@ public class AttendanceSessionDialog extends JDialog {
         form.setOpaque(false);
 
         cmbCourse = new JComboBox<>();
-        for (Course course : courses) {
-            cmbCourse.addItem(new CourseOption(course));
-        }
-
         cmbTimetableSession = new JComboBox<>();
         txtSessionDate = new ThemedDatePicker();
         txtSessionDate.setText(LocalDate.now().toString());
@@ -55,8 +60,13 @@ public class AttendanceSessionDialog extends JDialog {
         add(form, BorderLayout.CENTER);
         add(createActions(), BorderLayout.SOUTH);
 
-        cmbCourse.addActionListener(e -> populateTimetableSessions(timetableSessions));
-        populateTimetableSessions(timetableSessions);
+        cmbCourse.addActionListener(e -> {
+            if (!updatingSelectionState) {
+                populateTimetableSessions(getSelectedDay(), getSelectedTimetableSessionId());
+            }
+        });
+        txtSessionDate.addDateChangeListener(this::refreshSelectableOptions);
+        refreshSelectableOptions();
 
         pack();
         setSize(460, getHeight());
@@ -64,18 +74,18 @@ public class AttendanceSessionDialog extends JDialog {
     }
 
     /**
-     * get submitted request payload
-     * @author poornika
+     * Returns the submitted request payload.
+     * @author methum
      */
     public AddAttendanceSessionRequest getRequest() {
         return request;
     }
 
     /**
-     * create labeled form row
+     * Creates a labeled form row.
      * @param labelText label text
      * @param field input field
-     * @author poornika
+     * @author methum
      */
     private JPanel createField(String labelText, JComponent field) {
         JPanel panel = new JPanel(new BorderLayout(0, 6));
@@ -92,8 +102,8 @@ public class AttendanceSessionDialog extends JDialog {
     }
 
     /**
-     * build footer action buttons
-     * @author poornika
+     * Builds the footer action buttons.
+     * @author methum
      */
     private JPanel createActions() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
@@ -123,43 +133,92 @@ public class AttendanceSessionDialog extends JDialog {
     }
 
     /**
-     * fill timetable combo for selected course
-     * @param timetableSessions all timetable sessions
-     * @author poornika
+     * Refreshes selectable courses and timetable sessions for the chosen date.
+     * @author methum
      */
-    private void populateTimetableSessions(List<TimetableSession> timetableSessions) {
-        cmbTimetableSession.removeAllItems();
-        CourseOption selectedCourse = (CourseOption) cmbCourse.getSelectedItem();
-        if (selectedCourse == null) {
-            return;
-        }
+    private void refreshSelectableOptions() {
+        Integer selectedCourseId = getSelectedCourseId();
+        Integer selectedSessionId = getSelectedTimetableSessionId();
+        String selectedDay = getSelectedDay();
+        List<Course> filteredCourses = getCoursesForDay(selectedDay);
 
-        for (TimetableSession session : timetableSessions) {
-            if (session.getCourseId() == selectedCourse.course.getId()) {
-                cmbTimetableSession.addItem(new TimetableOption(session));
+        updatingSelectionState = true;
+        cmbCourse.removeAllItems();
+
+        CourseOption preferredCourse = null;
+        for (Course course : filteredCourses) {
+            CourseOption option = new CourseOption(course);
+            cmbCourse.addItem(option);
+            if (selectedCourseId != null && course.getId() == selectedCourseId) {
+                preferredCourse = option;
             }
         }
+
+        if (preferredCourse != null) {
+            cmbCourse.setSelectedItem(preferredCourse);
+        } else if (cmbCourse.getItemCount() > 0) {
+            cmbCourse.setSelectedIndex(0);
+        }
+        cmbCourse.setEnabled(cmbCourse.getItemCount() > 0);
+        updatingSelectionState = false;
+
+        populateTimetableSessions(selectedDay, selectedSessionId);
     }
 
     /**
-     * validate form and construct request
-     * @author poornika
+     * Populates the timetable combo for the selected course and date.
+     * @param selectedDay selected session day
+     * @param preferredSessionId previously selected timetable session id
+     * @author methum
+     */
+    private void populateTimetableSessions(String selectedDay, Integer preferredSessionId) {
+        cmbTimetableSession.removeAllItems();
+        CourseOption selectedCourse = (CourseOption) cmbCourse.getSelectedItem();
+        if (selectedCourse == null) {
+            cmbTimetableSession.setEnabled(false);
+            return;
+        }
+
+        TimetableOption preferredSession = null;
+        for (TimetableSession session : allTimetableSessions) {
+            boolean matchesCourse = session.getCourseId() == selectedCourse.course.getId();
+            boolean matchesDay = selectedDay == null || selectedDay.equalsIgnoreCase(valueOrEmpty(session.getDay()));
+            if (matchesCourse && matchesDay) {
+                TimetableOption option = new TimetableOption(session);
+                cmbTimetableSession.addItem(option);
+                if (preferredSessionId != null && session.getId() == preferredSessionId) {
+                    preferredSession = option;
+                }
+            }
+        }
+
+        if (preferredSession != null) {
+            cmbTimetableSession.setSelectedItem(preferredSession);
+        } else if (cmbTimetableSession.getItemCount() > 0) {
+            cmbTimetableSession.setSelectedIndex(0);
+        }
+        cmbTimetableSession.setEnabled(cmbTimetableSession.getItemCount() > 0);
+    }
+
+    /**
+     * Validates the form and constructs the add-session request.
+     * @author methum
      */
     private void submit() {
         CourseOption selectedCourse = (CourseOption) cmbCourse.getSelectedItem();
         TimetableOption selectedTimetable = (TimetableOption) cmbTimetableSession.getSelectedItem();
 
         if (selectedCourse == null) {
-            JOptionPane.showMessageDialog(this, "Course is required.", "Attendance", JOptionPane.WARNING_MESSAGE);
+            showValidationWarning("Course is required.");
             return;
         }
         if (selectedTimetable == null) {
-            JOptionPane.showMessageDialog(this, "Timetable session is required.", "Attendance", JOptionPane.WARNING_MESSAGE);
+            showValidationWarning("Timetable session is required.");
             return;
         }
         String sessionDate = txtSessionDate.getText() == null ? "" : txtSessionDate.getText().trim();
         if (sessionDate.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Session date is required.", "Attendance", JOptionPane.WARNING_MESSAGE);
+            showValidationWarning("Session date is required.");
             return;
         }
 
@@ -172,8 +231,86 @@ public class AttendanceSessionDialog extends JDialog {
     }
 
     /**
-     * option wrapper used by course combo box
-     * @author poornika
+     * Loads courses that have timetable sessions on the selected day.
+     * @param selectedDay selected session day
+     * @author methum
+     */
+    private List<Course> getCoursesForDay(String selectedDay) {
+        if (selectedDay == null) {
+            return new ArrayList<>(allCourses);
+        }
+
+        List<Course> courses = new ArrayList<>();
+        for (Course course : allCourses) {
+            boolean hasMatchingSession = false;
+            for (TimetableSession session : allTimetableSessions) {
+                if (session.getCourseId() == course.getId() && selectedDay.equalsIgnoreCase(valueOrEmpty(session.getDay()))) {
+                    hasMatchingSession = true;
+                    break;
+                }
+            }
+            if (hasMatchingSession) {
+                courses.add(course);
+            }
+        }
+        return courses;
+    }
+
+    /**
+     * Resolves the selected course id safely.
+     * @author methum
+     */
+    private Integer getSelectedCourseId() {
+        CourseOption selectedCourse = (CourseOption) cmbCourse.getSelectedItem();
+        return selectedCourse == null ? null : selectedCourse.course.getId();
+    }
+
+    /**
+     * Resolves the selected timetable session id safely.
+     * @author methum
+     */
+    private Integer getSelectedTimetableSessionId() {
+        TimetableOption selectedTimetable = (TimetableOption) cmbTimetableSession.getSelectedItem();
+        return selectedTimetable == null ? null : selectedTimetable.session.getId();
+    }
+
+    /**
+     * Resolves the weekday name from the chosen session date.
+     * @author methum
+     */
+    private String getSelectedDay() {
+        String value = txtSessionDate.getText();
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(value.trim()).getDayOfWeek().name();
+        } catch (DateTimeParseException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * Normalizes nullable text values.
+     * @param value text value
+     * @author methum
+     */
+    private String valueOrEmpty(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    /**
+     * Shows a validation warning message for invalid dialog input.
+     * @param message warning message
+     * @author methum
+     */
+    private void showValidationWarning(String message) {
+        JOptionPane.showMessageDialog(this, message, WARNING_TITLE, JOptionPane.WARNING_MESSAGE);
+    }
+
+    /**
+     * Option wrapper used by the course combo box.
+     * @author methum
      */
     private static class CourseOption {
         private final Course course;
@@ -189,8 +326,8 @@ public class AttendanceSessionDialog extends JDialog {
     }
 
     /**
-     * option wrapper used by timetable session combo box
-     * @author poornika
+     * Option wrapper used by the timetable session combo box.
+     * @author methum
      */
     private static class TimetableOption {
         private final TimetableSession session;
@@ -207,9 +344,9 @@ public class AttendanceSessionDialog extends JDialog {
         }
 
         /**
-         * format HH:mm text safely from timetable time values
+         * Formats HH:mm text safely from timetable time values.
          * @param value raw time text
-         * @author poornika
+         * @author methum
          */
         private String formatTime(String value) {
             if (value == null || value.trim().isEmpty()) {

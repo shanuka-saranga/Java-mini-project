@@ -13,8 +13,8 @@ import java.util.Set;
 import java.util.HashSet;
 
 /**
- * handle attendance business logic for lecturer, student and medical flows
- * @author poornika
+ * Handles attendance business logic for attendance management, eligibility, and medical flows.
+ * @author methum
  */
 public class AttendanceService implements IAttendanceService {
     private static final String STATUS_COMPLETED = "COMPLETED";
@@ -26,8 +26,8 @@ public class AttendanceService implements IAttendanceService {
     private final AttendanceRepository attendanceRepository;
 
     /**
-     * initialize attendance service dependencies
-     * @author poornika
+     * Initializes attendance service dependencies.
+     * @author methum
      */
     public AttendanceService() {
         this.attendanceRepository = new AttendanceRepository();
@@ -58,39 +58,33 @@ public class AttendanceService implements IAttendanceService {
     }
 
     /**
-     * load all attendance sessions
-     * @author poornika
+     * Loads all attendance sessions.
+     * @author methum
      */
     public List<AttendanceSessionRow> getAllAttendanceSessions() {
         return attendanceRepository.findAllAttendanceSessions();
     }
 
     /**
-     * load attendance editor dataset for one session
+     * Loads the attendance editor dataset for one session.
      * @param sessionId session id
-     * @author poornika
+     * @author methum
      */
     public AttendanceSessionEditorData getSessionEditorData(int sessionId) {
         if (sessionId <= 0) {
             throw new RuntimeException("Invalid session ID.");
         }
-
-        AttendanceSessionEditorData data = new AttendanceSessionEditorData();
-        data.setSession(attendanceRepository.findAttendanceSessionById(sessionId));
-        data.setStudentRows(attendanceRepository.findStudentAttendanceRowsBySession(sessionId));
-        return data;
+        return buildSessionEditorData(sessionId);
     }
 
     /**
-     * create attendance session for lecturer flow
+     * Creates an attendance session for the lecturer flow.
      * @param request add session payload
      * @param lecturerId lecturer user id
-     * @author poornika
+     * @author methum
      */
     public AttendanceSessionRow addSession(AddAttendanceSessionRequest request, int lecturerId) {
-        if (request == null) {
-            throw new RuntimeException("Attendance session request is required.");
-        }
+        requireSessionRequest(request);
 
         int courseId = parsePositiveInt(request.getCourseId(), "Course is required.");
         int timetableSessionId = parsePositiveInt(request.getTimetableSessionId(), "Timetable session is required.");
@@ -108,9 +102,7 @@ public class AttendanceService implements IAttendanceService {
      * @author methum
      */
     public AttendanceSessionRow addSessionForTo(AddAttendanceSessionRequest request) {
-        if (request == null) {
-            throw new RuntimeException("Attendance session request is required.");
-        }
+        requireSessionRequest(request);
 
         int courseId = parsePositiveInt(request.getCourseId(), "Course is required.");
         int timetableSessionId = parsePositiveInt(request.getTimetableSessionId(), "Timetable session is required.");
@@ -119,11 +111,11 @@ public class AttendanceService implements IAttendanceService {
     }
 
     /**
-     * save attendance statuses for a session
+     * Saves attendance statuses for a session.
      * @param sessionId session id
      * @param markedBy marker user id
      * @param updates updates list
-     * @author poornika
+     * @author methum
      */
     public void saveSessionAttendance(int sessionId, int markedBy, List<StudentAttendanceUpdate> updates) {
         if (sessionId <= 0) {
@@ -132,9 +124,7 @@ public class AttendanceService implements IAttendanceService {
         if (markedBy <= 0) {
             throw new RuntimeException("Invalid marker.");
         }
-        if (updates == null || updates.isEmpty()) {
-            throw new RuntimeException("Attendance updates are required.");
-        }
+        validateAttendanceUpdates(updates);
         attendanceRepository.saveSessionAttendance(sessionId, markedBy, updates);
     }
 
@@ -185,6 +175,40 @@ public class AttendanceService implements IAttendanceService {
      */
     public int getPendingMedicalSubmissionCount() {
         return attendanceRepository.countPendingMedicalSubmissions();
+    }
+
+    /**
+     * Builds the attendance editor data bundle for a single session.
+     * @param sessionId session id
+     * @author methum
+     */
+    private AttendanceSessionEditorData buildSessionEditorData(int sessionId) {
+        AttendanceSessionEditorData data = new AttendanceSessionEditorData();
+        data.setSession(attendanceRepository.findAttendanceSessionById(sessionId));
+        data.setStudentRows(attendanceRepository.findStudentAttendanceRowsBySession(sessionId));
+        return data;
+    }
+
+    /**
+     * Validates the add-session request object.
+     * @param request add-session request
+     * @author methum
+     */
+    private void requireSessionRequest(AddAttendanceSessionRequest request) {
+        if (request == null) {
+            throw new RuntimeException("Attendance session request is required.");
+        }
+    }
+
+    /**
+     * Validates the attendance update list.
+     * @param updates attendance updates
+     * @author methum
+     */
+    private void validateAttendanceUpdates(List<StudentAttendanceUpdate> updates) {
+        if (updates == null || updates.isEmpty()) {
+            throw new RuntimeException("Attendance updates are required.");
+        }
     }
 
     /**

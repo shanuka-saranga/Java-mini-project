@@ -2,18 +2,18 @@ package com.fot.system.model.dto;
 
 
 /**
- * carry one student attendance status update command
- * @author poornika
+ * Carries one student attendance status update command.
+ * @author methum
  */
 public class StudentAttendanceUpdate {
     private final String registrationNo;
     private final String attendanceStatus;
 
     /**
-     * create immutable attendance update payload
+     * Creates an immutable attendance update payload.
      * @param registrationNo student registration number
      * @param attendanceStatus attendance status
-     * @author poornika
+     * @author methum
      */
     public StudentAttendanceUpdate(String registrationNo, String attendanceStatus) {
         this.registrationNo = registrationNo;

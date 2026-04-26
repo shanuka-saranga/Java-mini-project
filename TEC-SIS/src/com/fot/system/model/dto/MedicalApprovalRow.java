@@ -5,6 +5,10 @@ import com.fot.system.model.entity.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents one TO medical approval row with its linked session details.
+ * @author methum
+ */
 public class MedicalApprovalRow {
     private int medicalId;
     private String registrationNo;
@@ -75,6 +79,10 @@ public class MedicalApprovalRow {
         return sessionDetails;
     }
 
+    /**
+     * Returns the number of linked sessions in the medical submission.
+     * @author methum
+     */
     public int getSessionCount() {
         return sessionDetails.size();
     }

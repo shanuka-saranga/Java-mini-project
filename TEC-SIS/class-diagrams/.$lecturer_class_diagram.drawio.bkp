@@ -1,20 +1,20 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2">
   <diagram name="Page-1" id="C0kKi0-R4Ub8YMJZihS6">
-    <mxGraphModel dx="5053" dy="4203" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1700" math="0" shadow="0">
+    <mxGraphModel dx="3575" dy="3065" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1700" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="200" parent="1" style="shape=line;strokeWidth=7;strokeColor=#005700;fillColor=#008a00;fontColor=#ffffff;" value="" vertex="1">
-          <mxGeometry height="1" width="5130" x="-10" y="-620" as="geometry" />
+          <mxGeometry height="1" width="5830" x="-10" y="-620" as="geometry" />
         </mxCell>
         <mxCell id="201" parent="1" style="shape=line;strokeWidth=6;strokeColor=#006EAF;fillColor=#1ba1e2;fontColor=#ffffff;" value="" vertex="1">
-          <mxGeometry height="1" width="5190" x="-10" y="280" as="geometry" />
+          <mxGeometry height="1" width="5850" x="-10" y="280" as="geometry" />
         </mxCell>
         <mxCell id="202" parent="1" style="shape=line;strokeWidth=5;strokeColor=#A50040;fillColor=#d80073;fontColor=#ffffff;" value="" vertex="1">
-          <mxGeometry height="1" width="5210" x="-10" y="601" as="geometry" />
+          <mxGeometry height="1" width="5850" x="-10" y="601" as="geometry" />
         </mxCell>
         <mxCell id="203" parent="1" style="shape=line;strokeWidth=5;strokeColor=#3700CC;fillColor=#6a00ff;fontColor=#ffffff;" value="" vertex="1">
-          <mxGeometry height="1" width="5260" x="-10" y="1889" as="geometry" />
+          <mxGeometry height="1" width="5900" x="-10" y="1889" as="geometry" />
         </mxCell>
         <mxCell id="2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;LoginView&lt;/b&gt;&lt;hr/&gt;- emailField: JTextField&lt;br/&gt;- passwordField: JPasswordField&lt;br/&gt;- loginButton: JButton&lt;hr/&gt;+ LoginView(email: String, password: String)&lt;br/&gt;+ getEmail(): String&lt;br/&gt;+ getPassword(): String&lt;br/&gt;+ getLoginButton(): JButton" vertex="1">
           <mxGeometry height="190" width="250" x="150" y="-40" as="geometry" />
@@ -602,7 +602,7 @@
           <mxGeometry height="260" width="240" x="5260" y="840" as="geometry" />
         </mxCell>
         <mxCell id="examEligibilityServiceNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;ExamEligibilityService&lt;/b&gt;&lt;hr/&gt;- attendanceService: AttendanceService&lt;br/&gt;- marksRepository: MarksRepository&lt;br/&gt;- academicPerformance: AcademicPerformance&lt;hr/&gt;+ getCourseExamEligibilityViewData(...): CourseExamEligibilityViewData&lt;br/&gt;- buildEligibilityRow(...): ExamEligibilityRow&lt;br/&gt;- buildBatchSummary(rows): ExamEligibilityBatchSummary" vertex="1">
-          <mxGeometry height="145" width="330" x="4880" y="1195" as="geometry" />
+          <mxGeometry height="175" width="330" x="4880" y="1195" as="geometry" />
         </mxCell>
         <mxCell id="mainDashboardToExamEligibilityEdge" edge="1" parent="1" source="6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="lecturerExamEligibilityPanelNode" value="">
           <mxGeometry relative="1" as="geometry">
@@ -690,8 +690,80 @@
             </Array>
           </mxGeometry>
         </mxCell>
+        <mxCell id="lecturerTimetableLabel" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;" value="Lecturer Timetable" vertex="1">
+          <mxGeometry height="20" width="250" x="5520" y="-80" as="geometry" />
+        </mxCell>
+        <mxCell id="lecturerTimetablePanelNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;LecturerTimetablePanel&lt;/b&gt;&lt;hr/&gt;+ LecturerTimetablePanel(user: User)&lt;br/&gt;# getPanelSubtitle(): String" vertex="1">
+          <mxGeometry height="100" width="290" x="5520" y="-20" as="geometry" />
+        </mxCell>
+        <mxCell id="sharedTimeTablePanelNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;i&gt;&lt;&lt;abstract&gt;&gt;&lt;/i&gt;&lt;br/&gt;&lt;b&gt;TimeTablePanel&lt;/b&gt;&lt;hr/&gt;- timetableService: TimetableService&lt;br/&gt;- timetableContainer: JPanel&lt;hr/&gt;# getPanelTitle(): String&lt;br/&gt;# getPanelSubtitle(): String&lt;br/&gt;# getTimetableSessions(): List&lt;TimetableSession&gt;&lt;br/&gt;- loadTimetableData(): void&lt;br/&gt;- renderTimetable(sessions): void" vertex="1">
+          <mxGeometry height="165" width="320" x="5505" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="timetableServiceNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;TimetableService&lt;/b&gt;&lt;hr/&gt;- timetableRepository: TimetableRepository&lt;hr/&gt;+ getAllTimetableSessions(): List&lt;TimetableSession&gt;&lt;br/&gt;+ getTimetableByLecturer(lecturerId): List&lt;TimetableSession&gt;&lt;br/&gt;+ getSessionById(sessionId): TimetableSession" vertex="1">
+          <mxGeometry height="130" width="320" x="5495" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="timetableSessionNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;TimetableSession&lt;/b&gt;&lt;hr/&gt;- id: int&lt;br/&gt;- courseId: int&lt;br/&gt;- lecturerId: Integer&lt;br/&gt;- day: String&lt;br/&gt;- courseCode: String&lt;br/&gt;- courseName: String&lt;br/&gt;- lecturerName: String&lt;br/&gt;- startTime: String&lt;br/&gt;- endTime: String&lt;br/&gt;- venue: String&lt;br/&gt;- sessionType: String" vertex="1">
+          <mxGeometry height="220" width="270" x="5520" y="1610" as="geometry" />
+        </mxCell>
+        <mxCell id="timetableRepositoryNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;TimetableRepository&lt;/b&gt;&lt;hr/&gt;- conn: Connection&lt;hr/&gt;+ getAllTimetableSessions(): List&lt;TimetableSession&gt;&lt;br/&gt;+ getTimetableByLecturer(lecturerId): List&lt;TimetableSession&gt;&lt;br/&gt;+ findById(sessionId): TimetableSession" vertex="1">
+          <mxGeometry height="120" width="320" x="5495" y="1945" as="geometry" />
+        </mxCell>
+        <mxCell id="mainDashboardToLecturerTimetableEdge" edge="1" parent="1" source="6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="lecturerTimetablePanelNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="980" y="65" />
+              <mxPoint x="5470" y="65" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lecturerTimetableInheritanceEdge" edge="1" parent="1" source="lecturerTimetablePanelNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=0;" target="sharedTimeTablePanelNode" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="timeTablePanelToServiceEdge" edge="1" parent="1" source="sharedTimeTablePanelNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="timetableServiceNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="5665" y="320" />
+              <mxPoint x="5665" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="timeTablePanelToSessionEdge" edge="1" parent="1" source="sharedTimeTablePanelNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="timetableSessionNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="5665" y="420" />
+              <mxPoint x="5870" y="420" />
+              <mxPoint x="5870" y="1720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="timetableServiceToRepositoryDiagramEdge" edge="1" parent="1" source="timetableServiceNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="timetableRepositoryNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="5450" y="1265" />
+              <mxPoint x="5450" y="2005" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="timetableServiceToSessionEdge" edge="1" parent="1" source="timetableServiceNode" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="timetableSessionNode" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="5750" y="1265" />
+              <mxPoint x="5750" y="1720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="timetableRepositoryToSessionEdge" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="5480" y="1862" />
+              <mxPoint x="5480" y="1862" />
+            </Array>
+            <mxPoint x="5665" y="1947" as="sourcePoint" />
+            <mxPoint x="5665" y="1832" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="O7oSLQPEnLjm-vzvtWjA-369" parent="1" style="shape=line;strokeWidth=5;strokeColor=#BD7000;fillColor=#f0a30a;fontColor=#000000;" value="" vertex="1">
-          <mxGeometry height="1" width="5260" x="-10" y="1141" as="geometry" />
+          <mxGeometry height="1" width="5860" x="-10" y="1141" as="geometry" />
         </mxCell>
         <mxCell id="O7oSLQPEnLjm-vzvtWjA-370" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;opacity=30;" value="&lt;span style=&quot;font-weight: 700; text-align: left; text-wrap-mode: nowrap;&quot;&gt;View Layer&lt;/span&gt;" vertex="1">
           <mxGeometry height="900" width="120" x="-130" y="-620" as="geometry" />
@@ -712,7 +784,7 @@
           <mxGeometry height="330" width="120" x="-130" y="1890" as="geometry" />
         </mxCell>
         <mxCell id="O7oSLQPEnLjm-vzvtWjA-379" parent="1" style="shape=line;strokeWidth=5;strokeColor=#A50040;fillColor=#d80073;fontColor=#ffffff;" value="" vertex="1">
-          <mxGeometry height="1" width="5210" x="-10" y="1560" as="geometry" />
+          <mxGeometry height="1" width="5960" x="-10" y="1560" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

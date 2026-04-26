@@ -15,14 +15,28 @@ import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides the technical officer attendance workspace for creating sessions and updating student attendance.
+ * @author methum
+ */
 public class TOAttendancePanel extends JPanel {
     private static final String[] ATTENDANCE_STATUSES = {"PRESENT", "ABSENT"};
+    private static final int SESSION_TABLE_HEIGHT = 260;
+    private static final int STUDENT_TABLE_HEIGHT = 320;
+    private static final int SESSION_ID_COLUMN = 0;
+    private static final int REGISTRATION_COLUMN = 0;
+    private static final int ATTENDANCE_STATUS_COLUMN = 2;
+    private static final int MEDICAL_COLUMN = 3;
+    private static final String DEFAULT_EDITOR_MESSAGE = "Select a session row to edit attendance.";
+    private static final String ERROR_TITLE = "Attendance Error";
+    private static final String INFO_TITLE = "Attendance";
 
     private final User currentUser;
     private final AttendanceService attendanceService;
@@ -40,6 +54,11 @@ public class TOAttendancePanel extends JPanel {
     private List<TimetableSession> allTimetableSessions = new ArrayList<>();
     private AttendanceSessionRow selectedSession;
 
+    /**
+     * Creates the TO attendance panel and loads the initial lookup and session data.
+     * @param user logged-in technical officer
+     * @author methum
+     */
     public TOAttendancePanel(User user) {
         this.currentUser = user;
         this.attendanceService = new AttendanceService();
@@ -58,6 +77,10 @@ public class TOAttendancePanel extends JPanel {
         loadSessions();
     }
 
+    /**
+     * Builds the top header with title and primary action buttons.
+     * @author methum
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
@@ -85,18 +108,18 @@ public class TOAttendancePanel extends JPanel {
         CustomButton addBtn = createActionButton("Add New Session", FontAwesomeSolid.PLUS, AppTheme.BTN_SAVE_BG, AppTheme.BTN_SAVE_FG, AppTheme.BTN_SAVE_HOVER);
         addBtn.addActionListener(e -> openAddSessionDialog());
 
-        CustomButton saveBtn = createActionButton("Save Attendance", FontAwesomeSolid.SAVE, AppTheme.BTN_SAVE_BG, AppTheme.BTN_SAVE_FG, AppTheme.BTN_SAVE_HOVER);
-        saveBtn.addActionListener(e -> saveAttendance());
-
         actions.add(refreshBtn);
         actions.add(addBtn);
-        actions.add(saveBtn);
 
         header.add(titleBlock, BorderLayout.WEST);
         header.add(actions, BorderLayout.EAST);
         return header;
     }
 
+    /**
+     * Builds the session list and student attendance editor content area.
+     * @author methum
+     */
     private JComponent createContent() {
         JPanel content = new JPanel(new BorderLayout(0, 18));
         content.setOpaque(false);
@@ -149,12 +172,12 @@ public class TOAttendancePanel extends JPanel {
             }
         });
 
-        JScrollPane sessionsScrollPane = createScrollPane(sessionTable, 260);
+        JScrollPane sessionsScrollPane = createScrollPane(sessionTable, SESSION_TABLE_HEIGHT);
 
         JPanel bottomSection = new JPanel(new BorderLayout(0, 10));
         bottomSection.setOpaque(false);
 
-        lblSelectedSession = createMetaLabel("Select a session row to edit attendance.");
+        lblSelectedSession = createMetaLabel(DEFAULT_EDITOR_MESSAGE);
 
         studentTableModel = new DefaultTableModel(
                 new Object[]{"Reg No", "Student", "Attendance Status", "Medical"},
@@ -162,16 +185,16 @@ public class TOAttendancePanel extends JPanel {
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 2;
+                return column == ATTENDANCE_STATUS_COLUMN && !isApprovedMedicalRow(row);
             }
         };
 
         studentTable = createStyledTable(studentTableModel, true);
-        TableColumn statusColumn = studentTable.getColumnModel().getColumn(2);
+        TableColumn statusColumn = studentTable.getColumnModel().getColumn(ATTENDANCE_STATUS_COLUMN);
         statusColumn.setCellEditor(new DefaultCellEditor(new JComboBox<>(ATTENDANCE_STATUSES)));
-        JScrollPane studentsScrollPane = createScrollPane(studentTable, 320);
+        JScrollPane studentsScrollPane = createScrollPane(studentTable, STUDENT_TABLE_HEIGHT);
 
-        bottomSection.add(createSectionLabel("Student Attendance"), BorderLayout.NORTH);
+        bottomSection.add(createStudentAttendanceHeader(), BorderLayout.NORTH);
         bottomSection.add(lblSelectedSession, BorderLayout.CENTER);
         bottomSection.add(studentsScrollPane, BorderLayout.SOUTH);
 
@@ -193,6 +216,27 @@ public class TOAttendancePanel extends JPanel {
         return content;
     }
 
+    /**
+     * Builds the student attendance section header with the save action.
+     * @author methum
+     */
+    private JPanel createStudentAttendanceHeader() {
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
+
+        CustomButton saveBtn = createActionButton("Save Attendance", FontAwesomeSolid.SAVE, AppTheme.BTN_SAVE_BG, AppTheme.BTN_SAVE_FG, AppTheme.BTN_SAVE_HOVER);
+        saveBtn.addActionListener(e -> saveAttendance());
+
+        header.add(createSectionLabel("Student Attendance"), BorderLayout.WEST);
+        header.add(saveBtn, BorderLayout.EAST);
+        return header;
+    }
+
+    /**
+     * Creates a bold section label for the panel.
+     * @param text label text
+     * @author methum
+     */
     private JLabel createSectionLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontBold(18));
@@ -200,6 +244,11 @@ public class TOAttendancePanel extends JPanel {
         return label;
     }
 
+    /**
+     * Creates a subtle metadata label used above the student editor table.
+     * @param text label text
+     * @author methum
+     */
     private JLabel createMetaLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontPlain(14));
@@ -207,12 +256,27 @@ public class TOAttendancePanel extends JPanel {
         return label;
     }
 
+    /**
+     * Creates a styled action button with the provided icon and colors.
+     * @param text button text
+     * @param icon icon glyph
+     * @param bg background color
+     * @param fg foreground color
+     * @param hover hover background color
+     * @author methum
+     */
     private CustomButton createActionButton(String text, FontAwesomeSolid icon, Color bg, Color fg, Color hover) {
         CustomButton button = new CustomButton(text, bg, fg, hover, new Dimension(150, 40));
         button.setIcon(FontIcon.of(icon, 14, fg));
         return button;
     }
 
+    /**
+     * Creates the shared table styling used by both attendance tables.
+     * @param model table model
+     * @param editable whether cells should be editable
+     * @author methum
+     */
     private JTable createStyledTable(DefaultTableModel model, boolean editable) {
         JTable table = new JTable(model);
         table.setRowHeight(28);
@@ -225,12 +289,19 @@ public class TOAttendancePanel extends JPanel {
         table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
         table.getTableHeader().setFont(AppTheme.fontBold(13));
         table.setFillsViewportHeight(true);
+        table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         if (!editable) {
             table.setDefaultEditor(Object.class, null);
         }
         return table;
     }
 
+    /**
+     * Wraps a table in a styled scroll pane with a fixed preferred height.
+     * @param table table instance
+     * @param preferredHeight preferred scroll height
+     * @author methum
+     */
     private JScrollPane createScrollPane(JTable table, int preferredHeight) {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
@@ -240,18 +311,39 @@ public class TOAttendancePanel extends JPanel {
         return scrollPane;
     }
 
+    /**
+     * Loads course and timetable lookup data needed by the add-session dialog.
+     * @author methum
+     */
     private void loadLookupData() {
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() {
-                allCourses = courseService.getAllCourses();
-                allTimetableSessions = timetableService.getAllTimetableSessions();
+                List<Course> courses = courseService.getAllCourses();
+                List<TimetableSession> timetableSessions = timetableService.getAllTimetableSessions();
+                allCourses = courses == null ? new ArrayList<>() : new ArrayList<>(courses);
+                allTimetableSessions = timetableSessions == null ? new ArrayList<>() : new ArrayList<>(timetableSessions);
                 return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    get();
+                } catch (Exception e) {
+                    allCourses = new ArrayList<>();
+                    allTimetableSessions = new ArrayList<>();
+                    showErrorDialog("Failed to load course and timetable data.");
+                }
             }
         };
         worker.execute();
     }
 
+    /**
+     * Loads all attendance sessions shown in the top session table.
+     * @author methum
+     */
     private void loadSessions() {
         SwingWorker<List<AttendanceSessionRow>, Void> worker = new SwingWorker<>() {
             @Override
@@ -264,21 +356,23 @@ public class TOAttendancePanel extends JPanel {
                 try {
                     renderSessions(get());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(
-                            TOAttendancePanel.this,
-                            "Failed to load sessions.",
-                            "Attendance Error",
-                            JOptionPane.ERROR_MESSAGE
-                    );
+                    showErrorDialog("Failed to load sessions.");
                 }
             }
         };
         worker.execute();
     }
 
+    /**
+     * Renders the session list and resets the student editor state.
+     * @param rows session rows
+     * @author methum
+     */
     private void renderSessions(List<AttendanceSessionRow> rows) {
+        stopTableEditing(studentTable);
         sessionTableModel.setRowCount(0);
-        for (AttendanceSessionRow row : rows) {
+        List<AttendanceSessionRow> safeRows = rows == null ? List.of() : rows;
+        for (AttendanceSessionRow row : safeRows) {
             sessionTableModel.addRow(new Object[]{
                     row.getSessionId(),
                     row.getCourseCode(),
@@ -292,12 +386,14 @@ public class TOAttendancePanel extends JPanel {
                     row.getSessionStatus()
             });
         }
-        studentTableModel.setRowCount(0);
-        selectedSession = null;
-        lblSelectedSession.setText("Select a session row to edit attendance.");
+        resetSelectedSessionEditor();
         applySessionFilter();
     }
 
+    /**
+     * Applies the keyword filter to the session table.
+     * @author methum
+     */
     private void applySessionFilter() {
         TableRowSorter<?> sorter = (TableRowSorter<?>) sessionTable.getRowSorter();
         String keyword = txtSessionSearch.getText() == null ? "" : txtSessionSearch.getText().trim();
@@ -308,14 +404,20 @@ public class TOAttendancePanel extends JPanel {
         }
     }
 
+    /**
+     * Loads the selected session and its editable student attendance rows.
+     * @author methum
+     */
     private void openSelectedSession() {
+        stopTableEditing(studentTable);
+
         int selectedRow = sessionTable.getSelectedRow();
         if (selectedRow < 0) {
             return;
         }
 
         int modelRow = sessionTable.convertRowIndexToModel(selectedRow);
-        int sessionId = Integer.parseInt(sessionTableModel.getValueAt(modelRow, 0).toString());
+        int sessionId = Integer.parseInt(String.valueOf(sessionTableModel.getValueAt(modelRow, SESSION_ID_COLUMN)));
 
         SwingWorker<AttendanceSessionEditorData, Void> worker = new SwingWorker<>() {
             @Override
@@ -328,24 +430,31 @@ public class TOAttendancePanel extends JPanel {
                 try {
                     renderSessionEditor(get());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(
-                            TOAttendancePanel.this,
-                            "Failed to load session attendance.",
-                            "Attendance Error",
-                            JOptionPane.ERROR_MESSAGE
-                    );
+                    showErrorDialog("Failed to load session attendance.");
                 }
             }
         };
         worker.execute();
     }
 
+    /**
+     * Renders the selected session details and editable student attendance rows.
+     * @param data editor data
+     * @author methum
+     */
     private void renderSessionEditor(AttendanceSessionEditorData data) {
+        stopTableEditing(studentTable);
+
+        if (data == null) {
+            resetSelectedSessionEditor();
+            return;
+        }
+
         selectedSession = data.getSession();
         studentTableModel.setRowCount(0);
 
         if (selectedSession == null) {
-            lblSelectedSession.setText("Select a session row to edit attendance.");
+            lblSelectedSession.setText(DEFAULT_EDITOR_MESSAGE);
             return;
         }
 
@@ -354,17 +463,47 @@ public class TOAttendancePanel extends JPanel {
                         selectedSession.getSessionDate() + " | " + selectedSession.getTimeRange()
         );
 
-        data.getStudentRows().forEach(row -> studentTableModel.addRow(new Object[]{
+        List<StudentAttendanceEditRow> studentRows = data.getStudentRows() == null ? List.of() : data.getStudentRows();
+        studentRows.forEach(row -> studentTableModel.addRow(new Object[]{
                 row.getRegistrationNo(),
                 row.getStudentName(),
-                row.getAttendanceStatus().isEmpty() ? "ABSENT" : row.getAttendanceStatus(),
+                resolveDisplayedAttendanceStatus(row),
                 row.getMedicalApprovalStatus().isEmpty() ? "-" : row.getMedicalApprovalStatus()
         }));
     }
 
+    /**
+     * Checks whether the given table row belongs to an approved medical record.
+     * @param row table row index
+     * @author methum
+     */
+    private boolean isApprovedMedicalRow(int row) {
+        Object medicalValue = studentTableModel.getValueAt(row, MEDICAL_COLUMN);
+        return medicalValue != null && "APPROVED".equalsIgnoreCase(medicalValue.toString().trim());
+    }
+
+    /**
+     * Resolves the display status for a student attendance row.
+     * @param row student attendance row
+     * @author methum
+     */
+    private String resolveDisplayedAttendanceStatus(StudentAttendanceEditRow row) {
+        if (row == null) {
+            return "ABSENT";
+        }
+        if ("APPROVED".equalsIgnoreCase(row.getMedicalApprovalStatus())) {
+            return "MEDICAL";
+        }
+        return row.getAttendanceStatus().isEmpty() ? "ABSENT" : row.getAttendanceStatus();
+    }
+
+    /**
+     * Opens the add-session dialog for TOs.
+     * @author methum
+     */
     private void openAddSessionDialog() {
         if (allCourses == null || allCourses.isEmpty() || allTimetableSessions == null || allTimetableSessions.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Course and timetable data are still loading.", "Attendance", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Course and timetable data are still loading.", INFO_TITLE, JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -382,33 +521,87 @@ public class TOAttendancePanel extends JPanel {
 
         try {
             attendanceSessionController.createSessionForTo(request);
-            JOptionPane.showMessageDialog(this, "New session created successfully.");
+            JOptionPane.showMessageDialog(this, "New session created successfully.", INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
             loadSessions();
         } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Attendance Error", JOptionPane.ERROR_MESSAGE);
+            showErrorDialog(ex.getMessage());
         }
     }
 
+    /**
+     * Saves all editable attendance statuses for the selected session.
+     * @author methum
+     */
     private void saveAttendance() {
         if (selectedSession == null) {
-            JOptionPane.showMessageDialog(this, "Select a session first.", "Attendance", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Select a session first.", INFO_TITLE, JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        List<StudentAttendanceUpdate> updates = new ArrayList<>();
-        for (int row = 0; row < studentTableModel.getRowCount(); row++) {
-            updates.add(new StudentAttendanceUpdate(
-                    String.valueOf(studentTableModel.getValueAt(row, 0)),
-                    String.valueOf(studentTableModel.getValueAt(row, 2))
-            ));
-        }
+        stopTableEditing(studentTable);
+        List<StudentAttendanceUpdate> updates = buildAttendanceUpdates();
 
         try {
             attendanceSessionController.saveAttendance(selectedSession.getSessionId(), currentUser.getId(), updates);
-            JOptionPane.showMessageDialog(this, "Attendance saved successfully.");
+            JOptionPane.showMessageDialog(this, "Attendance saved successfully.", INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
             openSelectedSession();
         } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Attendance Error", JOptionPane.ERROR_MESSAGE);
+            showErrorDialog(ex.getMessage());
         }
+    }
+
+    /**
+     * Builds the attendance update payload list from the student table.
+     * @author methum
+     */
+    private List<StudentAttendanceUpdate> buildAttendanceUpdates() {
+        List<StudentAttendanceUpdate> updates = new ArrayList<>();
+        for (int row = 0; row < studentTableModel.getRowCount(); row++) {
+            updates.add(new StudentAttendanceUpdate(
+                    String.valueOf(studentTableModel.getValueAt(row, REGISTRATION_COLUMN)),
+                    String.valueOf(studentTableModel.getValueAt(row, ATTENDANCE_STATUS_COLUMN))
+            ));
+        }
+        return updates;
+    }
+
+    /**
+     * Resets the selected session state and clears the student editor table.
+     * @author methum
+     */
+    private void resetSelectedSessionEditor() {
+        stopTableEditing(studentTable);
+        studentTableModel.setRowCount(0);
+        selectedSession = null;
+        lblSelectedSession.setText(DEFAULT_EDITOR_MESSAGE);
+    }
+
+    /**
+     * Stops active table editing before the model is read or reset.
+     * @param table target table
+     * @author methum
+     */
+    private void stopTableEditing(JTable table) {
+        if (table == null || !table.isEditing()) {
+            return;
+        }
+
+        TableCellEditor editor = table.getCellEditor();
+        if (editor == null) {
+            return;
+        }
+
+        if (!editor.stopCellEditing()) {
+            editor.cancelCellEditing();
+        }
+    }
+
+    /**
+     * Shows a standard error dialog for attendance operations.
+     * @param message error message
+     * @author methum
+     */
+    private void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(this, message, ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
     }
 }

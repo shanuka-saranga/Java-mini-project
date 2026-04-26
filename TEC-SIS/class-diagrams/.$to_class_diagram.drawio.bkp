@@ -1,0 +1,289 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2">
+  <diagram name="Page-1" id="C0kKi0-R4Ub8YMJZihS6">
+    <mxGraphModel dx="2440" dy="1878" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="5200" pageHeight="3400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sep-view" parent="1" style="shape=line;strokeWidth=7;strokeColor=#005700;fillColor=#008a00;fontColor=#ffffff;" value="" vertex="1">
+          <mxGeometry height="1" width="4060" x="760" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="sep-controller" parent="1" style="shape=line;strokeWidth=6;strokeColor=#006EAF;fillColor=#1ba1e2;fontColor=#ffffff;" value="" vertex="1">
+          <mxGeometry height="1" width="4060" x="760" y="1120" as="geometry" />
+        </mxCell>
+        <mxCell id="sep-dto" parent="1" style="shape=line;strokeWidth=5;strokeColor=#A50040;fillColor=#d80073;fontColor=#ffffff;" value="" vertex="1">
+          <mxGeometry height="1" width="4060" x="760" y="1440" as="geometry" />
+        </mxCell>
+        <mxCell id="sep-service" parent="1" style="shape=line;strokeWidth=5;strokeColor=#BD7000;fillColor=#f0a30a;fontColor=#000000;" value="" vertex="1">
+          <mxGeometry height="1" width="4060" x="760" y="2050" as="geometry" />
+        </mxCell>
+        <mxCell id="sep-entity" parent="1" style="shape=line;strokeWidth=5;strokeColor=#A50040;fillColor=#d80073;fontColor=#ffffff;" value="" vertex="1">
+          <mxGeometry height="1" width="4060" x="760" y="2550" as="geometry" />
+        </mxCell>
+        <mxCell id="sep-repo" parent="1" style="shape=line;strokeWidth=5;strokeColor=#3700CC;fillColor=#6a00ff;fontColor=#ffffff;" value="" vertex="1">
+          <mxGeometry height="1" width="4060" x="760" y="2890" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-view" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;opacity=30;" value="&lt;span style=&quot;font-weight:700;&quot;&gt;View Layer&lt;/span&gt;" vertex="1">
+          <mxGeometry height="840" width="120" x="620" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-controller" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;opacity=30;" value="&lt;span style=&quot;font-weight:700;&quot;&gt;Controller Layer&lt;/span&gt;" vertex="1">
+          <mxGeometry height="320" width="120" x="620" y="1120" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-dto" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a20025;fontColor=#ffffff;strokeColor=#6F0000;opacity=30;" value="DTOs" vertex="1">
+          <mxGeometry height="610" width="120" x="620" y="1440" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-service" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0a30a;fontColor=#000000;strokeColor=#BD7000;opacity=50;" value="&lt;span style=&quot;font-weight:700;&quot;&gt;Service Layer&lt;/span&gt;" vertex="1">
+          <mxGeometry height="500" width="120" x="620" y="2050" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-entity" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a20025;fontColor=#ffffff;strokeColor=#6F0000;opacity=30;" value="Entity" vertex="1">
+          <mxGeometry height="340" width="120" x="620" y="2550" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-repo" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;opacity=30;" value="&lt;span style=&quot;font-weight:700;&quot;&gt;Repository Layer&lt;/span&gt;" vertex="1">
+          <mxGeometry height="330" width="120" x="620" y="2890" as="geometry" />
+        </mxCell>
+        <mxCell id="title-common" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;" value="Common Dashboard Components" vertex="1">
+          <mxGeometry height="20" width="260" x="900" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="title-to-att" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;" value="TO Attendance Management" vertex="1">
+          <mxGeometry height="20" width="260" x="2180" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="title-to-med" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontStyle=1;" value="TO Medical Review" vertex="1">
+          <mxGeometry height="20" width="220" x="3520" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="main-dashboard" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;MainDashboard&lt;/b&gt;&lt;hr/&gt;- currentUser: User&lt;hr/&gt;+ MainDashboard(user: User)&lt;br/&gt;+ setVisible(visible: boolean): void" vertex="1">
+          <mxGeometry height="130" width="220" x="900" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="base-sidebar" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;BaseSidebar&lt;/b&gt;&lt;hr/&gt;- parentFrame: MainDashboard&lt;hr/&gt;+ BaseSidebar(frame, roleName)&lt;br/&gt;+ createMenuButton(...)&lt;br/&gt;# addRoleSpecificButtons()" vertex="1">
+          <mxGeometry height="150" width="330" x="1220" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="to-sidebar" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;TOSidebar&lt;/b&gt;&lt;hr/&gt;+ TOSidebar(frame)&lt;br/&gt;# addRoleSpecificButtons()" vertex="1">
+          <mxGeometry height="100" width="250" x="1600" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="to-home-panel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;TOHomePanel&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="170" x="1900" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="to-attendance-panel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;TOAttendancePanel&lt;/b&gt;&lt;hr/&gt;- currentUser: User&lt;br/&gt;- selectedSession: AttendanceSessionRow&lt;br/&gt;- attendanceService: AttendanceService&lt;br/&gt;- courseService: CourseService&lt;br/&gt;- timetableService: TimetableService&lt;br/&gt;- attendanceSessionController: AttendanceSessionController&lt;hr/&gt;+ loadLookupData(): void&lt;br/&gt;+ loadSessions(): void&lt;br/&gt;+ openAddSessionDialog(): void&lt;br/&gt;+ renderSessionEditor(data): void&lt;br/&gt;+ saveAttendance(): void" vertex="1">
+          <mxGeometry height="250" width="440" x="2180" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="attendance-session-dialog" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AttendanceSessionDialog&lt;/b&gt;&lt;hr/&gt;- allCourses: List&lt;Course&gt;&lt;br/&gt;- allTimetableSessions: List&lt;TimetableSession&gt;&lt;br/&gt;- request: AddAttendanceSessionRequest&lt;hr/&gt;+ getRequest(): AddAttendanceSessionRequest&lt;br/&gt;- refreshSelectableOptions(): void&lt;br/&gt;- populateTimetableSessions(...): void&lt;br/&gt;- submit(): void" vertex="1">
+          <mxGeometry height="210" width="370" x="2690" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="themed-date-picker" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;ThemedDatePicker&lt;/b&gt;&lt;hr/&gt;- selectedDate: LocalDate&lt;hr/&gt;+ getText(): String&lt;br/&gt;+ setText(value): void&lt;br/&gt;+ addDateChangeListener(listener): void" vertex="1">
+          <mxGeometry height="120" width="250" x="3120" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="to-medical-panel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;TOMedicalPanel&lt;/b&gt;&lt;hr/&gt;- currentUser: User&lt;br/&gt;- medicalApprovalController: MedicalApprovalController&lt;br/&gt;- pendingRows: List&lt;MedicalApprovalRow&gt;&lt;br/&gt;- approvedRows: List&lt;MedicalApprovalRow&gt;&lt;hr/&gt;+ loadMedicalData(): void&lt;br/&gt;+ renderPendingRows(rows): void&lt;br/&gt;+ renderApprovedRows(rows): void&lt;br/&gt;+ showMedicalDetails(...): void&lt;br/&gt;+ approveSelectedMedical(): void" vertex="1">
+          <mxGeometry height="240" width="430" x="3520" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="attendance-session-controller" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AttendanceSessionController&lt;/b&gt;&lt;hr/&gt;- attendanceService: AttendanceService&lt;hr/&gt;+ createSessionForTo(request): AttendanceSessionRow&lt;br/&gt;+ saveAttendance(sessionId, markedBy, updates): void" vertex="1">
+          <mxGeometry height="140" width="310" x="2430" y="1170" as="geometry" />
+        </mxCell>
+        <mxCell id="medical-approval-controller" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;MedicalApprovalController&lt;/b&gt;&lt;hr/&gt;- medicalApprovalService: MedicalApprovalService&lt;hr/&gt;+ loadPendingMedicals(): List&lt;MedicalApprovalRow&gt;&lt;br/&gt;+ loadApprovedMedicals(): List&lt;MedicalApprovalRow&gt;&lt;br/&gt;+ approveMedical(medicalId, approvedBy): void" vertex="1">
+          <mxGeometry height="160" width="370" x="3580" y="1170" as="geometry" />
+        </mxCell>
+        <mxCell id="attendance-session-row" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AttendanceSessionRow&lt;/b&gt;&lt;hr/&gt;- sessionId: int&lt;br/&gt;- courseId: int&lt;br/&gt;- courseCode: String&lt;br/&gt;- courseName: String&lt;br/&gt;- sessionType: String&lt;br/&gt;- sessionNo: int&lt;br/&gt;- sessionDate: String&lt;br/&gt;- timeRange: String&lt;br/&gt;- sessionStatus: String" vertex="1">
+          <mxGeometry height="200" width="280" x="1880" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="attendance-session-editor-data" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AttendanceSessionEditorData&lt;/b&gt;&lt;hr/&gt;- session: AttendanceSessionRow&lt;br/&gt;- studentRows: List&lt;StudentAttendanceEditRow&gt;" vertex="1">
+          <mxGeometry height="110" width="260" x="2210" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="student-attendance-edit-row" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;StudentAttendanceEditRow&lt;/b&gt;&lt;hr/&gt;- registrationNo: String&lt;br/&gt;- studentName: String&lt;br/&gt;- attendanceStatus: String&lt;br/&gt;- medicalApprovalStatus: String" vertex="1">
+          <mxGeometry height="140" width="270" x="2520" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="student-attendance-update" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;StudentAttendanceUpdate&lt;/b&gt;&lt;hr/&gt;- registrationNo: String&lt;br/&gt;- attendanceStatus: String" vertex="1">
+          <mxGeometry height="100" width="230" x="2840" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="add-attendance-session-request" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AddAttendanceSessionRequest&lt;/b&gt;&lt;hr/&gt;- courseId: String&lt;br/&gt;- timetableSessionId: String&lt;br/&gt;- sessionDate: String" vertex="1">
+          <mxGeometry height="120" width="260" x="3120" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="medical-panel-data" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;MedicalPanelData&lt;/b&gt;&lt;hr/&gt;- pendingRows: List&lt;MedicalApprovalRow&gt;&lt;br/&gt;- approvedRows: List&lt;MedicalApprovalRow&gt;" vertex="1">
+          <mxGeometry height="120" width="260" x="3440" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="medical-approval-row" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;MedicalApprovalRow&lt;/b&gt;&lt;hr/&gt;- medicalId: int&lt;br/&gt;- registrationNo: String&lt;br/&gt;- studentName: String&lt;br/&gt;- submittedDate: String&lt;br/&gt;- approvalStatus: String&lt;br/&gt;- approvedAt: String&lt;br/&gt;- medicalDocument: String&lt;br/&gt;- sessionDetails: List&lt;MedicalSessionDetail&gt;" vertex="1">
+          <mxGeometry height="210" width="300" x="3750" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="medical-session-detail" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;MedicalSessionDetail&lt;/b&gt;&lt;hr/&gt;- courseCode: String&lt;br/&gt;- courseName: String&lt;br/&gt;- sessionType: String&lt;br/&gt;- sessionNo: int&lt;br/&gt;- sessionDate: String" vertex="1">
+          <mxGeometry height="150" width="270" x="4090" y="1480" as="geometry" />
+        </mxCell>
+        <mxCell id="attendance-service" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AttendanceService&lt;/b&gt;&lt;hr/&gt;- attendanceRepository: AttendanceRepository&lt;hr/&gt;+ getAllAttendanceSessions(): List&lt;AttendanceSessionRow&gt;&lt;br/&gt;+ getSessionEditorData(sessionId): AttendanceSessionEditorData&lt;br/&gt;+ addSessionForTo(request): AttendanceSessionRow&lt;br/&gt;+ saveSessionAttendance(...): void" vertex="1">
+          <mxGeometry height="170" width="360" x="2100" y="2100" as="geometry" />
+        </mxCell>
+        <mxCell id="course-service" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;CourseService&lt;/b&gt;&lt;hr/&gt;- courseRepository: CourseRepository&lt;hr/&gt;+ getAllCourses(): List&lt;Course&gt;&lt;br/&gt;+ getCourseById(courseId): Course" vertex="1">
+          <mxGeometry height="110" width="260" x="2520" y="2100" as="geometry" />
+        </mxCell>
+        <mxCell id="timetable-service" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;TimetableService&lt;/b&gt;&lt;hr/&gt;- timetableRepository: TimetableRepository&lt;br/&gt;- courseService: CourseService&lt;hr/&gt;+ getAllTimetableSessions(): List&lt;TimetableSession&gt;&lt;br/&gt;+ getSessionById(sessionId): TimetableSession" vertex="1">
+          <mxGeometry height="140" width="320" x="2840" y="2100" as="geometry" />
+        </mxCell>
+        <mxCell id="imedical-approval-service" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;i&gt;&lt;&lt;interface&gt;&gt;&lt;/i&gt;&lt;br/&gt;&lt;b&gt;IMedicalApprovalService&lt;/b&gt;&lt;hr/&gt;+ getPendingMedicals(): List&lt;MedicalApprovalRow&gt;&lt;br/&gt;+ getApprovedMedicals(): List&lt;MedicalApprovalRow&gt;&lt;br/&gt;+ approveMedical(...): void" vertex="1">
+          <mxGeometry height="150" width="310" x="3460" y="2100" as="geometry" />
+        </mxCell>
+        <mxCell id="medical-approval-service" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;MedicalApprovalService&lt;/b&gt;&lt;hr/&gt;- attendanceRepository: AttendanceRepository&lt;hr/&gt;+ getPendingMedicals(): List&lt;MedicalApprovalRow&gt;&lt;br/&gt;+ getApprovedMedicals(): List&lt;MedicalApprovalRow&gt;&lt;br/&gt;+ approveMedical(medicalId, approvedBy): void" vertex="1">
+          <mxGeometry height="170" width="340" x="3820" y="2100" as="geometry" />
+        </mxCell>
+        <mxCell id="user-entity" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;User&lt;/b&gt;&lt;hr/&gt;+ getRole(): String&lt;br/&gt;+ getFullName(): String&lt;br/&gt;+ getId(): int" vertex="1">
+          <mxGeometry height="100" width="180" x="900" y="2600" as="geometry" />
+        </mxCell>
+        <mxCell id="course-entity" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;Course&lt;/b&gt;&lt;hr/&gt;+ getId(): int&lt;br/&gt;+ getCourseCode(): String&lt;br/&gt;+ getCourseName(): String&lt;br/&gt;+ getSessionType(): String" vertex="1">
+          <mxGeometry height="130" width="210" x="2520" y="2580" as="geometry" />
+        </mxCell>
+        <mxCell id="timetable-session-entity" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;TimetableSession&lt;/b&gt;&lt;hr/&gt;- id: int&lt;br/&gt;- courseId: int&lt;br/&gt;- day: String&lt;br/&gt;- startTime: String&lt;br/&gt;- endTime: String&lt;br/&gt;- venue: String&lt;br/&gt;- sessionType: String" vertex="1">
+          <mxGeometry height="190" width="320" x="2800" y="2550" as="geometry" />
+        </mxCell>
+        <mxCell id="attendance-repository" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;AttendanceRepository&lt;/b&gt;&lt;hr/&gt;+ findAllAttendanceSessions(): List&lt;AttendanceSessionRow&gt;&lt;br/&gt;+ findAttendanceSessionById(sessionId): AttendanceSessionRow&lt;br/&gt;+ findStudentAttendanceRowsBySession(sessionId): List&lt;StudentAttendanceEditRow&gt;&lt;br/&gt;+ createSessionFromTimetable(...): AttendanceSessionRow&lt;br/&gt;+ saveSessionAttendance(...): void&lt;br/&gt;+ findMedicalRowsByStatus(status): List&lt;MedicalApprovalRow&gt;&lt;br/&gt;+ approveMedical(medicalId, approvedBy): void" vertex="1">
+          <mxGeometry height="200" width="370" x="2080" y="2920" as="geometry" />
+        </mxCell>
+        <mxCell id="course-repository" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;CourseRepository&lt;/b&gt;&lt;hr/&gt;+ findAll(): List&lt;Course&gt;&lt;br/&gt;+ findById(courseId): Course" vertex="1">
+          <mxGeometry height="110" width="220" x="2650" y="2920" as="geometry" />
+        </mxCell>
+        <mxCell id="timetable-repository" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;" value="&lt;b&gt;TimetableRepository&lt;/b&gt;&lt;hr/&gt;+ getAllTimetableSessions(): List&lt;TimetableSession&gt;&lt;br/&gt;+ findById(sessionId): TimetableSession" vertex="1">
+          <mxGeometry height="120" width="320" x="2940" y="2920" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="to-sidebar" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=0;" target="base-sidebar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="main-dashboard" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=none;" target="base-sidebar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="main-dashboard" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="user-entity">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="main-dashboard" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="to-home-panel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="main-dashboard" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="to-attendance-panel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="main-dashboard" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="to-medical-panel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="to-attendance-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-session-controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="to-attendance-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="to-attendance-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="course-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="to-attendance-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="timetable-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="to-attendance-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-session-dialog">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="to-attendance-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-session-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="to-attendance-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-session-editor-data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="to-attendance-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="student-attendance-update">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="attendance-session-dialog" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="add-attendance-session-request">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="attendance-session-dialog" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;startArrow=diamond;startFill=1;endArrow=none;" target="themed-date-picker">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="attendance-session-dialog" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="course-entity">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="attendance-session-dialog" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="timetable-session-entity">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="attendance-session-controller" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="attendance-session-controller" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="add-attendance-session-request">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e21" edge="1" parent="1" source="attendance-session-controller" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="student-attendance-update">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e22" edge="1" parent="1" source="attendance-session-controller" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-session-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e23" edge="1" parent="1" source="to-medical-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="medical-approval-controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e24" edge="1" parent="1" source="to-medical-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="medical-panel-data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e25" edge="1" parent="1" source="to-medical-panel" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="medical-approval-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e26" edge="1" parent="1" source="medical-approval-controller" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="medical-approval-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e27" edge="1" parent="1" source="medical-approval-controller" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="medical-approval-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e28" edge="1" parent="1" source="attendance-session-editor-data" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;startArrow=diamond;startFill=1;endArrow=none;" target="attendance-session-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e29" edge="1" parent="1" source="attendance-session-editor-data" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;startArrow=diamond;startFill=1;endArrow=none;" target="student-attendance-edit-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e30" edge="1" parent="1" source="medical-panel-data" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;startArrow=diamond;startFill=1;endArrow=none;" target="medical-approval-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e31" edge="1" parent="1" source="medical-approval-row" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;startArrow=diamond;startFill=1;endArrow=none;" target="medical-session-detail">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e32" edge="1" parent="1" source="attendance-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-repository">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e33" edge="1" parent="1" source="attendance-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-session-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e34" edge="1" parent="1" source="attendance-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-session-editor-data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e35" edge="1" parent="1" source="attendance-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="student-attendance-update">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e36" edge="1" parent="1" source="course-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="course-repository">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e37" edge="1" parent="1" source="course-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="course-entity">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e38" edge="1" parent="1" source="timetable-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="timetable-repository">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e39" edge="1" parent="1" source="timetable-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="timetable-session-entity">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e40" edge="1" parent="1" source="timetable-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="course-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e41" edge="1" parent="1" source="medical-approval-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=block;endFill=0;" target="imedical-approval-service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e42" edge="1" parent="1" source="medical-approval-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-repository">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e43" edge="1" parent="1" source="medical-approval-service" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="medical-approval-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e44" edge="1" parent="1" source="attendance-repository" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="attendance-session-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e45" edge="1" parent="1" source="attendance-repository" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="student-attendance-edit-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e46" edge="1" parent="1" source="attendance-repository" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="medical-approval-row">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e47" edge="1" parent="1" source="attendance-repository" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="medical-session-detail">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e48" edge="1" parent="1" source="course-repository" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="course-entity">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e49" edge="1" parent="1" source="timetable-repository" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;" target="timetable-session-entity">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

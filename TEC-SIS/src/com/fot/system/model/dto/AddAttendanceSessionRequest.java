@@ -3,8 +3,8 @@ package com.fot.system.model.dto;
 import com.fot.system.model.entity.*;
 
 /**
- * carry request data needed to create a new attendance session
- * @author poornika
+ * Carries the request data needed to create a new attendance session.
+ * @author methum
  */
 public class AddAttendanceSessionRequest {
     private final String courseId;
@@ -12,11 +12,11 @@ public class AddAttendanceSessionRequest {
     private final String sessionDate;
 
     /**
-     * create immutable add-session request payload
+     * Creates an immutable add-session request payload.
      * @param courseId course id
      * @param timetableSessionId timetable session id
      * @param sessionDate session date
-     * @author poornika
+     * @author methum
      */
     public AddAttendanceSessionRequest(String courseId, String timetableSessionId, String sessionDate) {
         this.courseId = courseId;
