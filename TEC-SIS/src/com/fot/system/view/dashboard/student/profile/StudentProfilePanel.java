@@ -1,8 +1,7 @@
 package com.fot.system.view.dashboard.student.profile;
 
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
-import com.fot.system.view.dashboard.shared.UserProfilePanel;
+import com.fot.system.view.dashboard.shared_components.UserProfilePanel;
 
 public class StudentProfilePanel extends UserProfilePanel {
 
@@ -25,13 +24,4 @@ public class StudentProfilePanel extends UserProfilePanel {
         return "Review your student profile. Students can update only contact details and profile picture.";
     }
 
-    @Override
-    protected String getViewAccessHint() {
-        return "Can update only contact details and profile picture of their profile.";
-    }
-
-    @Override
-    protected String getEditAccessHint() {
-        return "Can update only contact details and profile picture of their profile.";
-    }
 }

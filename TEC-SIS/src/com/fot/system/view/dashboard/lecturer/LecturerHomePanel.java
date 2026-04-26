@@ -1,13 +1,13 @@
 package com.fot.system.view.dashboard.lecturer;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.dto.*;
+import com.fot.system.model.dto.LecturerDashboardData;
 import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.NoticeService;
 import com.fot.system.view.components.FeedItemCard;
-import com.fot.system.view.dashboard.admin.shared.DashboardStatCard;
-import com.fot.system.view.dashboard.admin.shared.NoticeFeedPanel;
+import com.fot.system.view.dashboard.admin.components.DashboardStatCard;
+import com.fot.system.view.dashboard.admin.components.NoticeFeedPanel;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 
@@ -96,7 +96,7 @@ public class LecturerHomePanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout(0, 14));
         panel.setBackground(AppTheme.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(18, 18, 18, 18)
         ));
 
@@ -136,7 +136,7 @@ public class LecturerHomePanel extends JPanel {
         JPanel row = new JPanel(new BorderLayout(12, 0));
         row.setOpaque(false);
         row.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_SOFT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_SOFT, 1, false),
                 new EmptyBorder(10, 12, 10, 12)
         ));
 
@@ -167,9 +167,9 @@ public class LecturerHomePanel extends JPanel {
     }
 
     private void loadDashboardData() {
-        SwingWorker<DashboardData, Void> worker = new SwingWorker<DashboardData, Void>() {
+        SwingWorker<LecturerDashboardData, Void> worker = new SwingWorker<LecturerDashboardData, Void>() {
             @Override
-            protected DashboardData doInBackground() {
+            protected LecturerDashboardData doInBackground() {
                 List<Course> assignedCourses = courseService.getCoursesByLecturerId(currentUser.getId());
                 List<Notice> visibleNotices = noticeService.getRecentVisibleNoticesForRole(currentUser.getRole(), 6);
 
@@ -195,7 +195,7 @@ public class LecturerHomePanel extends JPanel {
                     }
                 }
 
-                return new DashboardData(
+                return new LecturerDashboardData(
                         assignedCourses,
                         theoryCourses,
                         practicalOrBoth,
@@ -210,18 +210,18 @@ public class LecturerHomePanel extends JPanel {
             @Override
             protected void done() {
                 try {
-                    DashboardData data = get();
-                    myCoursesCard.setValue(String.valueOf(data.assignedCourses.size()));
-                    theoryCoursesCard.setValue(String.valueOf(data.theoryCourses));
-                    practicalCoursesCard.setValue(String.valueOf(data.practicalOrBothCourses));
-                    noticesCard.setValue(String.valueOf(data.visibleNoticesCount));
+                    LecturerDashboardData data = get();
+                    myCoursesCard.setValue(String.valueOf(data.getAssignedCourses().size()));
+                    theoryCoursesCard.setValue(String.valueOf(data.getTheoryCourses()));
+                    practicalCoursesCard.setValue(String.valueOf(data.getPracticalOrBothCourses()));
+                    noticesCard.setValue(String.valueOf(data.getVisibleNoticesCount()));
 
-                    totalCreditsLabel.setText(String.valueOf(data.totalCredits));
-                    totalHoursLabel.setText(String.valueOf(data.totalHours));
-                    bothSessionsLabel.setText(String.valueOf(data.bothSessions));
+                    totalCreditsLabel.setText(String.valueOf(data.getTotalCredits()));
+                    totalHoursLabel.setText(String.valueOf(data.getTotalHours()));
+                    bothSessionsLabel.setText(String.valueOf(data.getBothSessions()));
 
-                    applyAssignedCourses(data.assignedCourses);
-                    noticeFeedPanel.setNotices(data.notices);
+                    applyAssignedCourses(data.getAssignedCourses());
+                    noticeFeedPanel.setNotices(data.getNotices());
                 } catch (Exception e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(
@@ -263,29 +263,5 @@ public class LecturerHomePanel extends JPanel {
 
     private String valueOrDash(String value) {
         return value == null || value.trim().isEmpty() ? "-" : value.trim();
-    }
-
-    private static class DashboardData {
-        private final List<Course> assignedCourses;
-        private final int theoryCourses;
-        private final int practicalOrBothCourses;
-        private final int bothSessions;
-        private final int totalCredits;
-        private final int totalHours;
-        private final int visibleNoticesCount;
-        private final List<Notice> notices;
-
-        private DashboardData(List<Course> assignedCourses, int theoryCourses, int practicalOrBothCourses,
-                              int bothSessions, int totalCredits, int totalHours,
-                              int visibleNoticesCount, List<Notice> notices) {
-            this.assignedCourses = assignedCourses;
-            this.theoryCourses = theoryCourses;
-            this.practicalOrBothCourses = practicalOrBothCourses;
-            this.bothSessions = bothSessions;
-            this.totalCredits = totalCredits;
-            this.totalHours = totalHours;
-            this.visibleNoticesCount = visibleNoticesCount;
-            this.notices = notices;
-        }
     }
 }

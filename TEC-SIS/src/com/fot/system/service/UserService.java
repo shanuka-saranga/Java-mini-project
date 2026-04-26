@@ -1,18 +1,29 @@
 package com.fot.system.service;
 
 import com.fot.system.config.AppConfig;
-import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
+import com.fot.system.model.dto.AddUserRequest;
+import com.fot.system.model.dto.EditUserRequest;
+import com.fot.system.model.entity.Staff;
+import com.fot.system.model.entity.Student;
+import com.fot.system.model.entity.User;
 import com.fot.system.repository.UserRepository;
 
 import java.sql.Date;
 import java.util.List;
 
+/**
+ * handle user-related business logic used by profile and user management flows
+ * @author janith
+ */
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final ProfilePictureStorageService profilePictureStorageService;
 
+    /**
+     * initialize user service dependencies
+     * @author janith
+     */
     public UserService() {
         this.userRepository = new UserRepository();
         this.profilePictureStorageService = new ProfilePictureStorageService();
@@ -45,7 +56,6 @@ public class UserService implements IUserService {
         }
 
         if (!AppConfig.STATUS_ACTIVE.equalsIgnoreCase(user.getStatus())) {
-            System.out.println("user status is = "+ user.getStatus());
             throw new RuntimeException("User account is blocked");
         }
 
@@ -66,6 +76,9 @@ public class UserService implements IUserService {
      * @author janith , methum, poornika , shaanuka
      */
     public User getUserById(int id) {
+        if (id <= 0) {
+            throw new RuntimeException("Invalid user ID.");
+        }
         return userRepository.findById(id);
     }
 
@@ -132,6 +145,82 @@ public class UserService implements IUserService {
     }
 
     /**
+     * Checks whether a user email already exists.
+     * @param email email to check
+     * @author janith
+     */
+    public boolean emailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    /**
+     * Checks whether a user email exists for another user record.
+     * @param email  email to check
+     * @param userId current user id to exclude
+     * @author janith
+     */
+    public boolean emailExistsExcludingUserId(String email, int userId) {
+        return userRepository.existsByEmailAndUserId(email, userId);
+    }
+
+    /**
+     * Checks whether a phone number already exists.
+     * @param phone phone number to check
+     * @author janith
+     */
+    public boolean phoneExists(String phone) {
+        return userRepository.existsByPhone(phone);
+    }
+
+    /**
+     * Checks whether a phone number exists for another user record.
+     * @param phone  phone number to check
+     * @param userId current user id to exclude
+     * @author janith
+     */
+    public boolean phoneExistsExcludingUserId(String phone, int userId) {
+        return userRepository.existsByPhoneExcludingUserId(phone, userId);
+    }
+
+    /**
+     * Checks whether a student registration number already exists.
+     * @param registrationNo registration number to check
+     * @author janith
+     */
+    public boolean registrationNoExists(String registrationNo) {
+        return userRepository.existsByRegistrationNo(registrationNo);
+    }
+
+    /**
+     * Checks whether a student registration number exists for another user record.
+     * @param registrationNo registration number to check
+     * @param userId         current user id to exclude
+     * @author janith
+     */
+    public boolean registrationNoExistsExcludingUserId(String registrationNo, int userId) {
+        return userRepository.existsByRegistrationNoExcludingUserId(registrationNo, userId);
+    }
+
+    /**
+     * Checks whether a staff code already exists.
+     * @param staffCode staff code to check
+     * @author janith
+     */
+    public boolean staffCodeExists(String staffCode) {
+        return userRepository.existsByStaffCode(staffCode);
+    }
+
+    /**
+     * Checks whether a staff code exists for another user record.
+     * @param staffCode staff code to check
+     * @param userId    current user id to exclude
+     * @author janith
+     */
+    public boolean staffCodeExistsExcludingUserId(String staffCode, int userId) {
+        return userRepository.existsByStaffCodeExcludingUserId(staffCode, userId);
+    }
+
+    /**
      * create user considering user role
      * @param request AdduserRequest object
      * @author janith
@@ -184,19 +273,19 @@ public class UserService implements IUserService {
      * @author janith
      */
     private void populateCommonFields(User user, AddUserRequest request) {
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setPasswordHash(request.getPassword());
-        user.setPhone(request.getPhone());
-        user.setAddress(request.getAddress());
+        user.setFirstName(normalizeRequired(request.getFirstName()));
+        user.setLastName(normalizeRequired(request.getLastName()));
+        user.setEmail(normalizeRequired(request.getEmail()));
+        user.setPasswordHash(normalizeRequired(request.getPassword()));
+        user.setPhone(normalizeRequired(request.getPhone()));
+        user.setAddress(normalizeNullable(request.getAddress()));
         user.setProfilePicturePath(saveProfilePictureIfPresent(
                 request.getProfilePicturePath(),
                 request.getEmail(),
                 request.getRole()
         ));
         user.setDob(parseDob(request.getDob()));
-        user.setRole(request.getRole());
+        user.setRole(normalizeRequired(request.getRole()).toUpperCase());
         user.setStatus(normalizeStatus(request.getStatus()));
         user.setDepartmentId(parseDepartmentId(request.getDepartmentId()));
     }
@@ -208,19 +297,19 @@ public class UserService implements IUserService {
      * @author janith
      */
     private void populateCommonFields(User user, EditUserRequest request) {
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setPasswordHash(request.getPassword());
-        user.setPhone(request.getPhone());
-        user.setAddress(request.getAddress());
+        user.setFirstName(normalizeRequired(request.getFirstName()));
+        user.setLastName(normalizeRequired(request.getLastName()));
+        user.setEmail(normalizeRequired(request.getEmail()));
+        user.setPasswordHash(normalizeRequired(request.getPassword()));
+        user.setPhone(normalizeRequired(request.getPhone()));
+        user.setAddress(normalizeNullable(request.getAddress()));
         user.setProfilePicturePath(resolveProfilePicturePathForUpdate(
                 request.getProfilePicturePath(),
                 request.getEmail(),
                 request.getRole()
         ));
         user.setDob(parseDob(request.getDob()));
-        user.setRole(request.getRole());
+        user.setRole(normalizeRequired(request.getRole()).toUpperCase());
         user.setStatus(normalizeStatus(request.getStatus()));
         user.setDepartmentId(parseDepartmentId(request.getDepartmentId()));
     }
@@ -232,7 +321,11 @@ public class UserService implements IUserService {
      */
     private int parseDepartmentId(String departmentId) {
         try {
-            return Integer.parseInt(departmentId.trim());
+            int parsed = Integer.parseInt(departmentId.trim());
+            if (parsed <= 0) {
+                throw new RuntimeException("Department ID must be a valid number.");
+            }
+            return parsed;
         } catch (NumberFormatException e) {
             throw new RuntimeException("Department ID must be a valid number.");
         }
@@ -298,7 +391,6 @@ public class UserService implements IUserService {
      * @param picturePath provided profile picture path
      * @param email user email (used for naming the stored picture if saving is needed)
      * @param role user role (used for organizing stored pictures if saving is needed)
-     *
      * @author janith
      */
     private String resolveProfilePicturePathForUpdate(String picturePath, String email, String role) {
@@ -311,6 +403,31 @@ public class UserService implements IUserService {
         }
 
         return profilePictureStorageService.saveProfilePicture(picturePath, email, role);
+    }
+
+    /**
+     * normalize required string values
+     * @param value input value
+     * @author janith
+     */
+    private String normalizeRequired(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.trim();
+    }
+
+    /**
+     * normalize optional string values
+     * @param value input value
+     * @author janith
+     */
+    private String normalizeNullable(String value) {
+        if (value == null) {
+            return null;
+        }
+        String normalized = value.trim();
+        return normalized.isEmpty() ? null : normalized;
     }
 
 }

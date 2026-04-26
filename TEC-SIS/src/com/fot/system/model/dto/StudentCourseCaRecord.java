@@ -9,6 +9,10 @@ public class StudentCourseCaRecord {
     private double quizTotal;
     private double assignmentTotal;
     private double midExamTotal;
+    private int quizPresentCount;
+    private Double quizLowestPresentMark;
+    private int assignmentSubmittedCount;
+    private int midExamPresentCount;
     private int quizCount;
     private int assignmentCount;
     private int midExamCount;
@@ -59,6 +63,38 @@ public class StudentCourseCaRecord {
 
     public void setMidExamTotal(double midExamTotal) {
         this.midExamTotal = midExamTotal;
+    }
+
+    public int getQuizPresentCount() {
+        return quizPresentCount;
+    }
+
+    public void setQuizPresentCount(int quizPresentCount) {
+        this.quizPresentCount = quizPresentCount;
+    }
+
+    public Double getQuizLowestPresentMark() {
+        return quizLowestPresentMark;
+    }
+
+    public void setQuizLowestPresentMark(Double quizLowestPresentMark) {
+        this.quizLowestPresentMark = quizLowestPresentMark;
+    }
+
+    public int getAssignmentSubmittedCount() {
+        return assignmentSubmittedCount;
+    }
+
+    public void setAssignmentSubmittedCount(int assignmentSubmittedCount) {
+        this.assignmentSubmittedCount = assignmentSubmittedCount;
+    }
+
+    public int getMidExamPresentCount() {
+        return midExamPresentCount;
+    }
+
+    public void setMidExamPresentCount(int midExamPresentCount) {
+        this.midExamPresentCount = midExamPresentCount;
     }
 
     public int getQuizCount() {

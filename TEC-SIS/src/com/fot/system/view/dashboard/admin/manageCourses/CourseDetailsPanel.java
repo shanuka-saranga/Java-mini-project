@@ -1,5 +1,6 @@
 package com.fot.system.view.dashboard.admin.manageCourses;
 
+import com.fot.system.config.AppConfig;
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.EditCourseController;
 import com.fot.system.model.dto.*;
@@ -11,10 +12,16 @@ import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.function.Consumer;
 
+/**
+ * show selected course details and edit/delete actions
+ * @author janith
+ */
 public class CourseDetailsPanel extends JPanel {
     private static final String VIEW_CARD = "VIEW";
     private static final String EDIT_CARD = "EDIT";
+    private static final Dimension DETAIL_LABEL_SIZE = new Dimension(330, 32);
 
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel container = new JPanel(cardLayout);
@@ -31,17 +38,21 @@ public class CourseDetailsPanel extends JPanel {
     private JLabel lblDepartment;
     private JLabel lblLecturer;
 
-    private final Color tealColor = new Color(0, 121, 107);
     private Course currentCourse;
     private Runnable onCloseAction;
     private Runnable onCourseUpdatedAction;
     private Runnable onCourseDeletedAction;
+    private Consumer<Boolean> onEditModeChangedAction;
 
+    /**
+     * initialize course details panel
+     * @author janith
+     */
     public CourseDetailsPanel() {
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
+        setBackground(AppTheme.BG_LIGHT);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(tealColor), " Course Details "),
+                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(AppTheme.PRIMARY), " Course Details "),
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
         setVisible(false);
@@ -53,12 +64,17 @@ public class CourseDetailsPanel extends JPanel {
         add(createBottomActions(), BorderLayout.SOUTH);
     }
 
+    /**
+     * create read only details card
+     * @author janith
+     */
     private JPanel createViewPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(AppTheme.BG_LIGHT);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 10, 8, 10);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         lblCourseCode = createStyledLabel("Course Code: -", FontAwesomeSolid.BOOK);
         lblCourseName = createStyledLabel("Course Name: -", FontAwesomeSolid.BOOK_OPEN);
@@ -82,9 +98,19 @@ public class CourseDetailsPanel extends JPanel {
         gbc.gridwidth = 2;
         addToGrid(panel, lblLecturer, 0, 4, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        gbc.weighty = 1.0;
+        panel.add(Box.createVerticalGlue(), gbc);
+
         return panel;
     }
 
+    /**
+     * create details panel action button section
+     * @author janith
+     */
     private JPanel createBottomActions() {
         JPanel mainActionPanel = new JPanel(new BorderLayout());
         mainActionPanel.setOpaque(false);
@@ -96,7 +122,7 @@ public class CourseDetailsPanel extends JPanel {
                 AppTheme.BTN_CANCEL_BG,
                 AppTheme.BTN_CANCEL_FG,
                 AppTheme.BTN_CANCEL_HOVER,
-                new Dimension(120, 40)
+                AppConfig.BUTTON_SIZE_CLOSE
         );
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -107,7 +133,7 @@ public class CourseDetailsPanel extends JPanel {
                 AppTheme.BTN_EDIT_BG,
                 AppTheme.BTN_EDIT_FG,
                 AppTheme.BTN_EDIT_HOVER,
-                new Dimension(150, 40)
+                AppConfig.BUTTON_SIZE_SAVE
         );
 
         CustomButton btnDelete = new CustomButton(
@@ -115,7 +141,7 @@ public class CourseDetailsPanel extends JPanel {
                 AppTheme.BTN_DELETE_BG,
                 AppTheme.BTN_DELETE_FG,
                 AppTheme.BTN_DELETE_HOVER,
-                new Dimension(120, 40)
+                AppConfig.BUTTON_SIZE_CLOSE
         );
 
         CustomButton btnSave = new CustomButton(
@@ -123,7 +149,7 @@ public class CourseDetailsPanel extends JPanel {
                 AppTheme.BTN_SAVE_BG,
                 AppTheme.BTN_SAVE_FG,
                 AppTheme.BTN_SAVE_HOVER,
-                new Dimension(150, 40)
+                AppConfig.BUTTON_SIZE_SAVE
         );
 
         CustomButton btnCancel = new CustomButton(
@@ -131,13 +157,14 @@ public class CourseDetailsPanel extends JPanel {
                 AppTheme.BTN_CANCEL_BG,
                 AppTheme.BTN_CANCEL_FG,
                 AppTheme.BTN_CANCEL_HOVER,
-                new Dimension(120, 40)
+                AppConfig.BUTTON_SIZE_CLOSE
         );
 
         btnSave.setVisible(false);
         btnCancel.setVisible(false);
 
         btnClose.addActionListener(e -> {
+            notifyEditModeChanged(false);
             setVisible(false);
             if (onCloseAction != null) {
                 onCloseAction.run();
@@ -155,6 +182,7 @@ public class CourseDetailsPanel extends JPanel {
             btnClose.setVisible(false);
             btnSave.setVisible(true);
             btnCancel.setVisible(true);
+            notifyEditModeChanged(true);
         });
 
         btnDelete.addActionListener(e -> deleteCurrentCourse());
@@ -168,6 +196,7 @@ public class CourseDetailsPanel extends JPanel {
             btnCancel.setVisible(false);
             btnEdit.setVisible(true);
             btnClose.setVisible(true);
+            notifyEditModeChanged(false);
         });
 
         btnSave.addActionListener(e -> {
@@ -177,6 +206,7 @@ public class CourseDetailsPanel extends JPanel {
                 btnCancel.setVisible(false);
                 btnEdit.setVisible(true);
                 btnClose.setVisible(true);
+                notifyEditModeChanged(false);
             }
         });
 
@@ -193,6 +223,10 @@ public class CourseDetailsPanel extends JPanel {
         return mainActionPanel;
     }
 
+    /**
+     * save updated course data from edit form
+     * @author janith
+     */
     private boolean saveUpdatedData() {
         if (currentCourse == null) {
             return false;
@@ -212,6 +246,10 @@ public class CourseDetailsPanel extends JPanel {
         }
     }
 
+    /**
+     * delete currently selected course
+     * @author janith
+     */
     private void deleteCurrentCourse() {
         if (currentCourse == null) {
             return;
@@ -232,6 +270,7 @@ public class CourseDetailsPanel extends JPanel {
         try {
             editCourseController.deleteCourse(currentCourse.getId());
             JOptionPane.showMessageDialog(this, "Course deleted successfully!");
+            notifyEditModeChanged(false);
             setVisible(false);
 
             if (onCourseDeletedAction != null) {
@@ -254,11 +293,19 @@ public class CourseDetailsPanel extends JPanel {
     private JLabel createStyledLabel(String text, FontAwesomeSolid icon) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontPlain(14));
-        label.setIcon(FontIcon.of(icon, 16, tealColor));
+        label.setForeground(AppTheme.TEXT_DARK);
+        label.setIcon(FontIcon.of(icon, 16, AppTheme.ICON_ACCENT));
         label.setIconTextGap(12);
+        label.setPreferredSize(DETAIL_LABEL_SIZE);
+        label.setMinimumSize(DETAIL_LABEL_SIZE);
         return label;
     }
 
+    /**
+     * apply selected course values to details card
+     * @param course selected course
+     * @author janith
+     */
     public void updateDetails(Course course) {
         this.currentCourse = course;
 
@@ -274,26 +321,67 @@ public class CourseDetailsPanel extends JPanel {
         editCourseDetailsPanel.setCourseData(course);
 
         cardLayout.show(container, VIEW_CARD);
+        notifyEditModeChanged(false);
         setVisible(true);
     }
 
+    /**
+     * set close action callback
+     * @param onCloseAction close callback
+     * @author janith
+     */
     public void setOnCloseAction(Runnable onCloseAction) {
         this.onCloseAction = onCloseAction;
     }
 
+    /**
+     * set course updated callback
+     * @param onCourseUpdatedAction update callback
+     * @author janith
+     */
     public void setOnCourseUpdatedAction(Runnable onCourseUpdatedAction) {
         this.onCourseUpdatedAction = onCourseUpdatedAction;
     }
 
+    /**
+     * set course deleted callback
+     * @param onCourseDeletedAction delete callback
+     * @author janith
+     */
     public void setOnCourseDeletedAction(Runnable onCourseDeletedAction) {
         this.onCourseDeletedAction = onCourseDeletedAction;
     }
 
+    /**
+     * set edit mode state callback
+     * @param onEditModeChangedAction edit mode callback
+     * @author janith
+     */
+    public void setOnEditModeChangedAction(Consumer<Boolean> onEditModeChangedAction) {
+        this.onEditModeChangedAction = onEditModeChangedAction;
+    }
+
+    /**
+     * set department lookup data for edit form
+     * @param departments department list
+     * @author janith
+     */
     public void setDepartments(List<Department> departments) {
         editCourseDetailsPanel.setDepartments(departments);
     }
 
+    /**
+     * set lecturer lookup data for edit form
+     * @param lecturers lecturer list
+     * @author janith
+     */
     public void setLecturers(List<Staff> lecturers) {
         editCourseDetailsPanel.setLecturers(lecturers);
+    }
+
+    private void notifyEditModeChanged(boolean editing) {
+        if (onEditModeChangedAction != null) {
+            onEditModeChangedAction.accept(editing);
+        }
     }
 }

@@ -6,6 +6,8 @@ import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.ProfilePhotoFrame;
+import com.fot.system.view.components.ThemedComboBox;
+import com.fot.system.view.components.ThemedDatePicker;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -13,6 +15,10 @@ import java.awt.*;
 import java.io.File;
 import java.util.List;
 
+/**
+ * render add-user form for admin manage users flow
+ * @author janith
+ */
 public class AddNewUserPanel extends JPanel {
     private static final String STUDENT_CARD = "STUDENT";
     private static final String STAFF_CARD = "STAFF";
@@ -24,7 +30,7 @@ public class AddNewUserPanel extends JPanel {
     private JTextField txtPhone;
     private JTextField txtAddress;
     private JTextField txtProfilePicture;
-    private JTextField txtDob;
+    private ThemedDatePicker txtDob;
     private JComboBox<Department> cmbDepartment;
     private ProfilePhotoFrame profilePhotoFrame;
 
@@ -44,6 +50,10 @@ public class AddNewUserPanel extends JPanel {
     private Runnable onCloseAction;
     private Runnable onSaveAction;
 
+    /**
+     * initialize add-user panel layout and actions
+     * @author janith
+     */
     public AddNewUserPanel() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
@@ -65,6 +75,10 @@ public class AddNewUserPanel extends JPanel {
         updateRoleSpecificFields();
     }
 
+    /**
+     * create add-user input form content
+     * @author janith
+     */
     private JPanel createFormPanel() {
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
@@ -81,11 +95,11 @@ public class AddNewUserPanel extends JPanel {
         txtAddress = new JTextField(15);
         txtProfilePicture = new JTextField(15);
         txtProfilePicture.setEditable(false);
-        txtDob = new JTextField(15);
-        cmbDepartment = new JComboBox<>();
+        txtDob = new ThemedDatePicker();
+        cmbDepartment = new ThemedComboBox<>();
         profilePhotoFrame = new ProfilePhotoFrame("No image selected");
 
-        cmbRole = new JComboBox<>(new String[]{
+        cmbRole = new ThemedComboBox<>(new String[]{
                 AppConfig.ROLE_STUDENT,
                 AppConfig.ROLE_LECTURER,
                 AppConfig.ROLE_TO,
@@ -93,7 +107,7 @@ public class AddNewUserPanel extends JPanel {
         });
         cmbRole.addActionListener(e -> updateRoleSpecificFields());
 
-        cmbStatus = new JComboBox<>(new String[]{
+        cmbStatus = new ThemedComboBox<>(new String[]{
                 AppConfig.STATUS_ACTIVE,
                 AppConfig.STATUS_BLOCKED,
                 "SUSPENDED"
@@ -123,6 +137,10 @@ public class AddNewUserPanel extends JPanel {
         return formPanel;
     }
 
+    /**
+     * initialize role-specific student/staff card inputs
+     * @author janith
+     */
     private void initializeRoleSpecificPanel() {
         roleSpecificPanel.setBackground(Color.WHITE);
 
@@ -135,7 +153,7 @@ public class AddNewUserPanel extends JPanel {
 
         txtRegistrationNo = new JTextField(15);
         txtRegistrationYear = new JTextField(15);
-        cmbStudentType = new JComboBox<>(new String[]{"PROPER", "REPEAT"});
+        cmbStudentType = new ThemedComboBox<>(new String[]{"PROPER", "REPEAT", "BATCH_MISSED"});
 
         addFormRow(studentPanel, "Registration No:", txtRegistrationNo, 0, studentGbc);
         addFormRow(studentPanel, "Registration Year:", txtRegistrationYear, 1, studentGbc);
@@ -158,6 +176,10 @@ public class AddNewUserPanel extends JPanel {
         roleSpecificPanel.add(staffPanel, STAFF_CARD);
     }
 
+    /**
+     * create footer actions for close and save
+     * @author janith
+     */
     private JPanel createBottomActions() {
         JPanel mainActionPanel = new JPanel(new BorderLayout());
         mainActionPanel.setOpaque(false);
@@ -203,6 +225,10 @@ public class AddNewUserPanel extends JPanel {
         return mainActionPanel;
     }
 
+    /**
+     * create profile picture path selector and actions
+     * @author janith
+     */
     private JPanel createProfilePictureSelector() {
         JPanel panel = new JPanel(new BorderLayout(8, 0));
         panel.setOpaque(false);
@@ -236,6 +262,10 @@ public class AddNewUserPanel extends JPanel {
         return panel;
     }
 
+    /**
+     * open file chooser and bind selected image path
+     * @author janith
+     */
     private void chooseProfilePicture() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select Profile Picture");
@@ -249,11 +279,20 @@ public class AddNewUserPanel extends JPanel {
         }
     }
 
+    /**
+     * clear selected profile picture and preview
+     * @author janith
+     */
     private void clearProfilePicture() {
         txtProfilePicture.setText("");
         profilePhotoFrame.clearImage();
     }
 
+    /**
+     * update profile preview image
+     * @param imagePath image path
+     * @author janith
+     */
     private void updateImagePreview(String imagePath) {
         if (imagePath == null || imagePath.trim().isEmpty()) {
             clearProfilePicture();
@@ -262,6 +301,10 @@ public class AddNewUserPanel extends JPanel {
         profilePhotoFrame.setImagePath(imagePath);
     }
 
+    /**
+     * toggle student or staff card based on selected role
+     * @author janith
+     */
     private void updateRoleSpecificFields() {
         if (isStudentRole()) {
             roleCardLayout.show(roleSpecificPanel, STUDENT_CARD);
@@ -273,6 +316,10 @@ public class AddNewUserPanel extends JPanel {
         roleSpecificPanel.repaint();
     }
 
+    /**
+     * reset all form fields to defaults
+     * @author janith
+     */
     public void resetForm() {
         cmbRole.setSelectedItem(AppConfig.ROLE_STUDENT);
         txtFirstName.setText("");
@@ -298,6 +345,10 @@ public class AddNewUserPanel extends JPanel {
         updateRoleSpecificFields();
     }
 
+    /**
+     * build add-user dto from current form values
+     * @author janith
+     */
     public AddUserRequest buildRequest() {
         return new AddUserRequest(
                 getRole(),
@@ -319,75 +370,148 @@ public class AddNewUserPanel extends JPanel {
         );
     }
 
+    /**
+     * get selected role value
+     * @author janith
+     */
     public String getRole() {
         return cmbRole.getSelectedItem() == null ? "" : cmbRole.getSelectedItem().toString();
     }
 
+    /**
+     * get first name input value
+     * @author janith
+     */
     public String getFirstName() {
         return txtFirstName.getText().trim();
     }
 
+    /**
+     * get last name input value
+     * @author janith
+     */
     public String getLastName() {
         return txtLastName.getText().trim();
     }
 
+    /**
+     * get email input value
+     * @author janith
+     */
     public String getEmail() {
         return txtEmail.getText().trim();
     }
 
+    /**
+     * get password input value
+     * @author janith
+     */
     public String getPassword() {
         return new String(txtPassword.getPassword()).trim();
     }
 
+    /**
+     * get phone input value
+     * @author janith
+     */
     public String getPhone() {
         return txtPhone.getText().trim();
     }
 
+    /**
+     * get address input value
+     * @author janith
+     */
     public String getAddress() {
         return txtAddress.getText().trim();
     }
 
+    /**
+     * get selected profile image path
+     * @author janith
+     */
     public String getProfilePicturePath() {
         return txtProfilePicture.getText().trim();
     }
 
+    /**
+     * get date of birth input value
+     * @author janith
+     */
     public String getDob() {
         return txtDob.getText().trim();
     }
 
+    /**
+     * get selected department id value
+     * @author janith
+     */
     public String getDepartmentId() {
         Department department = getSelectedDepartment();
         return department == null ? "" : String.valueOf(department.getDepartmentId());
     }
 
+    /**
+     * get selected status value
+     * @author janith
+     */
     public String getStatus() {
         return cmbStatus.getSelectedItem() == null ? "" : cmbStatus.getSelectedItem().toString();
     }
 
+    /**
+     * get registration number input value
+     * @author janith
+     */
     public String getRegistrationNo() {
         return txtRegistrationNo.getText().trim();
     }
 
+    /**
+     * get registration year input value
+     * @author janith
+     */
     public String getRegistrationYear() {
         return txtRegistrationYear.getText().trim();
     }
 
+    /**
+     * get selected student type value
+     * @author janith
+     */
     public String getStudentType() {
         return cmbStudentType.getSelectedItem() == null ? "" : cmbStudentType.getSelectedItem().toString();
     }
 
+    /**
+     * get staff code input value
+     * @author janith
+     */
     public String getStaffCode() {
         return txtStaffCode.getText().trim();
     }
 
+    /**
+     * get designation input value
+     * @author janith
+     */
     public String getDesignation() {
         return txtDesignation.getText().trim();
     }
 
+    /**
+     * check whether selected role is student
+     * @author janith
+     */
     public boolean isStudentRole() {
         return AppConfig.ROLE_STUDENT.equals(getRole());
     }
 
+    /**
+     * bind available department options to combo box
+     * @param departments department list
+     * @author janith
+     */
     public void setDepartments(List<Department> departments) {
         DefaultComboBoxModel<Department> model = new DefaultComboBoxModel<>();
         for (Department department : departments) {
@@ -399,14 +523,28 @@ public class AddNewUserPanel extends JPanel {
         }
     }
 
+    /**
+     * register close callback
+     * @param onCloseAction callback function
+     * @author janith
+     */
     public void setOnCloseAction(Runnable onCloseAction) {
         this.onCloseAction = onCloseAction;
     }
 
+    /**
+     * register save callback
+     * @param onSaveAction callback function
+     * @author janith
+     */
     public void setOnSaveAction(Runnable onSaveAction) {
         this.onSaveAction = onSaveAction;
     }
 
+    /**
+     * add labeled component row to form layout
+     * @author janith
+     */
     private void addFormRow(JPanel panel, String label, Component component, int row, GridBagConstraints gbc) {
         gbc.gridy = row;
         gbc.gridx = 0;
@@ -419,6 +557,10 @@ public class AddNewUserPanel extends JPanel {
         panel.add(component, gbc);
     }
 
+    /**
+     * resolve selected department from combo model
+     * @author janith
+     */
     private Department getSelectedDepartment() {
         Object selectedItem = cmbDepartment.getSelectedItem();
         if (selectedItem instanceof Department) {

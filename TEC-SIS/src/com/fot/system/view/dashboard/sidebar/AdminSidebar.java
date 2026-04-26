@@ -6,10 +6,19 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import javax.swing.*;
 
 public class AdminSidebar extends BaseSidebar {
+    /**
+     * initialize admin sidebar
+     * @param frame MainDashboard parent frame
+     * @author methum
+     */
     public AdminSidebar(MainDashboard frame) {
         super(frame, "ADMIN");
     }
 
+    /**
+     * add admin specific menu buttons
+     * @author methum
+     */
     @Override
     protected void addRoleSpecificButtons() {
 

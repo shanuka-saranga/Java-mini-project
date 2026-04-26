@@ -72,7 +72,7 @@ public class AssessmentMarksDetailPanel extends JPanel {
         txtSearch = new JTextField();
         txtSearch.setFont(AppTheme.fontPlain(14));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {

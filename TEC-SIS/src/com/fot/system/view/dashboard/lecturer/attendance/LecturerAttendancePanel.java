@@ -18,9 +18,21 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.List;
 
+/**
+ * show lecturer attendance dashboard with course list, session rows and student summary
+ * @author poornika
+ */
 public class LecturerAttendancePanel extends JPanel {
     private static final String LIST_CARD = "LIST";
     private static final String DETAILS_CARD = "DETAILS";
+    private static final int COL_ATTENDANCE_STATUS = 8;
+    private static final int COL_MEDICAL_STATUS = 9;
+    private static final String STATUS_PRESENT = "PRESENT";
+    private static final String STATUS_ABSENT = "ABSENT";
+    private static final String MEDICAL_APPROVED = "APPROVED";
+    private static final Color MEDICAL_ROW_COLOR = new Color(46, 204, 113, 80);
+    private static final Color PRESENT_ROW_COLOR = new Color(241, 196, 15, 80);
+    private static final Color ABSENT_ROW_COLOR = new Color(231, 76, 60, 80);
     private static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("0.00");
 
     private final User currentUser;
@@ -43,6 +55,11 @@ public class LecturerAttendancePanel extends JPanel {
     private TableRowSorter<DefaultTableModel> rowSorter;
     private TableRowSorter<DefaultTableModel> summaryRowSorter;
 
+    /**
+     * initialize lecturer attendance panel and bind data sources
+     * @param user logged in lecturer
+     * @author poornika
+     */
     public LecturerAttendancePanel(User user) {
         this.currentUser = user;
         this.courseService = new CourseService();
@@ -80,7 +97,7 @@ public class LecturerAttendancePanel extends JPanel {
         heldProgressBar.setString("0.00%");
         heldProgressBar.setForeground(AppTheme.PRIMARY);
         heldProgressBar.setBackground(AppTheme.SURFACE_MUTED);
-        heldProgressBar.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        heldProgressBar.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
 
         JPanel detailsView = new JPanel(new BorderLayout());
         detailsView.setOpaque(false);
@@ -88,7 +105,7 @@ public class LecturerAttendancePanel extends JPanel {
         JPanel openedCoursePanel = new JPanel(new BorderLayout(0, 16));
         openedCoursePanel.setBackground(AppTheme.CARD_BG);
         openedCoursePanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(22, 22, 22, 22)
         ));
 
@@ -97,7 +114,7 @@ public class LecturerAttendancePanel extends JPanel {
         panelHeader.add(lblOpenedCourseTab, BorderLayout.WEST);
 
         CloseActionButton closeButton = new CloseActionButton();
-        closeButton.addActionListener(e -> cardLayout.show(cardPanel, LIST_CARD));
+        closeButton.addActionListener(e -> showCourseListView());
         panelHeader.add(closeButton, BorderLayout.EAST);
 
         JPanel searchPanel = new JPanel(new BorderLayout(10, 0));
@@ -110,7 +127,7 @@ public class LecturerAttendancePanel extends JPanel {
         txtSearch = new JTextField();
         txtSearch.setFont(AppTheme.fontPlain(13));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -150,7 +167,25 @@ public class LecturerAttendancePanel extends JPanel {
             }
         };
 
-        attendanceTable = new JTable(tableModel);
+        attendanceTable = new JTable(tableModel) {
+            @Override
+            public Component prepareRenderer(javax.swing.table.TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                if (isRowSelected(row)) {
+                    component.setBackground(getSelectionBackground());
+                    component.setForeground(getSelectionForeground());
+                    return component;
+                }
+
+                int modelRow = convertRowIndexToModel(row);
+                String attendanceStatus = safeString(tableModel.getValueAt(modelRow, COL_ATTENDANCE_STATUS));
+                String medicalStatus = safeString(tableModel.getValueAt(modelRow, COL_MEDICAL_STATUS));
+
+                component.setForeground(AppTheme.TEXT_DARK);
+                component.setBackground(resolveAttendanceRowColor(attendanceStatus, medicalStatus));
+                return component;
+            }
+        };
         attendanceTable.setAutoCreateRowSorter(true);
         attendanceTable.setRowHeight(28);
         attendanceTable.setFont(AppTheme.fontPlain(13));
@@ -167,7 +202,7 @@ public class LecturerAttendancePanel extends JPanel {
         attendanceTable.setRowSorter(rowSorter);
 
         JScrollPane tableScrollPane = new JScrollPane(attendanceTable);
-        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         tableScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         tableScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -198,7 +233,7 @@ public class LecturerAttendancePanel extends JPanel {
         studentSummaryTable.setRowSorter(summaryRowSorter);
 
         JScrollPane summaryTableScrollPane = new JScrollPane(studentSummaryTable);
-        summaryTableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        summaryTableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         summaryTableScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         summaryTableScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -237,6 +272,10 @@ public class LecturerAttendancePanel extends JPanel {
         loadAssignedCourses();
     }
 
+    /**
+     * create top heading section for attendance page
+     * @author poornika
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
@@ -254,6 +293,11 @@ public class LecturerAttendancePanel extends JPanel {
         return header;
     }
 
+    /**
+     * create styled scroll pane wrapper
+     * @param content wrapped content panel
+     * @author poornika
+     */
     private JScrollPane createScrollPane(JPanel content) {
         JScrollPane scrollPane = new JScrollPane(content);
         scrollPane.setBorder(null);
@@ -262,6 +306,10 @@ public class LecturerAttendancePanel extends JPanel {
         return scrollPane;
     }
 
+    /**
+     * load lecturer assigned courses in background
+     * @author poornika
+     */
     private void loadAssignedCourses() {
         SwingWorker<List<Course>, Void> worker = new SwingWorker<>() {
             @Override
@@ -288,6 +336,10 @@ public class LecturerAttendancePanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * render selectable lecturer course cards
+     * @author poornika
+     */
     private void renderCourseList() {
         courseListPanel.removeAll();
 
@@ -316,6 +368,11 @@ public class LecturerAttendancePanel extends JPanel {
         courseListPanel.repaint();
     }
 
+    /**
+     * open selected course details and trigger data load
+     * @param course selected course
+     * @author poornika
+     */
     private void openCourse(Course course) {
         selectedCourse = course;
         lblOpenedCourseTab.setText(course.getCourseName());
@@ -324,6 +381,21 @@ public class LecturerAttendancePanel extends JPanel {
         cardLayout.show(cardPanel, DETAILS_CARD);
     }
 
+    /**
+     * return to course list and clear active search text
+     * @author poornika
+     */
+    private void showCourseListView() {
+        txtSearch.setText("");
+        selectedCourse = null;
+        lblOpenedCourseTab.setText("Opened Course");
+        cardLayout.show(cardPanel, LIST_CARD);
+    }
+
+    /**
+     * load attendance rows and summary details for selected course
+     * @author poornika
+     */
     private void loadAttendanceRows() {
         if (selectedCourse == null) {
             return;
@@ -353,12 +425,22 @@ public class LecturerAttendancePanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * update all sections with loaded view data
+     * @param viewData view data container
+     * @author poornika
+     */
     private void updateView(CourseAttendanceViewData viewData) {
         updateTable(viewData.getAttendanceRows());
         updateProgress(viewData.getCourseProgress());
         updateStudentSummaryTable(viewData.getStudentSummaryRows());
     }
 
+    /**
+     * bind attendance rows to main table
+     * @param rows attendance rows
+     * @author poornika
+     */
     private void updateTable(List<AttendanceTableRow> rows) {
         tableModel.setRowCount(0);
         for (AttendanceTableRow row : rows) {
@@ -377,12 +459,22 @@ public class LecturerAttendancePanel extends JPanel {
         }
     }
 
+    /**
+     * update progress label and progress bar values
+     * @param progress course progress
+     * @author poornika
+     */
     private void updateProgress(AttendanceCourseProgress progress) {
         heldProgressBar.setValue((int) Math.round(progress.getProgressPercentage()));
         heldProgressBar.setString(PERCENT_FORMAT.format(progress.getProgressPercentage()) + "%");
         lblHeldProgress.setText("Course Progress: " + progress.getHeldHours() + "/" + progress.getTotalHours() + " hours held");
     }
 
+    /**
+     * bind student summary rows to summary table
+     * @param summaryRows summary rows
+     * @author poornika
+     */
     private void updateStudentSummaryTable(List<StudentAttendanceSummaryRow> summaryRows) {
         studentSummaryTableModel.setRowCount(0);
         for (StudentAttendanceSummaryRow summaryRow : summaryRows) {
@@ -398,6 +490,10 @@ public class LecturerAttendancePanel extends JPanel {
         }
     }
 
+    /**
+     * apply search text filter on both tables
+     * @author poornika
+     */
     private void applySearchFilter() {
         String text = txtSearch.getText() == null ? "" : txtSearch.getText().trim();
         if (text.isEmpty()) {
@@ -411,6 +507,12 @@ public class LecturerAttendancePanel extends JPanel {
         }
     }
 
+    /**
+     * attach one click handler recursively for a card tree
+     * @param component root component
+     * @param adapter click adapter
+     * @author poornika
+     */
     private void attachClickHandler(Component component, MouseAdapter adapter) {
         component.addMouseListener(adapter);
         if (component instanceof Container container) {
@@ -420,6 +522,10 @@ public class LecturerAttendancePanel extends JPanel {
         }
     }
 
+    /**
+     * build fallback empty data object for error states
+     * @author poornika
+     */
     private CourseAttendanceViewData createEmptyViewData() {
         AttendanceCourseProgress progress = new AttendanceCourseProgress();
         progress.setHeldHours(0);
@@ -431,5 +537,67 @@ public class LecturerAttendancePanel extends JPanel {
         viewData.setAttendanceRows(List.of());
         viewData.setStudentSummaryRows(List.of());
         return viewData;
+    }
+
+    /**
+     * resolve row highlight color based on attendance and medical statuses
+     * @param attendanceStatus attendance status
+     * @param medicalStatus medical approval status
+     * @author poornika
+     */
+    private Color resolveAttendanceRowColor(String attendanceStatus, String medicalStatus) {
+        if (isMedicalRow(medicalStatus)) {
+            return MEDICAL_ROW_COLOR;
+        }
+
+        String normalizedStatus = normalize(attendanceStatus);
+        if (STATUS_PRESENT.equals(normalizedStatus)) {
+            return PRESENT_ROW_COLOR;
+        }
+        if (STATUS_ABSENT.equals(normalizedStatus)) {
+            return ABSENT_ROW_COLOR;
+        }
+        return AppTheme.CARD_BG;
+    }
+
+    /**
+     * identify whether row has approved/active medical status
+     * @param medicalStatus medical status value
+     * @author poornika
+     */
+    private boolean isMedicalRow(String medicalStatus) {
+        String normalizedMedical = normalize(medicalStatus);
+        if (normalizedMedical.isEmpty()) {
+            return false;
+        }
+        if (MEDICAL_APPROVED.equals(normalizedMedical)) {
+            return true;
+        }
+        return !normalizedMedical.isEmpty()
+                && !"-".equals(normalizedMedical)
+                && !"NONE".equals(normalizedMedical)
+                && !"NO".equals(normalizedMedical)
+                && !"N/A".equals(normalizedMedical)
+                && !"NOT_SUBMITTED".equals(normalizedMedical)
+                && !"NOT SUBMITTED".equals(normalizedMedical)
+                && !"REJECTED".equals(normalizedMedical);
+    }
+
+    /**
+     * convert nullable table values to text
+     * @param value cell value
+     * @author poornika
+     */
+    private String safeString(Object value) {
+        return value == null ? "" : String.valueOf(value);
+    }
+
+    /**
+     * normalize status text for comparisons
+     * @param value status value
+     * @author poornika
+     */
+    private String normalize(String value) {
+        return value == null ? "" : value.trim().toUpperCase();
     }
 }

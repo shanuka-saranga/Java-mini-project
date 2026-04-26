@@ -188,7 +188,7 @@ public class TOMedicalPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout(0, 10));
         panel.setBackground(AppTheme.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(14, 14, 14, 14)
         ));
         panel.add(metaLabel, BorderLayout.NORTH);
@@ -216,7 +216,7 @@ public class TOMedicalPanel extends JPanel {
 
     private JScrollPane createScrollPane(JTable table, int preferredHeight) {
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         scrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setPreferredSize(new Dimension(0, preferredHeight));
@@ -253,10 +253,10 @@ public class TOMedicalPanel extends JPanel {
             protected void done() {
                 try {
                     MedicalPanelData data = get();
-                    pendingRows = data.pendingRows;
-                    approvedRows = data.approvedRows;
-                    renderPendingRows(data.pendingRows);
-                    renderApprovedRows(data.approvedRows);
+                    pendingRows = data.getPendingRows();
+                    approvedRows = data.getApprovedRows();
+                    renderPendingRows(data.getPendingRows());
+                    renderApprovedRows(data.getApprovedRows());
                     clearDetails(lblPendingDetailsMeta, pendingDetailsTableModel, pendingDetailsPanel);
                     clearDetails(lblApprovedDetailsMeta, approvedDetailsTableModel, approvedDetailsPanel);
                 } catch (Exception e) {
@@ -384,16 +384,6 @@ public class TOMedicalPanel extends JPanel {
             Desktop.getDesktop().open(new File(path));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Unable to open document.", "Medical", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private static class MedicalPanelData {
-        private final List<MedicalApprovalRow> pendingRows;
-        private final List<MedicalApprovalRow> approvedRows;
-
-        private MedicalPanelData(List<MedicalApprovalRow> pendingRows, List<MedicalApprovalRow> approvedRows) {
-            this.pendingRows = pendingRows;
-            this.approvedRows = approvedRows;
         }
     }
 

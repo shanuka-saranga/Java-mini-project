@@ -15,15 +15,29 @@ import java.text.SimpleDateFormat;
 public class CourseMaterialCard extends JPanel {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
+    /**
+     * create material card with only open action
+     * @param material material entity
+     * @param onOpen open action callback
+     * @author poornika
+     */
     public CourseMaterialCard(CourseMaterial material, Runnable onOpen) {
         this(material, onOpen, null, null);
     }
 
+    /**
+     * create material card with optional actions
+     * @param material material entity
+     * @param onOpen open action callback
+     * @param onEdit edit action callback
+     * @param onDelete delete action callback
+     * @author poornika
+     */
     public CourseMaterialCard(CourseMaterial material, Runnable onOpen, Runnable onEdit, Runnable onDelete) {
         setLayout(new BorderLayout(14, 0));
         setBackground(AppTheme.CARD_MUTED_BG);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.CARD_BORDER, 1, true),
+                BorderFactory.createLineBorder(AppTheme.CARD_BORDER, 1, false),
                 new EmptyBorder(14, 14, 14, 14)
         ));
         setPreferredSize(new Dimension(0, 118));
@@ -35,6 +49,11 @@ public class CourseMaterialCard extends JPanel {
         add(createActions(onOpen, onEdit, onDelete), BorderLayout.EAST);
     }
 
+    /**
+     * create left-side file type icon
+     * @param material material entity
+     * @author poornika
+     */
     private JComponent createFileIcon(CourseMaterial material) {
         JPanel wrap = new JPanel(new GridBagLayout());
         wrap.setOpaque(false);
@@ -51,6 +70,11 @@ public class CourseMaterialCard extends JPanel {
         return wrap;
     }
 
+    /**
+     * create card text content area
+     * @param material material entity
+     * @author poornika
+     */
     private JComponent createTextContent(CourseMaterial material) {
         JPanel content = new JPanel();
         content.setOpaque(false);
@@ -81,6 +105,13 @@ public class CourseMaterialCard extends JPanel {
         return content;
     }
 
+    /**
+     * create right-side action button area
+     * @param onOpen open action callback
+     * @param onEdit edit action callback
+     * @param onDelete delete action callback
+     * @author poornika
+     */
     private JComponent createActions(Runnable onOpen, Runnable onEdit, Runnable onDelete) {
         JPanel actions = new JPanel();
         actions.setOpaque(false);
@@ -125,6 +156,11 @@ public class CourseMaterialCard extends JPanel {
         return actions;
     }
 
+    /**
+     * build description text with safe fallback
+     * @param material material entity
+     * @author poornika
+     */
     private static String buildBody(CourseMaterial material) {
         String description = material.getDescription() == null || material.getDescription().trim().isEmpty()
                 ? "No description provided."
@@ -132,6 +168,11 @@ public class CourseMaterialCard extends JPanel {
         return description;
     }
 
+    /**
+     * build metadata line shown at card footer
+     * @param material material entity
+     * @author poornika
+     */
     private static String buildMeta(CourseMaterial material) {
         String uploadedAt = material.getUploadedAt() == null ? "-" : DATE_FORMAT.format(material.getUploadedAt());
         String uploadedBy = material.getUploadedByName() == null || material.getUploadedByName().trim().isEmpty()
@@ -143,6 +184,11 @@ public class CourseMaterialCard extends JPanel {
         return fileType + "  |  Uploaded: " + uploadedAt + "  |  By: " + uploadedBy;
     }
 
+    /**
+     * resolve icon by material file type
+     * @param material material entity
+     * @author poornika
+     */
     private FontAwesomeSolid resolveFileIcon(CourseMaterial material) {
         String fileType = material.getFileType() == null ? "" : material.getFileType().trim().toLowerCase();
         if (fileType.equals("pdf")) {

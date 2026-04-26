@@ -39,7 +39,7 @@ public class TimetableSessionDialog extends JDialog {
         JPanel form = new JPanel(new GridLayout(0, 2, 14, 14));
         form.setBackground(AppTheme.CARD_BG);
         form.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(18, 18, 18, 18)
         ));
 

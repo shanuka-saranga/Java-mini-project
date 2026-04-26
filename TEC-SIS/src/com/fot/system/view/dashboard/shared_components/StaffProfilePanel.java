@@ -1,6 +1,5 @@
-package com.fot.system.view.dashboard.shared;
+package com.fot.system.view.dashboard.shared_components;
 
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 
 public class StaffProfilePanel extends UserProfilePanel {
@@ -24,13 +23,4 @@ public class StaffProfilePanel extends UserProfilePanel {
         return "Review your staff profile and update the personal information allowed for staff accounts.";
     }
 
-    @Override
-    protected String getViewAccessHint() {
-        return "You can update your profile photo, phone number, address, date of birth, and password.";
-    }
-
-    @Override
-    protected String getEditAccessHint() {
-        return "Allowed updates for your role: photo, phone number, address, date of birth, and password.";
-    }
 }

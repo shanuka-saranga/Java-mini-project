@@ -1,7 +1,4 @@
 package com.fot.system.model.dto;
-
-import com.fot.system.model.entity.*;
-
 public class AddNoticeRequest {
     private final String title;
     private final String content;

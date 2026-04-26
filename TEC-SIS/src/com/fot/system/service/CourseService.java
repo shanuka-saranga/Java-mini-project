@@ -8,6 +8,10 @@ import com.fot.system.repository.DepartmentRepository;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * manage course business logic and validation
+ * @author janith
+ */
 public class CourseService {
 
     private static final Set<String> VALID_SESSION_TYPES = Set.of("THEORY", "PRACTICAL", "BOTH");
@@ -15,19 +19,36 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final DepartmentRepository departmentRepository;
 
+    /**
+     * initialize course service dependencies
+     * @author janith
+     */
     public CourseService() {
         this.courseRepository = new CourseRepository();
         this.departmentRepository = new DepartmentRepository();
     }
 
+    /**
+     * get all courses
+     * @author janith
+     */
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
     }
 
+    /**
+     * get total course count
+     * @author janith
+     */
     public int getCourseCount() {
         return courseRepository.countAll();
     }
 
+    /**
+     * get courses assigned to lecturer
+     * @param lecturerId lecturer user id
+     * @author poornika
+     */
     public List<Course> getCoursesByLecturerId(int lecturerId) {
         if (lecturerId <= 0) {
             throw new RuntimeException("Invalid lecturer ID.");
@@ -35,10 +56,20 @@ public class CourseService {
         return courseRepository.findByLecturerId(lecturerId);
     }
 
+    /**
+     * get total course count for lecturer
+     * @param lecturerId lecturer user id
+     * @author poornika
+     */
     public int getCourseCountByLecturerId(int lecturerId) {
         return getCoursesByLecturerId(lecturerId).size();
     }
 
+    /**
+     * get courses for a student by user id
+     * @param studentUserId student user id
+     * @author janith
+     */
     public List<Course> getCoursesByStudentUserId(int studentUserId) {
         if (studentUserId <= 0) {
             throw new RuntimeException("Invalid student user ID.");
@@ -46,6 +77,11 @@ public class CourseService {
         return courseRepository.findByStudentUserId(studentUserId);
     }
 
+    /**
+     * find course by course code
+     * @param courseCode course code
+     * @author janith
+     */
     public Course getCourseByCode(String courseCode) {
         if (normalize(courseCode).isEmpty()) {
             throw new RuntimeException("Course code is required.");
@@ -53,6 +89,11 @@ public class CourseService {
         return courseRepository.findByCourseCode(courseCode.trim().toUpperCase());
     }
 
+    /**
+     * find course by id
+     * @param courseId course id
+     * @author janith
+     */
     public Course getCourseById(int courseId) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
@@ -60,14 +101,27 @@ public class CourseService {
         return courseRepository.findById(courseId);
     }
 
+    /**
+     * get all departments for lookup
+     * @author janith
+     */
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
     }
 
+    /**
+     * get all lecturers for lookup
+     * @author janith
+     */
     public List<Staff> getAllLecturers() {
         return courseRepository.findAllLecturers();
     }
 
+    /**
+     * add new course after validation
+     * @param request add course request payload
+     * @author janith
+     */
     public Course addCourse(AddCourseRequest request) {
         Course validatedCourse = validate(createCourse(request), false);
 
@@ -79,6 +133,11 @@ public class CourseService {
         return courseRepository.findByCourseCode(validatedCourse.getCourseCode());
     }
 
+    /**
+     * update existing course after validation
+     * @param request edit course request payload
+     * @author janith
+     */
     public Course updateCourse(EditCourseRequest request) {
         Course course = createCourse(request);
         course.setId(request.getCourseId());
@@ -99,6 +158,11 @@ public class CourseService {
         return courseRepository.findByCourseCode(validatedCourse.getCourseCode());
     }
 
+    /**
+     * delete course by id
+     * @param courseId course id
+     * @author janith
+     */
     public void deleteCourse(int courseId) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
@@ -109,6 +173,12 @@ public class CourseService {
         }
     }
 
+    /**
+     * validate and normalize course entity values
+     * @param course course entity
+     * @param requireId require valid id for update flow
+     * @author janith
+     */
     private Course validate(Course course, boolean requireId) {
         if (course == null) {
             throw new RuntimeException("Course details are required.");
@@ -159,6 +229,11 @@ public class CourseService {
         return course;
     }
 
+    /**
+     * create course entity from add/edit request payload
+     * @param request add course request payload
+     * @author janith
+     */
     private Course createCourse(AddCourseRequest request) {
         Course course = new Course();
         course.setCourseCode(request.getCourseCode());
@@ -173,6 +248,12 @@ public class CourseService {
         return course;
     }
 
+    /**
+     * parse positive integer value
+     * @param value input value
+     * @param message validation message
+     * @author janith
+     */
     private int parsePositiveInt(String value, String message) {
         try {
             int parsedValue = Integer.parseInt(normalize(value));
@@ -185,6 +266,11 @@ public class CourseService {
         }
     }
 
+    /**
+     * parse optional integer value
+     * @param value input value
+     * @author janith
+     */
     private Integer parseOptionalInt(String value) {
         String normalizedValue = normalize(value);
         if (normalizedValue.isEmpty()) {
@@ -202,6 +288,12 @@ public class CourseService {
         }
     }
 
+    /**
+     * parse non-negative integer value
+     * @param value input value
+     * @param message validation message
+     * @author janith
+     */
     private int parseNonNegativeInt(String value, String message) {
         try {
             int parsedValue = Integer.parseInt(normalize(value));
@@ -214,6 +306,11 @@ public class CourseService {
         }
     }
 
+    /**
+     * normalize text by trimming spaces
+     * @param value input value
+     * @author janith
+     */
     private String normalize(String value) {
         return value == null ? "" : value.trim();
     }

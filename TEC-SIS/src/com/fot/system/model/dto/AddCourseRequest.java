@@ -1,7 +1,9 @@
 package com.fot.system.model.dto;
 
-import com.fot.system.model.entity.*;
-
+/**
+ * carry add course form input values
+ * @author janith
+ */
 public class AddCourseRequest {
     private final String courseCode;
     private final String courseName;
@@ -13,6 +15,19 @@ public class AddCourseRequest {
     private final String departmentId;
     private final String lecturerInChargeId;
 
+    /**
+     * initialize add course request payload
+     * @param courseCode course code
+     * @param courseName course name
+     * @param credits course credits
+     * @param totalHours total hours
+     * @param sessionType session type
+     * @param noOfQuizzes number of quizzes
+     * @param noOfAssignments number of assignments
+     * @param departmentId department id
+     * @param lecturerInChargeId lecturer in charge id
+     * @author janith
+     */
     public AddCourseRequest(String courseCode, String courseName, String credits, String totalHours,
                             String sessionType, String noOfQuizzes, String noOfAssignments, String departmentId, String lecturerInChargeId) {
         this.courseCode = courseCode;

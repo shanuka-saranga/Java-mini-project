@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 21, 2026 at 08:02 PM
+-- Generation Time: Apr 25, 2026 at 06:56 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -319,9 +319,11 @@ INSERT INTO `courses` (`id`, `course_code`, `course_name`, `credits`, `total_hou
 (3, 'ICT2132', 'Object Oriented Programming Practicum', 2, 60, 'PRACTICAL', 3, 1, 2, 5),
 (4, 'ICT2122', 'Object Oriented Programming', 2, 30, 'THEORY', 3, 1, 2, 5),
 (5, 'ICT2113', 'Data Structures and Algorithms', 3, 45, 'BOTH', 3, 1, 2, 6),
-(6, 'ENG2122', 'English III', 2, 30, 'THEORY', 3, 1, 2, NULL),
+(6, 'ENG2122', 'English III', 2, 30, 'THEORY', 3, 1, 2, 5),
 (7, 'TCS2122', 'Soft Skills', 2, 30, 'THEORY', 3, 1, 2, 3),
-(8, 'TCS2112', 'Business Economics', 2, 30, 'THEORY', 3, 1, 4, 4);
+(8, 'TCS2112', 'Business Economics', 2, 30, 'THEORY', 3, 1, 4, 4),
+(10, 'TEMP1234', 'computer history', 4, 50, 'THEORY', 3, 1, 2, 3),
+(11, 'TEMP1235', 'computer science 2', 3, 30, 'PRACTICAL', 3, 1, 1, 6);
 
 -- --------------------------------------------------------
 
@@ -340,6 +342,13 @@ CREATE TABLE `course_materials` (
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `status` enum('ACTIVE','ARCHIVED') NOT NULL DEFAULT 'ACTIVE'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `course_materials`
+--
+
+INSERT INTO `course_materials` (`id`, `course_id`, `title`, `description`, `file_path`, `file_type`, `uploaded_by`, `uploaded_at`, `status`) VALUES
+(2, 1, 'lecture 1', 'electronic commerece', '/Users/janith/Development/Java-mini-project/TEC-SIS/storage/course-materials/ict2152_lecture_1_1777124325169.pdf', 'PDF', 3, '2026-04-25 13:38:45', 'ACTIVE');
 
 -- --------------------------------------------------------
 
@@ -1028,7 +1037,7 @@ INSERT INTO `notices` (`id`, `title`, `content`, `audience`, `priority`, `status
 (1, 'Semester Registration Notice', 'All undergraduates must complete semester registration before 2026-04-15.', 'STUDENT', 'HIGH', 'ACTIVE', '2026-04-01', '2026-04-15', 1, '2026-04-08 02:30:00', '2026-04-08 02:30:00'),
 (2, 'Mid Examination Timetable Released', 'The mid examination timetable for semester 2 has been released. Students are advised to check the notice board and LMS.', 'STUDENT', 'HIGH', 'ACTIVE', '2026-04-03', '2026-04-25', 1, '2026-04-08 02:35:00', '2026-04-08 02:35:00'),
 (3, 'Assignment Submission Deadline', 'Assignments for ICT2142 and ICT2122 must be submitted on or before 2026-04-18.', 'STUDENT', 'MEDIUM', 'ACTIVE', '2026-04-05', '2026-04-18', 1, '2026-04-08 02:40:00', '2026-04-08 02:40:00'),
-(4, 'Repeat Student Meeting', 'All repeat students are required to attend the academic progress meeting on 2026-04-12 at 10.00 AM.', 'STUDENT', 'HIGH', 'ACTIVE', '2026-04-06', '2026-04-12', 1, '2026-04-08 02:45:00', '2026-04-08 02:45:00'),
+(4, 'Repeat Student Meeting', 'All repeat students are required to attend the academic\n progress meeting on 2026-04-12 at 10.00 AM.', 'STUDENT', 'HIGH', 'ACTIVE', '2026-04-06', '2026-04-12', 1, '2026-04-08 02:45:00', '2026-04-25 11:10:53'),
 (5, 'Batch Missed Student Registration', 'Batch missed students should meet the department coordinator to confirm course registration for the current semester.', 'STUDENT', 'MEDIUM', 'ACTIVE', '2026-04-06', '2026-04-20', 1, '2026-04-08 02:50:00', '2026-04-08 02:50:00'),
 (6, 'Lecture Material Upload Reminder', 'Lecturers are kindly requested to upload course materials to the system before the start of each week.', 'LECTURER', 'MEDIUM', 'ACTIVE', '2026-04-02', '2026-04-30', 1, '2026-04-08 02:55:00', '2026-04-08 02:55:00'),
 (7, 'Marks Submission Deadline', 'All lecturers must submit quiz, assessment, and examination marks before 2026-04-28.', 'LECTURER', 'HIGH', 'ACTIVE', '2026-04-04', '2026-04-28', 1, '2026-04-08 03:00:00', '2026-04-08 03:00:00'),
@@ -1036,7 +1045,8 @@ INSERT INTO `notices` (`id`, `title`, `content`, `audience`, `priority`, `status
 (9, 'Lab Equipment Maintenance', 'Technical officers should complete the routine maintenance of laboratory equipment before Friday.', 'TO', 'HIGH', 'ACTIVE', '2026-04-05', '2026-04-12', 1, '2026-04-08 03:10:00', '2026-04-08 03:10:00'),
 (10, 'Network Downtime Notice', 'The faculty network will be temporarily unavailable on 2026-04-14 from 6.00 PM to 8.00 PM due to scheduled maintenance.', 'ALL', 'MEDIUM', 'ACTIVE', '2026-04-08', '2026-04-14', 1, '2026-04-08 03:15:00', '2026-04-08 03:15:00'),
 (11, 'New Library Resources', 'New reference books and learning materials for semester 2 courses are now available in the library.', 'ALL', 'LOW', 'ACTIVE', '2026-03-28', '2026-04-30', 1, '2026-04-08 03:20:00', '2026-04-08 03:20:00'),
-(12, 'Past Notice Sample', 'This inactive record can be used to test notice filtering and archive behavior in the system.', 'STUDENT', 'LOW', 'INACTIVE', '2026-03-01', '2026-03-15', 1, '2026-04-08 03:25:00', '2026-04-08 03:25:00');
+(12, 'Past Notice Sample', 'This inactive record can be used to test notice filtering and archive behavior in the system.', 'STUDENT', 'LOW', 'INACTIVE', '2026-03-01', '2026-03-15', 1, '2026-04-08 03:25:00', '2026-04-08 03:25:00'),
+(13, 'vacation', 'vacation for corona', 'ALL', 'MEDIUM', 'ACTIVE', '2026-04-20', '2026-04-24', 1, '2026-04-25 11:12:28', '2026-04-25 11:12:28');
 
 -- --------------------------------------------------------
 
@@ -1594,6 +1604,23 @@ CREATE TABLE `staff` (
   `designation` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `staff`
+--
+
+INSERT INTO `staff` (`user_id`, `staff_code`, `designation`) VALUES
+(1, 'ADM-0001', 'System Administrator'),
+(2, 'LEC-0002', 'Lecturer'),
+(3, 'LEC-0003', 'Lecturer'),
+(4, 'LEC-0004', 'Lecturer'),
+(5, 'LEC-0005', 'Lecturer'),
+(6, 'LEC-0006', 'Lecturer'),
+(7, 'TO-0007', 'Technical Officer'),
+(8, 'TO-0008', 'Technical Officer'),
+(9, 'TO-0009', 'Technical Officer'),
+(10, 'TO-0010', 'Technical Officer'),
+(31, 'DEAN-0031', 'Dean');
+
 -- --------------------------------------------------------
 
 --
@@ -1631,9 +1658,26 @@ INSERT INTO `student` (`user_id`, `registration_no`, `registration_year`, `stude
 (27, 'TG/2021/084', '2021', 'REPEAT'),
 (28, 'TG/2020/101', '2020', 'BATCH_MISSED'),
 (29, 'TG/2020/102', '2020', 'BATCH_MISSED'),
-(30, 'TG/2020/103', '2020', 'BATCH_MISSED');
+(30, 'TG/2020/103', '2020', 'BATCH_MISSED'),
+(32, 'TG/2023/1742', '2023', 'PROPER');
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `student_course_registrations`
+--
+
+CREATE TABLE `student_course_registrations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `student_user_id` int(11) NOT NULL,
+  `course_id` int(11) NOT NULL,
+  `semester_year` year(4) NOT NULL,
+  `attempt_no` tinyint(4) NOT NULL DEFAULT 1,
+  `registration_status` enum('REGISTERED','DROPPED') NOT NULL DEFAULT 'REGISTERED',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Table structure for table `timetable_sessions`
@@ -1694,9 +1738,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `password_hash`, `phone`, `address`, `profile_picture_path`, `dob`, `role`, `status`, `department_id`, `created_at`, `updated_at`) VALUES
-(1, 'Saman', 'Kumara', 'admin@tec.ruh.ac.lk', '1234', '0711111111', 'Faculty Office', NULL, '1985-05-10', 'ADMIN', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:42'),
+(1, 'Saman', 'Kumara', 'admin@tec.ruh.ac.lk', '1234', '0763418621', 'NO 23 , \nHokandara ,\nathurugiriya', '/Users/janith/Development/Java-mini-project/TEC-SIS/storage/profile-pictures/admin_admin_tec_ruh_ac_lk_1777102001316.jpg', '1999-05-10', 'ADMIN', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-25 08:40:18'),
 (2, 'Kamal', 'Gunasekara', 'kamal@tec.ruh.ac.lk', '1234', '0713333331', 'Matara', NULL, '1980-02-15', 'LECTURER', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
-(3, 'Nimal', 'Perera', 'nimal@tec.ruh.ac.lk', '1234', '0713333332', 'Galle', NULL, '1982-06-25', 'LECTURER', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
+(3, 'Nimal', 'Perera', 'nimal@tec.ruh.ac.lk', '1234', '0713333332', 'Galle', '/Users/janith/Development/Java-mini-project/TEC-SIS/storage/profile-pictures/lecturer_nimal_tec_ruh_ac_lk_1777112403373.jpeg', '1982-06-25', 'LECTURER', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-25 10:20:03'),
 (4, 'Ruwan', 'Silva', 'ruwan@tec.ruh.ac.lk', '1234', '0713333333', 'Hambantota', NULL, '1978-11-05', 'LECTURER', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
 (5, 'Amara', 'Siriwardena', 'amara@tec.ruh.ac.lk', '1234', '0713333334', 'Matara', NULL, '1985-03-12', 'LECTURER', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:42'),
 (6, 'Kasun', 'Rajapaksha', 'kasun@tec.ruh.ac.lk', '1234', '0713333335', 'Colombo', NULL, '1988-09-30', 'LECTURER', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:42'),
@@ -1711,7 +1755,7 @@ INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `password_hash`, 
 (15, 'Eranga', 'Prasad', 'eranga@fot.ruh.ac.lk', '1234', '0771000005', 'Kandy', NULL, '2002-05-12', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
 (16, 'Fathima', 'Rizna', 'rizna@fot.ruh.ac.lk', '1234', '0771000006', 'Matara', NULL, '2002-06-18', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
 (17, 'Gayan', 'Suranga', 'gayan@fot.ruh.ac.lk', '1234', '0771000007', 'Galle', NULL, '2002-07-25', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
-(18, 'Harsha', 'De Silva', 'harsha@fot.ruh.ac.lk', '1234', '0771000008', 'Ambalangoda', NULL, '2002-08-30', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
+(18, 'Harsha', 'De Silva', 'harsha@fot.ruh.ac.lk', '1234', '0771000008', 'Ambalangoda', '/Users/janith/Development/Java-mini-project/TEC-SIS/storage/profile-pictures/student_harsha_fot_ruh_ac_lk_1777110613799.jpeg', '2002-08-30', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-25 09:50:13'),
 (19, 'Ishara', 'Sandamini', 'ishara@fot.ruh.ac.lk', '1234', '0771000009', 'Hakmana', NULL, '2002-09-14', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
 (20, 'Janith', 'Kavinda', 'janith@fot.ruh.ac.lk', '1234', '0771000010', 'Matara', NULL, '2002-10-22', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
 (21, 'Kavindi', 'Nethmini', 'kavindi@fot.ruh.ac.lk', '1234', '0771000011', 'Dickwella', NULL, '2002-11-05', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
@@ -1720,10 +1764,37 @@ INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `password_hash`, 
 (24, 'Niroshan', 'Bandara', 'niroshan@fot.ruh.ac.lk', '1234', '0771000014', 'Galle', NULL, '2001-03-15', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
 (25, 'Yohan', 'Perera', 'yohan@fot.ruh.ac.lk', '1234', '0771000015', 'Matara', NULL, '2001-05-05', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
 (26, 'Dilmi', 'Hansika', 'dilmi@fot.ruh.ac.lk', '1234', '0771000016', 'Akuressa', NULL, '2001-06-18', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
-(27, 'Pasindu', 'Maduranga', 'pasindu@fot.ruh.ac.lk', '1234', '0771000017', 'Tangalle', NULL, '2001-07-09', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
+(27, 'Pasindu', 'Maduranga', 'pasindu@fot.ruh.ac.lk', '1234', '0771000017', 'Tangalle', NULL, '2001-02-15', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-25 09:51:07'),
 (28, 'Sachini', 'Rashmika', 'sachini@fot.ruh.ac.lk', '1234', '0771000018', 'Matara', NULL, '2000-02-14', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
 (29, 'Tharindu', 'Senanayake', 'tharindu@fot.ruh.ac.lk', '1234', '0771000019', 'Galle', NULL, '2000-04-21', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
-(30, 'Upeksha', 'Jayawardena', 'upeksha@fot.ruh.ac.lk', '1234', '0771000020', 'Hambantota', NULL, '2000-08-11', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02');
+(30, 'Upeksha', 'Jayawardena', 'upeksha@fot.ruh.ac.lk', '1234', '0771000020', 'Hambantota', NULL, '2000-08-11', 'STUDENT', 'ACTIVE', 2, '2026-04-08 07:56:02', '2026-04-08 07:56:02'),
+(31, 'Nadeeka', 'Wijesinghe', 'dean@tec.ruh.ac.lk', '1234', '0717777777', 'Faculty Office', NULL, '1979-07-12', 'DEAN', 'ACTIVE', 2, '2026-04-25 07:25:07', '2026-04-25 07:25:07'),
+(32, 'Isuru', 'sadeep', 'isuru@gmail.com', '1234', '0781234567', 'walasmulla', '/Users/janith/Development/Java-mini-project/TEC-SIS/storage/profile-pictures/student_isuru_gmail_com_1777112556451.jpeg', '2003-04-10', 'STUDENT', 'ACTIVE', 3, '2026-04-25 10:22:36', '2026-04-25 10:22:36');
+
+--
+-- Dumping data for table `student_course_registrations`
+--
+
+INSERT INTO `student_course_registrations` (
+  `student_user_id`,
+  `course_id`,
+  `semester_year`,
+  `attempt_no`,
+  `registration_status`,
+  `created_at`,
+  `updated_at`
+)
+SELECT
+  u.`id`,
+  c.`id`,
+  '2026',
+  1,
+  'REGISTERED',
+  '2026-04-25 12:00:00',
+  '2026-04-25 12:00:00'
+FROM `users` u
+CROSS JOIN `courses` c
+WHERE u.`role` = 'STUDENT';
 
 --
 -- Indexes for dumped tables
@@ -1843,6 +1914,13 @@ ALTER TABLE `student`
   ADD UNIQUE KEY `registration_no` (`registration_no`);
 
 --
+-- Indexes for table `student_course_registrations`
+--
+ALTER TABLE `student_course_registrations`
+  ADD UNIQUE KEY `uq_student_course_registration` (`student_user_id`,`course_id`,`semester_year`,`attempt_no`),
+  ADD KEY `fk_student_course_registrations_course` (`course_id`);
+
+--
 -- Indexes for table `timetable_sessions`
 --
 ALTER TABLE `timetable_sessions`
@@ -1885,7 +1963,7 @@ ALTER TABLE `courses`
 -- AUTO_INCREMENT for table `course_materials`
 --
 ALTER TABLE `course_materials`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -1927,7 +2005,7 @@ ALTER TABLE `mid_exams`
 -- AUTO_INCREMENT for table `notices`
 --
 ALTER TABLE `notices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `quizzes`
@@ -1948,10 +2026,16 @@ ALTER TABLE `timetable_sessions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
+-- AUTO_INCREMENT for table `student_course_registrations`
+--
+ALTER TABLE `student_course_registrations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- Constraints for dumped tables
@@ -2047,6 +2131,13 @@ ALTER TABLE `staff`
 --
 ALTER TABLE `student`
   ADD CONSTRAINT `student_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `student_course_registrations`
+--
+ALTER TABLE `student_course_registrations`
+  ADD CONSTRAINT `fk_student_course_registrations_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_student_course_registrations_user` FOREIGN KEY (`student_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `timetable_sessions`

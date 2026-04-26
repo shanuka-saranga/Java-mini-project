@@ -10,7 +10,12 @@ import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Consumer;
 
+/**
+ * show selected notice details with edit/delete actions
+ * @author janith
+ */
 public class NoticeDetailsPanel extends JPanel {
     private static final String VIEW_CARD = "VIEW";
     private static final String EDIT_CARD = "EDIT";
@@ -29,17 +34,21 @@ public class NoticeDetailsPanel extends JPanel {
     private JTextArea txtContent;
     private JLabel lblCreatedBy;
 
-    private final Color tealColor = new Color(0, 121, 107);
     private Notice currentNotice;
     private Runnable onCloseAction;
     private Runnable onNoticeUpdatedAction;
     private Runnable onNoticeDeletedAction;
+    private Consumer<Boolean> onEditModeChangedAction;
 
+    /**
+     * initialize notice details panel with view/edit cards
+     * @author janith
+     */
     public NoticeDetailsPanel() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(tealColor), " Notice Details "),
+                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(AppTheme.PRIMARY), " Notice Details "),
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
         setVisible(false);
@@ -51,6 +60,10 @@ public class NoticeDetailsPanel extends JPanel {
         add(createBottomActions(), BorderLayout.SOUTH);
     }
 
+    /**
+     * create read-only notice details card
+     * @author janith
+     */
     private JPanel createViewPanel() {
         JPanel wrapper = new JPanel(new BorderLayout(0, 10));
         wrapper.setBackground(Color.WHITE);
@@ -83,7 +96,7 @@ public class NoticeDetailsPanel extends JPanel {
         txtContent.setLineWrap(true);
         txtContent.setWrapStyleWord(true);
         txtContent.setFont(AppTheme.fontPlain(14));
-        txtContent.setBackground(new Color(248, 251, 251));
+        txtContent.setBackground(AppTheme.SURFACE_MUTED);
         txtContent.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         wrapper.add(top, BorderLayout.NORTH);
@@ -91,6 +104,10 @@ public class NoticeDetailsPanel extends JPanel {
         return wrapper;
     }
 
+    /**
+     * create footer actions for close/edit/delete/save
+     * @author janith
+     */
     private JPanel createBottomActions() {
         JPanel mainActionPanel = new JPanel(new BorderLayout());
         mainActionPanel.setOpaque(false);
@@ -140,6 +157,7 @@ public class NoticeDetailsPanel extends JPanel {
         btnCancel.setVisible(false);
 
         btnClose.addActionListener(e -> {
+            notifyEditModeChanged(false);
             setVisible(false);
             if (onCloseAction != null) {
                 onCloseAction.run();
@@ -156,6 +174,7 @@ public class NoticeDetailsPanel extends JPanel {
             btnClose.setVisible(false);
             btnSave.setVisible(true);
             btnCancel.setVisible(true);
+            notifyEditModeChanged(true);
         });
 
         btnDelete.addActionListener(e -> deleteCurrentNotice());
@@ -165,19 +184,25 @@ public class NoticeDetailsPanel extends JPanel {
                 editNoticeDetailsPanel.setNoticeData(currentNotice);
             }
             cardLayout.show(container, VIEW_CARD);
+            container.revalidate();
+            container.repaint();
             btnSave.setVisible(false);
             btnCancel.setVisible(false);
             btnEdit.setVisible(true);
             btnClose.setVisible(true);
+            notifyEditModeChanged(false);
         });
 
         btnSave.addActionListener(e -> {
             if (saveUpdatedData()) {
                 cardLayout.show(container, VIEW_CARD);
+                container.revalidate();
+                container.repaint();
                 btnSave.setVisible(false);
                 btnCancel.setVisible(false);
                 btnEdit.setVisible(true);
                 btnClose.setVisible(true);
+                notifyEditModeChanged(false);
             }
         });
 
@@ -191,6 +216,10 @@ public class NoticeDetailsPanel extends JPanel {
         return mainActionPanel;
     }
 
+    /**
+     * validate and persist notice update
+     * @author janith
+     */
     private boolean saveUpdatedData() {
         if (currentNotice == null) {
             return false;
@@ -205,11 +234,15 @@ public class NoticeDetailsPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Notice updated successfully!");
             return true;
         } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Edit Notice Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Failed to update notice.", "Edit Notice Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
 
+    /**
+     * delete current notice after confirmation
+     * @author janith
+     */
     private void deleteCurrentNotice() {
         if (currentNotice == null) {
             return;
@@ -238,10 +271,14 @@ public class NoticeDetailsPanel extends JPanel {
                 onCloseAction.run();
             }
         } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Delete Notice Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Failed to delete notice.", "Delete Notice Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    /**
+     * add detail component to grid layout
+     * @author janith
+     */
     private void addToGrid(JPanel panel, Component component, int x, int y, GridBagConstraints gbc) {
         gbc.gridx = x;
         gbc.gridy = y;
@@ -249,15 +286,29 @@ public class NoticeDetailsPanel extends JPanel {
         panel.add(component, gbc);
     }
 
+    /**
+     * create styled label with icon
+     * @author janith
+     */
     private JLabel createStyledLabel(String text, FontAwesomeSolid icon) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontPlain(14));
-        label.setIcon(FontIcon.of(icon, 16, tealColor));
+        label.setIcon(FontIcon.of(icon, 16, AppTheme.ICON_ACCENT));
         label.setIconTextGap(12);
         return label;
     }
 
+    /**
+     * bind notice data to view card
+     * @param notice selected notice
+     * @author janith
+     */
     public void updateDetails(Notice notice) {
+        if (notice == null) {
+            clearDetails();
+            return;
+        }
+
         this.currentNotice = notice;
 
         lblTitle.setText("Title: " + notice.getTitle());
@@ -272,17 +323,66 @@ public class NoticeDetailsPanel extends JPanel {
 
         cardLayout.show(container, VIEW_CARD);
         setVisible(true);
+        container.revalidate();
+        container.repaint();
+        revalidate();
+        repaint();
     }
 
+    /**
+     * clear current details state and hide panel
+     * @author janith
+     */
+    public void clearDetails() {
+        currentNotice = null;
+        txtContent.setText("");
+        setVisible(false);
+    }
+
+    /**
+     * register close callback
+     * @param onCloseAction callback
+     * @author janith
+     */
     public void setOnCloseAction(Runnable onCloseAction) {
         this.onCloseAction = onCloseAction;
     }
 
+    /**
+     * register callback after notice update
+     * @param onNoticeUpdatedAction callback
+     * @author janith
+     */
     public void setOnNoticeUpdatedAction(Runnable onNoticeUpdatedAction) {
         this.onNoticeUpdatedAction = onNoticeUpdatedAction;
     }
 
+    /**
+     * register callback after notice delete
+     * @param onNoticeDeletedAction callback
+     * @author janith
+     */
     public void setOnNoticeDeletedAction(Runnable onNoticeDeletedAction) {
         this.onNoticeDeletedAction = onNoticeDeletedAction;
+    }
+
+    /**
+     * register callback for edit mode changes
+     * @param onEditModeChangedAction callback
+     * @author janith
+     */
+    public void setOnEditModeChangedAction(Consumer<Boolean> onEditModeChangedAction) {
+        this.onEditModeChangedAction = onEditModeChangedAction;
+    }
+
+    /**
+     * notify parent panel when edit mode state changes
+     * @param editing current edit mode state
+     * @author janith
+     */
+    private void notifyEditModeChanged(boolean editing) {
+        if (onEditModeChangedAction != null) {
+            onEditModeChangedAction.accept(editing);
+        }
     }
 }

@@ -1,7 +1,10 @@
 package com.fot.system.model.dto;
 
-import com.fot.system.model.entity.*;
 
+/**
+ * represent one lecturer attendance table row for a student-session record
+ * @author poornika
+ */
 public class AttendanceTableRow {
     private String registrationNo;
     private String studentName;

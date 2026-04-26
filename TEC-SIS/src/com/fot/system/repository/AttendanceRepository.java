@@ -11,14 +11,27 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * handle database operations for attendance sessions, marks and medical links
+ * @author poornika
+ */
 public class AttendanceRepository {
 
     private final Connection conn;
 
+    /**
+     * initialize attendance repository
+     * @author poornika
+     */
     public AttendanceRepository() {
         this.conn = DBConnection.getInstance().getConnection();
     }
 
+    /**
+     * load attendance rows for lecturer course table
+     * @param courseId course id
+     * @author poornika
+     */
     public List<AttendanceTableRow> findAttendanceRowsByCourse(int courseId) {
         List<AttendanceTableRow> rows = new ArrayList<>();
         String sql = """
@@ -79,14 +92,30 @@ public class AttendanceRepository {
         return rows;
     }
 
+    /**
+     * format session time range text
+     * @param startTime start time
+     * @param endTime end time
+     * @author poornika
+     */
     private String formatTimeRange(String startTime, String endTime) {
         return valueOrEmpty(startTime) + " - " + valueOrEmpty(endTime);
     }
 
+    /**
+     * normalize nullable values for DTO mapping
+     * @param value raw value
+     * @author poornika
+     */
     private String valueOrEmpty(String value) {
         return value == null ? "" : value;
     }
 
+    /**
+     * load attendance sessions filtered by lecturer
+     * @param lecturerId lecturer user id
+     * @author poornika
+     */
     public List<AttendanceSessionRow> findAttendanceSessionsByLecturer(int lecturerId) {
         List<AttendanceSessionRow> rows = new ArrayList<>();
         String sql = """
@@ -115,20 +144,7 @@ public class AttendanceRepository {
             stmt.setInt(1, lecturerId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    AttendanceSessionRow row = new AttendanceSessionRow();
-                    row.setSessionId(rs.getInt("session_id"));
-                    row.setTimetableSessionId(rs.getInt("timetable_session_id"));
-                    row.setCourseId(rs.getInt("course_id"));
-                    row.setCourseCode(rs.getString("course_code"));
-                    row.setCourseName(rs.getString("course_name"));
-                    row.setSessionType(rs.getString("session_type"));
-                    row.setSessionNo(rs.getInt("session_no"));
-                    row.setSessionDate(String.valueOf(rs.getDate("session_date")));
-                    row.setSessionDay(rs.getString("session_day"));
-                    row.setTimeRange(formatTimeRange(rs.getString("start_time"), rs.getString("end_time")));
-                    row.setVenue(rs.getString("venue"));
-                    row.setSessionStatus(valueOrEmpty(rs.getString("status")));
-                    rows.add(row);
+                    rows.add(mapAttendanceSessionRow(rs));
                 }
             }
         } catch (SQLException e) {
@@ -138,6 +154,10 @@ public class AttendanceRepository {
         return rows;
     }
 
+    /**
+     * load all attendance sessions
+     * @author poornika
+     */
     public List<AttendanceSessionRow> findAllAttendanceSessions() {
         List<AttendanceSessionRow> rows = new ArrayList<>();
         String sql = """
@@ -164,20 +184,7 @@ public class AttendanceRepository {
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                AttendanceSessionRow row = new AttendanceSessionRow();
-                row.setSessionId(rs.getInt("session_id"));
-                row.setTimetableSessionId(rs.getInt("timetable_session_id"));
-                row.setCourseId(rs.getInt("course_id"));
-                row.setCourseCode(rs.getString("course_code"));
-                row.setCourseName(rs.getString("course_name"));
-                row.setSessionType(rs.getString("session_type"));
-                row.setSessionNo(rs.getInt("session_no"));
-                row.setSessionDate(String.valueOf(rs.getDate("session_date")));
-                row.setSessionDay(rs.getString("session_day"));
-                row.setTimeRange(formatTimeRange(rs.getString("start_time"), rs.getString("end_time")));
-                row.setVenue(rs.getString("venue"));
-                row.setSessionStatus(valueOrEmpty(rs.getString("status")));
-                rows.add(row);
+                rows.add(mapAttendanceSessionRow(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to load all attendance sessions: " + e.getMessage(), e);
@@ -186,6 +193,11 @@ public class AttendanceRepository {
         return rows;
     }
 
+    /**
+     * load editable student attendance rows by session id
+     * @param sessionId session id
+     * @author poornika
+     */
     public List<StudentAttendanceEditRow> findStudentAttendanceRowsBySession(int sessionId) {
         List<StudentAttendanceEditRow> rows = new ArrayList<>();
         String sql = """
@@ -234,6 +246,14 @@ public class AttendanceRepository {
         return rows;
     }
 
+    /**
+     * create attendance session from timetable for lecturer flow
+     * @param lecturerId lecturer user id
+     * @param courseId course id
+     * @param timetableSessionId timetable session id
+     * @param sessionDateValue session date
+     * @author poornika
+     */
     public AttendanceSessionRow createSessionFromTimetable(int lecturerId, int courseId, int timetableSessionId, LocalDate sessionDateValue) {
         String validateSql = """
                 SELECT ts.id, ts.course_id, ts.session_day, ts.start_time, ts.end_time, ts.venue, ts.session_type
@@ -310,6 +330,13 @@ public class AttendanceRepository {
         }
     }
 
+    /**
+     * create attendance session from timetable for TO flow
+     * @param courseId course id
+     * @param timetableSessionId timetable session id
+     * @param sessionDateValue session date
+     * @author methum
+     */
     public AttendanceSessionRow createSessionFromTimetable(int courseId, int timetableSessionId, LocalDate sessionDateValue) {
         String validateSql = """
                 SELECT ts.id, ts.course_id, ts.start_time, ts.end_time
@@ -384,6 +411,11 @@ public class AttendanceRepository {
         }
     }
 
+    /**
+     * load one attendance session by id
+     * @param sessionId session id
+     * @author poornika
+     */
     public AttendanceSessionRow findAttendanceSessionById(int sessionId) {
         String sql = """
                 SELECT
@@ -410,20 +442,7 @@ public class AttendanceRepository {
             stmt.setInt(1, sessionId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    AttendanceSessionRow row = new AttendanceSessionRow();
-                    row.setSessionId(rs.getInt("session_id"));
-                    row.setTimetableSessionId(rs.getInt("timetable_session_id"));
-                    row.setCourseId(rs.getInt("course_id"));
-                    row.setCourseCode(rs.getString("course_code"));
-                    row.setCourseName(rs.getString("course_name"));
-                    row.setSessionType(rs.getString("session_type"));
-                    row.setSessionNo(rs.getInt("session_no"));
-                    row.setSessionDate(String.valueOf(rs.getDate("session_date")));
-                    row.setSessionDay(rs.getString("session_day"));
-                    row.setTimeRange(formatTimeRange(rs.getString("start_time"), rs.getString("end_time")));
-                    row.setVenue(rs.getString("venue"));
-                    row.setSessionStatus(valueOrEmpty(rs.getString("status")));
-                    return row;
+                    return mapAttendanceSessionRow(rs);
                 }
             }
         } catch (SQLException e) {
@@ -433,6 +452,35 @@ public class AttendanceRepository {
         return null;
     }
 
+    /**
+     * map attendance session row from result set
+     * @param rs result set
+     * @author poornika
+     */
+    private AttendanceSessionRow mapAttendanceSessionRow(ResultSet rs) throws SQLException {
+        AttendanceSessionRow row = new AttendanceSessionRow();
+        row.setSessionId(rs.getInt("session_id"));
+        row.setTimetableSessionId(rs.getInt("timetable_session_id"));
+        row.setCourseId(rs.getInt("course_id"));
+        row.setCourseCode(rs.getString("course_code"));
+        row.setCourseName(rs.getString("course_name"));
+        row.setSessionType(rs.getString("session_type"));
+        row.setSessionNo(rs.getInt("session_no"));
+        row.setSessionDate(String.valueOf(rs.getDate("session_date")));
+        row.setSessionDay(rs.getString("session_day"));
+        row.setTimeRange(formatTimeRange(rs.getString("start_time"), rs.getString("end_time")));
+        row.setVenue(rs.getString("venue"));
+        row.setSessionStatus(valueOrEmpty(rs.getString("status")));
+        return row;
+    }
+
+    /**
+     * save per-student attendance statuses for a session
+     * @param sessionId session id
+     * @param markedBy marker user id
+     * @param updates status updates
+     * @author poornika
+     */
     public void saveSessionAttendance(int sessionId, int markedBy, List<StudentAttendanceUpdate> updates) {
         String existingSql = "SELECT id FROM attendance WHERE student_reg_no = ? AND session_id = ?";
         String insertSql = """
@@ -485,6 +533,11 @@ public class AttendanceRepository {
         }
     }
 
+    /**
+     * load student attendance rows for student dashboard
+     * @param studentUserId student user id
+     * @author poornika
+     */
     public List<StudentSessionAttendanceRow> findStudentSessionAttendanceRows(int studentUserId) {
         List<StudentSessionAttendanceRow> rows = new ArrayList<>();
         String sql = """
@@ -548,6 +601,11 @@ public class AttendanceRepository {
         return rows;
     }
 
+    /**
+     * load student medical submissions with linked session details
+     * @param studentUserId student user id
+     * @author poornika
+     */
     public List<StudentMedicalRow> findStudentMedicalRows(int studentUserId) {
         Map<Integer, StudentMedicalRow> groupedRows = new LinkedHashMap<>();
         String sql = """
@@ -605,6 +663,11 @@ public class AttendanceRepository {
         return new ArrayList<>(groupedRows.values());
     }
 
+    /**
+     * resolve student registration number by user id
+     * @param studentUserId student user id
+     * @author poornika
+     */
     public String findStudentRegistrationNoByUserId(int studentUserId) {
         String sql = "SELECT registration_no FROM student WHERE user_id = ?";
 
@@ -622,6 +685,13 @@ public class AttendanceRepository {
         return null;
     }
 
+    /**
+     * load absent sessions available for medical submission range
+     * @param studentUserId student user id
+     * @param startDate range start date
+     * @param endDate range end date
+     * @author poornika
+     */
     public List<AbsentSessionOption> findAbsentSessionsForStudentByDateRange(int studentUserId, Date startDate, Date endDate) {
         List<AbsentSessionOption> rows = new ArrayList<>();
         String sql = """
@@ -679,6 +749,14 @@ public class AttendanceRepository {
         return rows;
     }
 
+    /**
+     * save one medical submission and link selected absent sessions
+     * @param studentUserId student user id
+     * @param sessionIds selected session ids
+     * @param medicalDocumentPath stored document path
+     * @param submittedDate submitted date
+     * @author poornika
+     */
     public void saveStudentMedicalSubmissions(int studentUserId, List<Integer> sessionIds, String medicalDocumentPath, Date submittedDate) {
         String registrationNo = findStudentRegistrationNoByUserId(studentUserId);
         if (registrationNo == null || registrationNo.trim().isEmpty()) {
@@ -765,6 +843,10 @@ public class AttendanceRepository {
         }
     }
 
+    /**
+     * count currently pending medical submissions
+     * @author methum
+     */
     public int countPendingMedicalSubmissions() {
         String sql = "SELECT COUNT(*) FROM medicals WHERE approval_status = 'PENDING'";
 
@@ -780,6 +862,11 @@ public class AttendanceRepository {
         return 0;
     }
 
+    /**
+     * load medical rows by approval status for TO review
+     * @param status medical status filter
+     * @author methum
+     */
     public List<MedicalApprovalRow> findMedicalRowsByStatus(String status) {
         Map<Integer, MedicalApprovalRow> groupedRows = new LinkedHashMap<>();
         String sql = """
@@ -840,6 +927,12 @@ public class AttendanceRepository {
         return new ArrayList<>(groupedRows.values());
     }
 
+    /**
+     * safe string read helper for lambda mapping blocks
+     * @param rs result set
+     * @param column column name
+     * @author poornika
+     */
     private String rsGetString(ResultSet rs, String column) {
         try {
             return rs.getString(column);
@@ -848,6 +941,12 @@ public class AttendanceRepository {
         }
     }
 
+    /**
+     * safe date read helper for lambda mapping blocks
+     * @param rs result set
+     * @param column column name
+     * @author poornika
+     */
     private Date rsGetDate(ResultSet rs, String column) {
         try {
             return rs.getDate(column);
@@ -856,6 +955,12 @@ public class AttendanceRepository {
         }
     }
 
+    /**
+     * safe timestamp string read helper
+     * @param rs result set
+     * @param column column name
+     * @author poornika
+     */
     private String rsGetTimestamp(ResultSet rs, String column) {
         try {
             Timestamp timestamp = rs.getTimestamp(column);
@@ -865,6 +970,12 @@ public class AttendanceRepository {
         }
     }
 
+    /**
+     * approve medical submission and upgrade linked attendance rows
+     * @param medicalId medical id
+     * @param approvedBy approver user id
+     * @author methum
+     */
     public void approveMedical(int medicalId, int approvedBy) {
         String approveMedicalSql = """
                 UPDATE medicals

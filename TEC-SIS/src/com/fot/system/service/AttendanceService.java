@@ -12,14 +12,33 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
+/**
+ * handle attendance business logic for lecturer, student and medical flows
+ * @author poornika
+ */
 public class AttendanceService implements IAttendanceService {
+    private static final String STATUS_COMPLETED = "COMPLETED";
+    private static final String STATUS_PRESENT = "PRESENT";
+    private static final String STATUS_MEDICAL = "MEDICAL";
+    private static final String STATUS_ABSENT = "ABSENT";
+    private static final String MEDICAL_APPROVED = "APPROVED";
+    private static final double ELIGIBILITY_THRESHOLD_PERCENT = 79.0;
 
     private final AttendanceRepository attendanceRepository;
 
+    /**
+     * initialize attendance service dependencies
+     * @author poornika
+     */
     public AttendanceService() {
         this.attendanceRepository = new AttendanceRepository();
     }
 
+    /**
+     * load attendance rows by course id
+     * @param courseId course id
+     * @author poornika
+     */
     public List<AttendanceTableRow> getAttendanceRowsByCourse(int courseId) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
@@ -27,6 +46,11 @@ public class AttendanceService implements IAttendanceService {
         return attendanceRepository.findAttendanceRowsByCourse(courseId);
     }
 
+    /**
+     * load attendance sessions by lecturer id
+     * @param lecturerId lecturer user id
+     * @author poornika
+     */
     public List<AttendanceSessionRow> getAttendanceSessionsByLecturer(int lecturerId) {
         if (lecturerId <= 0) {
             throw new RuntimeException("Invalid lecturer ID.");
@@ -34,10 +58,19 @@ public class AttendanceService implements IAttendanceService {
         return attendanceRepository.findAttendanceSessionsByLecturer(lecturerId);
     }
 
+    /**
+     * load all attendance sessions
+     * @author poornika
+     */
     public List<AttendanceSessionRow> getAllAttendanceSessions() {
         return attendanceRepository.findAllAttendanceSessions();
     }
 
+    /**
+     * load attendance editor dataset for one session
+     * @param sessionId session id
+     * @author poornika
+     */
     public AttendanceSessionEditorData getSessionEditorData(int sessionId) {
         if (sessionId <= 0) {
             throw new RuntimeException("Invalid session ID.");
@@ -49,6 +82,12 @@ public class AttendanceService implements IAttendanceService {
         return data;
     }
 
+    /**
+     * create attendance session for lecturer flow
+     * @param request add session payload
+     * @param lecturerId lecturer user id
+     * @author poornika
+     */
     public AttendanceSessionRow addSession(AddAttendanceSessionRequest request, int lecturerId) {
         if (request == null) {
             throw new RuntimeException("Attendance session request is required.");
@@ -64,6 +103,11 @@ public class AttendanceService implements IAttendanceService {
         return attendanceRepository.createSessionFromTimetable(lecturerId, courseId, timetableSessionId, sessionDate);
     }
 
+    /**
+     * create attendance session for technical officer flow
+     * @param request add session payload
+     * @author methum
+     */
     public AttendanceSessionRow addSessionForTo(AddAttendanceSessionRequest request) {
         if (request == null) {
             throw new RuntimeException("Attendance session request is required.");
@@ -75,6 +119,13 @@ public class AttendanceService implements IAttendanceService {
         return attendanceRepository.createSessionFromTimetable(courseId, timetableSessionId, sessionDate);
     }
 
+    /**
+     * save attendance statuses for a session
+     * @param sessionId session id
+     * @param markedBy marker user id
+     * @param updates updates list
+     * @author poornika
+     */
     public void saveSessionAttendance(int sessionId, int markedBy, List<StudentAttendanceUpdate> updates) {
         if (sessionId <= 0) {
             throw new RuntimeException("Invalid session.");
@@ -88,6 +139,12 @@ public class AttendanceService implements IAttendanceService {
         attendanceRepository.saveSessionAttendance(sessionId, markedBy, updates);
     }
 
+    /**
+     * build lecturer attendance table, progress and summary data
+     * @param courseId course id
+     * @param totalCourseHours total configured course hours
+     * @author poornika
+     */
     public CourseAttendanceViewData getCourseAttendanceViewData(int courseId, int totalCourseHours) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
@@ -104,6 +161,11 @@ public class AttendanceService implements IAttendanceService {
         return viewData;
     }
 
+    /**
+     * build student attendance and medical page data
+     * @param studentUserId student user id
+     * @author poornika
+     */
     public StudentAttendanceMedicalViewData getStudentAttendanceMedicalViewData(int studentUserId) {
         if (studentUserId <= 0) {
             throw new RuntimeException("Invalid student user ID.");
@@ -118,14 +180,24 @@ public class AttendanceService implements IAttendanceService {
         return viewData;
     }
 
+    /**
+     * count pending medical submissions
+     * @author methum
+     */
     public int getPendingMedicalSubmissionCount() {
         return attendanceRepository.countPendingMedicalSubmissions();
     }
 
+    /**
+     * calculate held hours and progress percentage from completed sessions
+     * @param attendanceRows attendance rows
+     * @param totalCourseHours configured course hours
+     * @author poornika
+     */
     private AttendanceCourseProgress buildCourseProgress(List<AttendanceTableRow> attendanceRows, int totalCourseHours) {
         Set<String> completedSessions = new HashSet<>();
         for (AttendanceTableRow row : attendanceRows) {
-            if ("COMPLETED".equalsIgnoreCase(row.getSessionStatus())) {
+            if (equalsIgnoreCase(row.getSessionStatus(), STATUS_COMPLETED)) {
                 completedSessions.add(row.getSessionType() + "|" + row.getSessionNo() + "|" + row.getSessionDate() + "|" + row.getTimeRange());
             }
         }
@@ -142,6 +214,11 @@ public class AttendanceService implements IAttendanceService {
         return progress;
     }
 
+    /**
+     * aggregate per-student attendance summary rows
+     * @param attendanceRows attendance rows
+     * @author poornika
+     */
     private List<StudentAttendanceSummaryRow> buildStudentSummaryRows(List<AttendanceTableRow> attendanceRows) {
         Map<String, StudentAttendanceAccumulator> accumulators = new LinkedHashMap<>();
 
@@ -151,19 +228,19 @@ public class AttendanceService implements IAttendanceService {
                     key -> new StudentAttendanceAccumulator(row.getRegistrationNo(), row.getStudentName())
             );
 
-            if (!"COMPLETED".equalsIgnoreCase(row.getSessionStatus())) {
+            if (!equalsIgnoreCase(row.getSessionStatus(), STATUS_COMPLETED)) {
                 continue;
             }
 
             accumulator.totalHeldSessions++;
-            if ("PRESENT".equalsIgnoreCase(row.getAttendanceStatus())) {
+            if (equalsIgnoreCase(row.getAttendanceStatus(), STATUS_PRESENT)) {
                 accumulator.presentCount++;
-            } else if ("MEDICAL".equalsIgnoreCase(row.getAttendanceStatus())) {
+            } else if (equalsIgnoreCase(row.getAttendanceStatus(), STATUS_MEDICAL)) {
                 accumulator.medicalCount++;
-                if ("APPROVED".equalsIgnoreCase(row.getMedicalApprovalStatus())) {
+                if (equalsIgnoreCase(row.getMedicalApprovalStatus(), MEDICAL_APPROVED)) {
                     accumulator.approvedMedicalCount++;
                 }
-            } else if ("ABSENT".equalsIgnoreCase(row.getAttendanceStatus())) {
+            } else if (equalsIgnoreCase(row.getAttendanceStatus(), STATUS_ABSENT)) {
                 accumulator.absentCount++;
             }
         }
@@ -181,13 +258,17 @@ public class AttendanceService implements IAttendanceService {
             row.setMedicalCount(accumulator.medicalCount);
             row.setAbsentCount(accumulator.absentCount);
             row.setAttendancePercentage(attendancePercentage);
-            row.setEligible(attendancePercentage > 79.0);
+            row.setEligible(attendancePercentage > ELIGIBILITY_THRESHOLD_PERCENT);
             summaryRows.add(row);
         }
 
         return summaryRows;
     }
 
+    /**
+     * helper accumulator used when computing student summary rows
+     * @author poornika
+     */
     private static class StudentAttendanceAccumulator {
         private final String registrationNo;
         private final String studentName;
@@ -203,9 +284,15 @@ public class AttendanceService implements IAttendanceService {
         }
     }
 
+    /**
+     * parse a positive integer with validation
+     * @param value string value
+     * @param message validation message
+     * @author poornika
+     */
     private int parsePositiveInt(String value, String message) {
         try {
-            int parsed = Integer.parseInt(value == null ? "" : value.trim());
+            int parsed = Integer.parseInt(normalize(value));
             if (parsed <= 0) {
                 throw new RuntimeException(message);
             }
@@ -215,11 +302,36 @@ public class AttendanceService implements IAttendanceService {
         }
     }
 
+    /**
+     * parse local date using YYYY-MM-DD format
+     * @param value date value
+     * @param message validation message
+     * @author poornika
+     */
     private LocalDate parseDate(String value, String message) {
         try {
-            return LocalDate.parse(value == null ? "" : value.trim());
+            return LocalDate.parse(normalize(value));
         } catch (Exception e) {
             throw new RuntimeException(message + " Use YYYY-MM-DD.");
         }
+    }
+
+    /**
+     * normalize nullable string values
+     * @param value raw string
+     * @author poornika
+     */
+    private String normalize(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    /**
+     * compare strings ignoring case with null safety
+     * @param left first value
+     * @param right second value
+     * @author poornika
+     */
+    private boolean equalsIgnoreCase(String left, String right) {
+        return normalize(left).equalsIgnoreCase(normalize(right));
     }
 }

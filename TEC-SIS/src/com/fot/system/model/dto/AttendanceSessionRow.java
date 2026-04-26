@@ -2,6 +2,10 @@ package com.fot.system.model.dto;
 
 import com.fot.system.model.entity.*;
 
+/**
+ * represent one attendance session list row
+ * @author poornika
+ */
 public class AttendanceSessionRow {
     private int sessionId;
     private int courseId;

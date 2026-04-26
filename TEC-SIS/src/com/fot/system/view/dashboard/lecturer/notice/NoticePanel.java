@@ -1,10 +1,9 @@
 package com.fot.system.view.dashboard.lecturer.notice;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.service.NoticeService;
-import com.fot.system.view.dashboard.admin.shared.NoticeFeedPanel;
+import com.fot.system.view.dashboard.admin.components.NoticeFeedPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

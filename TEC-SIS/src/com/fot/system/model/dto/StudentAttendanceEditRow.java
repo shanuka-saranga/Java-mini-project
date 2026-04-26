@@ -1,7 +1,10 @@
 package com.fot.system.model.dto;
 
-import com.fot.system.model.entity.*;
 
+/**
+ * represent editable attendance status row for one student in a session
+ * @author poornika
+ */
 public class StudentAttendanceEditRow {
     private String registrationNo;
     private String studentName;

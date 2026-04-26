@@ -92,7 +92,7 @@ public class LoginView extends JFrame {
                 passwordField.requestFocusInWindow();
             }
         });
-        new LoginController(this, email, password);
+        new LoginController(this);
     }
 
     private JLabel createFieldLabel(String text) {
