@@ -554,6 +554,7 @@ public class MarksRepository {
         String sql = """
                 SELECT
                     c.id AS course_id,
+                    c.course_code,
                     c.credits,
                     c.session_type,
                     COALESCE(q.quiz_total, 0) AS quiz_total,
@@ -643,6 +644,7 @@ public class MarksRepository {
                 while (rs.next()) {
                     StudentCoursePerformance snapshot = new StudentCoursePerformance();
                     snapshot.setCourseId(rs.getInt("course_id"));
+                    snapshot.setCourseCode(rs.getString("course_code"));
                     snapshot.setCredits(rs.getInt("credits"));
                     snapshot.setSessionType(rs.getString("session_type"));
 

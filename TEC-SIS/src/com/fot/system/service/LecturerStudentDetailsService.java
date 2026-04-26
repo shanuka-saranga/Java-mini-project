@@ -34,21 +34,10 @@ public class LecturerStudentDetailsService {
             recordsByRegNo.computeIfAbsent(record.getRegistrationNo(), key -> new ArrayList<>()).add(record);
         }
 
-        for (Map.Entry<String, List<StudentCourseGradeRecord>> entry : recordsByRegNo.entrySet()) {
-            Student student = studentsByRegNo.get(entry.getKey());
-            if (student == null) {
-                continue;
-            }
-
-            List<String> grades = new ArrayList<>();
-            List<Integer> credits = new ArrayList<>();
-            for (StudentCourseGradeRecord record : entry.getValue()) {
-                grades.add(resolveCourseGrade(record));
-                credits.add(record.getCredits() > 0 ? record.getCredits() : 3);
-            }
-
-            double gpaValue = perfService.calculateSGpa(grades, credits);
-
+        for (Student student : studentsByRegNo.values()) {
+            List<StudentCourseGradeRecord> studentRecords = recordsByRegNo.getOrDefault(student.getRegistrationNo(), List.of());
+            double sgpa = calculateCurrentSgpa(studentRecords);
+            double cgpa = calculateCumulativeGpa(studentRecords);
             StudentDetailsRow row = new StudentDetailsRow();
             row.setRegNo(student.getRegistrationNo());
             row.setRegistrationYear(student.getRegistrationYear());
@@ -58,12 +47,53 @@ public class LecturerStudentDetailsService {
             row.setEmail(student.getEmail());
             row.setPhone(student.getPhone());
             row.setAddress(student.getAddress());
-            row.setSgpa(gpaValue);
-            row.setCgpa(gpaValue);
+            row.setSgpa(sgpa);
+            row.setCgpa(cgpa);
             detailsRows.add(row);
         }
 
         return detailsRows;
+    }
+
+    private double calculateCurrentSgpa(List<StudentCourseGradeRecord> studentRecords) {
+        if (studentRecords == null || studentRecords.isEmpty()) {
+            return 0.0;
+        }
+
+        int currentSemesterYear = studentRecords.stream()
+                .mapToInt(StudentCourseGradeRecord::getSemesterYear)
+                .max()
+                .orElse(0);
+
+        List<String> grades = new ArrayList<>();
+        List<Integer> credits = new ArrayList<>();
+        for (StudentCourseGradeRecord record : studentRecords) {
+            if (record.getSemesterYear() != currentSemesterYear) {
+                continue;
+            }
+            grades.add(resolveCourseGrade(record));
+            credits.add(record.getCredits() > 0 ? record.getCredits() : 3);
+        }
+
+        return perfService.calculateSGpa(grades, credits);
+    }
+
+    private double calculateCumulativeGpa(List<StudentCourseGradeRecord> studentRecords) {
+        if (studentRecords == null || studentRecords.isEmpty()) {
+            return 0.0;
+        }
+
+        List<String> grades = new ArrayList<>();
+        List<Integer> credits = new ArrayList<>();
+        for (StudentCourseGradeRecord record : studentRecords) {
+            if (!perfService.isCourseIncludedInCgpa(record.getCourseCode())) {
+                continue;
+            }
+            grades.add(resolveCourseGrade(record));
+            credits.add(record.getCredits() > 0 ? record.getCredits() : 3);
+        }
+
+        return perfService.calculateSGpa(grades, credits);
     }
 
     private String resolveCourseGrade(StudentCourseGradeRecord record) {
