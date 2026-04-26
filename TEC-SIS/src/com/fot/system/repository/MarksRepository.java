@@ -496,12 +496,10 @@ public class MarksRepository {
                     );
                     Double assignmentAverage = academicPerformance.calculateAssignmentAverageForConfiguredCount(
                             rs.getDouble("assignment_total"),
-                            rs.getInt("assignment_submitted_count"),
                             rs.getInt("no_of_assignments")
                     );
                     Double midExamAverage = academicPerformance.calculateExamAverageForConfiguredCount(
                             rs.getDouble("mid_exam_total"),
-                            rs.getInt("mid_exam_present_count"),
                             rs.getInt("exam_component_count")
                     );
                     double caAverage = academicPerformance.averageComponentScores(
@@ -511,7 +509,6 @@ public class MarksRepository {
                     );
                     Double endExamAverage = academicPerformance.calculateExamAverageForConfiguredCount(
                             rs.getDouble("end_exam_total"),
-                            rs.getInt("end_exam_present_count"),
                             rs.getInt("exam_component_count")
                     );
 

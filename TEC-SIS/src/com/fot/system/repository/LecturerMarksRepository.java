@@ -20,24 +20,9 @@ public class LecturerMarksRepository {
     }
 
     public CourseSemesterContext findCurrentSemesterContext(int courseId, int currentYear) {
-        String sql = """
-                SELECT COUNT(*) AS record_count
-                FROM marks
-                WHERE course_id = ? AND semester_year = ?
-                """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, courseId);
-            stmt.setInt(2, currentYear);
-            try (ResultSet rs = stmt.executeQuery()) {
-                CourseSemesterContext context = new CourseSemesterContext();
-                context.setSemesterYear(currentYear);
-                rs.next();
-                return context;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to load semester context: " + e.getMessage(), e);
-        }
+        CourseSemesterContext context = new CourseSemesterContext();
+        context.setSemesterYear(currentYear);
+        return context;
     }
 
     public List<AssessmentCardSummary> findQuizCardSummaries(int courseId, int semesterYear, int quizCount) {

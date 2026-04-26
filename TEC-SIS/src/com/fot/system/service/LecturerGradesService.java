@@ -46,8 +46,8 @@ public class LecturerGradesService {
     }
 
     private StudentGradeRow buildRow(StudentCourseGradeRecord record) {
-        double caAverage = calculateCaAverage(record);
-        double endExamAverage = calculateEndExamAverage(record);
+        double caAverage = academicPerformance.calculateCaAverage(record);
+        double endExamAverage = academicPerformance.calculateEndExamAverage(record);
 
         StudentGradeRow row = new StudentGradeRow();
         row.setRegistrationNo(record.getRegistrationNo());
@@ -71,14 +71,6 @@ public class LecturerGradesService {
         logGradeFlow("buildRow -> regNo=" + row.getRegistrationNo()
                 + ", ca=" + caAverage + ", end=" + endExamAverage + ", final=" + finalMark + ", grade=" + row.getGrade());
         return row;
-    }
-
-    private double calculateCaAverage(StudentCourseGradeRecord record) {
-        return academicPerformance.calculateCaAverage(record);
-    }
-
-    private double calculateEndExamAverage(StudentCourseGradeRecord record) {
-        return academicPerformance.calculateEndExamAverage(record);
     }
 
     private void logGradeFlow(String message) {

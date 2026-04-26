@@ -15,16 +15,8 @@ public class AcademicPerformance {
                         record.getQuizPresentCount(),
                         record.getQuizCount()
                 ),
-                calculateAssignmentAverageForConfiguredCount(
-                        record.getAssignmentTotal(),
-                        record.getAssignmentSubmittedCount(),
-                        record.getAssignmentCount()
-                ),
-                calculateExamAverageForConfiguredCount(
-                        record.getMidExamTotal(),
-                        record.getMidExamPresentCount(),
-                        record.getMidExamCount()
-                )
+                calculateAssignmentAverageForConfiguredCount(record.getAssignmentTotal(), record.getAssignmentCount()),
+                calculateExamAverageForConfiguredCount(record.getMidExamTotal(), record.getMidExamCount())
         );
     }
 
@@ -36,25 +28,13 @@ public class AcademicPerformance {
                         record.getQuizPresentCount(),
                         record.getQuizCount()
                 ),
-                calculateAssignmentAverageForConfiguredCount(
-                        record.getAssignmentTotal(),
-                        record.getAssignmentSubmittedCount(),
-                        record.getAssignmentCount()
-                ),
-                calculateExamAverageForConfiguredCount(
-                        record.getMidExamTotal(),
-                        record.getMidExamPresentCount(),
-                        record.getMidExamCount()
-                )
+                calculateAssignmentAverageForConfiguredCount(record.getAssignmentTotal(), record.getAssignmentCount()),
+                calculateExamAverageForConfiguredCount(record.getMidExamTotal(), record.getMidExamCount())
         );
     }
 
     public double calculateEndExamAverage(StudentCourseGradeRecord record) {
-        Double endExamAverage = calculateExamAverageForConfiguredCount(
-                record.getEndExamTotal(),
-                record.getEndExamPresentCount(),
-                record.getEndExamCount()
-        );
+        Double endExamAverage = calculateExamAverageForConfiguredCount(record.getEndExamTotal(), record.getEndExamCount());
         return endExamAverage == null ? 0 : endExamAverage;
     }
 
@@ -66,7 +46,7 @@ public class AcademicPerformance {
         return configuredQuizCount == 1 ? 1 : configuredQuizCount - 1;
     }
 
-    public int getConsideredQuizCount(int configuredQuizCount, int presentCount) {
+    public int getConsideredQuizCount(int configuredQuizCount) {
         int requiredQuizCount = getRequiredQuizCount(configuredQuizCount);
         if (requiredQuizCount <= 0) {
             return 0;
@@ -86,14 +66,14 @@ public class AcademicPerformance {
         return shouldDropLowest ? presentTotal - lowestPresentMark : presentTotal;
     }
 
-    public int getConsideredAssignmentCount(int configuredAssignmentCount, int submittedCount) {
+    public int getConsideredAssignmentCount(int configuredAssignmentCount) {
         if (configuredAssignmentCount <= 0) {
             return 0;
         }
         return configuredAssignmentCount;
     }
 
-    public int getConsideredExamCount(int requiredExamCount, int presentCount) {
+    public int getConsideredExamCount(int requiredExamCount) {
         if (requiredExamCount <= 0) {
             return 0;
         }
@@ -106,31 +86,23 @@ public class AcademicPerformance {
             int presentCount,
             int configuredQuizCount
     ) {
-        int denominator = getConsideredQuizCount(configuredQuizCount, presentCount);
+        int denominator = getConsideredQuizCount(configuredQuizCount);
         if (denominator <= 0) {
             return null;
         }
         return getAdjustedQuizTotal(presentTotal, lowestPresentMark, presentCount, configuredQuizCount) / denominator;
     }
 
-    public Double calculateAssignmentAverageForConfiguredCount(
-            double assignmentTotal,
-            int submittedCount,
-            int configuredAssignmentCount
-    ) {
-        int denominator = getConsideredAssignmentCount(configuredAssignmentCount, submittedCount);
+    public Double calculateAssignmentAverageForConfiguredCount(double assignmentTotal, int configuredAssignmentCount) {
+        int denominator = getConsideredAssignmentCount(configuredAssignmentCount);
         if (denominator <= 0) {
             return null;
         }
         return assignmentTotal / denominator;
     }
 
-    public Double calculateExamAverageForConfiguredCount(
-            double examTotal,
-            int presentCount,
-            int requiredExamCount
-    ) {
-        int denominator = getConsideredExamCount(requiredExamCount, presentCount);
+    public Double calculateExamAverageForConfiguredCount(double examTotal, int requiredExamCount) {
+        int denominator = getConsideredExamCount(requiredExamCount);
         if (denominator <= 0) {
             return null;
         }

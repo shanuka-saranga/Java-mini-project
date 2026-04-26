@@ -35,7 +35,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
     private final JPanel courseListPanel;
-    private final JLabel lblSelectedCourse;
     private final JLabel lblSemesterSummary;
     private final JLabel lblOpenedCourseTab;
     private final CardLayout detailsCardLayout;
@@ -74,7 +73,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         JScrollPane courseListScrollPane = createScrollPane(courseListPanel);
         courseListScrollPane.getViewport().setBackground(AppTheme.SURFACE_SOFT);
 
-        lblSelectedCourse = createTitleLabel("-");
         lblSemesterSummary = createMetaLabel("-");
         lblOpenedCourseTab = new JLabel("Opened Course");
         lblOpenedCourseTab.setFont(AppTheme.fontBold(16));
@@ -217,13 +215,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         return scrollPane;
     }
 
-    private JLabel createTitleLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(AppTheme.fontBold(22));
-        label.setForeground(AppTheme.TEXT_DARK);
-        return label;
-    }
-
     private JLabel createMetaLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontPlain(14));
@@ -289,7 +280,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         selectedCourse = course;
         logGradeFlow("openCourse -> courseId=" + course.getId() + ", courseCode=" + course.getCourseCode());
         lblOpenedCourseTab.setText(course.getCourseName());
-        lblSelectedCourse.setText(course.getCourseName());
         detailsCardLayout.show(detailsContentPanel, SUMMARY_VIEW);
         loadMarksOverview();
         cardLayout.show(cardPanel, DETAILS_CARD);
