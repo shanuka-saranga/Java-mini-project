@@ -15,6 +15,7 @@ import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -288,6 +289,7 @@ public class TOAttendancePanel extends JPanel {
         table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
         table.getTableHeader().setFont(AppTheme.fontBold(13));
         table.setFillsViewportHeight(true);
+        table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         if (!editable) {
             table.setDefaultEditor(Object.class, null);
         }
@@ -367,6 +369,7 @@ public class TOAttendancePanel extends JPanel {
      * @author methum
      */
     private void renderSessions(List<AttendanceSessionRow> rows) {
+        stopTableEditing(studentTable);
         sessionTableModel.setRowCount(0);
         List<AttendanceSessionRow> safeRows = rows == null ? List.of() : rows;
         for (AttendanceSessionRow row : safeRows) {
@@ -406,6 +409,8 @@ public class TOAttendancePanel extends JPanel {
      * @author methum
      */
     private void openSelectedSession() {
+        stopTableEditing(studentTable);
+
         int selectedRow = sessionTable.getSelectedRow();
         if (selectedRow < 0) {
             return;
@@ -438,6 +443,8 @@ public class TOAttendancePanel extends JPanel {
      * @author methum
      */
     private void renderSessionEditor(AttendanceSessionEditorData data) {
+        stopTableEditing(studentTable);
+
         if (data == null) {
             resetSelectedSessionEditor();
             return;
@@ -531,6 +538,7 @@ public class TOAttendancePanel extends JPanel {
             return;
         }
 
+        stopTableEditing(studentTable);
         List<StudentAttendanceUpdate> updates = buildAttendanceUpdates();
 
         try {
@@ -562,9 +570,30 @@ public class TOAttendancePanel extends JPanel {
      * @author methum
      */
     private void resetSelectedSessionEditor() {
+        stopTableEditing(studentTable);
         studentTableModel.setRowCount(0);
         selectedSession = null;
         lblSelectedSession.setText(DEFAULT_EDITOR_MESSAGE);
+    }
+
+    /**
+     * Stops active table editing before the model is read or reset.
+     * @param table target table
+     * @author methum
+     */
+    private void stopTableEditing(JTable table) {
+        if (table == null || !table.isEditing()) {
+            return;
+        }
+
+        TableCellEditor editor = table.getCellEditor();
+        if (editor == null) {
+            return;
+        }
+
+        if (!editor.stopCellEditing()) {
+            editor.cancelCellEditing();
+        }
     }
 
     /**
