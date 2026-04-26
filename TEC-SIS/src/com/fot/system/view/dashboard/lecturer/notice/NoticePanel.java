@@ -10,11 +10,23 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * display lecturer-visible notices in a dedicated notice board panel
+ * @author janith
+ */
 public class NoticePanel extends JPanel {
+    private static final int DEFAULT_NOTICE_LIMIT = 15;
+    private static final String PANEL_TITLE = "Recent Notices";
+
     private final User currentUser;
     private final NoticeService noticeService;
     private final NoticeFeedPanel noticeFeedPanel;
 
+    /**
+     * initialize lecturer notice board panel
+     * @param user logged-in lecturer user
+     * @author janith
+     */
     public NoticePanel(User user) {
         this.currentUser = user;
         this.noticeService = new NoticeService();
@@ -25,14 +37,17 @@ public class NoticePanel extends JPanel {
 
         add(createHeader(), BorderLayout.NORTH);
 
-        noticeFeedPanel = new NoticeFeedPanel("Recent Notices");
+        noticeFeedPanel = new NoticeFeedPanel(PANEL_TITLE);
 
         add(noticeFeedPanel, BorderLayout.CENTER);
 
-        // දත්ත Load කරන්න
         loadNotices();
     }
 
+    /**
+     * create the notice board page header
+     * @author janith
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
@@ -50,29 +65,49 @@ public class NoticePanel extends JPanel {
         return header;
     }
 
+    /**
+     * load notices visible to the current lecturer role
+     * @author janith
+     */
     private void loadNotices() {
         SwingWorker<List<Notice>, Void> worker = new SwingWorker<>() {
             @Override
             protected List<Notice> doInBackground() {
-                return noticeService.getRecentVisibleNoticesForRole(currentUser.getRole(), 15);
+                return noticeService.getRecentVisibleNoticesForRole(resolveCurrentRole(), DEFAULT_NOTICE_LIMIT);
             }
 
             @Override
             protected void done() {
                 try {
                     List<Notice> notices = get();
-                    noticeFeedPanel.setNotices(notices);
+                    noticeFeedPanel.setNotices(notices == null ? List.of() : notices);
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(
-                            NoticePanel.this,
-                            "Failed to load notices.",
-                            "System Error",
-                            JOptionPane.ERROR_MESSAGE
-                    );
+                    handleLoadError();
                 }
             }
         };
         worker.execute();
+    }
+
+    /**
+     * resolve the current user role used to filter visible notices
+     * @author janith
+     */
+    private String resolveCurrentRole() {
+        return currentUser == null || currentUser.getRole() == null ? "" : currentUser.getRole();
+    }
+
+    /**
+     * show a consistent error message when notice loading fails
+     * @author janith
+     */
+    private void handleLoadError() {
+        noticeFeedPanel.setNotices(List.of());
+        JOptionPane.showMessageDialog(
+                NoticePanel.this,
+                "Failed to load notices.",
+                "System Error",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 }

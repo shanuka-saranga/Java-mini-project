@@ -14,6 +14,7 @@ import com.fot.system.view.dashboard.lecturer.marksGrades.LecturerMarksAndGrades
 import com.fot.system.view.dashboard.lecturer.myCourses.LecturerCoursesPanel;
 import com.fot.system.view.dashboard.lecturer.notice.NoticePanel;
 import com.fot.system.view.dashboard.lecturer.studentDetails.StudentDetailsPanel;
+import com.fot.system.view.dashboard.lecturer.timetable.LecturerTimetablePanel;
 import com.fot.system.view.dashboard.lecturer.timetable.TimetablePanel;
 import com.fot.system.view.dashboard.student.attendance.StudentAttendanceMedicalPanel;
 import com.fot.system.view.dashboard.student.marksGrades.StudentMarksAndGradesPanel;
@@ -123,7 +124,7 @@ public class MainDashboard extends JFrame {
         contentArea.add(new LecturerAttendancePanel(currentUser), AppConfig.MENU_ATTENDANCE);
         contentArea.add(new LecturerMarksAndGradesPanel(currentUser), AppConfig.MENU_MARKS);
         contentArea.add(new LecturerExamEligibilityPanel(currentUser), AppConfig.MENU_EXAM_ELIGIBILITY);
-        contentArea.add(new TimetablePanel(currentUser), AppConfig.MENU_TIMETABLES);
+        contentArea.add(new LecturerTimetablePanel(currentUser), AppConfig.MENU_TIMETABLES);
         contentArea.add(new StudentDetailsPanel(currentUser), AppConfig.MENU_STUDENTS);
         contentArea.add(new NoticePanel(currentUser), AppConfig.MENU_NOTICES);
     }
