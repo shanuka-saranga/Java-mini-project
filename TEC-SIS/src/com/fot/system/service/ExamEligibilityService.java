@@ -46,7 +46,7 @@ public class ExamEligibilityService {
             double attendancePercentage = attendanceSummary == null ? 0 : attendanceSummary.getAttendancePercentage();
             double caAverage = calculateCaAverage(caRecord);
             boolean attendanceEligible = attendancePercentage >= 80.0;
-            boolean caEligible = caAverage > 50.0;
+            boolean caEligible = caAverage >= 50.0;
 
             ExamEligibilityRow row = new ExamEligibilityRow();
             row.setRegistrationNo(caRecord.getRegistrationNo());
