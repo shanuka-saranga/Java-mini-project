@@ -7,7 +7,9 @@ import com.fot.system.service.StudentMarksGradesService;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -50,9 +52,7 @@ public class StudentMarksAndGradesPanel extends JPanel {
         marksTable.setGridColor(AppTheme.BORDER_SOFT);
         marksTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         marksTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        marksTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        marksTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        marksTable.getTableHeader().setFont(AppTheme.fontBold(13));
+        applyTableHeaderTheme(marksTable);
         marksTable.setFillsViewportHeight(true);
         marksTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
@@ -78,6 +78,22 @@ public class StudentMarksAndGradesPanel extends JPanel {
 
         add(content, BorderLayout.CENTER);
         loadMarksAndGrades();
+    }
+
+    private void applyTableHeaderTheme(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(AppTheme.TABLE_HEADER_BG);
+        header.setForeground(AppTheme.TABLE_HEADER_FG);
+        header.setFont(AppTheme.fontBold(13));
+        header.setOpaque(true);
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(SwingConstants.CENTER);
+        renderer.setBackground(AppTheme.TABLE_HEADER_BG);
+        renderer.setForeground(AppTheme.TABLE_HEADER_FG);
+        renderer.setFont(AppTheme.fontBold(13));
+        renderer.setBorder(BorderFactory.createLineBorder(AppTheme.PRIMARY_ACTIVE, 1, false));
+        header.setDefaultRenderer(renderer);
     }
 
     private JPanel createHeader() {
