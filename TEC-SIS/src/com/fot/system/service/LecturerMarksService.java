@@ -37,26 +37,18 @@ public class LecturerMarksService {
         return lecturerMarksRepository.findEndExamSummary(courseId, semesterYear);
     }
 
-    public List<StudentMarksOverviewRow> getStudentMarksOverviewByCourse(int courseId) {
-        if (courseId <= 0) {
-            throw new RuntimeException("Invalid course ID.");
-        }
-        return lecturerMarksRepository.findStudentMarksOverviewByCourse(courseId);
-    }
-
-    public List<StudentMarksOverviewRow> getStudentMarksOverviewByCourse(int courseId, int semesterYear) {
-        if (courseId <= 0) {
-            throw new RuntimeException("Invalid course ID.");
-        }
-        return lecturerMarksRepository.findStudentMarksOverviewByCourse(courseId, semesterYear);
-    }
-
     public List<AssessmentStudentMarkRow> getAssessmentRows(String assessmentType, int courseId, int semesterYear, int itemNo) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
         }
-        return lecturerMarksRepository.findAssessmentRows(assessmentType, courseId, semesterYear, itemNo);
+        List< AssessmentStudentMarkRow> test =  lecturerMarksRepository.findAssessmentRows(assessmentType, courseId, semesterYear, itemNo);
+        for(AssessmentStudentMarkRow row : test) {
+            System.out.println(row);
+        }
+        return test;
     }
+
+
 
     public void saveAssessmentRows(String assessmentType, int itemNo, List<AssessmentStudentMarkRow> rows) {
         for (AssessmentStudentMarkRow row : rows) {
@@ -76,4 +68,5 @@ public class LecturerMarksService {
         }
         lecturerMarksRepository.saveAssessmentRows(assessmentType, itemNo, rows);
     }
+
 }

@@ -26,6 +26,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
     private static final String SUMMARY_VIEW = "SUMMARY";
     private static final String ITEM_VIEW = "ITEM";
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
+    private static final boolean ENABLE_GRADE_FLOW_LOGS = true;
 
     private final User currentUser;
     private final CourseService courseService;
@@ -134,7 +135,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         cmbGradeBatch.addActionListener(e -> applyGradeFilters());
 
         gradeTableModel = new DefaultTableModel(
-                new Object[]{"Reg No", "Student", "Batch", "Attendance %", "CA %", "End %", "Final Mark", "Grade"},
+                new Object[]{"Reg No", "Student", "Batch", "CA", "End", "Final Mark", "Grade"},
                 0
         ) {
             @Override
@@ -286,6 +287,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
 
     private void openCourse(Course course) {
         selectedCourse = course;
+        logGradeFlow("openCourse -> courseId=" + course.getId() + ", courseCode=" + course.getCourseCode());
         lblOpenedCourseTab.setText(course.getCourseName());
         lblSelectedCourse.setText(course.getCourseName());
         detailsCardLayout.show(detailsContentPanel, SUMMARY_VIEW);
@@ -302,9 +304,12 @@ public class LecturerMarksAndGradesPanel extends JPanel {
             @Override
             protected MarksViewData doInBackground() {
                 int currentYear = Year.now().getValue();
+                logGradeFlow("loadMarksOverview.start -> courseId=" + selectedCourse.getId() + ", year=" + currentYear);
                 CourseSemesterContext context = lecturerMarksService.getCurrentSemesterContext(selectedCourse.getId(), currentYear);
                 List<AssessmentCardSummary> summaries = buildAssessmentSummaries(context);
-                CourseGradeViewData gradeViewData = lecturerGradesService.getCourseGradeViewData(selectedCourse.getId(), selectedCourse.getTotalHours());
+                CourseGradeViewData gradeViewData = lecturerGradesService.getCourseGradeViewData(selectedCourse.getId());
+                logGradeFlow("loadMarksOverview.fetched -> summaryCards=" + summaries.size()
+                        + ", gradeRows=" + (gradeViewData.getRows() == null ? 0 : gradeViewData.getRows().size()));
                 return new MarksViewData(context, summaries, gradeViewData);
             }
 
@@ -313,10 +318,12 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                 try {
                     MarksViewData data = get();
                     currentMarksYear = data.context.getSemesterYear();
+                    logGradeFlow("loadMarksOverview.done -> currentMarksYear=" + currentMarksYear);
                     lblSemesterSummary.setText("Current Year Marks Summary: " + data.context.getSemesterYear());
                     updateSummaryCards(data.summaries);
                     updateGradeView(data.gradeViewData);
                 } catch (Exception e) {
+                    logGradeFlow("loadMarksOverview.error -> " + e.getMessage());
                     lblSemesterSummary.setText("Current Year Marks Summary: -");
                     updateSummaryCards(List.of());
                     updateGradeView(createEmptyGradeViewData());
@@ -349,17 +356,13 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                 selectedCourse.getId(),
                 context.getSemesterYear()
         );
-        if (hasSummaryData(midSummary)) {
-            summaries.add(midSummary);
-        }
+        summaries.add(midSummary);
 
         AssessmentCardSummary endSummary = lecturerMarksService.getEndExamSummary(
                 selectedCourse.getId(),
                 context.getSemesterYear()
         );
-        if (hasSummaryData(endSummary)) {
-            summaries.add(endSummary);
-        }
+        summaries.add(endSummary);
 
         return summaries;
     }
@@ -453,13 +456,14 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                     row.getRegistrationNo(),
                     row.getStudentName(),
                     row.getRegistrationYear(),
-                    formatMark(row.getAttendancePercentage()),
                     formatMark(row.getCaAverage()),
                     formatMark(row.getEndExamAverage()),
                     row.getFinalMark() == null ? "-" : formatMark(row.getFinalMark()),
                     row.getGrade()
             });
         }
+        logGradeFlow("updateGradeView -> renderedRows=" + gradeTableModel.getRowCount()
+                + ", batches=" + (viewData.getRegistrationYears() == null ? 0 : viewData.getRegistrationYears().size()));
         applyGradeFilters();
     }
 
@@ -503,13 +507,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         gradeRowSorter.setRowFilter(filter);
     }
 
-    private boolean hasSummaryData(AssessmentCardSummary summary) {
-        return summary != null
-                && (summary.getAttemptCount() > 0
-                || summary.getAbsentCount() > 0
-                || summary.getMedicalCount() > 0
-                || summary.getPendingCount() > 0);
-    }
 
     private void openAssessmentDetails(AssessmentCardSummary summary) {
         if (selectedCourse == null || summary == null) {
@@ -520,12 +517,18 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         SwingWorker<List<AssessmentStudentMarkRow>, Void> worker = new SwingWorker<>() {
             @Override
             protected List<AssessmentStudentMarkRow> doInBackground() {
-                return lecturerMarksService.getAssessmentRows(
-                        summary.getAssessmentType(),
-                        selectedCourse.getId(),
-                        currentMarksYear,
-                        summary.getItemNo()
-                );
+                try {
+                    List<AssessmentStudentMarkRow> rows = lecturerMarksService.getAssessmentRows(
+                            summary.getAssessmentType(),
+                            selectedCourse.getId(),
+                            currentMarksYear,
+                            summary.getItemNo()
+                    );
+                    return normalizeAssessmentRowsForCourse(summary, rows);
+                }catch (Exception e) {
+                    logGradeFlow("openAssessmentDetails.error -> " + e.getMessage());
+                    throw new RuntimeException("Failed to load assessment details. Make sure the new marks tables and status columns exist in your database.");
+                }
             }
 
             @Override
@@ -546,6 +549,67 @@ public class LecturerMarksAndGradesPanel extends JPanel {
             }
         };
         worker.execute();
+    }
+
+    private List<AssessmentStudentMarkRow> normalizeAssessmentRowsForCourse(
+            AssessmentCardSummary summary,
+            List<AssessmentStudentMarkRow> rows
+    ) {
+        List<AssessmentStudentMarkRow> sourceRows = rows == null ? List.of() : rows;
+        if (selectedCourse == null
+                || !"BOTH".equalsIgnoreCase(selectedCourse.getSessionType())
+                || summary == null
+                || (!"MID".equalsIgnoreCase(summary.getAssessmentType())
+                && !"END".equalsIgnoreCase(summary.getAssessmentType()))) {
+            return sourceRows;
+        }
+
+        java.util.Map<String, java.util.Map<String, AssessmentStudentMarkRow>> groupedRows = new java.util.LinkedHashMap<>();
+        for (AssessmentStudentMarkRow row : sourceRows) {
+            String groupKey = row.getRegistrationNo() + "|" + row.getAttemptNo();
+            groupedRows
+                    .computeIfAbsent(groupKey, key -> new java.util.LinkedHashMap<>())
+                    .put(normalizeExamType(row.getExamType()), row);
+        }
+
+        List<AssessmentStudentMarkRow> normalizedRows = new java.util.ArrayList<>();
+        for (java.util.Map<String, AssessmentStudentMarkRow> examTypeRows : groupedRows.values()) {
+            AssessmentStudentMarkRow theoryRow = examTypeRows.get("THEORY");
+            AssessmentStudentMarkRow practicalRow = examTypeRows.get("PRACTICAL");
+
+            if (theoryRow == null && practicalRow != null) {
+                theoryRow = createMissingExamTypeRow(practicalRow, "THEORY");
+            }
+            if (practicalRow == null && theoryRow != null) {
+                practicalRow = createMissingExamTypeRow(theoryRow, "PRACTICAL");
+            }
+
+            if (theoryRow != null) {
+                normalizedRows.add(theoryRow);
+            }
+            if (practicalRow != null) {
+                normalizedRows.add(practicalRow);
+            }
+        }
+        return normalizedRows;
+    }
+
+    private AssessmentStudentMarkRow createMissingExamTypeRow(AssessmentStudentMarkRow source, String examType) {
+        AssessmentStudentMarkRow row = new AssessmentStudentMarkRow();
+        row.setMarkId(source.getMarkId());
+        row.setRegistrationNo(source.getRegistrationNo());
+        row.setAttemptNo(source.getAttemptNo());
+        row.setExamType(examType);
+        row.setStatus("");
+        row.setMark(null);
+        return row;
+    }
+
+    private String normalizeExamType(String examType) {
+        if (examType == null || examType.isBlank()) {
+            return "";
+        }
+        return examType.trim().toUpperCase();
     }
 
     private void saveAssessmentDetailRows() {
@@ -602,5 +666,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
             List<AssessmentCardSummary> summaries,
             CourseGradeViewData gradeViewData
     ) {
+    }
+
+    private void logGradeFlow(String message) {
+        if (ENABLE_GRADE_FLOW_LOGS) {
+            System.out.println("[GRADE-FLOW][UI] " + message);
+        }
     }
 }

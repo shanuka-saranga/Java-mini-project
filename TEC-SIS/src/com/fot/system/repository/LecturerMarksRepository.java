@@ -126,6 +126,14 @@ public class LecturerMarksRepository {
         return summary;
     }
 
+    /**
+     * get
+     * @param assessmentType type of the assessment
+     * @param courseId
+     * @param semesterYear
+     * @param itemNo
+     * @author poornika
+     */
     public List<AssessmentStudentMarkRow> findAssessmentRows(String assessmentType, int courseId, int semesterYear, int itemNo) {
         ensureMarksRowsForRegisteredStudents(courseId, semesterYear);
         return switch (assessmentType) {

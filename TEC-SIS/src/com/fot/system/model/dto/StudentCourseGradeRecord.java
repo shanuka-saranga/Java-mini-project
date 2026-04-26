@@ -12,10 +12,24 @@ public class StudentCourseGradeRecord {
     private String studentName;
     private int registrationYear;
     private String sessionType;
+    private int attemptNo;
     private double quizTotal;
     private double assignmentTotal;
     private double midExamTotal;
     private double endExamTotal;
+    private int quizPresentCount;
+    private Double quizLowestPresentMark;
+    private int quizMedicalCount;
+    private int quizIncompleteCount;
+    private int assignmentSubmittedCount;
+    private int assignmentMedicalCount;
+    private int assignmentIncompleteCount;
+    private int midExamPresentCount;
+    private int midExamMedicalCount;
+    private int midExamIncompleteCount;
+    private int endExamPresentCount;
+    private int endExamMedicalCount;
+    private int endExamIncompleteCount;
     private int quizCount;
     private int assignmentCount;
     private int midExamCount;
@@ -93,6 +107,14 @@ public class StudentCourseGradeRecord {
         this.sessionType = sessionType;
     }
 
+    public int getAttemptNo() {
+        return attemptNo;
+    }
+
+    public void setAttemptNo(int attemptNo) {
+        this.attemptNo = attemptNo;
+    }
+
     public double getQuizTotal() {
         return quizTotal;
     }
@@ -123,6 +145,110 @@ public class StudentCourseGradeRecord {
 
     public void setEndExamTotal(double endExamTotal) {
         this.endExamTotal = endExamTotal;
+    }
+
+    public int getQuizPresentCount() {
+        return quizPresentCount;
+    }
+
+    public void setQuizPresentCount(int quizPresentCount) {
+        this.quizPresentCount = quizPresentCount;
+    }
+
+    public Double getQuizLowestPresentMark() {
+        return quizLowestPresentMark;
+    }
+
+    public void setQuizLowestPresentMark(Double quizLowestPresentMark) {
+        this.quizLowestPresentMark = quizLowestPresentMark;
+    }
+
+    public int getQuizMedicalCount() {
+        return quizMedicalCount;
+    }
+
+    public void setQuizMedicalCount(int quizMedicalCount) {
+        this.quizMedicalCount = quizMedicalCount;
+    }
+
+    public int getQuizIncompleteCount() {
+        return quizIncompleteCount;
+    }
+
+    public void setQuizIncompleteCount(int quizIncompleteCount) {
+        this.quizIncompleteCount = quizIncompleteCount;
+    }
+
+    public int getAssignmentSubmittedCount() {
+        return assignmentSubmittedCount;
+    }
+
+    public void setAssignmentSubmittedCount(int assignmentSubmittedCount) {
+        this.assignmentSubmittedCount = assignmentSubmittedCount;
+    }
+
+    public int getAssignmentMedicalCount() {
+        return assignmentMedicalCount;
+    }
+
+    public void setAssignmentMedicalCount(int assignmentMedicalCount) {
+        this.assignmentMedicalCount = assignmentMedicalCount;
+    }
+
+    public int getAssignmentIncompleteCount() {
+        return assignmentIncompleteCount;
+    }
+
+    public void setAssignmentIncompleteCount(int assignmentIncompleteCount) {
+        this.assignmentIncompleteCount = assignmentIncompleteCount;
+    }
+
+    public int getMidExamPresentCount() {
+        return midExamPresentCount;
+    }
+
+    public void setMidExamPresentCount(int midExamPresentCount) {
+        this.midExamPresentCount = midExamPresentCount;
+    }
+
+    public int getMidExamMedicalCount() {
+        return midExamMedicalCount;
+    }
+
+    public void setMidExamMedicalCount(int midExamMedicalCount) {
+        this.midExamMedicalCount = midExamMedicalCount;
+    }
+
+    public int getMidExamIncompleteCount() {
+        return midExamIncompleteCount;
+    }
+
+    public void setMidExamIncompleteCount(int midExamIncompleteCount) {
+        this.midExamIncompleteCount = midExamIncompleteCount;
+    }
+
+    public int getEndExamPresentCount() {
+        return endExamPresentCount;
+    }
+
+    public void setEndExamPresentCount(int endExamPresentCount) {
+        this.endExamPresentCount = endExamPresentCount;
+    }
+
+    public int getEndExamMedicalCount() {
+        return endExamMedicalCount;
+    }
+
+    public void setEndExamMedicalCount(int endExamMedicalCount) {
+        this.endExamMedicalCount = endExamMedicalCount;
+    }
+
+    public int getEndExamIncompleteCount() {
+        return endExamIncompleteCount;
+    }
+
+    public void setEndExamIncompleteCount(int endExamIncompleteCount) {
+        this.endExamIncompleteCount = endExamIncompleteCount;
     }
 
     public int getQuizCount() {
@@ -156,4 +282,5 @@ public class StudentCourseGradeRecord {
     public void setEndExamCount(int endExamCount) {
         this.endExamCount = endExamCount;
     }
+
 }
