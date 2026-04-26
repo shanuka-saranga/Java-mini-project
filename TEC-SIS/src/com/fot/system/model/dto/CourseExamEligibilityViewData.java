@@ -4,6 +4,10 @@ import com.fot.system.model.entity.*;
 
 import java.util.List;
 
+/**
+ * hold the full exam eligibility dataset for one course view
+ * @author poornika
+ */
 public class CourseExamEligibilityViewData {
     private List<ExamEligibilityRow> rows;
     private List<Integer> registrationYears;
