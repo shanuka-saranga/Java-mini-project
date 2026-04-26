@@ -3,36 +3,38 @@ package com.fot.system.service;
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.repository.MarksRepository;
+import com.fot.system.util.AcademicPerformance;
 
 import java.time.Year;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class LecturerGradesService {
+    private static final double CA_MINIMUM_MARK = 30.0;
+    private static final double END_MINIMUM_MARK = 30.0;
+    private static final double FINAL_PASS_MARK = 40.0;
+    private static final boolean ENABLE_GRADE_FLOW_LOGS = true;
 
     private final MarksRepository lecturerGradesRepository;
-    private final AttendanceService attendanceService;
+    private final AcademicPerformance academicPerformance;
 
     public LecturerGradesService() {
         this.lecturerGradesRepository = new MarksRepository();
-        this.attendanceService = new AttendanceService();
+        this.academicPerformance = new AcademicPerformance();
     }
 
-    public CourseGradeViewData getCourseGradeViewData(int courseId, int totalCourseHours) {
+    public CourseGradeViewData getCourseGradeViewData(int courseId) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
         }
 
         int currentYear = Year.now().getValue();
-        CourseAttendanceViewData attendanceViewData = attendanceService.getCourseAttendanceViewData(courseId, totalCourseHours);
-        Map<String, StudentAttendanceSummaryRow> attendanceMap = attendanceViewData.getStudentSummaryRows().stream()
-                .collect(Collectors.toMap(StudentAttendanceSummaryRow::getRegistrationNo, Function.identity()));
-
-        List<StudentGradeRow> rows = lecturerGradesRepository.findStudentCourseGradeRecords(courseId, currentYear).stream()
-                .map(record -> buildRow(record, attendanceMap.get(record.getRegistrationNo())))
+        logGradeFlow("getCourseGradeViewData.start -> courseId=" + courseId + ", year=" + currentYear);
+        List<StudentCourseGradeRecord> records = lecturerGradesRepository.findStudentCourseGradeRecords(courseId, currentYear);
+        logGradeFlow("getCourseGradeViewData.rawRecords -> count=" + records.size());
+        List<StudentGradeRow> rows = records.stream()
+                .map(this::buildRow)
                 .toList();
+        logGradeFlow("getCourseGradeViewData.calculatedRows -> count=" + rows.size());
 
         CourseGradeViewData viewData = new CourseGradeViewData();
         viewData.setRows(rows);
@@ -45,65 +47,81 @@ public class LecturerGradesService {
         return viewData;
     }
 
-    private StudentGradeRow buildRow(StudentCourseGradeRecord record, StudentAttendanceSummaryRow attendanceSummary) {
-        double attendancePercentage = attendanceSummary == null ? 0 : attendanceSummary.getAttendancePercentage();
+    private StudentGradeRow buildRow(StudentCourseGradeRecord record) {
         double caAverage = calculateCaAverage(record);
         double endExamAverage = calculateEndExamAverage(record);
-        boolean eligible = attendancePercentage >= 80.0 && caAverage > 50.0;
 
         StudentGradeRow row = new StudentGradeRow();
         row.setRegistrationNo(record.getRegistrationNo());
         row.setStudentName(record.getStudentName());
         row.setRegistrationYear(record.getRegistrationYear());
-        row.setAttendancePercentage(attendancePercentage);
         row.setCaAverage(caAverage);
         row.setEndExamAverage(endExamAverage);
 
-        if (eligible) {
-            double finalMark = calculateFinalMark(record.getSessionType(), caAverage, endExamAverage);
-            row.setFinalMark(finalMark);
-            row.setGrade(resolveGrade(finalMark));
-        } else {
+        String specialGrade = resolveSpecialGrade(record, caAverage, endExamAverage);
+        if (specialGrade != null) {
             row.setFinalMark(null);
-            row.setGrade("NOT ELIGIBLE");
+            row.setGrade(specialGrade);
+            logGradeFlow("buildRow -> regNo=" + row.getRegistrationNo()
+                    + ", ca=" + caAverage + ", end=" + endExamAverage + ", grade=" + specialGrade + ", final=-");
+            return row;
         }
 
+        double finalMark = academicPerformance.calculateFinalMark(record.getSessionType(), caAverage, endExamAverage);
+        row.setFinalMark(finalMark);
+        row.setGrade(finalMark < FINAL_PASS_MARK ? "E" : academicPerformance.resolveGrade(finalMark));
+        logGradeFlow("buildRow -> regNo=" + row.getRegistrationNo()
+                + ", ca=" + caAverage + ", end=" + endExamAverage + ", final=" + finalMark + ", grade=" + row.getGrade());
         return row;
     }
 
     private double calculateCaAverage(StudentCourseGradeRecord record) {
-        int totalComponents = record.getQuizCount() + record.getAssignmentCount() + record.getMidExamCount();
-        if (totalComponents <= 0) {
-            return 0;
-        }
-        return (record.getQuizTotal() + record.getAssignmentTotal() + record.getMidExamTotal()) / totalComponents;
+        return academicPerformance.calculateCaAverage(record);
     }
 
     private double calculateEndExamAverage(StudentCourseGradeRecord record) {
-        if (record.getEndExamCount() <= 0) {
-            return 0;
-        }
-        return record.getEndExamTotal() / record.getEndExamCount();
+        return academicPerformance.calculateEndExamAverage(record);
     }
 
-    private double calculateFinalMark(String sessionType, double caAverage, double endExamAverage) {
-        if ("THEORY".equalsIgnoreCase(sessionType)) {
-            return (caAverage * 0.30) + (endExamAverage * 0.70);
+    private String resolveSpecialGrade(StudentCourseGradeRecord record, double caAverage, double endExamAverage) {
+        if (record.getQuizMedicalCount() > 0
+                || record.getAssignmentMedicalCount() > 0
+                || record.getMidExamMedicalCount() > 0
+                || record.getEndExamMedicalCount() > 0) {
+            return "MC";
         }
-        return (caAverage * 0.40) + (endExamAverage * 0.60);
+
+        int requiredQuizCount = Math.max(1, record.getQuizCount() - 1);
+        boolean caCompleteByCounts = record.getQuizPresentCount() >= requiredQuizCount
+                && record.getAssignmentSubmittedCount() >= record.getAssignmentCount()
+                && record.getMidExamPresentCount() >= record.getMidExamCount();
+        boolean endCompleteByCounts = record.getEndExamPresentCount() >= record.getEndExamCount();
+
+        boolean caFailOrIncomplete = record.getQuizIncompleteCount() > 0
+                || record.getAssignmentIncompleteCount() > 0
+                || record.getMidExamIncompleteCount() > 0
+                || !caCompleteByCounts
+                || caAverage < CA_MINIMUM_MARK;
+        boolean endFailOrIncomplete = record.getEndExamIncompleteCount() > 0
+                || !endCompleteByCounts
+                || endExamAverage < END_MINIMUM_MARK;
+
+        if (caFailOrIncomplete && endFailOrIncomplete) {
+            return "E";
+        }
+        if (caFailOrIncomplete) {
+            return "EC";
+        }
+        if (endFailOrIncomplete) {
+            return "EE";
+        }
+
+        return null;
     }
 
-    private String resolveGrade(double finalMark) {
-        if (finalMark >= 85) return "A+";
-        if (finalMark >= 75) return "A";
-        if (finalMark >= 70) return "A-";
-        if (finalMark >= 65) return "B+";
-        if (finalMark >= 60) return "B";
-        if (finalMark >= 55) return "B-";
-        if (finalMark >= 50) return "C+";
-        if (finalMark >= 45) return "C";
-        if (finalMark >= 40) return "C-";
-        if (finalMark >= 35) return "D";
-        return "E";
+    private void logGradeFlow(String message) {
+        if (ENABLE_GRADE_FLOW_LOGS) {
+            System.out.println("[GRADE-FLOW][SERVICE] " + message);
+        }
     }
 }
