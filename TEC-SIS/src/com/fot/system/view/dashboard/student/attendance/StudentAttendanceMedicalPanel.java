@@ -13,7 +13,9 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -232,12 +234,26 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         table.setGridColor(AppTheme.BORDER_SOFT);
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(AppTheme.fontBold(13));
+        applyTableHeaderTheme(table);
         table.setFillsViewportHeight(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         return table;
+    }
+
+    private void applyTableHeaderTheme(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(AppTheme.TABLE_HEADER_BG);
+        header.setForeground(AppTheme.TABLE_HEADER_FG);
+        header.setFont(AppTheme.fontBold(13));
+        header.setOpaque(true);
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(SwingConstants.CENTER);
+        renderer.setBackground(AppTheme.TABLE_HEADER_BG);
+        renderer.setForeground(AppTheme.TABLE_HEADER_FG);
+        renderer.setFont(AppTheme.fontBold(13));
+        renderer.setBorder(BorderFactory.createLineBorder(AppTheme.PRIMARY_ACTIVE, 1, false));
+        header.setDefaultRenderer(renderer);
     }
 
     private JScrollPane createScrollPane(JTable table, int preferredHeight) {
