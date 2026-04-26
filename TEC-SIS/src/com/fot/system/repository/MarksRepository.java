@@ -279,6 +279,151 @@ public class MarksRepository {
         return rows;
     }
 
+    public List<StudentCourseGradeRecord> findAllLatestGradeRecords() {
+        List<StudentCourseGradeRecord> rows = new ArrayList<>();
+        String sql = """
+                SELECT
+                    c.id AS course_id,
+                    c.course_code,
+                    c.course_name,
+                    c.credits,
+                    m.semester_year,
+                    st.registration_no,
+                    CONCAT(u.first_name, ' ', u.last_name) AS student_name,
+                    st.registration_year,
+                    c.session_type,
+                    m.attempt_no,
+                    COALESCE(q.quiz_total, 0) AS quiz_total,
+                    COALESCE(a.assignment_total, 0) AS assignment_total,
+                    COALESCE(me.mid_exam_total, 0) AS mid_exam_total,
+                    COALESCE(ee.end_exam_total, 0) AS end_exam_total,
+                    COALESCE(q.present_count, 0) AS quiz_present_count,
+                    q.lowest_present_mark AS quiz_lowest_present_mark,
+                    COALESCE(q.medical_count, 0) AS quiz_medical_count,
+                    COALESCE(q.incomplete_count, 0) AS quiz_incomplete_count,
+                    COALESCE(a.submitted_count, 0) AS assignment_submitted_count,
+                    COALESCE(a.medical_count, 0) AS assignment_medical_count,
+                    COALESCE(a.incomplete_count, 0) AS assignment_incomplete_count,
+                    COALESCE(me.present_count, 0) AS mid_exam_present_count,
+                    COALESCE(me.medical_count, 0) AS mid_exam_medical_count,
+                    COALESCE(me.incomplete_count, 0) AS mid_exam_incomplete_count,
+                    COALESCE(ee.present_count, 0) AS end_exam_present_count,
+                    COALESCE(ee.medical_count, 0) AS end_exam_medical_count,
+                    COALESCE(ee.incomplete_count, 0) AS end_exam_incomplete_count,
+                    c.no_of_quizzes,
+                    c.no_of_assignments,
+                    CASE WHEN c.session_type = 'BOTH' THEN 2 ELSE 1 END AS exam_component_count
+                FROM student st
+                INNER JOIN users u
+                    ON u.id = st.user_id
+                INNER JOIN (
+                    SELECT m1.*
+                    FROM marks m1
+                    INNER JOIN (
+                        SELECT student_reg_no, course_id, semester_year, MAX(attempt_no) AS max_attempt
+                        FROM marks
+                        GROUP BY student_reg_no, course_id, semester_year
+                    ) latest
+                        ON latest.student_reg_no = m1.student_reg_no
+                       AND latest.course_id = m1.course_id
+                       AND latest.semester_year = m1.semester_year
+                       AND latest.max_attempt = m1.attempt_no
+                ) m
+                    ON m.student_reg_no = st.registration_no
+                INNER JOIN courses c
+                    ON c.id = m.course_id
+                LEFT JOIN (
+                    SELECT
+                        q.mark_id,
+                        SUM(CASE WHEN q.status = 'PRESENT' THEN q.quiz_mark ELSE 0 END) AS quiz_total,
+                        SUM(CASE WHEN q.status = 'PRESENT' THEN 1 ELSE 0 END) AS present_count,
+                        MIN(CASE WHEN q.status = 'PRESENT' THEN q.quiz_mark END) AS lowest_present_mark,
+                        SUM(CASE WHEN q.status = 'MEDICAL' THEN 1 ELSE 0 END) AS medical_count,
+                        SUM(CASE WHEN q.status IN ('ABSENT', 'PENDING') THEN 1 ELSE 0 END) AS incomplete_count
+                    FROM quizzes q
+                    GROUP BY q.mark_id
+                ) q
+                    ON q.mark_id = m.id
+                LEFT JOIN (
+                    SELECT
+                        a.mark_id,
+                        SUM(CASE WHEN a.status = 'SUBMITTED' THEN a.assignment_mark ELSE 0 END) AS assignment_total,
+                        SUM(CASE WHEN a.status = 'SUBMITTED' THEN 1 ELSE 0 END) AS submitted_count,
+                        SUM(CASE WHEN a.status = 'MEDICAL' THEN 1 ELSE 0 END) AS medical_count,
+                        SUM(CASE WHEN a.status IN ('PENDING', 'NOT_SUBMITTED') THEN 1 ELSE 0 END) AS incomplete_count
+                    FROM assignments a
+                    GROUP BY a.mark_id
+                ) a
+                    ON a.mark_id = m.id
+                LEFT JOIN (
+                    SELECT
+                        me.mark_id,
+                        SUM(CASE WHEN me.status = 'PRESENT' THEN me.mid_exam_mark ELSE 0 END) AS mid_exam_total,
+                        SUM(CASE WHEN me.status = 'PRESENT' THEN 1 ELSE 0 END) AS present_count,
+                        SUM(CASE WHEN me.status = 'MEDICAL' THEN 1 ELSE 0 END) AS medical_count,
+                        SUM(CASE WHEN me.status IN ('ABSENT', 'PENDING') THEN 1 ELSE 0 END) AS incomplete_count
+                    FROM mid_exams me
+                    GROUP BY me.mark_id
+                ) me
+                    ON me.mark_id = m.id
+                LEFT JOIN (
+                    SELECT
+                        ee.mark_id,
+                        SUM(CASE WHEN ee.status = 'PRESENT' THEN ee.end_exam_mark ELSE 0 END) AS end_exam_total,
+                        SUM(CASE WHEN ee.status = 'PRESENT' THEN 1 ELSE 0 END) AS present_count,
+                        SUM(CASE WHEN ee.status = 'MEDICAL' THEN 1 ELSE 0 END) AS medical_count,
+                        SUM(CASE WHEN ee.status IN ('ABSENT', 'PENDING') THEN 1 ELSE 0 END) AS incomplete_count
+                    FROM end_exams ee
+                    GROUP BY ee.mark_id
+                ) ee
+                    ON ee.mark_id = m.id
+                ORDER BY st.registration_year, st.registration_no, m.semester_year DESC, c.course_code
+                """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                StudentCourseGradeRecord row = new StudentCourseGradeRecord();
+                row.setCourseId(rs.getInt("course_id"));
+                row.setCourseCode(rs.getString("course_code"));
+                row.setCourseName(rs.getString("course_name"));
+                row.setCredits(rs.getInt("credits"));
+                row.setSemesterYear(rs.getInt("semester_year"));
+                row.setRegistrationNo(rs.getString("registration_no"));
+                row.setStudentName(rs.getString("student_name"));
+                row.setRegistrationYear(rs.getInt("registration_year"));
+                row.setSessionType(rs.getString("session_type"));
+                row.setAttemptNo(rs.getInt("attempt_no"));
+                row.setQuizTotal(rs.getDouble("quiz_total"));
+                row.setAssignmentTotal(rs.getDouble("assignment_total"));
+                row.setMidExamTotal(rs.getDouble("mid_exam_total"));
+                row.setEndExamTotal(rs.getDouble("end_exam_total"));
+                row.setQuizPresentCount(rs.getInt("quiz_present_count"));
+                row.setQuizLowestPresentMark(getNullableDouble(rs, "quiz_lowest_present_mark"));
+                row.setQuizMedicalCount(rs.getInt("quiz_medical_count"));
+                row.setQuizIncompleteCount(rs.getInt("quiz_incomplete_count"));
+                row.setAssignmentSubmittedCount(rs.getInt("assignment_submitted_count"));
+                row.setAssignmentMedicalCount(rs.getInt("assignment_medical_count"));
+                row.setAssignmentIncompleteCount(rs.getInt("assignment_incomplete_count"));
+                row.setMidExamPresentCount(rs.getInt("mid_exam_present_count"));
+                row.setMidExamMedicalCount(rs.getInt("mid_exam_medical_count"));
+                row.setMidExamIncompleteCount(rs.getInt("mid_exam_incomplete_count"));
+                row.setEndExamPresentCount(rs.getInt("end_exam_present_count"));
+                row.setEndExamMedicalCount(rs.getInt("end_exam_medical_count"));
+                row.setEndExamIncompleteCount(rs.getInt("end_exam_incomplete_count"));
+                row.setQuizCount(rs.getInt("no_of_quizzes"));
+                row.setAssignmentCount(rs.getInt("no_of_assignments"));
+                row.setMidExamCount(rs.getInt("exam_component_count"));
+                row.setEndExamCount(rs.getInt("exam_component_count"));
+                rows.add(row);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load all latest grade records: " + e.getMessage(), e);
+        }
+
+        return rows;
+    }
+
     private Double getNullableDouble(ResultSet rs, String column) throws SQLException {
         double value = rs.getDouble(column);
         return rs.wasNull() ? null : value;
