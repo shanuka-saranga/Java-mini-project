@@ -22,6 +22,8 @@ public class LecturerExamEligibilityPanel extends JPanel {
     private static final String LIST_CARD = "LIST";
     private static final String DETAILS_CARD = "DETAILS";
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
+    private static final Color ELIGIBLE_ROW_COLOR = new Color(46, 204, 113, 70);
+    private static final Color NOT_ELIGIBLE_ROW_COLOR = new Color(231, 76, 60, 55);
 
     private final User currentUser;
     private final CourseService courseService;
@@ -171,6 +173,28 @@ public class LecturerExamEligibilityPanel extends JPanel {
         eligibilityTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
         eligibilityTable.getTableHeader().setFont(AppTheme.fontBold(13));
         eligibilityTable.setFillsViewportHeight(true);
+        eligibilityTable.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table,
+                    Object value,
+                    boolean isSelected,
+                    boolean hasFocus,
+                    int row,
+                    int column
+            ) {
+                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (isSelected) {
+                    component.setBackground(table.getSelectionBackground());
+                    component.setForeground(table.getSelectionForeground());
+                    return component;
+                }
+
+                component.setForeground(AppTheme.TEXT_DARK);
+                component.setBackground(resolveEligibilityRowColor(table, row));
+                return component;
+            }
+        });
 
         rowSorter = new TableRowSorter<>(tableModel);
         eligibilityTable.setRowSorter(rowSorter);
@@ -410,6 +434,19 @@ public class LecturerExamEligibilityPanel extends JPanel {
         };
 
         rowSorter.setRowFilter(filter);
+    }
+
+    private Color resolveEligibilityRowColor(JTable table, int viewRow) {
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        Object value = table.getModel().getValueAt(modelRow, 7);
+        String eligibility = value == null ? "" : value.toString().trim();
+        if ("ELIGIBLE".equalsIgnoreCase(eligibility)) {
+            return ELIGIBLE_ROW_COLOR;
+        }
+        if ("NOT ELIGIBLE".equalsIgnoreCase(eligibility)) {
+            return NOT_ELIGIBLE_ROW_COLOR;
+        }
+        return AppTheme.CARD_BG;
     }
 
     private void attachClickHandler(Component component, MouseAdapter adapter) {
