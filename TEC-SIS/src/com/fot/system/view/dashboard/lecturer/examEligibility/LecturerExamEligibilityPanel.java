@@ -18,10 +18,18 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.List;
 
+/**
+ * displays lecturer exam eligibility summaries and student eligibility rows
+ * @author poornika
+ */
 public class LecturerExamEligibilityPanel extends JPanel {
     private static final String LIST_CARD = "LIST";
     private static final String DETAILS_CARD = "DETAILS";
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
+    private static final Color ELIGIBLE_ROW_COLOR = new Color(46, 204, 113, 70);
+    private static final Color NOT_ELIGIBLE_ROW_COLOR = new Color(231, 76, 60, 55);
+    private static final int BATCH_COLUMN_INDEX = 2;
+    private static final int ELIGIBILITY_COLUMN_INDEX = 7;
 
     private final User currentUser;
     private final CourseService courseService;
@@ -42,6 +50,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
     private List<Course> assignedCourses;
     private Course selectedCourse;
 
+    /**
+     * initialize lecturer exam eligibility panel for the logged in lecturer
+     * @param user logged in lecturer
+     * @author poornika
+     */
     public LecturerExamEligibilityPanel(User user) {
         this.currentUser = user;
         this.courseService = new CourseService();
@@ -171,6 +184,28 @@ public class LecturerExamEligibilityPanel extends JPanel {
         eligibilityTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
         eligibilityTable.getTableHeader().setFont(AppTheme.fontBold(13));
         eligibilityTable.setFillsViewportHeight(true);
+        eligibilityTable.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table,
+                    Object value,
+                    boolean isSelected,
+                    boolean hasFocus,
+                    int row,
+                    int column
+            ) {
+                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (isSelected) {
+                    component.setBackground(table.getSelectionBackground());
+                    component.setForeground(table.getSelectionForeground());
+                    return component;
+                }
+
+                component.setForeground(AppTheme.TEXT_DARK);
+                component.setBackground(resolveEligibilityRowColor(table, row));
+                return component;
+            }
+        });
 
         rowSorter = new TableRowSorter<>(tableModel);
         eligibilityTable.setRowSorter(rowSorter);
@@ -200,6 +235,10 @@ public class LecturerExamEligibilityPanel extends JPanel {
         loadAssignedCourses();
     }
 
+    /**
+     * create the exam eligibility page header
+     * @author poornika
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
@@ -217,6 +256,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         return header;
     }
 
+    /**
+     * create a scroll pane wrapper for the given content panel
+     * @param content wrapped content panel
+     * @author poornika
+     */
     private JScrollPane createScrollPane(JPanel content) {
         JScrollPane scrollPane = new JScrollPane(content);
         scrollPane.setBorder(null);
@@ -225,6 +269,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         return scrollPane;
     }
 
+    /**
+     * create a bold number label for summary cards
+     * @param text summary value text
+     * @author poornika
+     */
     private JLabel createSummaryValueLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontBold(24));
@@ -232,6 +281,12 @@ public class LecturerExamEligibilityPanel extends JPanel {
         return label;
     }
 
+    /**
+     * create a summary card for one eligibility metric
+     * @param title summary title
+     * @param valueLabel summary value label
+     * @author poornika
+     */
     private JPanel createSummaryCard(String title, JLabel valueLabel) {
         JPanel card = new JPanel(new BorderLayout(0, 8));
         card.setBackground(AppTheme.CARD_BG);
@@ -249,6 +304,10 @@ public class LecturerExamEligibilityPanel extends JPanel {
         return card;
     }
 
+    /**
+     * load lecturer assigned courses for exam eligibility selection
+     * @author poornika
+     */
     private void loadAssignedCourses() {
         SwingWorker<List<Course>, Void> worker = new SwingWorker<>() {
             @Override
@@ -275,6 +334,10 @@ public class LecturerExamEligibilityPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * render lecturer assigned courses as clickable cards
+     * @author poornika
+     */
     private void renderCourseList() {
         courseListPanel.removeAll();
 
@@ -303,6 +366,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         courseListPanel.repaint();
     }
 
+    /**
+     * open the selected course eligibility view
+     * @param course selected course
+     * @author poornika
+     */
     private void openCourse(Course course) {
         selectedCourse = course;
         lblOpenedCourseTab.setText(course.getCourseName());
@@ -311,6 +379,10 @@ public class LecturerExamEligibilityPanel extends JPanel {
         cardLayout.show(cardPanel, DETAILS_CARD);
     }
 
+    /**
+     * load exam eligibility data for the opened course
+     * @author poornika
+     */
     private void loadEligibilityData() {
         if (selectedCourse == null) {
             return;
@@ -340,24 +412,41 @@ public class LecturerExamEligibilityPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * update summary cards, filters and table from loaded view data
+     * @param viewData exam eligibility view data
+     * @author poornika
+     */
     private void updateView(CourseExamEligibilityViewData viewData) {
-        updateSummary(viewData.getBatchSummary());
-        updateBatchFilter(viewData.getRegistrationYears());
-        updateTable(viewData.getRows());
+        CourseExamEligibilityViewData safeViewData = viewData == null ? createEmptyViewData() : viewData;
+        updateSummary(safeViewData.getBatchSummary());
+        updateBatchFilter(safeViewData.getRegistrationYears());
+        updateTable(safeViewData.getRows());
         applyFilters();
     }
 
+    /**
+     * update top summary counts for the current course
+     * @param summary batch summary data
+     * @author poornika
+     */
     private void updateSummary(ExamEligibilityBatchSummary summary) {
-        lblTotalStudents.setText(String.valueOf(summary.getTotalStudents()));
-        lblEligibleStudents.setText(String.valueOf(summary.getEligibleCount()));
-        lblNotEligibleStudents.setText(String.valueOf(summary.getNotEligibleCount()));
+        ExamEligibilityBatchSummary safeSummary = summary == null ? createEmptyBatchSummary() : summary;
+        lblTotalStudents.setText(String.valueOf(safeSummary.getTotalStudents()));
+        lblEligibleStudents.setText(String.valueOf(safeSummary.getEligibleCount()));
+        lblNotEligibleStudents.setText(String.valueOf(safeSummary.getNotEligibleCount()));
     }
 
+    /**
+     * refresh the registration year filter options
+     * @param registrationYears available registration years
+     * @author poornika
+     */
     private void updateBatchFilter(List<Integer> registrationYears) {
         Object selected = cmbRegistrationYear.getSelectedItem();
         cmbRegistrationYear.removeAllItems();
         cmbRegistrationYear.addItem("All Batches");
-        for (Integer year : registrationYears) {
+        for (Integer year : registrationYears == null ? List.<Integer>of() : registrationYears) {
             cmbRegistrationYear.addItem(String.valueOf(year));
         }
         if (selected != null) {
@@ -368,9 +457,14 @@ public class LecturerExamEligibilityPanel extends JPanel {
         }
     }
 
+    /**
+     * update student eligibility table rows
+     * @param rows student eligibility rows
+     * @author poornika
+     */
     private void updateTable(List<ExamEligibilityRow> rows) {
         tableModel.setRowCount(0);
-        for (ExamEligibilityRow row : rows) {
+        for (ExamEligibilityRow row : rows == null ? List.<ExamEligibilityRow>of() : rows) {
             tableModel.addRow(new Object[]{
                     row.getRegistrationNo(),
                     row.getStudentName(),
@@ -384,9 +478,18 @@ public class LecturerExamEligibilityPanel extends JPanel {
         }
     }
 
+    /**
+     * apply search text and batch filters to the eligibility table
+     * @author poornika
+     */
     private void applyFilters() {
-        String searchText = txtSearch.getText() == null ? "" : txtSearch.getText().trim();
+        String searchText = txtSearch.getText() == null ? "" : txtSearch.getText().trim().toLowerCase();
         String selectedBatch = cmbRegistrationYear.getSelectedItem() == null ? "All Batches" : cmbRegistrationYear.getSelectedItem().toString();
+
+        if (searchText.isEmpty() && "All Batches".equals(selectedBatch)) {
+            rowSorter.setRowFilter(null);
+            return;
+        }
 
         RowFilter<DefaultTableModel, Object> filter = new RowFilter<>() {
             @Override
@@ -395,7 +498,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
                 if (!matchesSearch) {
                     for (int i = 0; i < entry.getValueCount(); i++) {
                         Object value = entry.getValue(i);
-                        if (value != null && value.toString().toLowerCase().contains(searchText.toLowerCase())) {
+                        if (value != null && value.toString().toLowerCase().contains(searchText)) {
                             matchesSearch = true;
                             break;
                         }
@@ -403,7 +506,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
                 }
 
                 boolean matchesBatch = "All Batches".equals(selectedBatch)
-                        || selectedBatch.equals(String.valueOf(entry.getValue(2)));
+                        || selectedBatch.equals(String.valueOf(entry.getValue(BATCH_COLUMN_INDEX)));
 
                 return matchesSearch && matchesBatch;
             }
@@ -412,6 +515,31 @@ public class LecturerExamEligibilityPanel extends JPanel {
         rowSorter.setRowFilter(filter);
     }
 
+    /**
+     * resolve the background tint for an eligibility table row
+     * @param table eligibility table
+     * @param viewRow row index in the current table view
+     * @author poornika
+     */
+    private Color resolveEligibilityRowColor(JTable table, int viewRow) {
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        Object value = table.getModel().getValueAt(modelRow, ELIGIBILITY_COLUMN_INDEX);
+        String eligibility = value == null ? "" : value.toString().trim();
+        if ("ELIGIBLE".equalsIgnoreCase(eligibility)) {
+            return ELIGIBLE_ROW_COLOR;
+        }
+        if ("NOT ELIGIBLE".equalsIgnoreCase(eligibility)) {
+            return NOT_ELIGIBLE_ROW_COLOR;
+        }
+        return AppTheme.CARD_BG;
+    }
+
+    /**
+     * attach one mouse listener to a component and all nested child components
+     * @param component root component
+     * @param adapter mouse listener to attach
+     * @author poornika
+     */
     private void attachClickHandler(Component component, MouseAdapter adapter) {
         component.addMouseListener(adapter);
         if (component instanceof Container container) {
@@ -421,15 +549,27 @@ public class LecturerExamEligibilityPanel extends JPanel {
         }
     }
 
+    /**
+     * create an empty exam eligibility view model used for fallback rendering
+     * @author poornika
+     */
     private CourseExamEligibilityViewData createEmptyViewData() {
         CourseExamEligibilityViewData viewData = new CourseExamEligibilityViewData();
         viewData.setRows(List.of());
         viewData.setRegistrationYears(List.of());
+        viewData.setBatchSummary(createEmptyBatchSummary());
+        return viewData;
+    }
+
+    /**
+     * create a zero-value batch summary for empty eligibility states
+     * @author poornika
+     */
+    private ExamEligibilityBatchSummary createEmptyBatchSummary() {
         ExamEligibilityBatchSummary summary = new ExamEligibilityBatchSummary();
         summary.setTotalStudents(0);
         summary.setEligibleCount(0);
         summary.setNotEligibleCount(0);
-        viewData.setBatchSummary(summary);
-        return viewData;
+        return summary;
     }
 }

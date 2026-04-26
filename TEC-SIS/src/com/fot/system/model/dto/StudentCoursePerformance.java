@@ -4,6 +4,7 @@ import com.fot.system.model.entity.*;
 
 public class StudentCoursePerformance {
     private int courseId;
+    private String courseCode;
     private int credits;
     private String sessionType;
     private double caTotal;
@@ -21,6 +22,14 @@ public class StudentCoursePerformance {
 
     public void setCourseId(int courseId) {
         this.courseId = courseId;
+    }
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
     }
 
     public int getCredits() {

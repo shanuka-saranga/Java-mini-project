@@ -2,6 +2,10 @@ package com.fot.system.model.dto;
 
 import com.fot.system.model.entity.*;
 
+/**
+ * store summary counts for course exam eligibility results
+ * @author poornika
+ */
 public class ExamEligibilityBatchSummary {
     private int totalStudents;
     private int eligibleCount;
