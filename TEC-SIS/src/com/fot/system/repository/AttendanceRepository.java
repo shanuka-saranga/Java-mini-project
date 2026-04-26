@@ -12,16 +12,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * handle database operations for attendance sessions, marks and medical links
- * @author poornika
+ * Handles database operations for attendance sessions, attendance rows, and medical links.
+ * @author methum
  */
 public class AttendanceRepository {
 
     private final Connection conn;
 
     /**
-     * initialize attendance repository
-     * @author poornika
+     * Initializes the attendance repository.
+     * @author methum
      */
     public AttendanceRepository() {
         this.conn = DBConnection.getInstance().getConnection();
@@ -155,8 +155,8 @@ public class AttendanceRepository {
     }
 
     /**
-     * load all attendance sessions
-     * @author poornika
+     * Loads all attendance sessions.
+     * @author methum
      */
     public List<AttendanceSessionRow> findAllAttendanceSessions() {
         List<AttendanceSessionRow> rows = new ArrayList<>();
@@ -194,9 +194,9 @@ public class AttendanceRepository {
     }
 
     /**
-     * load editable student attendance rows by session id
+     * Loads editable student attendance rows by session id.
      * @param sessionId session id
-     * @author poornika
+     * @author methum
      */
     public List<StudentAttendanceEditRow> findStudentAttendanceRowsBySession(int sessionId) {
         List<StudentAttendanceEditRow> rows = new ArrayList<>();
@@ -231,12 +231,7 @@ public class AttendanceRepository {
             stmt.setInt(1, sessionId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    StudentAttendanceEditRow row = new StudentAttendanceEditRow();
-                    row.setRegistrationNo(rs.getString("registration_no"));
-                    row.setStudentName(rs.getString("student_name"));
-                    row.setAttendanceStatus(valueOrEmpty(rs.getString("attendance_status")));
-                    row.setMedicalApprovalStatus(valueOrEmpty(rs.getString("medical_approval_status")));
-                    rows.add(row);
+                    rows.add(mapStudentAttendanceEditRow(rs));
                 }
             }
         } catch (SQLException e) {
@@ -247,12 +242,12 @@ public class AttendanceRepository {
     }
 
     /**
-     * create attendance session from timetable for lecturer flow
+     * Creates an attendance session from a timetable entry for the lecturer flow.
      * @param lecturerId lecturer user id
      * @param courseId course id
      * @param timetableSessionId timetable session id
      * @param sessionDateValue session date
-     * @author poornika
+     * @author methum
      */
     public AttendanceSessionRow createSessionFromTimetable(int lecturerId, int courseId, int timetableSessionId, LocalDate sessionDateValue) {
         String validateSql = """
@@ -291,20 +286,8 @@ public class AttendanceRepository {
                     endTime = validRs.getTime("end_time");
                 }
 
-                previousStmt.setInt(1, timetableSessionId);
-                int nextSessionNo = 1;
-                try (ResultSet prevRs = previousStmt.executeQuery()) {
-                    if (prevRs.next()) {
-                        nextSessionNo = prevRs.getInt("max_session_no") + 1;
-                    }
-                }
-
-                insertStmt.setInt(1, timetableSessionId);
-                insertStmt.setInt(2, nextSessionNo);
-                insertStmt.setDate(3, Date.valueOf(sessionDateValue));
-                insertStmt.setTime(4, startTime);
-                insertStmt.setTime(5, endTime);
-                insertStmt.executeUpdate();
+                int nextSessionNo = resolveNextSessionNumber(previousStmt, timetableSessionId);
+                insertCompletedSession(insertStmt, timetableSessionId, nextSessionNo, sessionDateValue, startTime, endTime);
 
                 int sessionId;
                 try (ResultSet keys = insertStmt.getGeneratedKeys()) {
@@ -331,7 +314,7 @@ public class AttendanceRepository {
     }
 
     /**
-     * create attendance session from timetable for TO flow
+     * Creates an attendance session from a timetable entry for the TO flow.
      * @param courseId course id
      * @param timetableSessionId timetable session id
      * @param sessionDateValue session date
@@ -372,20 +355,8 @@ public class AttendanceRepository {
                     endTime = validRs.getTime("end_time");
                 }
 
-                previousStmt.setInt(1, timetableSessionId);
-                int nextSessionNo = 1;
-                try (ResultSet prevRs = previousStmt.executeQuery()) {
-                    if (prevRs.next()) {
-                        nextSessionNo = prevRs.getInt("max_session_no") + 1;
-                    }
-                }
-
-                insertStmt.setInt(1, timetableSessionId);
-                insertStmt.setInt(2, nextSessionNo);
-                insertStmt.setDate(3, Date.valueOf(sessionDateValue));
-                insertStmt.setTime(4, startTime);
-                insertStmt.setTime(5, endTime);
-                insertStmt.executeUpdate();
+                int nextSessionNo = resolveNextSessionNumber(previousStmt, timetableSessionId);
+                insertCompletedSession(insertStmt, timetableSessionId, nextSessionNo, sessionDateValue, startTime, endTime);
 
                 int sessionId;
                 try (ResultSet keys = insertStmt.getGeneratedKeys()) {
@@ -412,9 +383,9 @@ public class AttendanceRepository {
     }
 
     /**
-     * load one attendance session by id
+     * Loads one attendance session by id.
      * @param sessionId session id
-     * @author poornika
+     * @author methum
      */
     public AttendanceSessionRow findAttendanceSessionById(int sessionId) {
         String sql = """
@@ -453,9 +424,9 @@ public class AttendanceRepository {
     }
 
     /**
-     * map attendance session row from result set
+     * Maps an attendance session row from the result set.
      * @param rs result set
-     * @author poornika
+     * @author methum
      */
     private AttendanceSessionRow mapAttendanceSessionRow(ResultSet rs) throws SQLException {
         AttendanceSessionRow row = new AttendanceSessionRow();
@@ -475,11 +446,11 @@ public class AttendanceRepository {
     }
 
     /**
-     * save per-student attendance statuses for a session
+     * Saves per-student attendance statuses for a session.
      * @param sessionId session id
      * @param markedBy marker user id
      * @param updates status updates
-     * @author poornika
+     * @author methum
      */
     public void saveSessionAttendance(int sessionId, int markedBy, List<StudentAttendanceUpdate> updates) {
         String existingSql = "SELECT id FROM attendance WHERE student_reg_no = ? AND session_id = ?";
@@ -531,6 +502,62 @@ public class AttendanceRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to save attendance: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Maps one editable student attendance row from the result set.
+     * @param rs result set
+     * @author methum
+     */
+    private StudentAttendanceEditRow mapStudentAttendanceEditRow(ResultSet rs) throws SQLException {
+        StudentAttendanceEditRow row = new StudentAttendanceEditRow();
+        row.setRegistrationNo(rs.getString("registration_no"));
+        row.setStudentName(rs.getString("student_name"));
+        row.setAttendanceStatus(valueOrEmpty(rs.getString("attendance_status")));
+        row.setMedicalApprovalStatus(valueOrEmpty(rs.getString("medical_approval_status")));
+        return row;
+    }
+
+    /**
+     * Resolves the next session number for a timetable session.
+     * @param previousStmt prepared statement for the previous-session lookup
+     * @param timetableSessionId timetable session id
+     * @author methum
+     */
+    private int resolveNextSessionNumber(PreparedStatement previousStmt, int timetableSessionId) throws SQLException {
+        previousStmt.setInt(1, timetableSessionId);
+        try (ResultSet prevRs = previousStmt.executeQuery()) {
+            if (prevRs.next()) {
+                return prevRs.getInt("max_session_no") + 1;
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * Inserts a completed session row using the selected timetable schedule.
+     * @param insertStmt prepared statement for session insertion
+     * @param timetableSessionId timetable session id
+     * @param sessionNo next session number
+     * @param sessionDateValue session date
+     * @param startTime actual start time
+     * @param endTime actual end time
+     * @author methum
+     */
+    private void insertCompletedSession(
+            PreparedStatement insertStmt,
+            int timetableSessionId,
+            int sessionNo,
+            LocalDate sessionDateValue,
+            Time startTime,
+            Time endTime
+    ) throws SQLException {
+        insertStmt.setInt(1, timetableSessionId);
+        insertStmt.setInt(2, sessionNo);
+        insertStmt.setDate(3, Date.valueOf(sessionDateValue));
+        insertStmt.setTime(4, startTime);
+        insertStmt.setTime(5, endTime);
+        insertStmt.executeUpdate();
     }
 
     /**

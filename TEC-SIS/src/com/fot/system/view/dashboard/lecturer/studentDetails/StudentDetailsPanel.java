@@ -29,15 +29,11 @@ public class StudentDetailsPanel extends JPanel {
         setLayout(new BorderLayout(20, 20));
         setBackground(AppTheme.SURFACE_SOFT);
         setBorder(new EmptyBorder(24, 24, 24, 24));
-
         add(createHeader(), BorderLayout.NORTH);
-
         JPanel contentPanel = new JPanel(new BorderLayout(0, 16));
         contentPanel.setOpaque(false);
-
         JPanel controlsPanel = new JPanel(new BorderLayout(12, 0));
         controlsPanel.setOpaque(false);
-
         txtSearch = new JTextField();
         txtSearch.setPreferredSize(new Dimension(400, 40));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
@@ -69,7 +65,6 @@ public class StudentDetailsPanel extends JPanel {
 
         studentTable = new JTable(tableModel);
         styleTable(studentTable);
-
         rowSorter = new TableRowSorter<>(tableModel);
         studentTable.setRowSorter(rowSorter);
 

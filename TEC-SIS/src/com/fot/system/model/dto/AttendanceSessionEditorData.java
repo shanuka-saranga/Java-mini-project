@@ -1,12 +1,10 @@
 package com.fot.system.model.dto;
 
-import com.fot.system.model.entity.*;
-
 import java.util.List;
 
 /**
- * hold session details and editable student attendance rows
- * @author poornika
+ * Holds session details and editable student attendance rows.
+ * @author methum
  */
 public class AttendanceSessionEditorData {
     private AttendanceSessionRow session;

@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ThemedDatePicker extends JPanel {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -24,6 +26,7 @@ public class ThemedDatePicker extends JPanel {
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final JLabel monthLabel = new JLabel("", SwingConstants.CENTER);
     private final JPanel daysGrid = new JPanel(new GridLayout(6, 7, 4, 4));
+    private final List<Runnable> dateChangeListeners = new ArrayList<>();
     private YearMonth viewingMonth;
     private LocalDate selectedDate;
     private boolean popupOpen;
@@ -66,6 +69,7 @@ public class ThemedDatePicker extends JPanel {
             textField.setText("");
             selectedDate = null;
             viewingMonth = YearMonth.now();
+            fireDateChanged();
             return;
         }
 
@@ -79,11 +83,18 @@ public class ThemedDatePicker extends JPanel {
             selectedDate = null;
             viewingMonth = YearMonth.now();
         }
+        fireDateChanged();
     }
 
     public void setEditable(boolean editable) {
         textField.setEditable(editable);
         calendarButton.setEnabled(editable);
+    }
+
+    public void addDateChangeListener(Runnable listener) {
+        if (listener != null) {
+            dateChangeListeners.add(listener);
+        }
     }
 
     @Override
@@ -250,6 +261,7 @@ public class ThemedDatePicker extends JPanel {
             textField.setText(date.format(DATE_FORMATTER));
             viewingMonth = YearMonth.from(date);
             popupMenu.setVisible(false);
+            fireDateChanged();
         });
 
         return button;
@@ -260,6 +272,7 @@ public class ThemedDatePicker extends JPanel {
         if (value.isEmpty()) {
             selectedDate = null;
             viewingMonth = YearMonth.now();
+            fireDateChanged();
             return;
         }
         try {
@@ -269,6 +282,13 @@ public class ThemedDatePicker extends JPanel {
         } catch (DateTimeParseException ignored) {
             selectedDate = null;
             viewingMonth = YearMonth.now();
+        }
+        fireDateChanged();
+    }
+
+    private void fireDateChanged() {
+        for (Runnable listener : new ArrayList<>(dateChangeListeners)) {
+            listener.run();
         }
     }
 

@@ -2,8 +2,8 @@ package com.fot.system.model.dto;
 
 
 /**
- * represent editable attendance status row for one student in a session
- * @author poornika
+ * Represents an editable attendance status row for one student in a session.
+ * @author methum
  */
 public class StudentAttendanceEditRow {
     private String registrationNo;
