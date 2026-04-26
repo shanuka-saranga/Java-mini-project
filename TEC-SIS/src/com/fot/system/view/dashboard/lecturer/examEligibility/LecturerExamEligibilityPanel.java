@@ -28,6 +28,8 @@ public class LecturerExamEligibilityPanel extends JPanel {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
     private static final Color ELIGIBLE_ROW_COLOR = new Color(46, 204, 113, 70);
     private static final Color NOT_ELIGIBLE_ROW_COLOR = new Color(231, 76, 60, 55);
+    private static final int BATCH_COLUMN_INDEX = 2;
+    private static final int ELIGIBILITY_COLUMN_INDEX = 7;
 
     private final User currentUser;
     private final CourseService courseService;
@@ -267,6 +269,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         return scrollPane;
     }
 
+    /**
+     * create a bold number label for summary cards
+     * @param text summary value text
+     * @author poornika
+     */
     private JLabel createSummaryValueLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontBold(24));
@@ -274,6 +281,12 @@ public class LecturerExamEligibilityPanel extends JPanel {
         return label;
     }
 
+    /**
+     * create a summary card for one eligibility metric
+     * @param title summary title
+     * @param valueLabel summary value label
+     * @author poornika
+     */
     private JPanel createSummaryCard(String title, JLabel valueLabel) {
         JPanel card = new JPanel(new BorderLayout(0, 8));
         card.setBackground(AppTheme.CARD_BG);
@@ -405,9 +418,10 @@ public class LecturerExamEligibilityPanel extends JPanel {
      * @author poornika
      */
     private void updateView(CourseExamEligibilityViewData viewData) {
-        updateSummary(viewData.getBatchSummary());
-        updateBatchFilter(viewData.getRegistrationYears());
-        updateTable(viewData.getRows());
+        CourseExamEligibilityViewData safeViewData = viewData == null ? createEmptyViewData() : viewData;
+        updateSummary(safeViewData.getBatchSummary());
+        updateBatchFilter(safeViewData.getRegistrationYears());
+        updateTable(safeViewData.getRows());
         applyFilters();
     }
 
@@ -417,16 +431,22 @@ public class LecturerExamEligibilityPanel extends JPanel {
      * @author poornika
      */
     private void updateSummary(ExamEligibilityBatchSummary summary) {
-        lblTotalStudents.setText(String.valueOf(summary.getTotalStudents()));
-        lblEligibleStudents.setText(String.valueOf(summary.getEligibleCount()));
-        lblNotEligibleStudents.setText(String.valueOf(summary.getNotEligibleCount()));
+        ExamEligibilityBatchSummary safeSummary = summary == null ? createEmptyBatchSummary() : summary;
+        lblTotalStudents.setText(String.valueOf(safeSummary.getTotalStudents()));
+        lblEligibleStudents.setText(String.valueOf(safeSummary.getEligibleCount()));
+        lblNotEligibleStudents.setText(String.valueOf(safeSummary.getNotEligibleCount()));
     }
 
+    /**
+     * refresh the registration year filter options
+     * @param registrationYears available registration years
+     * @author poornika
+     */
     private void updateBatchFilter(List<Integer> registrationYears) {
         Object selected = cmbRegistrationYear.getSelectedItem();
         cmbRegistrationYear.removeAllItems();
         cmbRegistrationYear.addItem("All Batches");
-        for (Integer year : registrationYears) {
+        for (Integer year : registrationYears == null ? List.<Integer>of() : registrationYears) {
             cmbRegistrationYear.addItem(String.valueOf(year));
         }
         if (selected != null) {
@@ -444,7 +464,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
      */
     private void updateTable(List<ExamEligibilityRow> rows) {
         tableModel.setRowCount(0);
-        for (ExamEligibilityRow row : rows) {
+        for (ExamEligibilityRow row : rows == null ? List.<ExamEligibilityRow>of() : rows) {
             tableModel.addRow(new Object[]{
                     row.getRegistrationNo(),
                     row.getStudentName(),
@@ -458,9 +478,18 @@ public class LecturerExamEligibilityPanel extends JPanel {
         }
     }
 
+    /**
+     * apply search text and batch filters to the eligibility table
+     * @author poornika
+     */
     private void applyFilters() {
-        String searchText = txtSearch.getText() == null ? "" : txtSearch.getText().trim();
+        String searchText = txtSearch.getText() == null ? "" : txtSearch.getText().trim().toLowerCase();
         String selectedBatch = cmbRegistrationYear.getSelectedItem() == null ? "All Batches" : cmbRegistrationYear.getSelectedItem().toString();
+
+        if (searchText.isEmpty() && "All Batches".equals(selectedBatch)) {
+            rowSorter.setRowFilter(null);
+            return;
+        }
 
         RowFilter<DefaultTableModel, Object> filter = new RowFilter<>() {
             @Override
@@ -469,7 +498,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
                 if (!matchesSearch) {
                     for (int i = 0; i < entry.getValueCount(); i++) {
                         Object value = entry.getValue(i);
-                        if (value != null && value.toString().toLowerCase().contains(searchText.toLowerCase())) {
+                        if (value != null && value.toString().toLowerCase().contains(searchText)) {
                             matchesSearch = true;
                             break;
                         }
@@ -477,7 +506,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
                 }
 
                 boolean matchesBatch = "All Batches".equals(selectedBatch)
-                        || selectedBatch.equals(String.valueOf(entry.getValue(2)));
+                        || selectedBatch.equals(String.valueOf(entry.getValue(BATCH_COLUMN_INDEX)));
 
                 return matchesSearch && matchesBatch;
             }
@@ -486,9 +515,15 @@ public class LecturerExamEligibilityPanel extends JPanel {
         rowSorter.setRowFilter(filter);
     }
 
+    /**
+     * resolve the background tint for an eligibility table row
+     * @param table eligibility table
+     * @param viewRow row index in the current table view
+     * @author poornika
+     */
     private Color resolveEligibilityRowColor(JTable table, int viewRow) {
         int modelRow = table.convertRowIndexToModel(viewRow);
-        Object value = table.getModel().getValueAt(modelRow, 7);
+        Object value = table.getModel().getValueAt(modelRow, ELIGIBILITY_COLUMN_INDEX);
         String eligibility = value == null ? "" : value.toString().trim();
         if ("ELIGIBLE".equalsIgnoreCase(eligibility)) {
             return ELIGIBLE_ROW_COLOR;
@@ -499,6 +534,12 @@ public class LecturerExamEligibilityPanel extends JPanel {
         return AppTheme.CARD_BG;
     }
 
+    /**
+     * attach one mouse listener to a component and all nested child components
+     * @param component root component
+     * @param adapter mouse listener to attach
+     * @author poornika
+     */
     private void attachClickHandler(Component component, MouseAdapter adapter) {
         component.addMouseListener(adapter);
         if (component instanceof Container container) {
@@ -508,15 +549,27 @@ public class LecturerExamEligibilityPanel extends JPanel {
         }
     }
 
+    /**
+     * create an empty exam eligibility view model used for fallback rendering
+     * @author poornika
+     */
     private CourseExamEligibilityViewData createEmptyViewData() {
         CourseExamEligibilityViewData viewData = new CourseExamEligibilityViewData();
         viewData.setRows(List.of());
         viewData.setRegistrationYears(List.of());
+        viewData.setBatchSummary(createEmptyBatchSummary());
+        return viewData;
+    }
+
+    /**
+     * create a zero-value batch summary for empty eligibility states
+     * @author poornika
+     */
+    private ExamEligibilityBatchSummary createEmptyBatchSummary() {
         ExamEligibilityBatchSummary summary = new ExamEligibilityBatchSummary();
         summary.setTotalStudents(0);
         summary.setEligibleCount(0);
         summary.setNotEligibleCount(0);
-        viewData.setBatchSummary(summary);
-        return viewData;
+        return summary;
     }
 }

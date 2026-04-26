@@ -7,9 +7,9 @@ import com.fot.system.util.AcademicPerformance;
 
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
  * @author poornika
  */
 public class ExamEligibilityService {
+    private static final double MINIMUM_ATTENDANCE_PERCENTAGE = 80.0;
+    private static final double MINIMUM_CA_PERCENTAGE = 50.0;
 
     private final AttendanceService attendanceService;
     private final MarksRepository marksRepository;
@@ -51,49 +53,54 @@ public class ExamEligibilityService {
         CourseAttendanceViewData attendanceViewData = attendanceService.getCourseAttendanceViewData(courseId, totalCourseHours);
         List<StudentCourseCaRecord> caRecords = marksRepository.findStudentCourseCaRecords(courseId, currentYear);
 
-        Map<String, StudentAttendanceSummaryRow> attendanceMap = attendanceViewData.getStudentSummaryRows().stream()
+        List<StudentAttendanceSummaryRow> attendanceRows = attendanceViewData == null || attendanceViewData.getStudentSummaryRows() == null
+                ? List.of()
+                : attendanceViewData.getStudentSummaryRows();
+        Map<String, StudentAttendanceSummaryRow> attendanceMap = attendanceRows.stream()
                 .collect(Collectors.toMap(StudentAttendanceSummaryRow::getRegistrationNo, Function.identity()));
 
-        List<ExamEligibilityRow> rows = new ArrayList<>();
+        List<ExamEligibilityRow> rows = new ArrayList<>(caRecords.size());
+        TreeSet<Integer> registrationYears = new TreeSet<>();
         for (StudentCourseCaRecord caRecord : caRecords) {
-            StudentAttendanceSummaryRow attendanceSummary = attendanceMap.get(caRecord.getRegistrationNo());
-            double attendancePercentage = attendanceSummary == null ? 0 : attendanceSummary.getAttendancePercentage();
-            double caAverage = calculateCaAverage(caRecord);
-            boolean attendanceEligible = attendancePercentage >= 80.0;
-            boolean caEligible = caAverage >= 50.0;
-
-            ExamEligibilityRow row = new ExamEligibilityRow();
-            row.setRegistrationNo(caRecord.getRegistrationNo());
-            row.setStudentName(caRecord.getStudentName());
-            row.setRegistrationYear(caRecord.getRegistrationYear());
-            row.setAttendancePercentage(attendancePercentage);
-            row.setCaAverage(caAverage);
-            row.setAttendanceEligible(attendanceEligible);
-            row.setCaEligible(caEligible);
-            row.setEligible(attendanceEligible && caEligible);
+            ExamEligibilityRow row = buildEligibilityRow(caRecord, attendanceMap.get(caRecord.getRegistrationNo()));
             rows.add(row);
+            if (row.getRegistrationYear() > 0) {
+                registrationYears.add(row.getRegistrationYear());
+            }
         }
 
         CourseExamEligibilityViewData viewData = new CourseExamEligibilityViewData();
         viewData.setRows(rows);
-        viewData.setRegistrationYears(rows.stream()
-                .map(ExamEligibilityRow::getRegistrationYear)
-                .filter(year -> year > 0)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
-                .stream()
-                .sorted()
-                .toList());
+        viewData.setRegistrationYears(new ArrayList<>(registrationYears));
         viewData.setBatchSummary(buildBatchSummary(rows));
         return viewData;
     }
 
     /**
-     * calculate CA average for one student exam eligibility row
+     * Builds one exam eligibility row using CA and attendance values.
      * @param caRecord student CA record
+     * @param attendanceSummary attendance summary for the same student
      * @author poornika
      */
-    private double calculateCaAverage(StudentCourseCaRecord caRecord) {
-        return academicPerformance.calculateCaAverage(caRecord);
+    private ExamEligibilityRow buildEligibilityRow(
+            StudentCourseCaRecord caRecord,
+            StudentAttendanceSummaryRow attendanceSummary
+    ) {
+        double attendancePercentage = attendanceSummary == null ? 0 : attendanceSummary.getAttendancePercentage();
+        double caAverage = academicPerformance.calculateCaAverage(caRecord);
+        boolean attendanceEligible = attendancePercentage >= MINIMUM_ATTENDANCE_PERCENTAGE;
+        boolean caEligible = caAverage >= MINIMUM_CA_PERCENTAGE;
+
+        ExamEligibilityRow row = new ExamEligibilityRow();
+        row.setRegistrationNo(caRecord.getRegistrationNo());
+        row.setStudentName(caRecord.getStudentName());
+        row.setRegistrationYear(caRecord.getRegistrationYear());
+        row.setAttendancePercentage(attendancePercentage);
+        row.setCaAverage(caAverage);
+        row.setAttendanceEligible(attendanceEligible);
+        row.setCaEligible(caEligible);
+        row.setEligible(attendanceEligible && caEligible);
+        return row;
     }
 
     /**
