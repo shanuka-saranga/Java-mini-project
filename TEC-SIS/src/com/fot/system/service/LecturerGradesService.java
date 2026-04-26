@@ -9,8 +9,6 @@ import java.time.Year;
 import java.util.List;
 
 public class LecturerGradesService {
-    private static final double CA_MINIMUM_MARK = 30.0;
-    private static final double END_MINIMUM_MARK = 30.0;
     private static final double FINAL_PASS_MARK = 40.0;
     private static final boolean ENABLE_GRADE_FLOW_LOGS = true;
 
@@ -58,7 +56,7 @@ public class LecturerGradesService {
         row.setCaAverage(caAverage);
         row.setEndExamAverage(endExamAverage);
 
-        String specialGrade = resolveSpecialGrade(record, caAverage, endExamAverage);
+        String specialGrade = academicPerformance.resolveSpecialGrade(record, caAverage, endExamAverage);
         if (specialGrade != null) {
             row.setFinalMark(null);
             row.setGrade(specialGrade);
@@ -81,42 +79,6 @@ public class LecturerGradesService {
 
     private double calculateEndExamAverage(StudentCourseGradeRecord record) {
         return academicPerformance.calculateEndExamAverage(record);
-    }
-
-    private String resolveSpecialGrade(StudentCourseGradeRecord record, double caAverage, double endExamAverage) {
-        if (record.getQuizMedicalCount() > 0
-                || record.getAssignmentMedicalCount() > 0
-                || record.getMidExamMedicalCount() > 0
-                || record.getEndExamMedicalCount() > 0) {
-            return "MC";
-        }
-
-        int requiredQuizCount = Math.max(1, record.getQuizCount() - 1);
-        boolean caCompleteByCounts = record.getQuizPresentCount() >= requiredQuizCount
-                && record.getAssignmentSubmittedCount() >= record.getAssignmentCount()
-                && record.getMidExamPresentCount() >= record.getMidExamCount();
-        boolean endCompleteByCounts = record.getEndExamPresentCount() >= record.getEndExamCount();
-
-        boolean caFailOrIncomplete = record.getQuizIncompleteCount() > 0
-                || record.getAssignmentIncompleteCount() > 0
-                || record.getMidExamIncompleteCount() > 0
-                || !caCompleteByCounts
-                || caAverage < CA_MINIMUM_MARK;
-        boolean endFailOrIncomplete = record.getEndExamIncompleteCount() > 0
-                || !endCompleteByCounts
-                || endExamAverage < END_MINIMUM_MARK;
-
-        if (caFailOrIncomplete && endFailOrIncomplete) {
-            return "E";
-        }
-        if (caFailOrIncomplete) {
-            return "EC";
-        }
-        if (endFailOrIncomplete) {
-            return "EE";
-        }
-
-        return null;
     }
 
     private void logGradeFlow(String message) {

@@ -507,7 +507,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         gradeRowSorter.setRowFilter(filter);
     }
 
-
     private void openAssessmentDetails(AssessmentCardSummary summary) {
         if (selectedCourse == null || summary == null) {
             return;
@@ -583,7 +582,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
             if (practicalRow == null && theoryRow != null) {
                 practicalRow = createMissingExamTypeRow(theoryRow, "PRACTICAL");
             }
-
             if (theoryRow != null) {
                 normalizedRows.add(theoryRow);
             }

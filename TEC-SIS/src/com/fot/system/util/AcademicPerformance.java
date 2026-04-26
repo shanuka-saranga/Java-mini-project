@@ -4,56 +4,74 @@ import com.fot.system.model.entity.*;
 import java.util.List;
 
 public class AcademicPerformance {
+    private static final double CA_MINIMUM_MARK = 30.0;
+    private static final double END_MINIMUM_MARK = 30.0;
 
     public double calculateCaAverage(StudentCourseCaRecord record) {
-        double adjustedQuizTotal = getAdjustedQuizTotal(
-                record.getQuizTotal(),
-                record.getQuizLowestPresentMark(),
-                record.getQuizPresentCount(),
-                record.getQuizCount()
+        return averageComponentScores(
+                calculateQuizAverageForConfiguredCount(
+                        record.getQuizTotal(),
+                        record.getQuizLowestPresentMark(),
+                        record.getQuizPresentCount(),
+                        record.getQuizCount()
+                ),
+                calculateAssignmentAverageForConfiguredCount(
+                        record.getAssignmentTotal(),
+                        record.getAssignmentSubmittedCount(),
+                        record.getAssignmentCount()
+                ),
+                calculateExamAverageForConfiguredCount(
+                        record.getMidExamTotal(),
+                        record.getMidExamPresentCount(),
+                        record.getMidExamCount()
+                )
         );
-        int totalComponents = getConsideredQuizCount(record.getQuizCount(), record.getQuizPresentCount())
-                + getConsideredAssignmentCount(record.getAssignmentCount(), record.getAssignmentSubmittedCount())
-                + getConsideredExamCount(record.getMidExamCount(), record.getMidExamPresentCount());
-        if (totalComponents <= 0) {
-            return 0;
-        }
-        return (adjustedQuizTotal + record.getAssignmentTotal() + record.getMidExamTotal()) / totalComponents;
     }
 
     public double calculateCaAverage(StudentCourseGradeRecord record) {
-        double adjustedQuizTotal = getAdjustedQuizTotal(
-                record.getQuizTotal(),
-                record.getQuizLowestPresentMark(),
-                record.getQuizPresentCount(),
-                record.getQuizCount()
+        return averageComponentScores(
+                calculateQuizAverageForConfiguredCount(
+                        record.getQuizTotal(),
+                        record.getQuizLowestPresentMark(),
+                        record.getQuizPresentCount(),
+                        record.getQuizCount()
+                ),
+                calculateAssignmentAverageForConfiguredCount(
+                        record.getAssignmentTotal(),
+                        record.getAssignmentSubmittedCount(),
+                        record.getAssignmentCount()
+                ),
+                calculateExamAverageForConfiguredCount(
+                        record.getMidExamTotal(),
+                        record.getMidExamPresentCount(),
+                        record.getMidExamCount()
+                )
         );
-        int totalComponents = getConsideredQuizCount(record.getQuizCount(), record.getQuizPresentCount())
-                + getConsideredAssignmentCount(record.getAssignmentCount(), record.getAssignmentSubmittedCount())
-                + getConsideredExamCount(record.getMidExamCount(), record.getMidExamPresentCount());
-        if (totalComponents <= 0) {
-            return 0;
-        }
-        return (adjustedQuizTotal + record.getAssignmentTotal() + record.getMidExamTotal()) / totalComponents;
     }
 
     public double calculateEndExamAverage(StudentCourseGradeRecord record) {
-        int consideredEndExamCount = getConsideredExamCount(record.getEndExamCount(), record.getEndExamPresentCount());
-        if (consideredEndExamCount <= 0) {
-            return 0;
-        }
-        return record.getEndExamTotal() / consideredEndExamCount;
+        Double endExamAverage = calculateExamAverageForConfiguredCount(
+                record.getEndExamTotal(),
+                record.getEndExamPresentCount(),
+                record.getEndExamCount()
+        );
+        return endExamAverage == null ? 0 : endExamAverage;
     }
 
 
-    public int getConsideredQuizCount(int configuredQuizCount, int presentCount) {
-        if (configuredQuizCount <= 0 || presentCount <= 0) {
+    public int getRequiredQuizCount(int configuredQuizCount) {
+        if (configuredQuizCount <= 0) {
             return 0;
         }
-        if (configuredQuizCount > 1 && presentCount >= configuredQuizCount) {
-            return presentCount - 1;
+        return configuredQuizCount == 1 ? 1 : configuredQuizCount - 1;
+    }
+
+    public int getConsideredQuizCount(int configuredQuizCount, int presentCount) {
+        int requiredQuizCount = getRequiredQuizCount(configuredQuizCount);
+        if (requiredQuizCount <= 0) {
+            return 0;
         }
-        return presentCount;
+        return requiredQuizCount;
     }
 
     public double getAdjustedQuizTotal(
@@ -69,17 +87,66 @@ public class AcademicPerformance {
     }
 
     public int getConsideredAssignmentCount(int configuredAssignmentCount, int submittedCount) {
-        if (configuredAssignmentCount <= 0 || submittedCount <= 0) {
+        if (configuredAssignmentCount <= 0) {
             return 0;
         }
-        return Math.min(configuredAssignmentCount, submittedCount);
+        return configuredAssignmentCount;
     }
 
     public int getConsideredExamCount(int requiredExamCount, int presentCount) {
-        if (requiredExamCount <= 0 || presentCount <= 0) {
+        if (requiredExamCount <= 0) {
             return 0;
         }
-        return Math.min(requiredExamCount, presentCount);
+        return requiredExamCount;
+    }
+
+    public Double calculateQuizAverageForConfiguredCount(
+            double presentTotal,
+            Double lowestPresentMark,
+            int presentCount,
+            int configuredQuizCount
+    ) {
+        int denominator = getConsideredQuizCount(configuredQuizCount, presentCount);
+        if (denominator <= 0) {
+            return null;
+        }
+        return getAdjustedQuizTotal(presentTotal, lowestPresentMark, presentCount, configuredQuizCount) / denominator;
+    }
+
+    public Double calculateAssignmentAverageForConfiguredCount(
+            double assignmentTotal,
+            int submittedCount,
+            int configuredAssignmentCount
+    ) {
+        int denominator = getConsideredAssignmentCount(configuredAssignmentCount, submittedCount);
+        if (denominator <= 0) {
+            return null;
+        }
+        return assignmentTotal / denominator;
+    }
+
+    public Double calculateExamAverageForConfiguredCount(
+            double examTotal,
+            int presentCount,
+            int requiredExamCount
+    ) {
+        int denominator = getConsideredExamCount(requiredExamCount, presentCount);
+        if (denominator <= 0) {
+            return null;
+        }
+        return examTotal / denominator;
+    }
+
+    public double averageComponentScores(Double... componentScores) {
+        double total = 0;
+        int count = 0;
+        for (Double score : componentScores) {
+            if (score != null) {
+                total += score;
+                count++;
+            }
+        }
+        return count == 0 ? 0 : total / count;
     }
 
     public double calculateFinalMark(String sessionType, double caAverage, double endExamAverage) {
@@ -101,6 +168,42 @@ public class AcademicPerformance {
         if (finalMark >= 40) return "C-";
         if (finalMark >= 35) return "D";
         return "E";
+    }
+
+    public String resolveSpecialGrade(StudentCourseGradeRecord record, double caAverage, double endExamAverage) {
+        if (record.getQuizMedicalCount() > 0
+                || record.getAssignmentMedicalCount() > 0
+                || record.getMidExamMedicalCount() > 0
+                || record.getEndExamMedicalCount() > 0) {
+            return "MC";
+        }
+
+        int requiredQuizCount = getRequiredQuizCount(record.getQuizCount());
+        boolean caCompleteByCounts = record.getQuizPresentCount() >= requiredQuizCount
+                && record.getAssignmentSubmittedCount() >= record.getAssignmentCount()
+                && record.getMidExamPresentCount() >= record.getMidExamCount();
+        boolean endCompleteByCounts = record.getEndExamPresentCount() >= record.getEndExamCount();
+
+        boolean caFailOrIncomplete = record.getQuizIncompleteCount() > 0
+                || record.getAssignmentIncompleteCount() > 0
+                || record.getMidExamIncompleteCount() > 0
+                || !caCompleteByCounts
+                || caAverage < CA_MINIMUM_MARK;
+        boolean endFailOrIncomplete = record.getEndExamIncompleteCount() > 0
+                || !endCompleteByCounts
+                || endExamAverage < END_MINIMUM_MARK;
+
+        if (caFailOrIncomplete && endFailOrIncomplete) {
+            return "E";
+        }
+        if (caFailOrIncomplete) {
+            return "EC";
+        }
+        if (endFailOrIncomplete) {
+            return "EE";
+        }
+
+        return null;
     }
 
     public double resolveGradePoint(String grade) {

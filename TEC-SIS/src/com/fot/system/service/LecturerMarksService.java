@@ -41,11 +41,8 @@ public class LecturerMarksService {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
         }
-        List< AssessmentStudentMarkRow> test =  lecturerMarksRepository.findAssessmentRows(assessmentType, courseId, semesterYear, itemNo);
-        for(AssessmentStudentMarkRow row : test) {
-            System.out.println(row);
-        }
-        return test;
+
+        return lecturerMarksRepository.findAssessmentRows(assessmentType, courseId, semesterYear, itemNo);
     }
 
 
