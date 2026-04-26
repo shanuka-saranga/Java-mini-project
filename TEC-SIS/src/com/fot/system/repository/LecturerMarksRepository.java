@@ -19,6 +19,12 @@ public class LecturerMarksRepository {
         this.conn = DBConnection.getInstance().getConnection();
     }
 
+    /**
+     * Returns the current semester year context used by the lecturer marks view.
+     * @param courseId selected course id
+     * @param currentYear current calendar year
+     * @author janith
+     */
     public CourseSemesterContext findCurrentSemesterContext(int courseId, int currentYear) {
         CourseSemesterContext context = new CourseSemesterContext();
         context.setSemesterYear(currentYear);
@@ -112,12 +118,12 @@ public class LecturerMarksRepository {
     }
 
     /**
-     * get
+     * Loads marks rows for the selected assessment item and creates base marks rows when needed.
      * @param assessmentType type of the assessment
-     * @param courseId
-     * @param semesterYear
-     * @param itemNo
-     * @author poornika
+     * @param courseId selected course id
+     * @param semesterYear selected semester year
+     * @param itemNo assessment item number
+     * @author janith
      */
     public List<AssessmentStudentMarkRow> findAssessmentRows(String assessmentType, int courseId, int semesterYear, int itemNo) {
         ensureMarksRowsForRegisteredStudents(courseId, semesterYear);

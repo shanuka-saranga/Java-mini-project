@@ -497,6 +497,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         gradeRowSorter.setRowFilter(filter);
     }
 
+    /**
+     * Loads the selected assessment item and opens the editable marks detail view.
+     * @param summary selected assessment summary card
+     * @author janith
+     */
     private void openAssessmentDetails(AssessmentCardSummary summary) {
         if (selectedCourse == null || summary == null) {
             return;
@@ -540,6 +545,12 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * Ensures BOTH session courses always show THEORY and PRACTICAL rows for each student attempt.
+     * @param summary selected assessment summary card
+     * @param rows loaded assessment rows
+     * @author janith
+     */
     private List<AssessmentStudentMarkRow> normalizeAssessmentRowsForCourse(
             AssessmentCardSummary summary,
             List<AssessmentStudentMarkRow> rows
@@ -582,6 +593,12 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         return normalizedRows;
     }
 
+    /**
+     * Creates an empty exam row when one exam type is missing for a BOTH session course.
+     * @param source existing row used as the base student record
+     * @param examType missing exam type to create
+     * @author janith
+     */
     private AssessmentStudentMarkRow createMissingExamTypeRow(AssessmentStudentMarkRow source, String examType) {
         AssessmentStudentMarkRow row = new AssessmentStudentMarkRow();
         row.setMarkId(source.getMarkId());
@@ -593,6 +610,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         return row;
     }
 
+    /**
+     * Normalizes exam type values before grouping THEORY and PRACTICAL rows.
+     * @param examType raw exam type text
+     * @author janith
+     */
     private String normalizeExamType(String examType) {
         if (examType == null || examType.isBlank()) {
             return "";
@@ -600,6 +622,10 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         return examType.trim().toUpperCase();
     }
 
+    /**
+     * Validates and saves the currently edited assessment marks rows.
+     * @author janith
+     */
     private void saveAssessmentDetailRows() {
         if (selectedAssessmentSummary == null) {
             return;

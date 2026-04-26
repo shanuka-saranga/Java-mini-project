@@ -7,6 +7,11 @@ public class AcademicPerformance {
     private static final double CA_MINIMUM_MARK = 30.0;
     private static final double END_MINIMUM_MARK = 30.0;
 
+    /**
+     * Calculates the CA average using quiz, assignment, and mid exam component averages.
+     * @param record student CA record snapshot
+     * @author janith
+     */
     public double calculateCaAverage(StudentCourseCaRecord record) {
         return averageComponentScores(
                 calculateQuizAverageForConfiguredCount(
@@ -20,6 +25,11 @@ public class AcademicPerformance {
         );
     }
 
+    /**
+     * Calculates the CA average for the lecturer grades flow using the configured component counts.
+     * @param record student grade record snapshot
+     * @author janith
+     */
     public double calculateCaAverage(StudentCourseGradeRecord record) {
         return averageComponentScores(
                 calculateQuizAverageForConfiguredCount(
@@ -33,12 +43,22 @@ public class AcademicPerformance {
         );
     }
 
+    /**
+     * Calculates the end exam average from the configured end exam component count.
+     * @param record student grade record snapshot
+     * @author janith
+     */
     public double calculateEndExamAverage(StudentCourseGradeRecord record) {
         Double endExamAverage = calculateExamAverageForConfiguredCount(record.getEndExamTotal(), record.getEndExamCount());
         return endExamAverage == null ? 0 : endExamAverage;
     }
 
 
+    /**
+     * Resolves how many quizzes must be considered for CA after applying the drop-lowest rule.
+     * @param configuredQuizCount configured number of quizzes for the course
+     * @author janith
+     */
     public int getRequiredQuizCount(int configuredQuizCount) {
         if (configuredQuizCount <= 0) {
             return 0;
@@ -46,6 +66,11 @@ public class AcademicPerformance {
         return configuredQuizCount == 1 ? 1 : configuredQuizCount - 1;
     }
 
+    /**
+     * Returns the quiz denominator used when calculating the quiz average.
+     * @param configuredQuizCount configured number of quizzes for the course
+     * @author janith
+     */
     public int getConsideredQuizCount(int configuredQuizCount) {
         int requiredQuizCount = getRequiredQuizCount(configuredQuizCount);
         if (requiredQuizCount <= 0) {
@@ -54,6 +79,14 @@ public class AcademicPerformance {
         return requiredQuizCount;
     }
 
+    /**
+     * Adjusts the quiz total by removing the lowest present mark only when all quizzes were attempted.
+     * @param presentTotal total of present quiz marks
+     * @param lowestPresentMark lowest present quiz mark
+     * @param presentCount number of quizzes the student attempted
+     * @param configuredQuizCount configured number of quizzes for the course
+     * @author janith
+     */
     public double getAdjustedQuizTotal(
             double presentTotal,
             Double lowestPresentMark,
@@ -66,6 +99,11 @@ public class AcademicPerformance {
         return shouldDropLowest ? presentTotal - lowestPresentMark : presentTotal;
     }
 
+    /**
+     * Returns the assignment denominator used when calculating the assignment average.
+     * @param configuredAssignmentCount configured number of assignments for the course
+     * @author janith
+     */
     public int getConsideredAssignmentCount(int configuredAssignmentCount) {
         if (configuredAssignmentCount <= 0) {
             return 0;
@@ -73,6 +111,11 @@ public class AcademicPerformance {
         return configuredAssignmentCount;
     }
 
+    /**
+     * Returns the exam denominator used when calculating mid or end exam averages.
+     * @param requiredExamCount configured number of exam components
+     * @author janith
+     */
     public int getConsideredExamCount(int requiredExamCount) {
         if (requiredExamCount <= 0) {
             return 0;
@@ -80,6 +123,14 @@ public class AcademicPerformance {
         return requiredExamCount;
     }
 
+    /**
+     * Calculates the quiz average using the configured quiz denominator and drop-lowest rule.
+     * @param presentTotal total of present quiz marks
+     * @param lowestPresentMark lowest present quiz mark
+     * @param presentCount number of quizzes the student attempted
+     * @param configuredQuizCount configured number of quizzes for the course
+     * @author janith
+     */
     public Double calculateQuizAverageForConfiguredCount(
             double presentTotal,
             Double lowestPresentMark,
@@ -93,6 +144,12 @@ public class AcademicPerformance {
         return getAdjustedQuizTotal(presentTotal, lowestPresentMark, presentCount, configuredQuizCount) / denominator;
     }
 
+    /**
+     * Calculates the assignment average using the configured assignment count.
+     * @param assignmentTotal total of assignment marks
+     * @param configuredAssignmentCount configured number of assignments for the course
+     * @author janith
+     */
     public Double calculateAssignmentAverageForConfiguredCount(double assignmentTotal, int configuredAssignmentCount) {
         int denominator = getConsideredAssignmentCount(configuredAssignmentCount);
         if (denominator <= 0) {
@@ -101,6 +158,12 @@ public class AcademicPerformance {
         return assignmentTotal / denominator;
     }
 
+    /**
+     * Calculates the exam average using the configured exam component count.
+     * @param examTotal total of exam marks
+     * @param requiredExamCount configured number of exam components
+     * @author janith
+     */
     public Double calculateExamAverageForConfiguredCount(double examTotal, int requiredExamCount) {
         int denominator = getConsideredExamCount(requiredExamCount);
         if (denominator <= 0) {
@@ -109,6 +172,11 @@ public class AcademicPerformance {
         return examTotal / denominator;
     }
 
+    /**
+     * Averages the available component scores while ignoring missing components.
+     * @param componentScores component averages to combine
+     * @author janith
+     */
     public double averageComponentScores(Double... componentScores) {
         double total = 0;
         int count = 0;
@@ -142,6 +210,13 @@ public class AcademicPerformance {
         return "E";
     }
 
+    /**
+     * Resolves the special grade code based on medical, incomplete, and minimum mark rules.
+     * @param record student grade record snapshot
+     * @param caAverage calculated CA average
+     * @param endExamAverage calculated end exam average
+     * @author janith
+     */
     public String resolveSpecialGrade(StudentCourseGradeRecord record, double caAverage, double endExamAverage) {
         if (record.getQuizMedicalCount() > 0
                 || record.getAssignmentMedicalCount() > 0

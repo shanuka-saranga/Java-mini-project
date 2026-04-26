@@ -20,6 +20,11 @@ public class LecturerGradesService {
         this.academicPerformance = new AcademicPerformance();
     }
 
+    /**
+     * Builds the calculated grades view data for the selected lecturer course.
+     * @param courseId selected course id
+     * @author janith
+     */
     public CourseGradeViewData getCourseGradeViewData(int courseId) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
@@ -45,6 +50,11 @@ public class LecturerGradesService {
         return viewData;
     }
 
+    /**
+     * Builds one grade row by combining CA, end exam, special grade, and final grade rules.
+     * @param record aggregated student grade record
+     * @author janith
+     */
     private StudentGradeRow buildRow(StudentCourseGradeRecord record) {
         double caAverage = academicPerformance.calculateCaAverage(record);
         double endExamAverage = academicPerformance.calculateEndExamAverage(record);
