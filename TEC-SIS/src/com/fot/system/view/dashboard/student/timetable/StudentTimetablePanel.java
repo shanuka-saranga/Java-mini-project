@@ -5,14 +5,14 @@ import com.fot.system.view.dashboard.shared_components.TimeTablePanel;
 
 /**
  * Shows the student timetable using the shared read-only timetable layout.
- * @author janith
+ * @author shanuka
  */
 public class StudentTimetablePanel extends TimeTablePanel {
 
     /**
      * Creates the student timetable panel.
      * @param user logged-in student user
-     * @author janith
+     * @author shanuka
      */
     public StudentTimetablePanel(User user) {
         super();
@@ -20,7 +20,7 @@ public class StudentTimetablePanel extends TimeTablePanel {
 
     /**
      * Returns the student-specific timetable subtitle.
-     * @author janith
+     * @author shanuka
      */
     @Override
     protected String getPanelSubtitle() {

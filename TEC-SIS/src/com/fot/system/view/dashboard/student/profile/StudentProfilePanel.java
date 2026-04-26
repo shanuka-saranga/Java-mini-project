@@ -5,6 +5,11 @@ import com.fot.system.view.dashboard.shared_components.UserProfilePanel;
 
 public class StudentProfilePanel extends UserProfilePanel {
 
+    /**
+     * initialize student profile panel
+     * @param user logged in student user
+     * @author shanuka
+     */
     public StudentProfilePanel(User user) {
         super(user);
     }
@@ -19,6 +24,11 @@ public class StudentProfilePanel extends UserProfilePanel {
         return false;
     }
 
+    /**
+     * returns student profile subtitle text
+     * @return student profile subtitle
+     * @author shanuka
+     */
     @Override
     protected String getSubtitleText() {
         return "Review your student profile. Students can update only contact details and profile picture.";

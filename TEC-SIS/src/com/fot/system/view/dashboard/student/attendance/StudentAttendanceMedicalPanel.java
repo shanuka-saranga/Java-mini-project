@@ -52,6 +52,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
     private List<AbsentSessionOption> absentSessionOptions;
     private List<StudentMedicalRow> medicalRows;
 
+    /**
+     * initialize student attendance and medical panel
+     * @param user logged in student user
+     * @author shanuka
+     */
     public StudentAttendanceMedicalPanel(User user) {
         this.currentUser = user;
         this.attendanceService = new AttendanceService();
@@ -78,6 +83,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         loadStudentAttendanceMedicalData();
     }
 
+    /**
+     * create attendance panel header section
+     * @return header panel
+     * @author shanuka
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
@@ -95,6 +105,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         return header;
     }
 
+    /**
+     * create attendance meta and search section
+     * @return top meta panel
+     * @author shanuka
+     */
     private JPanel createTopMeta() {
         JPanel panel = new JPanel(new BorderLayout(12, 0));
         panel.setOpaque(false);
@@ -136,6 +151,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         return panel;
     }
 
+    /**
+     * create attendance, medical, and medical submission table area
+     * @return tables area component
+     * @author shanuka
+     */
     private JComponent createTablesArea() {
         JPanel panel = new JPanel();
         panel.setOpaque(false);
@@ -217,6 +237,12 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         return panel;
     }
 
+    /**
+     * create section title label
+     * @param text section title text
+     * @return section label
+     * @author shanuka
+     */
     private JLabel createSectionLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontBold(18));
@@ -224,6 +250,12 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         return label;
     }
 
+    /**
+     * create styled table for student attendance and medical data
+     * @param model table data model
+     * @return styled table
+     * @author shanuka
+     */
     private JTable createStyledTable(DefaultTableModel model) {
         JTable table = new JTable(model);
         table.setRowHeight(28);
@@ -240,6 +272,13 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         return table;
     }
 
+    /**
+     * create table scroll pane with preferred height
+     * @param table table component
+     * @param preferredHeight preferred scroll pane height
+     * @return table scroll pane
+     * @author shanuka
+     */
     private JScrollPane createScrollPane(JTable table, int preferredHeight) {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
@@ -249,12 +288,25 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         return scrollPane;
     }
 
+    /**
+     * create course attendance summary container
+     * @return course attendance summary panel
+     * @author shanuka
+     */
     private JPanel createCourseAttendanceSummaryPanel() {
         JPanel panel = new JPanel(new GridLayout(0, 1, 0, 8));
         panel.setOpaque(false);
         return panel;
     }
 
+    /**
+     * create one course attendance percentage row
+     * @param courseCode course code
+     * @param courseName course name
+     * @param percentage attendance percentage
+     * @return course attendance item panel
+     * @author shanuka
+     */
     private JPanel createCourseAttendanceItem(String courseCode, String courseName, double percentage) {
         JPanel item = new JPanel(new BorderLayout(12, 0));
         item.setBackground(AppTheme.CARD_BG);
@@ -282,6 +334,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         return item;
     }
 
+    /**
+     * create panel for selected medical session details
+     * @return medical details panel
+     * @author shanuka
+     */
     private JPanel createMedicalDetailsPanel() {
         JTable detailsTable = createStyledTable(medicalDetailsTableModel);
         JPanel panel = new JPanel(new BorderLayout(0, 10));
@@ -296,6 +353,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         return panel;
     }
 
+    /**
+     * create student medical submission form
+     * @return medical submission component
+     * @author shanuka
+     */
     private JComponent createMedicalSubmissionPanel() {
         JPanel wrapper = new JPanel();
         wrapper.setOpaque(false);
@@ -404,6 +466,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         return field;
     }
 
+    /**
+     * load student attendance records and medical submissions
+     * @author shanuka
+     */
     private void loadStudentAttendanceMedicalData() {
         SwingWorker<StudentAttendanceMedicalViewData, Void> worker = new SwingWorker<StudentAttendanceMedicalViewData, Void>() {
             @Override
@@ -431,6 +497,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * load absent sessions for selected medical date range
+     * @author shanuka
+     */
     private void loadAbsentSessionsForMedicalRange() {
         try {
             List<AbsentSessionOption> options = addStudentMedicalController.loadAbsentSessions(
@@ -446,6 +516,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         }
     }
 
+    /**
+     * render student session attendance rows
+     * @param rows attendance row list
+     * @author shanuka
+     */
     private void renderAttendanceRows(List<StudentSessionAttendanceRow> rows) {
         attendanceTableModel.setRowCount(0);
 
@@ -471,6 +546,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         }
     }
 
+    /**
+     * render course wise attendance summary
+     * @param rows attendance row list
+     * @author shanuka
+     */
     private void renderCourseAttendanceSummary(List<StudentSessionAttendanceRow> rows) {
         courseAttendanceSummaryPanel.removeAll();
 
@@ -522,6 +602,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         courseAttendanceSummaryPanel.repaint();
     }
 
+    /**
+     * render submitted student medical records
+     * @param rows medical row list
+     * @author shanuka
+     */
     private void renderMedicalRows(List<StudentMedicalRow> rows) {
         medicalRows = rows;
         medicalTableModel.setRowCount(0);
@@ -544,6 +629,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         }
     }
 
+    /**
+     * show linked session details for selected medical record
+     * @author shanuka
+     */
     private void showSelectedMedicalDetails() {
         int selectedRow = medicalTable.getSelectedRow();
         if (selectedRow < 0 || medicalRows == null || medicalRows.isEmpty()) {
@@ -605,12 +694,23 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         private int totalSessions;
         private int attendedSessions;
 
+        /**
+         * initialize course attendance aggregate
+         * @param courseCode course code
+         * @param courseName course name
+         * @author shanuka
+         */
         private CourseAttendanceAggregate(String courseCode, String courseName) {
             this.courseCode = courseCode;
             this.courseName = courseName;
         }
     }
 
+    /**
+     * render absent sessions available for medical submission
+     * @param options absent session option list
+     * @author shanuka
+     */
     private void renderAbsentSessionOptions(List<AbsentSessionOption> options) {
         absentSessionTableModel.setRowCount(0);
         txtMedicalDocument.setText("");
@@ -643,6 +743,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         medicalUploadPanel.repaint();
     }
 
+    /**
+     * collect selected absent session ids from medical submission table
+     * @return selected absent session id list
+     * @author shanuka
+     */
     private List<Integer> getSelectedAbsentSessionIds() {
         List<Integer> selectedSessionIds = new ArrayList<>();
         if (absentSessionOptions == null || absentSessionOptions.isEmpty()) {
@@ -658,6 +763,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         return selectedSessionIds;
     }
 
+    /**
+     * choose medical certificate document from local computer
+     * @author shanuka
+     */
     private void chooseMedicalDocument() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select Medical Certificate");
@@ -671,6 +780,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         }
     }
 
+    /**
+     * submit student medical request for selected absent sessions
+     * @author shanuka
+     */
     private void submitMedical() {
         try {
             addStudentMedicalController.submitMedical(new AddStudentMedicalRequest(
@@ -693,6 +806,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         }
     }
 
+    /**
+     * apply search filter to attendance table
+     * @author shanuka
+     */
     private void applyAttendanceFilter() {
         String keyword = txtSearch.getText() == null ? "" : txtSearch.getText().trim();
         if (keyword.isEmpty()) {
@@ -702,6 +819,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         }
     }
 
+    /**
+     * open submitted medical document file
+     * @param documentPath medical document path
+     * @author shanuka
+     */
     private void openMedicalDocument(String documentPath) {
         try {
             fileOpenService.openFile(documentPath);
@@ -747,6 +869,13 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         }
     }
 
+    /**
+     * create medical document open action component
+     * @param isSelected table row selected state
+     * @param documentPath medical document path
+     * @return document action panel
+     * @author shanuka
+     */
     private JPanel createDocumentActionComponent(boolean isSelected, String documentPath) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         panel.setOpaque(true);

@@ -23,6 +23,11 @@ public class StudentMarksAndGradesPanel extends JPanel {
     private final JLabel lblCurrentSgpa;
     private final JLabel lblCurrentCgpa;
 
+    /**
+     * initialize student marks and grades panel
+     * @param user logged in student user
+     * @author shanuka
+     */
     public StudentMarksAndGradesPanel(User user) {
         this.currentUser = user;
         this.studentMarksGradesService = new StudentMarksGradesService();
@@ -80,6 +85,11 @@ public class StudentMarksAndGradesPanel extends JPanel {
         loadMarksAndGrades();
     }
 
+    /**
+     * create marks and grades header section
+     * @return header panel
+     * @author shanuka
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
@@ -97,6 +107,12 @@ public class StudentMarksAndGradesPanel extends JPanel {
         return header;
     }
 
+    /**
+     * create marks and grades meta label
+     * @param text meta label text
+     * @return meta label
+     * @author shanuka
+     */
     private JLabel createMetaLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontBold(14));
@@ -104,6 +120,10 @@ public class StudentMarksAndGradesPanel extends JPanel {
         return label;
     }
 
+    /**
+     * load marks, grades, SGPA, and CGPA for logged in student
+     * @author shanuka
+     */
     private void loadMarksAndGrades() {
         SwingWorker<StudentMarksGradeViewData, Void> worker = new SwingWorker<StudentMarksGradeViewData, Void>() {
             @Override
@@ -132,6 +152,11 @@ public class StudentMarksAndGradesPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * render student subject marks and grades
+     * @param rows subject grade row list
+     * @author shanuka
+     */
     private void renderRows(List<StudentSubjectGradeRow> rows) {
         tableModel.setRowCount(0);
 
@@ -154,6 +179,12 @@ public class StudentMarksAndGradesPanel extends JPanel {
         }
     }
 
+    /**
+     * convert empty numeric value to dash text
+     * @param value numeric value
+     * @return formatted value text
+     * @author shanuka
+     */
     private String valueOrDash(int value) {
         return value <= 0 ? "-" : String.valueOf(value);
     }

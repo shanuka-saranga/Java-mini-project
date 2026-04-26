@@ -37,6 +37,11 @@ public class StudentHomePanel extends JPanel {
     private Course selectedCourse;
     private List<Course> studentCourses;
 
+    /**
+     * initialize student home dashboard panel
+     * @param user logged in student user
+     * @author shanuka
+     */
     public StudentHomePanel(User user) {
         this.currentUser = user;
         this.courseService = new CourseService();
@@ -80,6 +85,11 @@ public class StudentHomePanel extends JPanel {
         loadStudentNotices();
     }
 
+    /**
+     * create student home header section
+     * @return header panel
+     * @author shanuka
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
@@ -97,6 +107,12 @@ public class StudentHomePanel extends JPanel {
         return header;
     }
 
+    /**
+     * create student course list and notices view
+     * @param courseListScrollPane course list scroll pane
+     * @return list view panel
+     * @author shanuka
+     */
     private JPanel createListView(JScrollPane courseListScrollPane) {
         JPanel listView = new JPanel(new BorderLayout(18, 0));
         listView.setOpaque(false);
@@ -115,6 +131,11 @@ public class StudentHomePanel extends JPanel {
         return listView;
     }
 
+    /**
+     * create selected course materials details view
+     * @return details view panel
+     * @author shanuka
+     */
     private JPanel createDetailsView() {
         JPanel detailsView = new JPanel(new BorderLayout(0, 16));
         detailsView.setOpaque(false);
@@ -176,6 +197,13 @@ public class StudentHomePanel extends JPanel {
         return detailsView;
     }
 
+    /**
+     * create scroll pane for student panel content
+     * @param content content panel
+     * @param viewportColor scroll pane viewport color
+     * @return scroll pane
+     * @author shanuka
+     */
     private JScrollPane createScrollPane(JPanel content, Color viewportColor) {
         JScrollPane scrollPane = new JScrollPane(content);
         scrollPane.setBorder(null);
@@ -184,6 +212,10 @@ public class StudentHomePanel extends JPanel {
         return scrollPane;
     }
 
+    /**
+     * load courses assigned to logged in student
+     * @author shanuka
+     */
     private void loadStudentCourses() {
         SwingWorker<List<Course>, Void> worker = new SwingWorker<List<Course>, Void>() {
             @Override
@@ -210,6 +242,10 @@ public class StudentHomePanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * load recent notices visible for student role
+     * @author shanuka
+     */
     private void loadStudentNotices() {
         SwingWorker<List<Notice>, Void> worker = new SwingWorker<List<Notice>, Void>() {
             @Override
@@ -229,6 +265,10 @@ public class StudentHomePanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * render loaded student courses in course list panel
+     * @author shanuka
+     */
     private void renderCourseList() {
         courseListPanel.removeAll();
 
@@ -257,6 +297,11 @@ public class StudentHomePanel extends JPanel {
         courseListPanel.repaint();
     }
 
+    /**
+     * open selected course and display course materials
+     * @param course selected course
+     * @author shanuka
+     */
     private void openCourse(Course course) {
         selectedCourse = course;
         lblOpenedCourseTab.setText(course.getCourseCode() + " - " + course.getCourseName());
@@ -264,6 +309,10 @@ public class StudentHomePanel extends JPanel {
         cardLayout.show(cardPanel, DETAILS_CARD);
     }
 
+    /**
+     * load course materials for selected course
+     * @author shanuka
+     */
     private void loadMaterialsForSelectedCourse() {
         if (selectedCourse == null) {
             renderMaterialsEmpty("Select a course to view materials.");
@@ -288,6 +337,11 @@ public class StudentHomePanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * render selected course materials
+     * @param materials course material list
+     * @author shanuka
+     */
     private void renderMaterials(List<CourseMaterial> materials) {
         materialsListPanel.removeAll();
 
@@ -308,6 +362,11 @@ public class StudentHomePanel extends JPanel {
         materialsListPanel.repaint();
     }
 
+    /**
+     * render empty message in course materials area
+     * @param message empty state message
+     * @author shanuka
+     */
     private void renderMaterialsEmpty(String message) {
         materialsListPanel.removeAll();
         JLabel empty = new JLabel(message);
@@ -319,6 +378,11 @@ public class StudentHomePanel extends JPanel {
         materialsListPanel.repaint();
     }
 
+    /**
+     * open selected course material file
+     * @param material selected course material
+     * @author shanuka
+     */
     private void openMaterial(CourseMaterial material) {
         try {
             fileOpenService.openFile(material.getFilePath());
@@ -327,6 +391,12 @@ public class StudentHomePanel extends JPanel {
         }
     }
 
+    /**
+     * attach course click handler to component and child components
+     * @param component target component
+     * @param adapter mouse click adapter
+     * @author shanuka
+     */
     private void attachClickHandler(Component component, MouseAdapter adapter) {
         component.addMouseListener(adapter);
         if (component instanceof Container) {
