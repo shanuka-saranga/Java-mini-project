@@ -1,45 +1,85 @@
 package com.fot.system.util;
-
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
-
 import java.util.List;
 
 public class AcademicPerformance {
 
     public double calculateCaAverage(StudentCourseCaRecord record) {
-        int totalComponents = record.getQuizCount() + record.getAssignmentCount() + record.getMidExamCount();
+        double adjustedQuizTotal = getAdjustedQuizTotal(
+                record.getQuizTotal(),
+                record.getQuizLowestPresentMark(),
+                record.getQuizPresentCount(),
+                record.getQuizCount()
+        );
+        int totalComponents = getConsideredQuizCount(record.getQuizCount(), record.getQuizPresentCount())
+                + getConsideredAssignmentCount(record.getAssignmentCount(), record.getAssignmentSubmittedCount())
+                + getConsideredExamCount(record.getMidExamCount(), record.getMidExamPresentCount());
         if (totalComponents <= 0) {
             return 0;
         }
-        return (record.getQuizTotal() + record.getAssignmentTotal() + record.getMidExamTotal()) / totalComponents;
+        return (adjustedQuizTotal + record.getAssignmentTotal() + record.getMidExamTotal()) / totalComponents;
     }
 
     public double calculateCaAverage(StudentCourseGradeRecord record) {
-        int totalComponents = record.getQuizCount() + record.getAssignmentCount() + record.getMidExamCount();
+        double adjustedQuizTotal = getAdjustedQuizTotal(
+                record.getQuizTotal(),
+                record.getQuizLowestPresentMark(),
+                record.getQuizPresentCount(),
+                record.getQuizCount()
+        );
+        int totalComponents = getConsideredQuizCount(record.getQuizCount(), record.getQuizPresentCount())
+                + getConsideredAssignmentCount(record.getAssignmentCount(), record.getAssignmentSubmittedCount())
+                + getConsideredExamCount(record.getMidExamCount(), record.getMidExamPresentCount());
         if (totalComponents <= 0) {
             return 0;
         }
-        return (record.getQuizTotal() + record.getAssignmentTotal() + record.getMidExamTotal()) / totalComponents;
+        return (adjustedQuizTotal + record.getAssignmentTotal() + record.getMidExamTotal()) / totalComponents;
     }
 
     public double calculateEndExamAverage(StudentCourseGradeRecord record) {
-        if (record.getEndExamCount() <= 0) {
+        int consideredEndExamCount = getConsideredExamCount(record.getEndExamCount(), record.getEndExamPresentCount());
+        if (consideredEndExamCount <= 0) {
             return 0;
         }
-        return record.getEndExamTotal() / record.getEndExamCount();
+        return record.getEndExamTotal() / consideredEndExamCount;
     }
 
-    public boolean isAttendanceEligible(double attendancePercentage) {
-        return attendancePercentage >= 80.0;
+
+    public int getConsideredQuizCount(int configuredQuizCount, int presentCount) {
+        if (configuredQuizCount <= 0 || presentCount <= 0) {
+            return 0;
+        }
+        if (configuredQuizCount > 1 && presentCount >= configuredQuizCount) {
+            return presentCount - 1;
+        }
+        return presentCount;
     }
 
-    public boolean isCaEligible(double caAverage) {
-        return caAverage > 50.0;
+    public double getAdjustedQuizTotal(
+            double presentTotal,
+            Double lowestPresentMark,
+            int presentCount,
+            int configuredQuizCount
+    ) {
+        boolean shouldDropLowest = configuredQuizCount > 1
+                && presentCount >= configuredQuizCount
+                && lowestPresentMark != null;
+        return shouldDropLowest ? presentTotal - lowestPresentMark : presentTotal;
     }
 
-    public boolean isExamEligible(double attendancePercentage, double caAverage) {
-        return isAttendanceEligible(attendancePercentage) && isCaEligible(caAverage);
+    public int getConsideredAssignmentCount(int configuredAssignmentCount, int submittedCount) {
+        if (configuredAssignmentCount <= 0 || submittedCount <= 0) {
+            return 0;
+        }
+        return Math.min(configuredAssignmentCount, submittedCount);
+    }
+
+    public int getConsideredExamCount(int requiredExamCount, int presentCount) {
+        if (requiredExamCount <= 0 || presentCount <= 0) {
+            return 0;
+        }
+        return Math.min(requiredExamCount, presentCount);
     }
 
     public double calculateFinalMark(String sessionType, double caAverage, double endExamAverage) {
