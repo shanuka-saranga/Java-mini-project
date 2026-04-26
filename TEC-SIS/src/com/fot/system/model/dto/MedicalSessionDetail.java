@@ -2,6 +2,10 @@ package com.fot.system.model.dto;
 
 import com.fot.system.model.entity.*;
 
+/**
+ * Represents one session linked to a medical submission.
+ * @author methum
+ */
 public class MedicalSessionDetail {
     private String courseCode;
     private String courseName;

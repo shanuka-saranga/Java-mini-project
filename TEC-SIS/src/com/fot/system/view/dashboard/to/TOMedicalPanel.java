@@ -18,7 +18,19 @@ import java.awt.*;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Provides the technical officer medical review workspace for pending and approved medical records.
+ * @author methum
+ */
 public class TOMedicalPanel extends JPanel {
+    private static final int PENDING_DOCUMENT_COLUMN = 5;
+    private static final int APPROVED_DOCUMENT_COLUMN = 6;
+    private static final int MEDICAL_ID_COLUMN = 0;
+    private static final int TABLE_HEIGHT = 280;
+    private static final int DETAILS_TABLE_HEIGHT = 140;
+    private static final String DEFAULT_DETAILS_MESSAGE = "Select a medical row to view its linked sessions.";
+    private static final String MEDICAL_TITLE = "Medical";
+    private static final String MEDICAL_ERROR_TITLE = "Medical Error";
 
     private final User currentUser;
     private final MedicalApprovalController medicalApprovalController;
@@ -36,6 +48,11 @@ public class TOMedicalPanel extends JPanel {
     private List<MedicalApprovalRow> pendingRows = List.of();
     private List<MedicalApprovalRow> approvedRows = List.of();
 
+    /**
+     * Creates the TO medical review panel.
+     * @param user logged-in technical officer
+     * @author methum
+     */
     public TOMedicalPanel(User user) {
         this.currentUser = user;
         this.medicalApprovalController = new MedicalApprovalController();
@@ -95,6 +112,10 @@ public class TOMedicalPanel extends JPanel {
         loadMedicalData();
     }
 
+    /**
+     * Builds the header with medical review actions.
+     * @author methum
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
@@ -130,6 +151,10 @@ public class TOMedicalPanel extends JPanel {
         return header;
     }
 
+    /**
+     * Builds the pending and approved medical sections.
+     * @author methum
+     */
     private JComponent createContent() {
         JPanel content = new JPanel();
         content.setOpaque(false);
@@ -137,13 +162,13 @@ public class TOMedicalPanel extends JPanel {
 
         content.add(createSectionLabel("Pending Medical Approvals"));
         content.add(Box.createVerticalStrut(10));
-        content.add(createScrollPane(pendingTable, 280));
+        content.add(createScrollPane(pendingTable, TABLE_HEIGHT));
         content.add(Box.createVerticalStrut(10));
         content.add(pendingDetailsPanel);
         content.add(Box.createVerticalStrut(22));
         content.add(createSectionLabel("Approved Medicals"));
         content.add(Box.createVerticalStrut(10));
-        content.add(createScrollPane(approvedTable, 280));
+        content.add(createScrollPane(approvedTable, TABLE_HEIGHT));
         content.add(Box.createVerticalStrut(10));
         content.add(approvedDetailsPanel);
 
@@ -154,6 +179,11 @@ public class TOMedicalPanel extends JPanel {
         return mainScrollPane;
     }
 
+    /**
+     * Creates a section label for the medical lists.
+     * @param text label text
+     * @author methum
+     */
     private JLabel createSectionLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontBold(18));
@@ -161,12 +191,25 @@ public class TOMedicalPanel extends JPanel {
         return label;
     }
 
+    /**
+     * Creates a styled action button with the provided icon.
+     * @param text button text
+     * @param icon button icon
+     * @param bg background color
+     * @param fg foreground color
+     * @param hover hover background color
+     * @author methum
+     */
     private CustomButton createActionButton(String text, FontAwesomeSolid icon, Color bg, Color fg, Color hover) {
         CustomButton button = new CustomButton(text, bg, fg, hover, new Dimension(170, 40));
         button.setIcon(FontIcon.of(icon, 14, fg));
         return button;
     }
 
+    /**
+     * Creates the details table model used by both details panels.
+     * @author methum
+     */
     private DefaultTableModel createDetailsTableModel() {
         return new DefaultTableModel(new Object[]{"Course Code", "Course Name", "Type", "Session No", "Session Date"}, 0) {
             @Override
@@ -176,13 +219,23 @@ public class TOMedicalPanel extends JPanel {
         };
     }
 
+    /**
+     * Creates the default details metadata label.
+     * @author methum
+     */
     private JLabel createDetailsMetaLabel() {
-        JLabel label = new JLabel("Select a medical row to view its linked sessions.");
+        JLabel label = new JLabel(DEFAULT_DETAILS_MESSAGE);
         label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_SUBTLE);
         return label;
     }
 
+    /**
+     * Creates a reusable details panel for linked medical sessions.
+     * @param metaLabel metadata label
+     * @param detailsModel details table model
+     * @author methum
+     */
     private JPanel createDetailsPanel(JLabel metaLabel, DefaultTableModel detailsModel) {
         JTable detailsTable = createStyledTable(detailsModel);
         JPanel panel = new JPanel(new BorderLayout(0, 10));
@@ -192,11 +245,16 @@ public class TOMedicalPanel extends JPanel {
                 new EmptyBorder(14, 14, 14, 14)
         ));
         panel.add(metaLabel, BorderLayout.NORTH);
-        panel.add(createScrollPane(detailsTable, 140), BorderLayout.CENTER);
+        panel.add(createScrollPane(detailsTable, DETAILS_TABLE_HEIGHT), BorderLayout.CENTER);
         panel.setVisible(false);
         return panel;
     }
 
+    /**
+     * Creates the shared table styling used by medical tables.
+     * @param model table model
+     * @author methum
+     */
     private JTable createStyledTable(DefaultTableModel model) {
         JTable table = new JTable(model);
         table.setRowHeight(28);
@@ -211,9 +269,16 @@ public class TOMedicalPanel extends JPanel {
         table.setFillsViewportHeight(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         return table;
     }
 
+    /**
+     * Wraps a table in a styled scroll pane.
+     * @param table table instance
+     * @param preferredHeight preferred scroll height
+     * @author methum
+     */
     private JScrollPane createScrollPane(JTable table, int preferredHeight) {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
@@ -223,6 +288,12 @@ public class TOMedicalPanel extends JPanel {
         return scrollPane;
     }
 
+    /**
+     * Configures the document-action column for a medical table.
+     * @param table target table
+     * @param columnIndex document column index
+     * @author methum
+     */
     private void configureDocumentColumn(JTable table, int columnIndex) {
         TableColumn documentColumn = table.getColumnModel().getColumn(columnIndex);
         documentColumn.setPreferredWidth(90);
@@ -232,6 +303,11 @@ public class TOMedicalPanel extends JPanel {
         documentColumn.setCellEditor(new DocumentActionCellEditor(table, columnIndex));
     }
 
+    /**
+     * Hides the medical id column from the visible table.
+     * @param table target table
+     * @author methum
+     */
     private void hideIdColumn(JTable table) {
         TableColumn idColumn = table.getColumnModel().getColumn(0);
         idColumn.setMinWidth(0);
@@ -239,6 +315,10 @@ public class TOMedicalPanel extends JPanel {
         idColumn.setPreferredWidth(0);
     }
 
+    /**
+     * Loads pending and approved medical data for the panel.
+     * @author methum
+     */
     private void loadMedicalData() {
         SwingWorker<MedicalPanelData, Void> worker = new SwingWorker<>() {
             @Override
@@ -253,28 +333,30 @@ public class TOMedicalPanel extends JPanel {
             protected void done() {
                 try {
                     MedicalPanelData data = get();
-                    pendingRows = data.getPendingRows();
-                    approvedRows = data.getApprovedRows();
-                    renderPendingRows(data.getPendingRows());
-                    renderApprovedRows(data.getApprovedRows());
+                    pendingRows = data == null || data.getPendingRows() == null ? List.of() : data.getPendingRows();
+                    approvedRows = data == null || data.getApprovedRows() == null ? List.of() : data.getApprovedRows();
+                    renderPendingRows(pendingRows);
+                    renderApprovedRows(approvedRows);
                     clearDetails(lblPendingDetailsMeta, pendingDetailsTableModel, pendingDetailsPanel);
                     clearDetails(lblApprovedDetailsMeta, approvedDetailsTableModel, approvedDetailsPanel);
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(
-                            TOMedicalPanel.this,
-                            "Failed to load medical records.",
-                            "Medical Error",
-                            JOptionPane.ERROR_MESSAGE
-                    );
+                    showErrorDialog("Failed to load medical records.");
                 }
             }
         };
         worker.execute();
     }
 
+    /**
+     * Renders the pending medical rows.
+     * @param rows pending medical rows
+     * @author methum
+     */
     private void renderPendingRows(List<MedicalApprovalRow> rows) {
+        stopTableEditing(pendingTable);
         pendingTableModel.setRowCount(0);
-        for (MedicalApprovalRow row : rows) {
+        List<MedicalApprovalRow> safeRows = rows == null ? List.of() : rows;
+        for (MedicalApprovalRow row : safeRows) {
             pendingTableModel.addRow(new Object[]{
                     row.getMedicalId(),
                     row.getRegistrationNo(),
@@ -286,9 +368,16 @@ public class TOMedicalPanel extends JPanel {
         }
     }
 
+    /**
+     * Renders the approved medical rows.
+     * @param rows approved medical rows
+     * @author methum
+     */
     private void renderApprovedRows(List<MedicalApprovalRow> rows) {
+        stopTableEditing(approvedTable);
         approvedTableModel.setRowCount(0);
-        for (MedicalApprovalRow row : rows) {
+        List<MedicalApprovalRow> safeRows = rows == null ? List.of() : rows;
+        for (MedicalApprovalRow row : safeRows) {
             approvedTableModel.addRow(new Object[]{
                     row.getMedicalId(),
                     row.getRegistrationNo(),
@@ -301,6 +390,15 @@ public class TOMedicalPanel extends JPanel {
         }
     }
 
+    /**
+     * Shows the linked session details for the selected medical row.
+     * @param sourceTable source table
+     * @param rows medical rows
+     * @param metaLabel metadata label
+     * @param detailsModel details model
+     * @param detailsPanel details panel
+     * @author methum
+     */
     private void showMedicalDetails(
             JTable sourceTable,
             List<MedicalApprovalRow> rows,
@@ -315,9 +413,10 @@ public class TOMedicalPanel extends JPanel {
         }
 
         int modelRow = sourceTable.convertRowIndexToModel(selectedRow);
-        int medicalId = Integer.parseInt(String.valueOf(sourceTable.getModel().getValueAt(modelRow, 0)));
+        int medicalId = Integer.parseInt(String.valueOf(sourceTable.getModel().getValueAt(modelRow, MEDICAL_ID_COLUMN)));
 
-        MedicalApprovalRow selected = rows.stream()
+        List<MedicalApprovalRow> safeRows = rows == null ? List.of() : rows;
+        MedicalApprovalRow selected = safeRows.stream()
                 .filter(row -> row.getMedicalId() == medicalId)
                 .findFirst()
                 .orElse(null);
@@ -349,44 +448,112 @@ public class TOMedicalPanel extends JPanel {
         detailsPanel.repaint();
     }
 
+    /**
+     * Clears the medical details panel.
+     * @param metaLabel metadata label
+     * @param detailsModel details model
+     * @param detailsPanel details panel
+     * @author methum
+     */
     private void clearDetails(JLabel metaLabel, DefaultTableModel detailsModel, JPanel detailsPanel) {
-        metaLabel.setText("Select a medical row to view its linked sessions.");
+        metaLabel.setText(DEFAULT_DETAILS_MESSAGE);
         detailsModel.setRowCount(0);
         detailsPanel.setVisible(false);
     }
 
+    /**
+     * Approves the currently selected pending medical record.
+     * @author methum
+     */
     private void approveSelectedMedical() {
+        stopTableEditing(pendingTable);
         int selectedRow = pendingTable.getSelectedRow();
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "Select a pending medical record first.", "Medical", JOptionPane.WARNING_MESSAGE);
+            showWarningDialog("Select a pending medical record first.");
             return;
         }
 
         int modelRow = pendingTable.convertRowIndexToModel(selectedRow);
-        int medicalId = Integer.parseInt(String.valueOf(pendingTableModel.getValueAt(modelRow, 0)));
+        int medicalId = Integer.parseInt(String.valueOf(pendingTableModel.getValueAt(modelRow, MEDICAL_ID_COLUMN)));
 
         try {
             medicalApprovalController.approveMedical(medicalId, currentUser.getId());
-            JOptionPane.showMessageDialog(this, "Medical approved successfully.");
+            showInfoDialog("Medical approved successfully.");
             loadMedicalData();
         } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Medical Error", JOptionPane.ERROR_MESSAGE);
+            showErrorDialog(ex.getMessage());
         }
     }
 
+    /**
+     * Opens the selected medical document file.
+     * @param path local file path
+     * @author methum
+     */
     private void openDocument(String path) {
         if (path == null || path.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Document is not available.", "Medical", JOptionPane.WARNING_MESSAGE);
+            showWarningDialog("Document is not available.");
             return;
         }
 
         try {
             Desktop.getDesktop().open(new File(path));
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Unable to open document.", "Medical", JOptionPane.ERROR_MESSAGE);
+            showErrorDialog("Unable to open document.");
         }
     }
 
+    /**
+     * Stops active table editing before the model is refreshed.
+     * @param table target table
+     * @author methum
+     */
+    private void stopTableEditing(JTable table) {
+        if (table == null || !table.isEditing()) {
+            return;
+        }
+
+        TableCellEditor editor = table.getCellEditor();
+        if (editor == null) {
+            return;
+        }
+
+        if (!editor.stopCellEditing()) {
+            editor.cancelCellEditing();
+        }
+    }
+
+    /**
+     * Shows a warning dialog for medical actions.
+     * @param message warning message
+     * @author methum
+     */
+    private void showWarningDialog(String message) {
+        JOptionPane.showMessageDialog(this, message, MEDICAL_TITLE, JOptionPane.WARNING_MESSAGE);
+    }
+
+    /**
+     * Shows an information dialog for medical actions.
+     * @param message information message
+     * @author methum
+     */
+    private void showInfoDialog(String message) {
+        JOptionPane.showMessageDialog(this, message, MEDICAL_TITLE, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
+     * Shows an error dialog for medical actions.
+     * @param message error message
+     * @author methum
+     */
+    private void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(this, message, MEDICAL_ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Renders the document action button inside the medical tables.
+     * @author methum
+     */
     private static class DocumentActionCellRenderer implements TableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -400,12 +567,22 @@ public class TOMedicalPanel extends JPanel {
         }
     }
 
+    /**
+     * Handles the document action button editor for the medical tables.
+     * @author methum
+     */
     private class DocumentActionCellEditor extends AbstractCellEditor implements TableCellEditor {
         private final JButton button;
         private final JTable table;
         private final int columnIndex;
         private String currentPath;
 
+        /**
+         * Creates the document action editor.
+         * @param table source table
+         * @param columnIndex document column index
+         * @author methum
+         */
         private DocumentActionCellEditor(JTable table, int columnIndex) {
             this.table = table;
             this.columnIndex = columnIndex;
