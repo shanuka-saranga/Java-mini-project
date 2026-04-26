@@ -13,18 +13,32 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * handle business logic for lecturer exam eligibility calculations
+ * @author poornika
+ */
 public class ExamEligibilityService {
 
     private final AttendanceService attendanceService;
     private final MarksRepository marksRepository;
     private final AcademicPerformance academicPerformance;
 
+    /**
+     * initialize exam eligibility service dependencies
+     * @author poornika
+     */
     public ExamEligibilityService() {
         this.attendanceService = new AttendanceService();
         this.marksRepository = new MarksRepository();
         this.academicPerformance = new AcademicPerformance();
     }
 
+    /**
+     * build exam eligibility view data using attendance and CA records
+     * @param courseId selected course id
+     * @param totalCourseHours configured course hours
+     * @author poornika
+     */
     public CourseExamEligibilityViewData getCourseExamEligibilityViewData(int courseId, int totalCourseHours) {
         if (courseId <= 0) {
             throw new RuntimeException("Invalid course ID.");
@@ -73,10 +87,20 @@ public class ExamEligibilityService {
         return viewData;
     }
 
+    /**
+     * calculate CA average for one student exam eligibility row
+     * @param caRecord student CA record
+     * @author poornika
+     */
     private double calculateCaAverage(StudentCourseCaRecord caRecord) {
         return academicPerformance.calculateCaAverage(caRecord);
     }
 
+    /**
+     * build batch summary counts for the eligibility table
+     * @param rows student eligibility rows
+     * @author poornika
+     */
     private ExamEligibilityBatchSummary buildBatchSummary(List<ExamEligibilityRow> rows) {
         ExamEligibilityBatchSummary summary = new ExamEligibilityBatchSummary();
         summary.setTotalStudents(rows.size());

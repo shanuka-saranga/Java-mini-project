@@ -24,7 +24,7 @@ public class MarksRepository {
      * Loads latest-attempt CA records for exam eligibility using quiz, assignment, and mid exam data only.
      * @param courseId selected course id
      * @param semesterYear selected semester year
-     * @author janith
+     * @author poornika
      */
     public List<StudentCourseCaRecord> findStudentCourseCaRecords(int courseId, int semesterYear) {
         List<StudentCourseCaRecord> rows = new ArrayList<>();

@@ -18,6 +18,10 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.List;
 
+/**
+ * displays lecturer exam eligibility summaries and student eligibility rows
+ * @author poornika
+ */
 public class LecturerExamEligibilityPanel extends JPanel {
     private static final String LIST_CARD = "LIST";
     private static final String DETAILS_CARD = "DETAILS";
@@ -44,6 +48,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
     private List<Course> assignedCourses;
     private Course selectedCourse;
 
+    /**
+     * initialize lecturer exam eligibility panel for the logged in lecturer
+     * @param user logged in lecturer
+     * @author poornika
+     */
     public LecturerExamEligibilityPanel(User user) {
         this.currentUser = user;
         this.courseService = new CourseService();
@@ -224,6 +233,10 @@ public class LecturerExamEligibilityPanel extends JPanel {
         loadAssignedCourses();
     }
 
+    /**
+     * create the exam eligibility page header
+     * @author poornika
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
@@ -241,6 +254,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         return header;
     }
 
+    /**
+     * create a scroll pane wrapper for the given content panel
+     * @param content wrapped content panel
+     * @author poornika
+     */
     private JScrollPane createScrollPane(JPanel content) {
         JScrollPane scrollPane = new JScrollPane(content);
         scrollPane.setBorder(null);
@@ -273,6 +291,10 @@ public class LecturerExamEligibilityPanel extends JPanel {
         return card;
     }
 
+    /**
+     * load lecturer assigned courses for exam eligibility selection
+     * @author poornika
+     */
     private void loadAssignedCourses() {
         SwingWorker<List<Course>, Void> worker = new SwingWorker<>() {
             @Override
@@ -299,6 +321,10 @@ public class LecturerExamEligibilityPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * render lecturer assigned courses as clickable cards
+     * @author poornika
+     */
     private void renderCourseList() {
         courseListPanel.removeAll();
 
@@ -327,6 +353,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         courseListPanel.repaint();
     }
 
+    /**
+     * open the selected course eligibility view
+     * @param course selected course
+     * @author poornika
+     */
     private void openCourse(Course course) {
         selectedCourse = course;
         lblOpenedCourseTab.setText(course.getCourseName());
@@ -335,6 +366,10 @@ public class LecturerExamEligibilityPanel extends JPanel {
         cardLayout.show(cardPanel, DETAILS_CARD);
     }
 
+    /**
+     * load exam eligibility data for the opened course
+     * @author poornika
+     */
     private void loadEligibilityData() {
         if (selectedCourse == null) {
             return;
@@ -364,6 +399,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * update summary cards, filters and table from loaded view data
+     * @param viewData exam eligibility view data
+     * @author poornika
+     */
     private void updateView(CourseExamEligibilityViewData viewData) {
         updateSummary(viewData.getBatchSummary());
         updateBatchFilter(viewData.getRegistrationYears());
@@ -371,6 +411,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         applyFilters();
     }
 
+    /**
+     * update top summary counts for the current course
+     * @param summary batch summary data
+     * @author poornika
+     */
     private void updateSummary(ExamEligibilityBatchSummary summary) {
         lblTotalStudents.setText(String.valueOf(summary.getTotalStudents()));
         lblEligibleStudents.setText(String.valueOf(summary.getEligibleCount()));
@@ -392,6 +437,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         }
     }
 
+    /**
+     * update student eligibility table rows
+     * @param rows student eligibility rows
+     * @author poornika
+     */
     private void updateTable(List<ExamEligibilityRow> rows) {
         tableModel.setRowCount(0);
         for (ExamEligibilityRow row : rows) {

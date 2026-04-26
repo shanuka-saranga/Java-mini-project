@@ -2,6 +2,10 @@ package com.fot.system.model.dto;
 
 import com.fot.system.model.entity.*;
 
+/**
+ * store one student eligibility row for the lecturer exam eligibility table
+ * @author poornika
+ */
 public class ExamEligibilityRow {
     private String registrationNo;
     private String studentName;
