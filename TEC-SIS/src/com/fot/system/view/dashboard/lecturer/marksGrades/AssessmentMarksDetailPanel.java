@@ -16,6 +16,10 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * displays and edits student marks for a selected lecturer assessment item
+ * @author janith
+ */
 public class AssessmentMarksDetailPanel extends JPanel {
     private final JLabel lblTitle;
     private final JTextField txtSearch;
@@ -26,6 +30,12 @@ public class AssessmentMarksDetailPanel extends JPanel {
     private String currentAssessmentType;
     private List<AssessmentStudentMarkRow> currentRows = List.of();
 
+    /**
+     * Creates the assessment detail panel used to view and edit student marks.
+     * @param onBack action used to return to the summary view
+     * @param onSave action used to save edited marks
+     * @author janith
+     */
     public AssessmentMarksDetailPanel(Runnable onBack, Runnable onSave) {
         setLayout(new BorderLayout(0, 16));
         setOpaque(false);
@@ -187,16 +197,31 @@ public class AssessmentMarksDetailPanel extends JPanel {
         add(body, BorderLayout.CENTER);
     }
 
+    /**
+     * Updates the visible title for the selected assessment item.
+     * @param title assessment title text
+     * @author janith
+     */
     public void setAssessmentTitle(String title) {
         lblTitle.setText(title);
     }
 
+    /**
+     * Configures editors and state for the selected assessment type.
+     * @param assessmentType selected assessment type
+     * @author janith
+     */
     public void setAssessmentType(String assessmentType) {
         currentAssessmentType = assessmentType;
         table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(new JComboBox<>(buildStatusOptions(assessmentType))));
         table.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JComboBox<>(buildExamTypeOptions(assessmentType))));
     }
 
+    /**
+     * Loads assessment mark rows into the editable table.
+     * @param rows assessment rows to display
+     * @author janith
+     */
     public void setRows(List<AssessmentStudentMarkRow> rows) {
         currentRows = rows == null ? List.of() : new java.util.ArrayList<>(rows);
         tableModel.setRowCount(0);
@@ -219,6 +244,10 @@ public class AssessmentMarksDetailPanel extends JPanel {
         }
     }
 
+    /**
+     * Collects the edited student mark rows from the table model.
+     * @author janith
+     */
     public List<AssessmentStudentMarkRow> getEditedRows() {
         java.util.List<AssessmentStudentMarkRow> editedRows = new java.util.ArrayList<>();
         for (int rowIndex = 0; rowIndex < currentRows.size(); rowIndex++) {
@@ -235,6 +264,10 @@ public class AssessmentMarksDetailPanel extends JPanel {
         return editedRows;
     }
 
+    /**
+     * Applies the registration and status search filter to the marks table.
+     * @author janith
+     */
     private void applySearchFilter() {
         String query = txtSearch.getText().trim();
         if (query.isEmpty()) {
@@ -244,6 +277,11 @@ public class AssessmentMarksDetailPanel extends JPanel {
         }
     }
 
+    /**
+     * Builds the allowed status options for the selected assessment type.
+     * @param assessmentType selected assessment type
+     * @author janith
+     */
     private String[] buildStatusOptions(String assessmentType) {
         if ("ASSIGNMENT".equalsIgnoreCase(assessmentType)) {
             return new String[]{"", "PENDING", "SUBMITTED", "NOT_SUBMITTED", "MEDICAL"};
@@ -251,6 +289,11 @@ public class AssessmentMarksDetailPanel extends JPanel {
         return new String[]{"", "PENDING", "PRESENT", "ABSENT", "MEDICAL"};
     }
 
+    /**
+     * Builds the available exam type values for exam-based assessments.
+     * @param assessmentType selected assessment type
+     * @author janith
+     */
     private String[] buildExamTypeOptions(String assessmentType) {
         if ("MID".equalsIgnoreCase(assessmentType) || "END".equalsIgnoreCase(assessmentType)) {
             return new String[]{"THEORY", "PRACTICAL"};
@@ -258,6 +301,11 @@ public class AssessmentMarksDetailPanel extends JPanel {
         return new String[]{"-"};
     }
 
+    /**
+     * Formats a mark value for display in the table.
+     * @param mark numeric mark value
+     * @author janith
+     */
     private String formatMark(Double mark) {
         if (mark == null) {
             return "";
@@ -265,18 +313,38 @@ public class AssessmentMarksDetailPanel extends JPanel {
         return String.format("%.2f", mark);
     }
 
+    /**
+     * Returns a dash when the given value is blank.
+     * @param value source text value
+     * @author janith
+     */
     private String valueOrDash(String value) {
         return value == null || value.isBlank() ? "-" : value;
     }
 
+    /**
+     * Returns an empty string when the given value is blank.
+     * @param value source text value
+     * @author janith
+     */
     private String valueOrEmpty(String value) {
         return value == null || value.isBlank() ? "" : value;
     }
 
+    /**
+     * Normalizes a table cell value into trimmed text.
+     * @param value raw table value
+     * @author janith
+     */
     private String normalizeValue(Object value) {
         return value == null ? "" : value.toString().trim();
     }
 
+    /**
+     * Parses the entered mark text into a numeric value.
+     * @param value raw table value
+     * @author janith
+     */
     private Double parseMark(Object value) {
         String text = normalizeValue(value);
         if (text.isEmpty()) {
@@ -285,6 +353,12 @@ public class AssessmentMarksDetailPanel extends JPanel {
         return Double.parseDouble(text);
     }
 
+    /**
+     * Resolves the selected exam type while preserving the original fallback.
+     * @param value selected table value
+     * @param fallback original exam type value
+     * @author janith
+     */
     private String normalizeExamType(Object value, String fallback) {
         String text = normalizeValue(value);
         if (text.isEmpty() || "-".equals(text)) {

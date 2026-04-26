@@ -20,6 +20,10 @@ import java.text.DecimalFormat;
 import java.time.Year;
 import java.util.List;
 
+/**
+ * manages lecturer marks entry, assessment summaries, and grade overview views
+ * @author janith
+ */
 public class LecturerMarksAndGradesPanel extends JPanel {
     private static final String LIST_CARD = "LIST";
     private static final String DETAILS_CARD = "DETAILS";
@@ -52,6 +56,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
     private AssessmentCardSummary selectedAssessmentSummary;
     private int currentMarksYear;
 
+    /**
+     * Creates the lecturer marks and grades panel for the logged-in lecturer.
+     * @param user logged-in lecturer user
+     * @author janith
+     */
     public LecturerMarksAndGradesPanel(User user) {
         this.currentUser = user;
         this.courseService = new CourseService();
@@ -190,6 +199,10 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         loadAssignedCourses();
     }
 
+    /**
+     * Creates the page header for the marks and grades view.
+     * @author janith
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout(0, 8));
         header.setOpaque(false);
@@ -207,6 +220,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         return header;
     }
 
+    /**
+     * Wraps a panel inside a scroll pane with consistent styling.
+     * @param content panel content to wrap
+     * @author janith
+     */
     private JScrollPane createScrollPane(JPanel content) {
         JScrollPane scrollPane = new JScrollPane(content);
         scrollPane.setBorder(null);
@@ -215,6 +233,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         return scrollPane;
     }
 
+    /**
+     * Creates a muted metadata label used in the summary view.
+     * @param text initial label text
+     * @author janith
+     */
     private JLabel createMetaLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(AppTheme.fontPlain(14));
@@ -222,6 +245,10 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         return label;
     }
 
+    /**
+     * Loads the lecturer's assigned courses and renders the course list.
+     * @author janith
+     */
     private void loadAssignedCourses() {
         SwingWorker<List<Course>, Void> worker = new SwingWorker<>() {
             @Override
@@ -248,6 +275,10 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * Renders lecturer course cards for all assigned courses.
+     * @author janith
+     */
     private void renderCourseList() {
         courseListPanel.removeAll();
 
@@ -276,6 +307,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         courseListPanel.repaint();
     }
 
+    /**
+     * Opens the selected course and loads its marks overview data.
+     * @param course selected course
+     * @author janith
+     */
     private void openCourse(Course course) {
         selectedCourse = course;
         logGradeFlow("openCourse -> courseId=" + course.getId() + ", courseCode=" + course.getCourseCode());
@@ -285,6 +321,10 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         cardLayout.show(cardPanel, DETAILS_CARD);
     }
 
+    /**
+     * Loads assessment summaries and grade data for the opened course.
+     * @author janith
+     */
     private void loadMarksOverview() {
         if (selectedCourse == null) {
             return;
@@ -329,6 +369,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         worker.execute();
     }
 
+    /**
+     * Builds the full set of assessment summary cards for the current course.
+     * @param context current course semester context
+     * @author janith
+     */
     private List<AssessmentCardSummary> buildAssessmentSummaries(CourseSemesterContext context) {
         List<AssessmentCardSummary> summaries = new java.util.ArrayList<>();
         summaries.addAll(lecturerMarksService.getQuizCardSummaries(
@@ -357,6 +402,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         return summaries;
     }
 
+    /**
+     * Refreshes the assessment summary card grid with the latest summary data.
+     * @param summaries summary cards to display
+     * @author janith
+     */
     private void updateSummaryCards(List<AssessmentCardSummary> summaries) {
         summaryCardsPanel.removeAll();
 
@@ -392,6 +442,10 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         summaryCardsPanel.repaint();
     }
 
+    /**
+     * Creates the grade section containing filters and the grade table.
+     * @author janith
+     */
     private JPanel createGradeSection() {
         JPanel section = new JPanel();
         section.setOpaque(false);
@@ -438,6 +492,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         return section;
     }
 
+    /**
+     * Updates the grade table with the latest calculated student grade rows.
+     * @param viewData grade view data to render
+     * @author janith
+     */
     private void updateGradeView(CourseGradeViewData viewData) {
         updateGradeBatchFilter(viewData.getRegistrationYears());
         gradeTableModel.setRowCount(0);
@@ -457,6 +516,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         applyGradeFilters();
     }
 
+    /**
+     * Reloads the batch filter options using the available registration years.
+     * @param registrationYears registration years available in the grade view
+     * @author janith
+     */
     private void updateGradeBatchFilter(List<Integer> registrationYears) {
         Object selected = cmbGradeBatch.getSelectedItem();
         cmbGradeBatch.removeAllItems();
@@ -472,6 +536,10 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         }
     }
 
+    /**
+     * Applies the current search text and batch filter to the grade table.
+     * @author janith
+     */
     private void applyGradeFilters() {
         String searchText = txtGradeSearch.getText() == null ? "" : txtGradeSearch.getText().trim().toLowerCase();
         String selectedBatch = cmbGradeBatch.getSelectedItem() == null ? "All Batches" : cmbGradeBatch.getSelectedItem().toString();
@@ -655,10 +723,19 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         }
     }
 
+    /**
+     * Formats a numeric mark value for table and card display.
+     * @param value numeric mark value
+     * @author janith
+     */
     private String formatMark(double value) {
         return DECIMAL_FORMAT.format(value);
     }
 
+    /**
+     * Creates an empty grade view model used as a safe fallback state.
+     * @author janith
+     */
     private CourseGradeViewData createEmptyGradeViewData() {
         CourseGradeViewData viewData = new CourseGradeViewData();
         viewData.setRows(List.of());
@@ -666,6 +743,12 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         return viewData;
     }
 
+    /**
+     * Attaches the same click handler to a component and all of its children.
+     * @param component root component to attach
+     * @param adapter mouse adapter to register
+     * @author janith
+     */
     private void attachClickHandler(Component component, MouseAdapter adapter) {
         component.addMouseListener(adapter);
         if (component instanceof Container) {
@@ -682,6 +765,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
     ) {
     }
 
+    /**
+     * Writes grade flow debug messages when logging is enabled.
+     * @param message debug message text
+     * @author janith
+     */
     private void logGradeFlow(String message) {
         if (ENABLE_GRADE_FLOW_LOGS) {
             System.out.println("[GRADE-FLOW][UI] " + message);

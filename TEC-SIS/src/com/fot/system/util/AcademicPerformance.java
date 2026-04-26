@@ -274,6 +274,7 @@ public class AcademicPerformance {
         double totalCredits = 0;
 
         for (StudentCoursePerformance snapshot : courseSnapshots) {
+            if (!isCourseIncludedInCgpa(snapshot.getCourseCode())) continue;
             if (snapshot.getAttendancePercentage() < 80.0) continue;
 
             double finalMark = calculateFinalMark(snapshot.getSessionType(), snapshot.getCaMarks(), snapshot.getEndExamMarks());
@@ -285,6 +286,13 @@ public class AcademicPerformance {
         }
 
         return (totalCredits <= 0) ? 0.00 : weightedPoints / totalCredits;
+    }
+
+    public boolean isCourseIncludedInCgpa(String courseCode) {
+        if (courseCode == null || courseCode.isBlank()) {
+            return true;
+        }
+        return !courseCode.trim().toUpperCase().startsWith("ENG");
     }
 
     public double calculateSGpa(List<String> grades, List<Integer> credits) {
