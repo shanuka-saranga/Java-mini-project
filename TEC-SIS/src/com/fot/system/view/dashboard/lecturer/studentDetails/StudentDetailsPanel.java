@@ -76,7 +76,6 @@ public class StudentDetailsPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(studentTable);
         scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         scrollPane.getViewport().setBackground(AppTheme.CARD_BG);
-
         contentPanel.add(controlsPanel, BorderLayout.NORTH);
         contentPanel.add(scrollPane, BorderLayout.CENTER);
         add(contentPanel, BorderLayout.CENTER);
