@@ -1,7 +1,8 @@
 package com.fot.system.view.dashboard.lecturer.marksGrades;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.AssessmentStudentMarkRow;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.SectionCard;
 
@@ -59,7 +60,7 @@ public class AssessmentMarksDetailPanel extends JPanel {
         topBar.add(topActions, BorderLayout.WEST);
 
         lblTitle = new JLabel("-");
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitle.setFont(AppTheme.fontBold(22));
         lblTitle.setForeground(AppTheme.TEXT_DARK);
         topBar.add(lblTitle, BorderLayout.CENTER);
 
@@ -69,9 +70,9 @@ public class AssessmentMarksDetailPanel extends JPanel {
         controls.setOpaque(false);
 
         txtSearch = new JTextField();
-        txtSearch.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtSearch.setFont(AppTheme.fontPlain(14));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
@@ -149,8 +150,8 @@ public class AssessmentMarksDetailPanel extends JPanel {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.getTableHeader().setFont(AppTheme.fontBold(13));
+        table.setFont(AppTheme.fontPlain(13));
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
         table.setGridColor(AppTheme.BORDER_LIGHT);

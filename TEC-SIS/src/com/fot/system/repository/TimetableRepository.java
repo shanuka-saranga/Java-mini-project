@@ -1,7 +1,8 @@
 package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.TimetableSession;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;

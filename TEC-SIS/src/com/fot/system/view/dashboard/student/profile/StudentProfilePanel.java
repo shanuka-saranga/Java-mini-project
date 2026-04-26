@@ -1,13 +1,9 @@
 package com.fot.system.view.dashboard.student.profile;
 
-import com.fot.system.model.User;
-import com.fot.system.view.dashboard.shared.UserProfilePanel;
+import com.fot.system.model.entity.*;
+import com.fot.system.view.dashboard.shared_components.UserProfilePanel;
 
 public class StudentProfilePanel extends UserProfilePanel {
-    private static final String SUBTITLE_TEXT =
-            "Review your student profile. Students can update only contact details and profile picture.";
-    private static final String ACCESS_HINT =
-            "Can update only contact details and profile picture of their profile.";
 
     public StudentProfilePanel(User user) {
         super(user);
@@ -25,16 +21,7 @@ public class StudentProfilePanel extends UserProfilePanel {
 
     @Override
     protected String getSubtitleText() {
-        return SUBTITLE_TEXT;
+        return "Review your student profile. Students can update only contact details and profile picture.";
     }
 
-    @Override
-    protected String getViewAccessHint() {
-        return ACCESS_HINT;
-    }
-
-    @Override
-    protected String getEditAccessHint() {
-        return ACCESS_HINT;
-    }
 }

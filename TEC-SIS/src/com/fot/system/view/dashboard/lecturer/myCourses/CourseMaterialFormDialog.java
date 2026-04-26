@@ -1,8 +1,8 @@
 package com.fot.system.view.dashboard.lecturer.myCourses;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Course;
-import com.fot.system.model.CourseMaterial;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
 
 import javax.swing.*;
@@ -19,6 +19,14 @@ public class CourseMaterialFormDialog extends JDialog {
     private final JTextField txtFileType;
     private boolean confirmed;
 
+    /**
+     * build add/edit material dialog for selected course
+     * @param owner parent window
+     * @param dialogTitle dialog title text
+     * @param course selected course
+     * @param material material to edit, null for add
+     * @author poornika
+     */
     public CourseMaterialFormDialog(Window owner, String dialogTitle, Course course, CourseMaterial material) {
         super(owner, dialogTitle, ModalityType.APPLICATION_MODAL);
         setSize(520, 420);
@@ -29,13 +37,13 @@ public class CourseMaterialFormDialog extends JDialog {
         root.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         JLabel title = new JLabel(dialogTitle + " - " + course.getCourseCode());
-        title.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        title.setFont(AppTheme.fontBold(22));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JPanel form = new JPanel();
         form.setBackground(AppTheme.CARD_BG);
         form.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(18, 18, 18, 18)
         ));
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
@@ -46,7 +54,7 @@ public class CourseMaterialFormDialog extends JDialog {
         txtDescription = new JTextArea(4, 20);
         txtDescription.setLineWrap(true);
         txtDescription.setWrapStyleWord(true);
-        txtDescription.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtDescription.setFont(AppTheme.fontPlain(14));
         txtDescription.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         txtFilePath = new JTextField();
@@ -95,26 +103,50 @@ public class CourseMaterialFormDialog extends JDialog {
         setContentPane(root);
     }
 
+    /**
+     * check whether save/update was confirmed
+     * @author poornika
+     */
     public boolean isConfirmed() {
         return confirmed;
     }
 
+    /**
+     * get typed material title
+     * @author poornika
+     */
     public String getTitleValue() {
         return txtTitle.getText().trim();
     }
 
+    /**
+     * get typed material description
+     * @author poornika
+     */
     public String getDescriptionValue() {
         return txtDescription.getText().trim();
     }
 
+    /**
+     * get selected file path value
+     * @author poornika
+     */
     public String getFilePathValue() {
         return txtFilePath.getText().trim();
     }
 
+    /**
+     * get selected file type value
+     * @author poornika
+     */
     public String getFileTypeValue() {
         return txtFileType.getText().trim();
     }
 
+    /**
+     * validate form and close dialog when valid
+     * @author poornika
+     */
     private void handleSave() {
         if (getTitleValue().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Material title is required.", "Validation Error", JOptionPane.ERROR_MESSAGE);
@@ -129,12 +161,18 @@ public class CourseMaterialFormDialog extends JDialog {
         dispose();
     }
 
+    /**
+     * create labeled field block
+     * @param labelText field label text
+     * @param field field component
+     * @author poornika
+     */
     private JPanel createField(String labelText, JComponent field) {
         JPanel panel = new JPanel(new BorderLayout(0, 6));
         panel.setOpaque(false);
 
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_DARK);
 
         panel.add(label, BorderLayout.NORTH);
@@ -142,6 +180,10 @@ public class CourseMaterialFormDialog extends JDialog {
         return panel;
     }
 
+    /**
+     * create file input row with browse action
+     * @author poornika
+     */
     private JPanel createFilePickerRow() {
         JPanel panel = new JPanel(new BorderLayout(10, 0));
         panel.setOpaque(false);
@@ -160,6 +202,10 @@ public class CourseMaterialFormDialog extends JDialog {
         return panel;
     }
 
+    /**
+     * open file chooser and bind selected file values
+     * @author poornika
+     */
     private void chooseFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select Material File");
@@ -178,6 +224,10 @@ public class CourseMaterialFormDialog extends JDialog {
         }
     }
 
+    /**
+     * create scroll pane wrapper for description area
+     * @author poornika
+     */
     private JScrollPane createTextAreaPane() {
         JScrollPane scrollPane = new JScrollPane(txtDescription);
         scrollPane.setBorder(BorderFactory.createCompoundBorder(
@@ -188,14 +238,24 @@ public class CourseMaterialFormDialog extends JDialog {
         return scrollPane;
     }
 
+    /**
+     * apply shared text-field styling
+     * @param textField target field
+     * @author poornika
+     */
     private void styleTextField(JTextField textField) {
-        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textField.setFont(AppTheme.fontPlain(14));
         textField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(AppTheme.BORDER_MUTED),
                 new EmptyBorder(10, 12, 10, 12)
         ));
     }
 
+    /**
+     * normalize nullable strings to empty text
+     * @param value raw value
+     * @author poornika
+     */
     private String valueOrEmpty(String value) {
         return value == null ? "" : value.trim();
     }

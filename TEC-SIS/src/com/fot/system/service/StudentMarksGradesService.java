@@ -1,11 +1,7 @@
 package com.fot.system.service;
 
-import com.fot.system.model.Student;
-import com.fot.system.model.StudentCourseGradeRecord;
-import com.fot.system.model.StudentCoursePerformance;
-import com.fot.system.model.StudentMarksGradeViewData;
-import com.fot.system.model.StudentSubjectGradeRow;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.MarksRepository;
 import com.fot.system.repository.UserRepository;
 import com.fot.system.util.AcademicPerformance;

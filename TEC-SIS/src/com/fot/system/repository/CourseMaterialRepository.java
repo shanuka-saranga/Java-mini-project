@@ -1,7 +1,8 @@
 package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.CourseMaterial;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,10 +16,19 @@ public class CourseMaterialRepository {
 
     private final Connection conn;
 
+    /**
+     * initialize repository with shared db connection
+     * @author poornika
+     */
     public CourseMaterialRepository() {
         this.conn = DBConnection.getInstance().getConnection();
     }
 
+    /**
+     * find active materials by course id
+     * @param courseId course id
+     * @author poornika
+     */
     public List<CourseMaterial> findByCourseId(int courseId) {
         List<CourseMaterial> materials = new ArrayList<>();
         String sql = "SELECT cm.id, cm.course_id, cm.title, cm.description, cm.file_path, cm.file_type, " +
@@ -42,6 +52,11 @@ public class CourseMaterialRepository {
         return materials;
     }
 
+    /**
+     * persist new material row and assign generated id
+     * @param material material entity
+     * @author poornika
+     */
     public boolean save(CourseMaterial material) {
         String sql = "INSERT INTO course_materials (course_id, title, description, file_path, file_type, uploaded_by, status) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -71,6 +86,11 @@ public class CourseMaterialRepository {
         }
     }
 
+    /**
+     * find single material by id
+     * @param materialId material id
+     * @author poornika
+     */
     public CourseMaterial findById(int materialId) {
         String sql = "SELECT cm.id, cm.course_id, cm.title, cm.description, cm.file_path, cm.file_type, " +
                 "cm.uploaded_by, cm.uploaded_at, cm.status, CONCAT(u.first_name, ' ', u.last_name) AS uploaded_by_name " +
@@ -92,6 +112,11 @@ public class CourseMaterialRepository {
         return null;
     }
 
+    /**
+     * update editable material fields
+     * @param material material entity
+     * @author poornika
+     */
     public boolean update(CourseMaterial material) {
         String sql = "UPDATE course_materials SET title = ?, description = ?, file_path = ?, file_type = ?, " +
                 "uploaded_by = ?, uploaded_at = CURRENT_TIMESTAMP WHERE id = ?";
@@ -109,6 +134,11 @@ public class CourseMaterialRepository {
         }
     }
 
+    /**
+     * soft-delete material by status update
+     * @param materialId material id
+     * @author poornika
+     */
     public boolean archive(int materialId) {
         String sql = "UPDATE course_materials SET status = 'ARCHIVED' WHERE id = ?";
 
@@ -120,6 +150,11 @@ public class CourseMaterialRepository {
         }
     }
 
+    /**
+     * map result set row into entity
+     * @param rs query result set
+     * @author poornika
+     */
     private CourseMaterial mapMaterial(ResultSet rs) throws SQLException {
         CourseMaterial material = new CourseMaterial();
         material.setId(rs.getInt("id"));

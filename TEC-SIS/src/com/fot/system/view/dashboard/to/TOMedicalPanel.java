@@ -2,9 +2,8 @@ package com.fot.system.view.dashboard.to;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.MedicalApprovalController;
-import com.fot.system.model.MedicalApprovalRow;
-import com.fot.system.model.MedicalSessionDetail;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
@@ -104,11 +103,11 @@ public class TOMedicalPanel extends JPanel {
         titleBlock.setOpaque(false);
 
         JLabel title = new JLabel("Medicals");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Review pending medical submissions and approved medical records.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         titleBlock.add(title, BorderLayout.NORTH);
@@ -157,7 +156,7 @@ public class TOMedicalPanel extends JPanel {
 
     private JLabel createSectionLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        label.setFont(AppTheme.fontBold(18));
         label.setForeground(AppTheme.TEXT_DARK);
         return label;
     }
@@ -179,7 +178,7 @@ public class TOMedicalPanel extends JPanel {
 
     private JLabel createDetailsMetaLabel() {
         JLabel label = new JLabel("Select a medical row to view its linked sessions.");
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_SUBTLE);
         return label;
     }
@@ -189,7 +188,7 @@ public class TOMedicalPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout(0, 10));
         panel.setBackground(AppTheme.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(14, 14, 14, 14)
         ));
         panel.add(metaLabel, BorderLayout.NORTH);
@@ -201,14 +200,14 @@ public class TOMedicalPanel extends JPanel {
     private JTable createStyledTable(DefaultTableModel model) {
         JTable table = new JTable(model);
         table.setRowHeight(28);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.setFont(AppTheme.fontPlain(13));
         table.setForeground(AppTheme.TEXT_DARK);
         table.setGridColor(AppTheme.BORDER_SOFT);
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
         table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        table.getTableHeader().setFont(AppTheme.fontBold(13));
         table.setFillsViewportHeight(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -217,7 +216,7 @@ public class TOMedicalPanel extends JPanel {
 
     private JScrollPane createScrollPane(JTable table, int preferredHeight) {
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         scrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setPreferredSize(new Dimension(0, preferredHeight));
@@ -254,10 +253,10 @@ public class TOMedicalPanel extends JPanel {
             protected void done() {
                 try {
                     MedicalPanelData data = get();
-                    pendingRows = data.pendingRows;
-                    approvedRows = data.approvedRows;
-                    renderPendingRows(data.pendingRows);
-                    renderApprovedRows(data.approvedRows);
+                    pendingRows = data.getPendingRows();
+                    approvedRows = data.getApprovedRows();
+                    renderPendingRows(data.getPendingRows());
+                    renderApprovedRows(data.getApprovedRows());
                     clearDetails(lblPendingDetailsMeta, pendingDetailsTableModel, pendingDetailsPanel);
                     clearDetails(lblApprovedDetailsMeta, approvedDetailsTableModel, approvedDetailsPanel);
                 } catch (Exception e) {
@@ -385,16 +384,6 @@ public class TOMedicalPanel extends JPanel {
             Desktop.getDesktop().open(new File(path));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Unable to open document.", "Medical", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private static class MedicalPanelData {
-        private final List<MedicalApprovalRow> pendingRows;
-        private final List<MedicalApprovalRow> approvedRows;
-
-        private MedicalPanelData(List<MedicalApprovalRow> pendingRows, List<MedicalApprovalRow> approvedRows) {
-            this.pendingRows = pendingRows;
-            this.approvedRows = approvedRows;
         }
     }
 

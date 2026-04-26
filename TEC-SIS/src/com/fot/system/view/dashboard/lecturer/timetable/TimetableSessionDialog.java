@@ -1,10 +1,8 @@
 package com.fot.system.view.dashboard.lecturer.timetable;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Course;
-import com.fot.system.model.Staff;
-import com.fot.system.model.TimetableSession;
-import com.fot.system.model.TimetableSessionRequest;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
 
 import javax.swing.*;
@@ -35,13 +33,13 @@ public class TimetableSessionDialog extends JDialog {
         root.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         JLabel heading = new JLabel(title);
-        heading.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        heading.setFont(AppTheme.fontBold(22));
         heading.setForeground(AppTheme.TEXT_DARK);
 
         JPanel form = new JPanel(new GridLayout(0, 2, 14, 14));
         form.setBackground(AppTheme.CARD_BG);
         form.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(18, 18, 18, 18)
         ));
 
@@ -198,7 +196,7 @@ public class TimetableSessionDialog extends JDialog {
         panel.setOpaque(false);
 
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_DARK);
 
         panel.add(label, BorderLayout.NORTH);
@@ -208,13 +206,13 @@ public class TimetableSessionDialog extends JDialog {
 
     private JComponent createHint(String text) {
         JLabel hint = new JLabel(text);
-        hint.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        hint.setFont(AppTheme.fontPlain(12));
         hint.setForeground(AppTheme.TEXT_SUBTLE);
         return hint;
     }
 
     private void styleComponent(JComponent component) {
-        component.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        component.setFont(AppTheme.fontPlain(14));
         component.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(AppTheme.BORDER_MUTED),
                 new EmptyBorder(8, 10, 8, 10)

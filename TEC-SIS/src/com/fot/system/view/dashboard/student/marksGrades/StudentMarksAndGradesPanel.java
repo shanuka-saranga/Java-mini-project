@@ -1,26 +1,19 @@
 package com.fot.system.view.dashboard.student.marksGrades;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.StudentMarksGradeViewData;
-import com.fot.system.model.StudentSubjectGradeRow;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.StudentMarksGradesService;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.List;
 
 public class StudentMarksAndGradesPanel extends JPanel {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
-    private static final Object[] TABLE_COLUMNS = {
-            "Course Code", "Course Name", "Semester", "Credits", "CA %", "End %", "Final Mark", "Grade"
-    };
-    private static final Object[] EMPTY_ROW = {"-", "No marks available.", "-", "-", "-", "-", "-", "-"};
 
     private final User currentUser;
     private final StudentMarksGradesService studentMarksGradesService;
@@ -40,7 +33,10 @@ public class StudentMarksAndGradesPanel extends JPanel {
 
         add(createHeader(), BorderLayout.NORTH);
 
-        tableModel = new DefaultTableModel(TABLE_COLUMNS, 0) {
+        tableModel = new DefaultTableModel(
+                new Object[]{"Course Code", "Course Name", "Semester", "Credits", "CA %", "End %", "Final Mark", "Grade"},
+                0
+        ) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -48,10 +44,20 @@ public class StudentMarksAndGradesPanel extends JPanel {
         };
 
         marksTable = new JTable(tableModel);
-        configureMarksTable();
+        marksTable.setRowHeight(30);
+        marksTable.setFont(AppTheme.fontPlain(13));
+        marksTable.setForeground(AppTheme.TEXT_DARK);
+        marksTable.setGridColor(AppTheme.BORDER_SOFT);
+        marksTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
+        marksTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
+        marksTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
+        marksTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
+        marksTable.getTableHeader().setFont(AppTheme.fontBold(13));
+        marksTable.setFillsViewportHeight(true);
+        marksTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         JScrollPane tableScrollPane = new JScrollPane(marksTable);
-        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         tableScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         tableScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -79,11 +85,11 @@ public class StudentMarksAndGradesPanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("Marks / Grades");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Review your subject marks, final grades, current SGPA, and current CGPA.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);
@@ -91,46 +97,9 @@ public class StudentMarksAndGradesPanel extends JPanel {
         return header;
     }
 
-    private void configureMarksTable() {
-        marksTable.setRowHeight(30);
-        marksTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        marksTable.setForeground(AppTheme.TEXT_DARK);
-        marksTable.setGridColor(AppTheme.BORDER_SOFT);
-        marksTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
-        marksTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        configureTableHeader();
-        marksTable.setFillsViewportHeight(true);
-        marksTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-    }
-
-    private void configureTableHeader() {
-        JTableHeader tableHeader = marksTable.getTableHeader();
-        tableHeader.setBackground(AppTheme.TABLE_HEADER_BG);
-        tableHeader.setForeground(AppTheme.TABLE_HEADER_FG);
-        tableHeader.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        tableHeader.setReorderingAllowed(false);
-        tableHeader.setPreferredSize(new Dimension(0, 34));
-        tableHeader.setDefaultRenderer(createHeaderRenderer());
-    }
-
-    private TableCellRenderer createHeaderRenderer() {
-        return (table, value, isSelected, hasFocus, row, column) -> {
-            JLabel label = new JLabel(value == null ? "" : value.toString(), SwingConstants.CENTER);
-            label.setOpaque(true);
-            label.setBackground(AppTheme.TABLE_HEADER_BG);
-            label.setForeground(AppTheme.TABLE_HEADER_FG);
-            label.setFont(new Font("Segoe UI", Font.BOLD, 13));
-            label.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(AppTheme.PRIMARY_ACTIVE, 1),
-                    new EmptyBorder(6, 8, 6, 8)
-            ));
-            return label;
-        };
-    }
-
     private JLabel createMetaLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        label.setFont(AppTheme.fontBold(14));
         label.setForeground(AppTheme.TEXT_DARK);
         return label;
     }
@@ -167,30 +136,22 @@ public class StudentMarksAndGradesPanel extends JPanel {
         tableModel.setRowCount(0);
 
         if (rows == null || rows.isEmpty()) {
-            tableModel.addRow(EMPTY_ROW);
+            tableModel.addRow(new Object[]{"-", "No marks available.", "-", "-", "-", "-", "-", "-"});
             return;
         }
 
         for (StudentSubjectGradeRow row : rows) {
-            tableModel.addRow(buildTableRow(row));
+            tableModel.addRow(new Object[]{
+                    row.getCourseCode(),
+                    row.getCourseName(),
+                    row.getSemesterYear(),
+                    row.getCredits(),
+                    DECIMAL_FORMAT.format(row.getCaAverage()),
+                    DECIMAL_FORMAT.format(row.getEndExamAverage()),
+                    row.getFinalMark() == null ? "-" : DECIMAL_FORMAT.format(row.getFinalMark()),
+                    row.getGrade()
+            });
         }
-    }
-
-    private Object[] buildTableRow(StudentSubjectGradeRow row) {
-        return new Object[]{
-                row.getCourseCode(),
-                row.getCourseName(),
-                row.getSemesterYear(),
-                row.getCredits(),
-                DECIMAL_FORMAT.format(row.getCaAverage()),
-                DECIMAL_FORMAT.format(row.getEndExamAverage()),
-                formatNullableNumber(row.getFinalMark()),
-                row.getGrade()
-        };
-    }
-
-    private String formatNullableNumber(Number value) {
-        return value == null ? "-" : DECIMAL_FORMAT.format(value);
     }
 
     private String valueOrDash(int value) {

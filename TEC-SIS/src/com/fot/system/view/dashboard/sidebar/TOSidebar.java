@@ -8,10 +8,19 @@ import javax.swing.*;
 
 public class TOSidebar extends BaseSidebar {
 
+    /**
+     * initialize technical officer sidebar
+     * @param frame MainDashboard parent frame
+     * @author methum
+     */
     public TOSidebar(MainDashboard frame) {
         super(frame, "TECHNICAL OFFICER");
     }
 
+    /**
+     * add technical officer specific menu buttons
+     * @author methum
+     */
     @Override
     protected void addRoleSpecificButtons() {
         add(createMenuButton("Attendance", FontAwesomeSolid.USER_CHECK, AppConfig.MENU_ATTENDANCE));

@@ -1,18 +1,28 @@
 package com.fot.system.controller;
 
-import com.fot.system.model.AddCourseRequest;
-import com.fot.system.model.Course;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.view.dashboard.admin.manageCourses.AddNewCoursePanel;
 
 import javax.swing.*;
 
+/**
+ * handle add course form actions and validation flow
+ * @author janith
+ */
 public class AddCourseController {
 
     private final AddNewCoursePanel view;
     private final CourseService courseService;
     private final Runnable onSuccessAction;
 
+    /**
+     * initialize add course controller
+     * @param view add course form view
+     * @param onSuccessAction callback after successful save
+     * @author janith
+     */
     public AddCourseController(AddNewCoursePanel view, Runnable onSuccessAction) {
         this.view = view;
         this.courseService = new CourseService();
@@ -20,6 +30,10 @@ public class AddCourseController {
         this.view.setOnSaveAction(this::handleSaveCourse);
     }
 
+    /**
+     * validate and save new course from ui request
+     * @author janith
+     */
     private void handleSaveCourse() {
         try {
             AddCourseRequest request = view.buildRequest();
@@ -47,6 +61,11 @@ public class AddCourseController {
         }
     }
 
+    /**
+     * validate add course request fields
+     * @param request add course request payload
+     * @author janith
+     */
     private void validate(AddCourseRequest request) {
         if (request == null) {
             throw new RuntimeException("Course request cannot be null.");
@@ -71,12 +90,24 @@ public class AddCourseController {
         }
     }
 
+    /**
+     * check required text value
+     * @param value field value
+     * @param message error message
+     * @author janith
+     */
     private void requireValue(String value, String message) {
         if (value == null || value.trim().isEmpty()) {
             throw new RuntimeException(message);
         }
     }
 
+    /**
+     * parse positive integer value
+     * @param value field value
+     * @param message error message
+     * @author janith
+     */
     private int parsePositiveInt(String value, String message) {
         try {
             int parsedValue = Integer.parseInt(value.trim());
@@ -89,6 +120,12 @@ public class AddCourseController {
         }
     }
 
+    /**
+     * parse non negative integer value
+     * @param value field value
+     * @param message error message
+     * @author janith
+     */
     private int parseNonNegativeInt(String value, String message) {
         try {
             int parsedValue = Integer.parseInt(value.trim());

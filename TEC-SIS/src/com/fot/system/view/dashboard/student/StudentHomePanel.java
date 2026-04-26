@@ -1,17 +1,14 @@
 package com.fot.system.view.dashboard.student;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Course;
-import com.fot.system.model.CourseMaterial;
-import com.fot.system.model.Notice;
-import com.fot.system.model.User;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseMaterialService;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.FileOpenService;
 import com.fot.system.service.NoticeService;
 import com.fot.system.view.components.CloseActionButton;
 import com.fot.system.view.components.CourseSummaryCard;
-import com.fot.system.view.dashboard.admin.shared.NoticeFeedPanel;
+import com.fot.system.view.dashboard.admin.components.NoticeFeedPanel;
 import com.fot.system.view.dashboard.lecturer.myCourses.CourseMaterialCard;
 
 import javax.swing.*;
@@ -68,7 +65,7 @@ public class StudentHomePanel extends JPanel {
         JPanel listView = createListView(courseListScrollPane);
 
         lblOpenedCourseTab = new JLabel("Opened Course");
-        lblOpenedCourseTab.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblOpenedCourseTab.setFont(AppTheme.fontBold(16));
         lblOpenedCourseTab.setForeground(AppTheme.TEXT_DARK);
 
         materialsListPanel = new JPanel();
@@ -88,11 +85,11 @@ public class StudentHomePanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("My Courses");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Open a course to view all active course materials shared for your learning.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);
@@ -127,14 +124,14 @@ public class StudentHomePanel extends JPanel {
         topActions.setLayout(new BoxLayout(topActions, BoxLayout.Y_AXIS));
 
         CloseActionButton closeButton = new CloseActionButton();
-        closeButton.addActionListener(e -> showCard(LIST_CARD));
+        closeButton.addActionListener(e -> cardLayout.show(cardPanel, LIST_CARD));
         closeButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
         topActions.add(closeButton);
 
         JPanel openedCoursePanel = new JPanel(new BorderLayout(0, 16));
         openedCoursePanel.setBackground(AppTheme.CARD_BG);
         openedCoursePanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(22, 22, 22, 22)
         ));
 
@@ -148,12 +145,24 @@ public class StudentHomePanel extends JPanel {
         panelHeader.add(tabLabelWrap, BorderLayout.WEST);
         panelHeader.add(topActions, BorderLayout.EAST);
 
-        JPanel materialsHeader = createSectionHeader(
-                "Course Materials",
-                "All active materials for the selected course are shown below."
-        );
+        JLabel materialsHeading = new JLabel("Course Materials");
+        materialsHeading.setFont(AppTheme.fontBold(18));
+        materialsHeading.setForeground(AppTheme.TEXT_DARK);
 
-        JPanel contentStack = createVerticalStackPanel();
+        JLabel materialsSubtext = new JLabel("All active materials for the selected course are shown below.");
+        materialsSubtext.setFont(AppTheme.fontPlain(14));
+        materialsSubtext.setForeground(AppTheme.TEXT_SUBTLE);
+
+        JPanel materialsHeader = new JPanel();
+        materialsHeader.setOpaque(false);
+        materialsHeader.setLayout(new BoxLayout(materialsHeader, BoxLayout.Y_AXIS));
+        materialsHeader.add(materialsHeading);
+        materialsHeader.add(Box.createVerticalStrut(6));
+        materialsHeader.add(materialsSubtext);
+
+        JPanel contentStack = new JPanel();
+        contentStack.setOpaque(false);
+        contentStack.setLayout(new BoxLayout(contentStack, BoxLayout.Y_AXIS));
         contentStack.add(materialsHeader);
         contentStack.add(Box.createVerticalStrut(14));
         contentStack.add(materialsListPanel);
@@ -175,43 +184,6 @@ public class StudentHomePanel extends JPanel {
         return scrollPane;
     }
 
-    private JPanel createSectionHeader(String title, String subtitle) {
-        JPanel header = createVerticalStackPanel();
-        header.add(createLabel(title, Font.BOLD, 18, AppTheme.TEXT_DARK));
-        header.add(Box.createVerticalStrut(6));
-        header.add(createLabel(subtitle, Font.PLAIN, 14, AppTheme.TEXT_SUBTLE));
-        return header;
-    }
-
-    private JPanel createVerticalStackPanel() {
-        JPanel panel = new JPanel();
-        panel.setOpaque(false);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        return panel;
-    }
-
-    private JLabel createLabel(String text, int fontStyle, int fontSize, Color foreground) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", fontStyle, fontSize));
-        label.setForeground(foreground);
-        return label;
-    }
-
-    private JLabel createEmptyStateLabel(String message) {
-        JLabel emptyLabel = createLabel(message, Font.PLAIN, 14, AppTheme.TEXT_SUBTLE);
-        emptyLabel.setBorder(new EmptyBorder(12, 8, 12, 8));
-        return emptyLabel;
-    }
-
-    private void refreshPanel(JPanel panel) {
-        panel.revalidate();
-        panel.repaint();
-    }
-
-    private void showCard(String cardName) {
-        cardLayout.show(cardPanel, cardName);
-    }
-
     private void loadStudentCourses() {
         SwingWorker<List<Course>, Void> worker = new SwingWorker<List<Course>, Void>() {
             @Override
@@ -224,7 +196,7 @@ public class StudentHomePanel extends JPanel {
                 try {
                     studentCourses = get();
                     renderCourseList();
-                    showCard(LIST_CARD);
+                    cardLayout.show(cardPanel, LIST_CARD);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
                             StudentHomePanel.this,
@@ -261,34 +233,35 @@ public class StudentHomePanel extends JPanel {
         courseListPanel.removeAll();
 
         if (studentCourses == null || studentCourses.isEmpty()) {
-            courseListPanel.add(createEmptyStateLabel("No courses are available for your student record yet."));
+            JLabel empty = new JLabel("No courses are available for your student record yet.");
+            empty.setFont(AppTheme.fontPlain(14));
+            empty.setForeground(AppTheme.TEXT_SUBTLE);
+            empty.setBorder(new EmptyBorder(12, 8, 12, 8));
+            courseListPanel.add(empty);
         } else {
             for (Course course : studentCourses) {
-                courseListPanel.add(createCourseCard(course));
+                CourseSummaryCard card = new CourseSummaryCard(course, false);
+                MouseAdapter openCourseHandler = new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        openCourse(course);
+                    }
+                };
+                attachClickHandler(card, openCourseHandler);
+                courseListPanel.add(card);
                 courseListPanel.add(Box.createVerticalStrut(12));
             }
         }
 
-        refreshPanel(courseListPanel);
-    }
-
-    private CourseSummaryCard createCourseCard(Course course) {
-        CourseSummaryCard card = new CourseSummaryCard(course, false);
-        MouseAdapter openCourseHandler = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                openCourse(course);
-            }
-        };
-        attachClickHandler(card, openCourseHandler);
-        return card;
+        courseListPanel.revalidate();
+        courseListPanel.repaint();
     }
 
     private void openCourse(Course course) {
         selectedCourse = course;
         lblOpenedCourseTab.setText(course.getCourseCode() + " - " + course.getCourseName());
         loadMaterialsForSelectedCourse();
-        showCard(DETAILS_CARD);
+        cardLayout.show(cardPanel, DETAILS_CARD);
     }
 
     private void loadMaterialsForSelectedCourse() {
@@ -324,21 +297,26 @@ public class StudentHomePanel extends JPanel {
         }
 
         for (CourseMaterial material : materials) {
-            materialsListPanel.add(createMaterialCard(material));
+            materialsListPanel.add(new CourseMaterialCard(
+                    material,
+                    () -> openMaterial(material)
+            ));
             materialsListPanel.add(Box.createVerticalStrut(12));
         }
 
-        refreshPanel(materialsListPanel);
-    }
-
-    private CourseMaterialCard createMaterialCard(CourseMaterial material) {
-        return new CourseMaterialCard(material, () -> openMaterial(material));
+        materialsListPanel.revalidate();
+        materialsListPanel.repaint();
     }
 
     private void renderMaterialsEmpty(String message) {
         materialsListPanel.removeAll();
-        materialsListPanel.add(createEmptyStateLabel(message));
-        refreshPanel(materialsListPanel);
+        JLabel empty = new JLabel(message);
+        empty.setFont(AppTheme.fontPlain(14));
+        empty.setForeground(AppTheme.TEXT_SUBTLE);
+        empty.setBorder(new EmptyBorder(12, 8, 12, 8));
+        materialsListPanel.add(empty);
+        materialsListPanel.revalidate();
+        materialsListPanel.repaint();
     }
 
     private void openMaterial(CourseMaterial material) {

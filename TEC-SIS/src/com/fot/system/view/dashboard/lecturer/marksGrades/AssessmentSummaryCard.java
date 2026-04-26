@@ -16,7 +16,7 @@ public class AssessmentSummaryCard extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(AppTheme.CARD_BG);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BASE_COLOR, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BASE_COLOR, 1, false),
                 new EmptyBorder(16, 16, 16, 16)
         ));
 
@@ -44,7 +44,7 @@ public class AssessmentSummaryCard extends JPanel {
     private JLabel createLabel(String text, int style, int size, Color color) {
         JLabel label = new JLabel(text);
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
-        label.setFont(new Font("Segoe UI", style, size));
+        label.setFont(new Font(AppTheme.FONT_FAMILY, style, size));
         label.setForeground(color);
         return label;
     }

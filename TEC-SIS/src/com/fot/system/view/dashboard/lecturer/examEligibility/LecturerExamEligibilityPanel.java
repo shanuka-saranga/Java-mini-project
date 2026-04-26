@@ -1,11 +1,8 @@
 package com.fot.system.view.dashboard.lecturer.examEligibility;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Course;
-import com.fot.system.model.CourseExamEligibilityViewData;
-import com.fot.system.model.ExamEligibilityBatchSummary;
-import com.fot.system.model.ExamEligibilityRow;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.ExamEligibilityService;
 import com.fot.system.view.components.CloseActionButton;
@@ -69,7 +66,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
         courseListScrollPane.getViewport().setBackground(AppTheme.SURFACE_SOFT);
 
         lblOpenedCourseTab = new JLabel("Opened Course");
-        lblOpenedCourseTab.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblOpenedCourseTab.setFont(AppTheme.fontBold(16));
         lblOpenedCourseTab.setForeground(AppTheme.TEXT_DARK);
 
         JPanel detailsView = new JPanel(new BorderLayout());
@@ -78,7 +75,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
         JPanel openedCoursePanel = new JPanel(new BorderLayout(0, 16));
         openedCoursePanel.setBackground(AppTheme.CARD_BG);
         openedCoursePanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(22, 22, 22, 22)
         ));
 
@@ -105,11 +102,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         controlsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
         txtSearch = new JTextField();
-        txtSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtSearch.setFont(AppTheme.fontPlain(13));
         txtSearch.setPreferredSize(new Dimension(420, 38));
         txtSearch.setMinimumSize(new Dimension(220, 38));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -138,7 +135,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
         controlsPanel.add(searchPanel, BorderLayout.CENTER);
 
         cmbRegistrationYear = new JComboBox<>();
-        cmbRegistrationYear.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        cmbRegistrationYear.setFont(AppTheme.fontPlain(13));
         cmbRegistrationYear.setPreferredSize(new Dimension(160, 38));
         cmbRegistrationYear.addActionListener(e -> applyFilters());
         JPanel batchFilterPanel = new JPanel(new BorderLayout(6, 0));
@@ -146,7 +143,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
         batchFilterPanel.setPreferredSize(new Dimension(240, 38));
         batchFilterPanel.setMaximumSize(new Dimension(240, 38));
         JLabel batchLabel = new JLabel("Batch");
-        batchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        batchLabel.setFont(AppTheme.fontPlain(13));
         batchLabel.setForeground(AppTheme.TEXT_SUBTLE);
         batchFilterPanel.add(batchLabel, BorderLayout.WEST);
         batchFilterPanel.add(cmbRegistrationYear, BorderLayout.CENTER);
@@ -165,21 +162,21 @@ public class LecturerExamEligibilityPanel extends JPanel {
         eligibilityTable = new JTable(tableModel);
         eligibilityTable.setAutoCreateRowSorter(true);
         eligibilityTable.setRowHeight(28);
-        eligibilityTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        eligibilityTable.setFont(AppTheme.fontPlain(13));
         eligibilityTable.setForeground(AppTheme.TEXT_DARK);
         eligibilityTable.setGridColor(AppTheme.BORDER_SOFT);
         eligibilityTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         eligibilityTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
         eligibilityTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         eligibilityTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        eligibilityTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        eligibilityTable.getTableHeader().setFont(AppTheme.fontBold(13));
         eligibilityTable.setFillsViewportHeight(true);
 
         rowSorter = new TableRowSorter<>(tableModel);
         eligibilityTable.setRowSorter(rowSorter);
 
         JScrollPane tableScrollPane = new JScrollPane(eligibilityTable);
-        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        tableScrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         tableScrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         tableScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -208,11 +205,11 @@ public class LecturerExamEligibilityPanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("Exam Eligibility");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Check whole-batch and individual eligibility using attendance and current-year CA marks.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);
@@ -230,7 +227,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
 
     private JLabel createSummaryValueLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        label.setFont(AppTheme.fontBold(24));
         label.setForeground(AppTheme.TEXT_DARK);
         return label;
     }
@@ -239,12 +236,12 @@ public class LecturerExamEligibilityPanel extends JPanel {
         JPanel card = new JPanel(new BorderLayout(0, 8));
         card.setBackground(AppTheme.CARD_BG);
         card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BASE_COLOR, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BASE_COLOR, 1, false),
                 new EmptyBorder(14, 14, 14, 14)
         ));
 
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        titleLabel.setFont(AppTheme.fontPlain(13));
         titleLabel.setForeground(AppTheme.TEXT_SUBTLE);
 
         card.add(titleLabel, BorderLayout.NORTH);
@@ -283,7 +280,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
 
         if (assignedCourses == null || assignedCourses.isEmpty()) {
             JLabel empty = new JLabel("No assigned courses available.");
-            empty.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            empty.setFont(AppTheme.fontPlain(14));
             empty.setForeground(AppTheme.TEXT_SUBTLE);
             empty.setBorder(new EmptyBorder(12, 8, 12, 8));
             courseListPanel.add(empty);

@@ -1,7 +1,7 @@
 package com.fot.system.controller;
 
-import com.fot.system.model.AbsentSessionOption;
-import com.fot.system.model.AddStudentMedicalRequest;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.StudentMedicalService;
 
 import java.util.List;

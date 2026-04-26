@@ -1,7 +1,8 @@
 package com.fot.system.view.components;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Course;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +24,7 @@ public class CourseSummaryCard extends FeedItemCard {
 
         if (selected) {
             setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(AppTheme.PRIMARY, 2, true),
+                    BorderFactory.createLineBorder(AppTheme.PRIMARY, 2, false),
                     BorderFactory.createEmptyBorder(13, 13, 13, 13)
             ));
         }

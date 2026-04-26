@@ -2,17 +2,13 @@ package com.fot.system.view.dashboard.student.attendance;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.AddStudentMedicalController;
-import com.fot.system.model.AbsentSessionOption;
-import com.fot.system.model.AddStudentMedicalRequest;
-import com.fot.system.model.MedicalSessionDetail;
-import com.fot.system.model.StudentAttendanceMedicalViewData;
-import com.fot.system.model.StudentMedicalRow;
-import com.fot.system.model.StudentSessionAttendanceRow;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.AttendanceService;
 import com.fot.system.service.FileOpenService;
 import com.fot.system.view.components.CustomButton;
 import com.fot.system.view.components.MaterialActionButton;
+import com.fot.system.view.components.ThemedDatePicker;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import javax.swing.*;
@@ -31,14 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 public class StudentAttendanceMedicalPanel extends JPanel {
-    private static final String MEDICAL_DETAILS_HINT = "Select a medical row to view its linked sessions.";
-    private static final String NO_COURSE_ATTENDANCE_TEXT = "No course attendance percentages available.";
-    private static final String NO_COMPLETED_SESSIONS_TEXT = "No completed course sessions available yet.";
-    private static final String NO_MEDICAL_ROWS_TEXT = "No medical submissions found.";
-    private static final String NO_ABSENT_SESSIONS_TEXT = "No absent sessions without medical records were found in that period.";
-    private static final String SELECT_ABSENT_SESSIONS_TEXT = "Select absent sessions for this medical submission.";
-    private static final String MEDICAL_SUBMITTED_TEXT = "Medical submitted. Load another date range if needed.";
-
     private final User currentUser;
     private final AttendanceService attendanceService;
     private final AddStudentMedicalController addStudentMedicalController;
@@ -55,8 +43,8 @@ public class StudentAttendanceMedicalPanel extends JPanel {
     private JLabel lblMedicalDetailsMeta;
     private JTextField txtSearch;
     private JLabel lblAttendanceMeta;
-    private JTextField txtMedicalStartDate;
-    private JTextField txtMedicalEndDate;
+    private ThemedDatePicker txtMedicalStartDate;
+    private ThemedDatePicker txtMedicalEndDate;
     private JTextField txtMedicalDocument;
     private JPanel medicalUploadPanel;
     private JLabel lblAbsentSessionMeta;
@@ -95,11 +83,11 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         header.setOpaque(false);
 
         JLabel title = new JLabel("Attendance");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        title.setFont(AppTheme.fontBold(28));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Review all recorded session attendance and submitted medical records for your student account.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(title, BorderLayout.NORTH);
@@ -112,13 +100,13 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         panel.setOpaque(false);
 
         lblAttendanceMeta = new JLabel("Loading attendance records...");
-        lblAttendanceMeta.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblAttendanceMeta.setFont(AppTheme.fontPlain(14));
         lblAttendanceMeta.setForeground(AppTheme.TEXT_SUBTLE);
 
         txtSearch = new JTextField();
-        txtSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtSearch.setFont(AppTheme.fontPlain(13));
         txtSearch.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -153,23 +141,54 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         panel.setOpaque(false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        attendanceTableModel = createReadOnlyTableModel(
-                "Course Code", "Course Name", "Type", "Session No", "Date", "Day", "Time", "Venue", "Session", "Attendance"
-        );
+        attendanceTableModel = new DefaultTableModel(
+                new Object[]{"Course Code", "Course Name", "Type", "Session No", "Date", "Day", "Time", "Venue", "Session", "Attendance"},
+                0
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         attendanceTable = createStyledTable(attendanceTableModel);
         attendanceSorter = new TableRowSorter<>(attendanceTableModel);
         attendanceTable.setRowSorter(attendanceSorter);
         courseAttendanceSummaryPanel = createCourseAttendanceSummaryPanel();
 
-        medicalTableModel = createMedicalTableModel();
+        medicalTableModel = new DefaultTableModel(
+                new Object[]{"Medical ID", "Sessions", "Submitted Date", "Approval", "Approved At", "Document"},
+                0
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 5;
+            }
+        };
 
         medicalTable = createStyledTable(medicalTableModel);
-        configureMedicalTableColumns();
-        medicalDetailsTableModel = createReadOnlyTableModel(
-                "Course Code", "Course Name", "Type", "Session No", "Session Date"
-        );
-        lblMedicalDetailsMeta = createSubtleLabel(MEDICAL_DETAILS_HINT, 13);
+        TableColumn idColumn = medicalTable.getColumnModel().getColumn(0);
+        idColumn.setMinWidth(0);
+        idColumn.setMaxWidth(0);
+        idColumn.setPreferredWidth(0);
+        TableColumn documentColumn = medicalTable.getColumnModel().getColumn(5);
+        documentColumn.setPreferredWidth(90);
+        documentColumn.setMaxWidth(90);
+        documentColumn.setMinWidth(90);
+        documentColumn.setCellRenderer(new DocumentActionCellRenderer());
+        documentColumn.setCellEditor(new DocumentActionCellEditor());
+        medicalDetailsTableModel = new DefaultTableModel(
+                new Object[]{"Course Code", "Course Name", "Type", "Session No", "Session Date"},
+                0
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        lblMedicalDetailsMeta = new JLabel("Select a medical row to view its linked sessions.");
+        lblMedicalDetailsMeta.setFont(AppTheme.fontPlain(13));
+        lblMedicalDetailsMeta.setForeground(AppTheme.TEXT_SUBTLE);
         medicalDetailsPanel = createMedicalDetailsPanel();
         medicalTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -200,89 +219,30 @@ public class StudentAttendanceMedicalPanel extends JPanel {
 
     private JLabel createSectionLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        label.setFont(AppTheme.fontBold(18));
         label.setForeground(AppTheme.TEXT_DARK);
         return label;
-    }
-
-    private JLabel createSubtleLabel(String text, int fontSize) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, fontSize));
-        label.setForeground(AppTheme.TEXT_SUBTLE);
-        return label;
-    }
-
-    private DefaultTableModel createReadOnlyTableModel(Object... columns) {
-        return new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-    }
-
-    private DefaultTableModel createMedicalTableModel() {
-        return new DefaultTableModel(
-                new Object[]{"Medical ID", "Sessions", "Submitted Date", "Approval", "Approved At", "Document"},
-                0
-        ) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 5;
-            }
-        };
-    }
-
-    private DefaultTableModel createAbsentSessionTableModel() {
-        return new DefaultTableModel(
-                new Object[]{"Select", "Course Code", "Course Name", "Type", "Session No", "Date", "Day", "Time", "Venue"},
-                0
-        ) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 0;
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return columnIndex == 0 ? Boolean.class : Object.class;
-            }
-        };
     }
 
     private JTable createStyledTable(DefaultTableModel model) {
         JTable table = new JTable(model);
         table.setRowHeight(28);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.setFont(AppTheme.fontPlain(13));
         table.setForeground(AppTheme.TEXT_DARK);
         table.setGridColor(AppTheme.BORDER_SOFT);
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
         table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
         table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        table.getTableHeader().setFont(AppTheme.fontBold(13));
         table.setFillsViewportHeight(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         return table;
     }
 
-    private void configureMedicalTableColumns() {
-        TableColumn idColumn = medicalTable.getColumnModel().getColumn(0);
-        idColumn.setMinWidth(0);
-        idColumn.setMaxWidth(0);
-        idColumn.setPreferredWidth(0);
-
-        TableColumn documentColumn = medicalTable.getColumnModel().getColumn(5);
-        documentColumn.setPreferredWidth(90);
-        documentColumn.setMaxWidth(90);
-        documentColumn.setMinWidth(90);
-        documentColumn.setCellRenderer(new DocumentActionCellRenderer());
-        documentColumn.setCellEditor(new DocumentActionCellEditor());
-    }
-
     private JScrollPane createScrollPane(JTable table, int preferredHeight) {
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        scrollPane.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         scrollPane.getViewport().setBackground(AppTheme.CARD_BG);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setPreferredSize(new Dimension(0, preferredHeight));
@@ -299,13 +259,13 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         JPanel item = new JPanel(new BorderLayout(12, 0));
         item.setBackground(AppTheme.CARD_BG);
         item.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(10, 12, 10, 12)
         ));
         item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
 
         JLabel courseLabel = new JLabel(courseCode + " - " + courseName);
-        courseLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        courseLabel.setFont(AppTheme.fontBold(13));
         courseLabel.setForeground(AppTheme.TEXT_DARK);
 
         JProgressBar progressBar = new JProgressBar(0, 100);
@@ -314,7 +274,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         progressBar.setStringPainted(true);
         progressBar.setForeground(AppTheme.PRIMARY);
         progressBar.setBackground(AppTheme.SURFACE_MUTED);
-        progressBar.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true));
+        progressBar.setBorder(BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false));
         progressBar.setPreferredSize(new Dimension(220, 22));
 
         item.add(courseLabel, BorderLayout.WEST);
@@ -327,7 +287,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         JPanel panel = new JPanel(new BorderLayout(0, 10));
         panel.setBackground(AppTheme.CARD_BG);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(14, 14, 14, 14)
         ));
         panel.add(lblMedicalDetailsMeta, BorderLayout.NORTH);
@@ -344,8 +304,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         JPanel rangePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         rangePanel.setOpaque(false);
 
-        txtMedicalStartDate = createCompactTextField();
-        txtMedicalEndDate = createCompactTextField();
+        txtMedicalStartDate = new ThemedDatePicker();
+        txtMedicalEndDate = new ThemedDatePicker();
+        txtMedicalStartDate.setPreferredSize(new Dimension(140, 38));
+        txtMedicalEndDate.setPreferredSize(new Dimension(140, 38));
 
         rangePanel.add(new JLabel("Start Date"));
         rangePanel.add(txtMedicalStartDate);
@@ -362,9 +324,24 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         loadAbsentButton.addActionListener(e -> loadAbsentSessionsForMedicalRange());
         rangePanel.add(loadAbsentButton);
 
-        lblAbsentSessionMeta = createSubtleLabel("Enter the medical date range first.", 13);
+        lblAbsentSessionMeta = new JLabel("Enter the medical date range first.");
+        lblAbsentSessionMeta.setFont(AppTheme.fontPlain(13));
+        lblAbsentSessionMeta.setForeground(AppTheme.TEXT_SUBTLE);
 
-        absentSessionTableModel = createAbsentSessionTableModel();
+        absentSessionTableModel = new DefaultTableModel(
+                new Object[]{"Select", "Course Code", "Course Name", "Type", "Session No", "Date", "Day", "Time", "Venue"},
+                0
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 0;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 0 ? Boolean.class : Object.class;
+            }
+        };
 
         absentSessionTable = createStyledTable(absentSessionTableModel);
         absentSessionTable.getModel().addTableModelListener(e -> updateMedicalUploadVisibility());
@@ -418,10 +395,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
 
     private JTextField createCompactTextField() {
         JTextField field = new JTextField();
-        field.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        field.setFont(AppTheme.fontPlain(13));
         field.setPreferredSize(new Dimension(120, 38));
         field.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, true),
+                BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
         return field;
@@ -498,8 +475,12 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         courseAttendanceSummaryPanel.removeAll();
 
         if (rows == null || rows.isEmpty()) {
-            courseAttendanceSummaryPanel.add(createSubtleLabel(NO_COURSE_ATTENDANCE_TEXT, 13));
-            refreshPanel(courseAttendanceSummaryPanel);
+            JLabel empty = new JLabel("No course attendance percentages available.");
+            empty.setFont(AppTheme.fontPlain(13));
+            empty.setForeground(AppTheme.TEXT_SUBTLE);
+            courseAttendanceSummaryPanel.add(empty);
+            courseAttendanceSummaryPanel.revalidate();
+            courseAttendanceSummaryPanel.repaint();
             return;
         }
 
@@ -522,7 +503,10 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         }
 
         if (aggregates.isEmpty()) {
-            courseAttendanceSummaryPanel.add(createSubtleLabel(NO_COMPLETED_SESSIONS_TEXT, 13));
+            JLabel empty = new JLabel("No completed course sessions available yet.");
+            empty.setFont(AppTheme.fontPlain(13));
+            empty.setForeground(AppTheme.TEXT_SUBTLE);
+            courseAttendanceSummaryPanel.add(empty);
         } else {
             for (CourseAttendanceAggregate aggregate : aggregates.values()) {
                 double percentage = aggregate.totalSessions == 0
@@ -534,7 +518,8 @@ public class StudentAttendanceMedicalPanel extends JPanel {
             }
         }
 
-        refreshPanel(courseAttendanceSummaryPanel);
+        courseAttendanceSummaryPanel.revalidate();
+        courseAttendanceSummaryPanel.repaint();
     }
 
     private void renderMedicalRows(List<StudentMedicalRow> rows) {
@@ -543,24 +528,20 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         clearMedicalDetails();
 
         if (rows == null || rows.isEmpty()) {
-            medicalTableModel.addRow(new Object[]{"-", NO_MEDICAL_ROWS_TEXT, "-", "-", "-", "-"});
+            medicalTableModel.addRow(new Object[]{"-", "No medical submissions found.", "-", "-", "-", "-"});
             return;
         }
 
         for (StudentMedicalRow row : rows) {
-            medicalTableModel.addRow(buildMedicalRow(row));
+            medicalTableModel.addRow(new Object[]{
+                    row.getMedicalId(),
+                    row.getSessionCount(),
+                    row.getSubmittedDate(),
+                    row.getApprovalStatus(),
+                    row.getApprovedAt(),
+                    row.getMedicalDocument()
+            });
         }
-    }
-
-    private Object[] buildMedicalRow(StudentMedicalRow row) {
-        return new Object[]{
-                row.getMedicalId(),
-                row.getSessionCount(),
-                row.getSubmittedDate(),
-                row.getApprovalStatus(),
-                row.getApprovedAt(),
-                row.getMedicalDocument()
-        };
     }
 
     private void showSelectedMedicalDetails() {
@@ -598,27 +579,24 @@ public class StudentAttendanceMedicalPanel extends JPanel {
 
         medicalDetailsTableModel.setRowCount(0);
         for (MedicalSessionDetail detail : selected.getSessionDetails()) {
-            medicalDetailsTableModel.addRow(buildMedicalDetailRow(detail));
+            medicalDetailsTableModel.addRow(new Object[]{
+                    detail.getCourseCode(),
+                    detail.getCourseName(),
+                    detail.getSessionType(),
+                    detail.getSessionNo(),
+                    detail.getSessionDate()
+            });
         }
 
         medicalDetailsPanel.setVisible(true);
-        refreshPanel(medicalDetailsPanel);
+        medicalDetailsPanel.revalidate();
+        medicalDetailsPanel.repaint();
     }
 
     private void clearMedicalDetails() {
-        lblMedicalDetailsMeta.setText(MEDICAL_DETAILS_HINT);
+        lblMedicalDetailsMeta.setText("Select a medical row to view its linked sessions.");
         medicalDetailsTableModel.setRowCount(0);
         medicalDetailsPanel.setVisible(false);
-    }
-
-    private Object[] buildMedicalDetailRow(MedicalSessionDetail detail) {
-        return new Object[]{
-                detail.getCourseCode(),
-                detail.getCourseName(),
-                detail.getSessionType(),
-                detail.getSessionNo(),
-                detail.getSessionDate()
-        };
     }
 
     private static class CourseAttendanceAggregate {
@@ -639,33 +617,30 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         medicalUploadPanel.setVisible(false);
 
         if (options == null || options.isEmpty()) {
-            lblAbsentSessionMeta.setText(NO_ABSENT_SESSIONS_TEXT);
+            lblAbsentSessionMeta.setText("No absent sessions without medical records were found in that period.");
             return;
         }
 
-        lblAbsentSessionMeta.setText(SELECT_ABSENT_SESSIONS_TEXT);
+        lblAbsentSessionMeta.setText("Select absent sessions for this medical submission.");
         for (AbsentSessionOption option : options) {
-            absentSessionTableModel.addRow(buildAbsentSessionRow(option));
+            absentSessionTableModel.addRow(new Object[]{
+                    false,
+                    option.getCourseCode(),
+                    option.getCourseName(),
+                    option.getSessionType(),
+                    option.getSessionNo(),
+                    option.getSessionDate(),
+                    option.getSessionDay(),
+                    option.getTimeRange(),
+                    option.getVenue()
+            });
         }
-    }
-
-    private Object[] buildAbsentSessionRow(AbsentSessionOption option) {
-        return new Object[]{
-                false,
-                option.getCourseCode(),
-                option.getCourseName(),
-                option.getSessionType(),
-                option.getSessionNo(),
-                option.getSessionDate(),
-                option.getSessionDay(),
-                option.getTimeRange(),
-                option.getVenue()
-        };
     }
 
     private void updateMedicalUploadVisibility() {
         medicalUploadPanel.setVisible(!getSelectedAbsentSessionIds().isEmpty());
-        refreshPanel(medicalUploadPanel);
+        medicalUploadPanel.revalidate();
+        medicalUploadPanel.repaint();
     }
 
     private List<Integer> getSelectedAbsentSessionIds() {
@@ -710,7 +685,7 @@ public class StudentAttendanceMedicalPanel extends JPanel {
             txtMedicalDocument.setText("");
             absentSessionOptions = new ArrayList<>();
             absentSessionTableModel.setRowCount(0);
-            lblAbsentSessionMeta.setText(MEDICAL_SUBMITTED_TEXT);
+            lblAbsentSessionMeta.setText("Medical submitted. Load another date range if needed.");
             medicalUploadPanel.setVisible(false);
             loadStudentAttendanceMedicalData();
         } catch (RuntimeException ex) {
@@ -733,11 +708,6 @@ public class StudentAttendanceMedicalPanel extends JPanel {
         } catch (RuntimeException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Open Document", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private void refreshPanel(JPanel panel) {
-        panel.revalidate();
-        panel.repaint();
     }
 
     private class DocumentActionCellRenderer implements TableCellRenderer {

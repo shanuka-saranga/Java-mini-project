@@ -1,12 +1,9 @@
 package com.fot.system.service;
 
-import com.fot.system.model.CourseAttendanceViewData;
-import com.fot.system.model.CourseExamEligibilityViewData;
-import com.fot.system.model.ExamEligibilityBatchSummary;
-import com.fot.system.model.ExamEligibilityRow;
-import com.fot.system.model.StudentAttendanceSummaryRow;
-import com.fot.system.model.StudentCourseCaRecord;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.MarksRepository;
+import com.fot.system.util.AcademicPerformance;
 
 import java.time.Year;
 import java.util.ArrayList;
@@ -20,10 +17,12 @@ public class ExamEligibilityService {
 
     private final AttendanceService attendanceService;
     private final MarksRepository marksRepository;
+    private final AcademicPerformance academicPerformance;
 
     public ExamEligibilityService() {
         this.attendanceService = new AttendanceService();
         this.marksRepository = new MarksRepository();
+        this.academicPerformance = new AcademicPerformance();
     }
 
     public CourseExamEligibilityViewData getCourseExamEligibilityViewData(int courseId, int totalCourseHours) {
@@ -75,12 +74,7 @@ public class ExamEligibilityService {
     }
 
     private double calculateCaAverage(StudentCourseCaRecord caRecord) {
-        int totalComponents = caRecord.getQuizCount() + caRecord.getAssignmentCount() + caRecord.getMidExamCount();
-        if (totalComponents <= 0) {
-            return 0;
-        }
-        double totalScore = caRecord.getQuizTotal() + caRecord.getAssignmentTotal() + caRecord.getMidExamTotal();
-        return totalScore / totalComponents;
+        return academicPerformance.calculateCaAverage(caRecord);
     }
 
     private ExamEligibilityBatchSummary buildBatchSummary(List<ExamEligibilityRow> rows) {

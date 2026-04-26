@@ -1,10 +1,10 @@
 package com.fot.system.view.dashboard.lecturer.attendance;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.AddAttendanceSessionRequest;
-import com.fot.system.model.Course;
-import com.fot.system.model.TimetableSession;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.components.ThemedDatePicker;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,12 +12,23 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * collect inputs required to create a new attendance session
+ * @author poornika
+ */
 public class AttendanceSessionDialog extends JDialog {
     private final JComboBox<CourseOption> cmbCourse;
     private final JComboBox<TimetableOption> cmbTimetableSession;
-    private final JTextField txtSessionDate;
+    private final ThemedDatePicker txtSessionDate;
     private AddAttendanceSessionRequest request;
 
+    /**
+     * initialize add-attendance-session dialog
+     * @param owner parent window
+     * @param courses lecturer courses
+     * @param timetableSessions matching timetable sessions
+     * @author poornika
+     */
     public AttendanceSessionDialog(Window owner, List<Course> courses, List<TimetableSession> timetableSessions) {
         super(owner, "Add Attendance Session", ModalityType.APPLICATION_MODAL);
 
@@ -34,7 +45,8 @@ public class AttendanceSessionDialog extends JDialog {
         }
 
         cmbTimetableSession = new JComboBox<>();
-        txtSessionDate = new JTextField(LocalDate.now().toString());
+        txtSessionDate = new ThemedDatePicker();
+        txtSessionDate.setText(LocalDate.now().toString());
 
         form.add(createField("Course", cmbCourse));
         form.add(createField("Timetable Session", cmbTimetableSession));
@@ -51,24 +63,38 @@ public class AttendanceSessionDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
+    /**
+     * get submitted request payload
+     * @author poornika
+     */
     public AddAttendanceSessionRequest getRequest() {
         return request;
     }
 
+    /**
+     * create labeled form row
+     * @param labelText label text
+     * @param field input field
+     * @author poornika
+     */
     private JPanel createField(String labelText, JComponent field) {
         JPanel panel = new JPanel(new BorderLayout(0, 6));
         panel.setOpaque(false);
 
         JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setFont(AppTheme.fontPlain(13));
         label.setForeground(AppTheme.TEXT_DARK);
 
-        field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        field.setFont(AppTheme.fontPlain(14));
         panel.add(label, BorderLayout.NORTH);
         panel.add(field, BorderLayout.CENTER);
         return panel;
     }
 
+    /**
+     * build footer action buttons
+     * @author poornika
+     */
     private JPanel createActions() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         panel.setOpaque(false);
@@ -96,6 +122,11 @@ public class AttendanceSessionDialog extends JDialog {
         return panel;
     }
 
+    /**
+     * fill timetable combo for selected course
+     * @param timetableSessions all timetable sessions
+     * @author poornika
+     */
     private void populateTimetableSessions(List<TimetableSession> timetableSessions) {
         cmbTimetableSession.removeAllItems();
         CourseOption selectedCourse = (CourseOption) cmbCourse.getSelectedItem();
@@ -110,12 +141,17 @@ public class AttendanceSessionDialog extends JDialog {
         }
     }
 
+    /**
+     * validate form and construct request
+     * @author poornika
+     */
     private void submit() {
         CourseOption selectedCourse = (CourseOption) cmbCourse.getSelectedItem();
         TimetableOption selectedTimetable = (TimetableOption) cmbTimetableSession.getSelectedItem();
 
         if (selectedCourse == null) {
-            throw new RuntimeException("Course is required.");
+            JOptionPane.showMessageDialog(this, "Course is required.", "Attendance", JOptionPane.WARNING_MESSAGE);
+            return;
         }
         if (selectedTimetable == null) {
             JOptionPane.showMessageDialog(this, "Timetable session is required.", "Attendance", JOptionPane.WARNING_MESSAGE);
@@ -135,6 +171,10 @@ public class AttendanceSessionDialog extends JDialog {
         dispose();
     }
 
+    /**
+     * option wrapper used by course combo box
+     * @author poornika
+     */
     private static class CourseOption {
         private final Course course;
 
@@ -148,6 +188,10 @@ public class AttendanceSessionDialog extends JDialog {
         }
     }
 
+    /**
+     * option wrapper used by timetable session combo box
+     * @author poornika
+     */
     private static class TimetableOption {
         private final TimetableSession session;
 
@@ -157,9 +201,22 @@ public class AttendanceSessionDialog extends JDialog {
 
         @Override
         public String toString() {
-            String start = session.getStartTime() == null ? "-" : session.getStartTime().substring(0, 5);
-            String end = session.getEndTime() == null ? "-" : session.getEndTime().substring(0, 5);
+            String start = formatTime(session.getStartTime());
+            String end = formatTime(session.getEndTime());
             return session.getDay() + " | " + start + " - " + end + " | " + session.getVenue();
+        }
+
+        /**
+         * format HH:mm text safely from timetable time values
+         * @param value raw time text
+         * @author poornika
+         */
+        private String formatTime(String value) {
+            if (value == null || value.trim().isEmpty()) {
+                return "-";
+            }
+            String trimmed = value.trim();
+            return trimmed.length() >= 5 ? trimmed.substring(0, 5) : trimmed;
         }
     }
 }

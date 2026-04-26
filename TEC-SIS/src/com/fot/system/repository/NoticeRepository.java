@@ -2,7 +2,8 @@ package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
 import com.fot.system.config.AppConfig;
-import com.fot.system.model.Notice;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,14 +13,26 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * handle notice persistence and lookup queries
+ * @author janith
+ */
 public class NoticeRepository {
 
     private final Connection conn;
 
+    /**
+     * initialize notice repository and database connection
+     * @author janith
+     */
     public NoticeRepository() {
         this.conn = DBConnection.getInstance().getConnection();
     }
 
+    /**
+     * find all notices with creator name
+     * @author janith
+     */
     public List<Notice> findAll() {
         List<Notice> notices = new ArrayList<>();
         String sql = "SELECT n.*, CONCAT(u.first_name, ' ', u.last_name) AS created_by_name " +
@@ -37,6 +50,11 @@ public class NoticeRepository {
         return notices;
     }
 
+    /**
+     * find notice by id
+     * @param noticeId notice id
+     * @author janith
+     */
     public Notice findById(int noticeId) {
         String sql = "SELECT n.*, CONCAT(u.first_name, ' ', u.last_name) AS created_by_name " +
                 "FROM notices n INNER JOIN users u ON u.id = n.created_by WHERE n.id = ?";
@@ -55,6 +73,11 @@ public class NoticeRepository {
         return null;
     }
 
+    /**
+     * save new notice record
+     * @param notice notice entity
+     * @author janith
+     */
     public boolean save(Notice notice) {
         String sql = "INSERT INTO notices (title, content, audience, priority, status, published_date, expiry_date, created_by) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -76,6 +99,11 @@ public class NoticeRepository {
         }
     }
 
+    /**
+     * update existing notice record
+     * @param notice notice entity
+     * @author janith
+     */
     public boolean update(Notice notice) {
         String sql = "UPDATE notices SET title = ?, content = ?, audience = ?, priority = ?, status = ?, published_date = ?, expiry_date = ?, created_by = ? WHERE id = ?";
 
@@ -88,6 +116,11 @@ public class NoticeRepository {
         }
     }
 
+    /**
+     * delete notice by id
+     * @param noticeId notice id
+     * @author janith
+     */
     public boolean deleteById(int noticeId) {
         String sql = "DELETE FROM notices WHERE id = ?";
 
@@ -99,6 +132,10 @@ public class NoticeRepository {
         }
     }
 
+    /**
+     * count active and currently visible notices
+     * @author janith
+     */
     public int countActive() {
         String sql = "SELECT COUNT(*) FROM notices WHERE status = 'ACTIVE' AND published_date <= CURDATE() " +
                 "AND (expiry_date IS NULL OR expiry_date >= CURDATE())";
@@ -115,6 +152,11 @@ public class NoticeRepository {
         return 0;
     }
 
+    /**
+     * count notices visible for a specific role
+     * @param role user role
+     * @author janith
+     */
     public int countVisibleByRole(String role) {
         String normalizedRole = normalizeRole(role);
         if (AppConfig.ROLE_ADMIN.equalsIgnoreCase(normalizedRole)) {
@@ -138,6 +180,12 @@ public class NoticeRepository {
         return 0;
     }
 
+    /**
+     * find recent visible notices for a role with limit
+     * @param role user role
+     * @param limit max items
+     * @author janith
+     */
     public List<Notice> findRecentVisibleByRole(String role, int limit) {
         List<Notice> notices = new ArrayList<>();
         String normalizedRole = normalizeRole(role);
@@ -169,6 +217,12 @@ public class NoticeRepository {
         return notices;
     }
 
+    /**
+     * bind notice entity fields into prepared statement
+     * @param stmt prepared statement
+     * @param notice notice entity
+     * @author janith
+     */
     private void bindNotice(PreparedStatement stmt, Notice notice) throws SQLException {
         stmt.setString(1, notice.getTitle());
         stmt.setString(2, notice.getContent());
@@ -184,6 +238,11 @@ public class NoticeRepository {
         stmt.setInt(8, notice.getCreatedBy());
     }
 
+    /**
+     * map query result row into notice entity
+     * @param rs result set row
+     * @author janith
+     */
     private Notice mapNotice(ResultSet rs) throws SQLException {
         Notice notice = new Notice();
         notice.setId(rs.getInt("id"));
@@ -199,6 +258,11 @@ public class NoticeRepository {
         return notice;
     }
 
+    /**
+     * normalize role text for query comparisons
+     * @param role role value
+     * @author janith
+     */
     private String normalizeRole(String role) {
         return role == null ? "" : role.trim().toUpperCase();
     }

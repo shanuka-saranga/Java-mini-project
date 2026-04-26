@@ -1,6 +1,7 @@
 package com.fot.system.service;
 
-import com.fot.system.model.*;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.MarksRepository;
 import com.fot.system.repository.StudentRepository;
 import com.fot.system.util.AcademicPerformance;
@@ -19,7 +20,6 @@ public class LecturerStudentDetailsService {
     public List<StudentDetailsRow> getLectureViewStudentDetails() {
         List<StudentDetailsRow> detailsRows = new ArrayList<>();
 
-        // Repository එකෙන් සියලුම ශිෂ්‍ය දත්ත (සහ ඔවුන්ගේ ලකුණු ලැයිස්තු) ලබා ගැනීම
         List<StudentsPerformance> allPerformanceData = studentRepo.getAllStudentsPerformance();
 
         for (StudentsPerformance studentRecord : allPerformanceData) {
@@ -48,11 +48,9 @@ public class LecturerStudentDetailsService {
             row.setPhone(studentRecord.getPhone());
             row.setAddress(studentRecord.getAddress());
 
-            // GPA අගයන් ඇතුළත් කිරීම
             row.setSgpa(gpaValue);
             row.setCgpa(gpaValue);
 
-            // මෙම ශිෂ්‍යයාගේ පේළිය අවසාන ලැයිස්තුවට එක් කරන්න
             detailsRows.add(row);
         }
 

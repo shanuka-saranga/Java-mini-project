@@ -1,10 +1,9 @@
 package com.fot.system.view.dashboard.lecturer.notice;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Notice;
-import com.fot.system.model.User;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.NoticeService;
-import com.fot.system.view.dashboard.admin.shared.NoticeFeedPanel;
+import com.fot.system.view.dashboard.admin.components.NoticeFeedPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -39,11 +38,11 @@ public class NoticePanel extends JPanel {
         header.setOpaque(false);
 
         JLabel titleLabel = new JLabel("Notice Board");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setFont(AppTheme.fontBold(28));
         titleLabel.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitleLabel = new JLabel("View all the latest institutional notices and announcements for your role.");
-        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitleLabel.setFont(AppTheme.fontPlain(14));
         subtitleLabel.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(titleLabel, BorderLayout.NORTH);

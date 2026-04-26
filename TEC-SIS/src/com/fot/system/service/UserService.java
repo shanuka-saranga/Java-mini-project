@@ -1,26 +1,40 @@
 package com.fot.system.service;
 
 import com.fot.system.config.AppConfig;
-import com.fot.system.model.AddUserRequest;
-import com.fot.system.model.EditUserRequest;
-import com.fot.system.model.Staff;
-import com.fot.system.model.Student;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.AddUserRequest;
+import com.fot.system.model.dto.EditUserRequest;
+import com.fot.system.model.entity.Staff;
+import com.fot.system.model.entity.Student;
+import com.fot.system.model.entity.User;
 import com.fot.system.repository.UserRepository;
 
 import java.sql.Date;
 import java.util.List;
 
-public class UserService {
+/**
+ * handle user-related business logic used by profile and user management flows
+ * @author janith
+ */
+public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final ProfilePictureStorageService profilePictureStorageService;
 
+    /**
+     * initialize user service dependencies
+     * @author janith
+     */
     public UserService() {
         this.userRepository = new UserRepository();
         this.profilePictureStorageService = new ProfilePictureStorageService();
     }
 
+    /**
+     * login users
+     * @param email user email
+     * @param password user password
+     * @author methum
+     */
     public User login(String email, String password) {
         email = email == null ? null : email.trim();
 
@@ -36,35 +50,60 @@ public class UserService {
         if (user == null) {
             return null;
         }
+
         if (!user.getPasswordHash().equals(password)) {
             return null;
         }
 
         if (!AppConfig.STATUS_ACTIVE.equalsIgnoreCase(user.getStatus())) {
-            System.out.println("user status is = "+ user.getStatus());
             throw new RuntimeException("User account is blocked");
         }
 
         return user;
     }
 
+    /**
+     * get all users
+     * @author janith
+     */
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    /**
+     * get user by id
+     * @param id user id
+     * @author janith , methum, poornika , shaanuka
+     */
     public User getUserById(int id) {
+        if (id <= 0) {
+            throw new RuntimeException("Invalid user ID.");
+        }
         return userRepository.findById(id);
     }
 
+    /**
+     * get user count
+     * @author janith
+     */
     public int getUserCount() {
         return userRepository.countAll();
     }
 
+    /**
+     * get user count for each role
+     * @param role user role (ADMIN / DEAN / LECTURER / STUDENT / TO)
+     * @author janith
+     */
     public int getUserCountByRole(String role) {
         return userRepository.countByRole(role);
     }
 
-
+    /**
+     * add new user
+     * @param request user details to add
+     * @author janith
+     */
     public User addUser(AddUserRequest request) {
         User user = createUserByRole(request);
         boolean saved = userRepository.save(user);
@@ -76,6 +115,11 @@ public class UserService {
         return user;
     }
 
+    /**
+     * update user details
+     * @param request user details to update
+     * @author janith
+     */
     public User updateUser(EditUserRequest request) {
         User user = createUserByRole(request);
         boolean updated = userRepository.update(user);
@@ -87,6 +131,11 @@ public class UserService {
         return userRepository.findById(user.getId());
     }
 
+    /**
+     * delete user
+     * @param userId id of the user to delete
+     * @author janith
+     */
     public boolean deleteUser(int userId) {
         if (userId <= 0) {
             throw new RuntimeException("Invalid user ID.");
@@ -95,6 +144,87 @@ public class UserService {
         return userRepository.deleteById(userId);
     }
 
+    /**
+     * Checks whether a user email already exists.
+     * @param email email to check
+     * @author janith
+     */
+    public boolean emailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    /**
+     * Checks whether a user email exists for another user record.
+     * @param email  email to check
+     * @param userId current user id to exclude
+     * @author janith
+     */
+    public boolean emailExistsExcludingUserId(String email, int userId) {
+        return userRepository.existsByEmailAndUserId(email, userId);
+    }
+
+    /**
+     * Checks whether a phone number already exists.
+     * @param phone phone number to check
+     * @author janith
+     */
+    public boolean phoneExists(String phone) {
+        return userRepository.existsByPhone(phone);
+    }
+
+    /**
+     * Checks whether a phone number exists for another user record.
+     * @param phone  phone number to check
+     * @param userId current user id to exclude
+     * @author janith
+     */
+    public boolean phoneExistsExcludingUserId(String phone, int userId) {
+        return userRepository.existsByPhoneExcludingUserId(phone, userId);
+    }
+
+    /**
+     * Checks whether a student registration number already exists.
+     * @param registrationNo registration number to check
+     * @author janith
+     */
+    public boolean registrationNoExists(String registrationNo) {
+        return userRepository.existsByRegistrationNo(registrationNo);
+    }
+
+    /**
+     * Checks whether a student registration number exists for another user record.
+     * @param registrationNo registration number to check
+     * @param userId         current user id to exclude
+     * @author janith
+     */
+    public boolean registrationNoExistsExcludingUserId(String registrationNo, int userId) {
+        return userRepository.existsByRegistrationNoExcludingUserId(registrationNo, userId);
+    }
+
+    /**
+     * Checks whether a staff code already exists.
+     * @param staffCode staff code to check
+     * @author janith
+     */
+    public boolean staffCodeExists(String staffCode) {
+        return userRepository.existsByStaffCode(staffCode);
+    }
+
+    /**
+     * Checks whether a staff code exists for another user record.
+     * @param staffCode staff code to check
+     * @param userId    current user id to exclude
+     * @author janith
+     */
+    public boolean staffCodeExistsExcludingUserId(String staffCode, int userId) {
+        return userRepository.existsByStaffCodeExcludingUserId(staffCode, userId);
+    }
+
+    /**
+     * create user considering user role
+     * @param request AdduserRequest object
+     * @author janith
+     */
     private User createUserByRole(AddUserRequest request) {
         if (request.isStudentRole()) {
             Student student = new Student();
@@ -112,6 +242,11 @@ public class UserService {
         return staff;
     }
 
+    /**
+     * create user considering user role
+     * @param request EditUserRequest object
+     * @author janith
+     */
     private User createUserByRole(EditUserRequest request) {
         if (request.isStudentRole()) {
             Student student = new Student();
@@ -131,50 +266,76 @@ public class UserService {
         return staff;
     }
 
+    /**
+     * populate common user fields for add operation
+     * @param user user entity to populate
+     * @param request AddUserRequest object containing user details
+     * @author janith
+     */
     private void populateCommonFields(User user, AddUserRequest request) {
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setPasswordHash(request.getPassword());
-        user.setPhone(request.getPhone());
-        user.setAddress(request.getAddress());
+        user.setFirstName(normalizeRequired(request.getFirstName()));
+        user.setLastName(normalizeRequired(request.getLastName()));
+        user.setEmail(normalizeRequired(request.getEmail()));
+        user.setPasswordHash(normalizeRequired(request.getPassword()));
+        user.setPhone(normalizeRequired(request.getPhone()));
+        user.setAddress(normalizeNullable(request.getAddress()));
         user.setProfilePicturePath(saveProfilePictureIfPresent(
                 request.getProfilePicturePath(),
                 request.getEmail(),
                 request.getRole()
         ));
         user.setDob(parseDob(request.getDob()));
-        user.setRole(request.getRole());
+        user.setRole(normalizeRequired(request.getRole()).toUpperCase());
         user.setStatus(normalizeStatus(request.getStatus()));
         user.setDepartmentId(parseDepartmentId(request.getDepartmentId()));
     }
 
+    /**
+     * populate common user fields for edit operation
+     * @param user user entity to populate
+     * @param request EditUserRequest object containing user details
+     * @author janith
+     */
     private void populateCommonFields(User user, EditUserRequest request) {
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setPasswordHash(request.getPassword());
-        user.setPhone(request.getPhone());
-        user.setAddress(request.getAddress());
+        user.setFirstName(normalizeRequired(request.getFirstName()));
+        user.setLastName(normalizeRequired(request.getLastName()));
+        user.setEmail(normalizeRequired(request.getEmail()));
+        user.setPasswordHash(normalizeRequired(request.getPassword()));
+        user.setPhone(normalizeRequired(request.getPhone()));
+        user.setAddress(normalizeNullable(request.getAddress()));
         user.setProfilePicturePath(resolveProfilePicturePathForUpdate(
                 request.getProfilePicturePath(),
                 request.getEmail(),
                 request.getRole()
         ));
         user.setDob(parseDob(request.getDob()));
-        user.setRole(request.getRole());
+        user.setRole(normalizeRequired(request.getRole()).toUpperCase());
         user.setStatus(normalizeStatus(request.getStatus()));
         user.setDepartmentId(parseDepartmentId(request.getDepartmentId()));
     }
 
+    /**
+     * parse department id from string to int
+     * @param departmentId department id as string
+     * @author janith
+     */
     private int parseDepartmentId(String departmentId) {
         try {
-            return Integer.parseInt(departmentId.trim());
+            int parsed = Integer.parseInt(departmentId.trim());
+            if (parsed <= 0) {
+                throw new RuntimeException("Department ID must be a valid number.");
+            }
+            return parsed;
         } catch (NumberFormatException e) {
             throw new RuntimeException("Department ID must be a valid number.");
         }
     }
 
+    /**
+     * parse date of birth from string to Date
+     * @param dob date of birth as string
+     * @author janith
+     */
     private Date parseDob(String dob) {
         try {
             return Date.valueOf(dob.trim());
@@ -183,6 +344,11 @@ public class UserService {
         }
     }
 
+    /**
+     * parse registration year from string to int
+     * @param registrationYear registration year as string
+     * @author janith
+     */
     private int parseRegistrationYear(String registrationYear) {
         try {
             return Integer.parseInt(registrationYear.trim());
@@ -191,6 +357,11 @@ public class UserService {
         }
     }
 
+    /**
+     * normalize user status to allowed values (ACTIVE, SUSPENDED, BLOCKED)
+     * @param status user status as string
+     * @author janith
+     */
     private String normalizeStatus(String status) {
         if ("SUSPENDED".equalsIgnoreCase(status)) {
             return "SUSPENDED";
@@ -201,6 +372,13 @@ public class UserService {
         return AppConfig.STATUS_ACTIVE;
     }
 
+    /**
+     * save profile picture if a path is provided, otherwise return null
+     * @param sourcePath original path of the profile picture
+     * @param email user email (used for naming the stored picture)
+     * @param role user role (used for organizing stored pictures)
+     * @author janith
+     */
     private String saveProfilePictureIfPresent(String sourcePath, String email, String role) {
         if (sourcePath == null || sourcePath.trim().isEmpty()) {
             return null;
@@ -208,6 +386,13 @@ public class UserService {
         return profilePictureStorageService.saveProfilePicture(sourcePath, email, role);
     }
 
+    /**
+     * resolve profile picture path for update - if the provided path is already managed, return it as is, otherwise save the new picture and return the new path
+     * @param picturePath provided profile picture path
+     * @param email user email (used for naming the stored picture if saving is needed)
+     * @param role user role (used for organizing stored pictures if saving is needed)
+     * @author janith
+     */
     private String resolveProfilePicturePathForUpdate(String picturePath, String email, String role) {
         if (picturePath == null || picturePath.trim().isEmpty()) {
             return null;
@@ -218,6 +403,31 @@ public class UserService {
         }
 
         return profilePictureStorageService.saveProfilePicture(picturePath, email, role);
+    }
+
+    /**
+     * normalize required string values
+     * @param value input value
+     * @author janith
+     */
+    private String normalizeRequired(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.trim();
+    }
+
+    /**
+     * normalize optional string values
+     * @param value input value
+     * @author janith
+     */
+    private String normalizeNullable(String value) {
+        if (value == null) {
+            return null;
+        }
+        String normalized = value.trim();
+        return normalized.isEmpty() ? null : normalized;
     }
 
 }

@@ -17,6 +17,13 @@ public class CourseMaterialStorageService {
             ".jpg", ".jpeg", ".png"
     );
 
+    /**
+     * copy selected material file into managed storage
+     * @param sourcePath local source path
+     * @param courseCode course code
+     * @param title material title
+     * @author poornika
+     */
     public String saveMaterialFile(String sourcePath, String courseCode, String title) {
         String normalizedSourcePath = normalize(sourcePath);
         if (normalizedSourcePath.isEmpty()) {
@@ -46,6 +53,11 @@ public class CourseMaterialStorageService {
         }
     }
 
+    /**
+     * delete stored managed file if available
+     * @param filePath managed file path
+     * @author poornika
+     */
     public void deleteStoredMaterialFile(String filePath) {
         String normalizedPath = normalize(filePath);
         if (normalizedPath.isEmpty()) {
@@ -65,12 +77,24 @@ public class CourseMaterialStorageService {
         }
     }
 
+    /**
+     * build safe unique file name for managed storage
+     * @param courseCode course code
+     * @param title material title
+     * @param extension file extension
+     * @author poornika
+     */
     private String buildFileName(String courseCode, String title, String extension) {
         String safeCourseCode = normalize(courseCode).toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "_");
         String safeTitle = normalize(title).toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "_");
         return safeCourseCode + "_" + safeTitle + "_" + System.currentTimeMillis() + extension;
     }
 
+    /**
+     * resolve lowercase extension from file name
+     * @param fileName source file name
+     * @author poornika
+     */
     private String getExtension(String fileName) {
         int lastDotIndex = fileName.lastIndexOf('.');
         if (lastDotIndex < 0) {
@@ -79,6 +103,11 @@ public class CourseMaterialStorageService {
         return fileName.substring(lastDotIndex).toLowerCase(Locale.ROOT);
     }
 
+    /**
+     * trim string values safely
+     * @param value raw value
+     * @author poornika
+     */
     private String normalize(String value) {
         return value == null ? "" : value.trim();
     }

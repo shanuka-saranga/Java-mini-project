@@ -1,12 +1,12 @@
 package com.fot.system.view.dashboard.to;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.Notice;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.ToDashboardData;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.AttendanceService;
 import com.fot.system.service.NoticeService;
-import com.fot.system.view.dashboard.admin.shared.DashboardStatCard;
-import com.fot.system.view.dashboard.admin.shared.NoticeFeedPanel;
+import com.fot.system.view.dashboard.admin.components.DashboardStatCard;
+import com.fot.system.view.dashboard.admin.components.NoticeFeedPanel;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import javax.swing.*;
@@ -48,10 +48,10 @@ public class TOHomePanel extends JPanel {
         header.setOpaque(false);
 
         JLabel welcomeLabel = new JLabel("Welcome back, " + currentUser.getFullName() + "!");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        welcomeLabel.setFont(AppTheme.fontBold(28));
 
         JLabel subtitleLabel = new JLabel("Here is your technical officer overview with pending medical submissions and recent notices.");
-        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitleLabel.setFont(AppTheme.fontPlain(14));
         subtitleLabel.setForeground(AppTheme.TEXT_SUBTLE);
 
         header.add(welcomeLabel, BorderLayout.NORTH);
@@ -74,22 +74,22 @@ public class TOHomePanel extends JPanel {
     }
 
     private void loadDashboardData() {
-        SwingWorker<DashboardData, Void> worker = new SwingWorker<>() {
+        SwingWorker<ToDashboardData, Void> worker = new SwingWorker<>() {
             @Override
-            protected DashboardData doInBackground() {
+            protected ToDashboardData doInBackground() {
                 int pendingMedicals = attendanceService.getPendingMedicalSubmissionCount();
                 int visibleNoticeCount = noticeService.getVisibleNoticeCountForRole(currentUser.getRole());
                 List<Notice> visibleNotices = noticeService.getRecentVisibleNoticesForRole(currentUser.getRole(), 8);
-                return new DashboardData(pendingMedicals, visibleNoticeCount, visibleNotices);
+                return new ToDashboardData(pendingMedicals, visibleNoticeCount, visibleNotices);
             }
 
             @Override
             protected void done() {
                 try {
-                    DashboardData data = get();
-                    pendingMedicalsCard.setValue(String.valueOf(data.pendingMedicals));
-                    visibleNoticesCard.setValue(String.valueOf(data.visibleNotices));
-                    noticeFeedPanel.setNotices(data.notices);
+                    ToDashboardData data = get();
+                    pendingMedicalsCard.setValue(String.valueOf(data.getPendingMedicals()));
+                    visibleNoticesCard.setValue(String.valueOf(data.getVisibleNotices()));
+                    noticeFeedPanel.setNotices(data.getNotices());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
                             TOHomePanel.this,
@@ -101,17 +101,5 @@ public class TOHomePanel extends JPanel {
             }
         };
         worker.execute();
-    }
-
-    private static class DashboardData {
-        private final int pendingMedicals;
-        private final int visibleNotices;
-        private final List<Notice> notices;
-
-        private DashboardData(int pendingMedicals, int visibleNotices, List<Notice> notices) {
-            this.pendingMedicals = pendingMedicals;
-            this.visibleNotices = visibleNotices;
-            this.notices = notices;
-        }
     }
 }

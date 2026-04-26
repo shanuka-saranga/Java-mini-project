@@ -2,72 +2,138 @@ package com.fot.system.repository;
 
 import com.fot.system.config.AppConfig;
 import com.fot.system.config.DBConnection;
-import com.fot.system.model.Staff;
-import com.fot.system.model.Student;
-import com.fot.system.model.User;
+import com.fot.system.model.entity.Staff;
+import com.fot.system.model.entity.Student;
+import com.fot.system.model.entity.User;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * handle user persistence and lookup queries
+ * @author janith
+ */
 public class UserRepository {
+    private static final String USER_WITH_ROLE_DETAILS_SQL =
+            "SELECT u.*, s.registration_no, s.registration_year, s.student_type, " +
+            "st.staff_code, st.designation " +
+            "FROM users u " +
+            "LEFT JOIN student s ON u.id = s.user_id " +
+            "LEFT JOIN staff st ON u.id = st.user_id";
 
     private final Connection conn;
 
+    /**
+     * initialize user repository and get database connection
+     * @author janith
+     */
     public UserRepository() {
         this.conn = DBConnection.getInstance().getConnection();
     }
 
+    /**
+     * find user by id
+     * @param email user email
+     * @author methum
+     */
     public User findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return mapToUser(rs);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapToUser(rs);
+                }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to load user by email: " + e.getMessage(), e);
         }
 
         return null;
     }
 
+    /**
+     * check if user exists by email
+     * @param email user email
+     * @author janith
+     */
     public boolean existsByEmail(String email) {
         return exists("SELECT 1 FROM users WHERE email = ?", email);
     }
 
-    public boolean existsByEmailExcludingUserId(String email, int userId) {
+    /**
+     * check if user exists by email and user id
+     * @param email user email
+     * @author janith
+     */
+    public boolean existsByEmailAndUserId(String email, int userId) {
         return exists("SELECT 1 FROM users WHERE email = ? AND id <> ?", email, userId);
     }
 
+    /**
+     * check phone number is already exist
+     * @param phone user phone
+     * @author janith
+     */
     public boolean existsByPhone(String phone) {
         return exists("SELECT 1 FROM users WHERE phone = ?", phone);
     }
 
+    /**
+     * check user phone number is already exist
+     * @param phone user phone
+     * @param userId user id to exclude from check
+     * @author janith
+     */
     public boolean existsByPhoneExcludingUserId(String phone, int userId) {
         return exists("SELECT 1 FROM users WHERE phone = ? AND id <> ?", phone, userId);
     }
 
+    /**
+     * check registration number is already exist
+     * @param registrationNo student String type registration number
+     * @author janith
+     */
     public boolean existsByRegistrationNo(String registrationNo) {
         return exists("SELECT 1 FROM student WHERE registration_no = ?", registrationNo);
     }
 
+    /**
+     * check user registration number is already exist
+     * @param registrationNo student String type registration number
+     * @param userId int Specific user id
+     * @author janith
+     */
     public boolean existsByRegistrationNoExcludingUserId(String registrationNo, int userId) {
         return exists("SELECT 1 FROM student WHERE registration_no = ? AND user_id <> ?", registrationNo, userId);
     }
 
+    /**
+     * check staff Code is already exist
+     * @param staffCode String specific staff code
+     * @author janith
+     */
     public boolean existsByStaffCode(String staffCode) {
         return exists("SELECT 1 FROM staff WHERE staff_code = ?", staffCode);
     }
 
+    /**
+     * check user staff Code is already exist
+     * @param staffCode String specific staff code
+     * @param userId int Specific user id
+     * @author janith
+     */
     public boolean existsByStaffCodeExcludingUserId(String staffCode, int userId) {
         return exists("SELECT 1 FROM staff WHERE staff_code = ? AND user_id <> ?", staffCode, userId);
     }
 
+    /**
+     * save user to database
+     * @param user User object
+     * @author janith
+     */
     public boolean save(User user) {
         String sqlUser = "INSERT INTO users (first_name, last_name, role, dob, email, phone, address, profile_picture_path, department_id, password_hash, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -106,16 +172,20 @@ public class UserRepository {
                 return true;
             } catch (SQLException e) {
                 conn.rollback();
-                e.printStackTrace();
+                throw e;
             } finally {
                 conn.setAutoCommit(true);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to save user: " + e.getMessage(), e);
         }
-        return false;
     }
 
+    /**
+     * update user details in database
+     * @param user User object
+     * @author janith
+     */
     public boolean update(User user) {
         String sqlUser = "UPDATE users SET first_name = ?, last_name = ?, role = ?, dob = ?, email = ?, phone = ?, address = ?, profile_picture_path = ?, department_id = ?, password_hash = ?, status = ? WHERE id = ?";
 
@@ -155,6 +225,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * delete user from database by id
+     * @param userId int user id to delete
+     * @author janith
+     */
     public boolean deleteById(int userId) {
         String sql = "DELETE FROM users WHERE id = ?";
 
@@ -166,6 +241,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * save student details to database
+     * @param s Student object (student table data)
+     * @author janith
+     */
     private void saveStudentDetails(Student s) throws SQLException {
         String sql = "INSERT INTO student (user_id, registration_no, registration_year, student_type) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -177,6 +257,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * save staff details to database
+     * @param s Staff object (staff table data)
+     * @author janith
+     */
     private void saveStaffDetails(Staff s) throws SQLException {
         String sql = "INSERT INTO staff (user_id, staff_code, designation) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -187,6 +272,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * update role specific details in database
+     * @param user User object
+     * @author janith
+     */
     private void updateRoleSpecificDetails(User user) throws SQLException {
         if (user instanceof Student) {
             updateStudentDetails((Student) user);
@@ -195,6 +285,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * update student details in database
+     * @param student Student object (student table data)
+     * @author janith
+     */
     private void updateStudentDetails(Student student) throws SQLException {
         String sql = "UPDATE student SET registration_no = ?, registration_year = ?, student_type = ? WHERE user_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -206,6 +301,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * update user details in database
+     * @param staff Staff object (staff table data)
+     * @author janith
+     */
     private void updateStaffDetails(Staff staff) throws SQLException {
         String sql = "UPDATE staff SET staff_code = ?, designation = ? WHERE user_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -216,35 +316,38 @@ public class UserRepository {
         }
     }
 
+    /**
+     * get all users from database
+     * @author janith
+     */
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-
-        String sql = "SELECT u.*, s.registration_no, s.registration_year, s.student_type, " +
-                "st.staff_code, st.designation " +
-                "FROM users u " +
-                "LEFT JOIN student s ON u.id = s.user_id " +
-                "LEFT JOIN staff st ON u.id = st.user_id";
-
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(USER_WITH_ROLE_DETAILS_SQL)) {
 
             while (rs.next()) {
-                // දැන් මේක ඇතුළේ staff_code තියෙන නිසා Error එකක් එන්නේ නැහැ
                 users.add(mapToSpecificUser(rs));
             }
-
         } catch (SQLException e) {
-            System.err.println("Error in findAll: " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("Failed to load users: " + e.getMessage(), e);
         }
 
         return users;
     }
 
+    /**
+     * count all users in database
+     * @author janith
+     */
     public int countAll() {
         return countBySql("SELECT COUNT(*) FROM users");
     }
 
+    /**
+     * count users by role
+     * @param role user role
+     * @author janith
+     */
     public int countByRole(String role) {
         String sql = "SELECT COUNT(*) FROM users WHERE role = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -260,6 +363,11 @@ public class UserRepository {
         return 0;
     }
 
+    /**
+     * map query result to specific user type (student or staff)
+     * @param rs ResultSet object
+     * @author janith
+     */
     private User mapToSpecificUser(ResultSet rs) throws SQLException {
         String role = rs.getString("role");
         User user;
@@ -275,22 +383,15 @@ public class UserRepository {
             ((Staff) user).setDesignation(rs.getString("designation"));
         }
 
-        user.setId(rs.getInt("id"));
-        user.setFirstName(rs.getString("first_name"));
-        user.setLastName(rs.getString("last_name"));
-        user.setEmail(rs.getString("email"));
-        user.setPhone(rs.getString("phone"));
-        user.setAddress(rs.getString("address"));
-        user.setProfilePicturePath(rs.getString("profile_picture_path"));
-        user.setDob(rs.getDate("dob"));
-        user.setDepartmentId(rs.getInt("department_id"));
-        user.setPasswordHash(rs.getString("password_hash"));
-        user.setStatus(rs.getString("status"));
-        user.setRole(role);
-
+        mapCommonUserColumns(rs, user, role);
         return user;
     }
 
+    /**
+     * map user table result to basic user object
+     * @param rs ResultSet object
+     * @author janith
+     */
     private User mapToUser(ResultSet rs) throws SQLException {
         String role = rs.getString("role");
         User user;
@@ -301,29 +402,17 @@ public class UserRepository {
             user = new Staff();
         }
 
-        user.setId(rs.getInt("id"));
-        user.setFirstName(rs.getString("first_name"));
-        user.setLastName(rs.getString("last_name"));
-        user.setEmail(rs.getString("email"));
-        user.setPhone(rs.getString("phone"));
-        user.setAddress(rs.getString("address"));
-        user.setProfilePicturePath(rs.getString("profile_picture_path"));
-        user.setDob(rs.getDate("dob"));
-        user.setDepartmentId(rs.getInt("department_id"));
-        user.setPasswordHash(rs.getString("password_hash"));
-        user.setStatus(rs.getString("status"));
-        user.setRole(role);
-
+        mapCommonUserColumns(rs, user, role);
         return user;
     }
 
+    /**
+     * find user by id
+     * @param id user id
+     * @author janith
+     */
     public User findById(int id) {
-        String sql = "SELECT u.*, s.registration_no, s.registration_year, s.student_type, " +
-                "st.staff_code, st.designation " +
-                "FROM users u " +
-                "LEFT JOIN student s ON u.id = s.user_id " +
-                "LEFT JOIN staff st ON u.id = st.user_id " +
-                "WHERE u.id = ?";
+        String sql = USER_WITH_ROLE_DETAILS_SQL + " WHERE u.id = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -333,11 +422,17 @@ public class UserRepository {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error finding user by ID: " + e.getMessage());
+            throw new RuntimeException("Failed to load user by ID: " + e.getMessage(), e);
         }
         return null;
     }
 
+    /**
+     * execute generic existence check by single value
+     * @param sql sql query with one parameter
+     * @param value value to bind
+     * @author janith
+     */
     private boolean exists(String sql, String value) {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, value);
@@ -349,6 +444,13 @@ public class UserRepository {
         }
     }
 
+    /**
+     * execute generic existence check by value and excluded user id
+     * @param sql sql query with two parameters
+     * @param value value to bind
+     * @param userId user id to exclude
+     * @author janith
+     */
     private boolean exists(String sql, String value, int userId) {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, value);
@@ -361,6 +463,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * execute generic count query
+     * @param sql count sql query
+     * @author janith
+     */
     private int countBySql(String sql) {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -371,5 +478,27 @@ public class UserRepository {
             throw new RuntimeException("Failed to count users: " + e.getMessage(), e);
         }
         return 0;
+    }
+
+    /**
+     * map common user columns from result set
+     * @param rs source result set
+     * @param user target user entity
+     * @param role normalized role value
+     * @author janith
+     */
+    private void mapCommonUserColumns(ResultSet rs, User user, String role) throws SQLException {
+        user.setId(rs.getInt("id"));
+        user.setFirstName(rs.getString("first_name"));
+        user.setLastName(rs.getString("last_name"));
+        user.setEmail(rs.getString("email"));
+        user.setPhone(rs.getString("phone"));
+        user.setAddress(rs.getString("address"));
+        user.setProfilePicturePath(rs.getString("profile_picture_path"));
+        user.setDob(rs.getDate("dob"));
+        user.setDepartmentId(rs.getInt("department_id"));
+        user.setPasswordHash(rs.getString("password_hash"));
+        user.setStatus(rs.getString("status"));
+        user.setRole(role);
     }
 }

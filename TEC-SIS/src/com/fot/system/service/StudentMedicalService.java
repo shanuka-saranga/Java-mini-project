@@ -1,14 +1,14 @@
 package com.fot.system.service;
 
-import com.fot.system.model.AbsentSessionOption;
-import com.fot.system.model.AddStudentMedicalRequest;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.repository.AttendanceRepository;
 
 import java.sql.Date;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class StudentMedicalService {
+public class StudentMedicalService implements IStudentMedicalService {
 
     private final AttendanceRepository attendanceRepository;
     private final MedicalDocumentStorageService medicalDocumentStorageService;

@@ -8,10 +8,19 @@ import javax.swing.*;
 
 public class StudentSidebar extends BaseSidebar {
 
+    /**
+     * initialize student sidebar
+     * @param frame MainDashboard parent frame
+     * @author methum
+     */
     public StudentSidebar(MainDashboard frame) {
         super(frame, "STUDENT");
     }
 
+    /**
+     * add student specific menu buttons
+     * @author methum
+     */
     @Override
     protected void addRoleSpecificButtons() {
         add(createMenuButton("Marks / Grades", FontAwesomeSolid.POLL, AppConfig.MENU_MARKS));

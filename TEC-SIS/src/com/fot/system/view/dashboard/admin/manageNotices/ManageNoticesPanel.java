@@ -2,8 +2,8 @@ package com.fot.system.view.dashboard.admin.manageNotices;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.AddNoticeController;
-import com.fot.system.model.Notice;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.NoticeService;
 import com.fot.system.view.components.CustomButton;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
@@ -13,12 +13,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * manage notice dashboard section with table and detail forms
+ * @author janith
+ */
 public class ManageNoticesPanel extends JPanel {
     private static final String DETAILS_CARD = "DETAILS";
     private static final String ADD_NOTICE_CARD = "ADD_NOTICE";
     private static final int EXPANDED_DIVIDER_SIZE = 5;
     private static final int COLLAPSED_DIVIDER_SIZE = 0;
-    private static final int DETAILS_PANEL_HEIGHT = 350;
+    private static final double DETAILS_PANEL_RATIO = 0.60;
 
     private final NoticeService noticeService;
     private final NoticeTablePanel noticeTablePanel;
@@ -28,7 +32,17 @@ public class ManageNoticesPanel extends JPanel {
     private final CardLayout bottomCardLayout = new CardLayout();
     private final JPanel bottomContentPanel = new JPanel(bottomCardLayout);
     private JSplitPane splitPane;
+    private boolean bottomExpanded;
+    private boolean selectionLocked;
+    private int lockedSelectionRow = -1;
+    private boolean restoringSelection;
+    private boolean initialLoadPending = true;
 
+    /**
+     * initialize manage notices panel
+     * @param currentUser logged in user
+     * @author janith
+     */
     public ManageNoticesPanel(User currentUser) {
         setLayout(new BorderLayout(20, 20));
         setBackground(Color.WHITE);
@@ -41,6 +55,7 @@ public class ManageNoticesPanel extends JPanel {
         noticeDetailsPanel.setOnCloseAction(this::collapseBottomPanel);
         noticeDetailsPanel.setOnNoticeUpdatedAction(this::loadDataFromDatabase);
         noticeDetailsPanel.setOnNoticeDeletedAction(this::afterNoticeDeleted);
+        noticeDetailsPanel.setOnEditModeChangedAction(this::onEditModeChanged);
 
         addNewNoticePanel = new AddNewNoticePanel(currentUser.getId());
         addNewNoticePanel.setOnCloseAction(this::collapseBottomPanel);
@@ -54,16 +69,29 @@ public class ManageNoticesPanel extends JPanel {
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setTopComponent(noticeTablePanel);
         splitPane.setBottomComponent(bottomContentPanel);
-        splitPane.setResizeWeight(1.0);
+        splitPane.setResizeWeight(DETAILS_PANEL_RATIO);
+        splitPane.setContinuousLayout(true);
         splitPane.setDividerSize(COLLAPSED_DIVIDER_SIZE);
         splitPane.setBackground(Color.WHITE);
         splitPane.setBorder(null);
 
+        noticeTablePanel.setMinimumSize(new Dimension(0, 140));
         bottomContentPanel.setMinimumSize(new Dimension(0, 0));
         add(splitPane, BorderLayout.CENTER);
 
         noticeTablePanel.getTable().getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
+            if (e.getValueIsAdjusting() || restoringSelection) {
+                return;
+            }
+            if (initialLoadPending) {
+                return;
+            }
+            if (selectionLocked) {
+                maintainLockedSelection();
+                return;
+            }
+
+            if (noticeTablePanel.getTable().getSelectedRow() != -1) {
                 updateDetailsView();
             }
         });
@@ -72,12 +100,16 @@ public class ManageNoticesPanel extends JPanel {
         SwingUtilities.invokeLater(this::collapseBottomPanel);
     }
 
+    /**
+     * create panel header with title and add button
+     * @author janith
+     */
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
 
         JLabel title = new JLabel("Notice Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        title.setFont(AppTheme.fontBold(26));
 
         CustomButton addBtn = new CustomButton(
                 "Add New Notice",
@@ -94,7 +126,12 @@ public class ManageNoticesPanel extends JPanel {
         return header;
     }
 
+    /**
+     * load notice table data from database
+     * @author janith
+     */
     private void loadDataFromDatabase() {
+        final Integer selectedNoticeId = getSelectedNoticeId();
         SwingWorker<List<Notice>, Void> worker = new SwingWorker<>() {
             @Override
             protected List<Notice> doInBackground() {
@@ -119,15 +156,44 @@ public class ManageNoticesPanel extends JPanel {
                         };
                         noticeTablePanel.addRow(rowData);
                     }
+
+                    if (initialLoadPending) {
+                        JTable table = noticeTablePanel.getTable();
+                        table.clearSelection();
+                        selectionLocked = false;
+                        lockedSelectionRow = -1;
+                        noticeDetailsPanel.clearDetails();
+                        collapseBottomPanel();
+                        initialLoadPending = false;
+                        return;
+                    }
+
+                    if (selectedNoticeId != null && restoreSelectionByNoticeId(selectedNoticeId)) {
+                        return;
+                    }
+
+                    JTable table = noticeTablePanel.getTable();
+                    if (table.getSelectedRow() == -1) {
+                        noticeDetailsPanel.clearDetails();
+                        collapseBottomPanel();
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "Error loading notices!");
+                    JOptionPane.showMessageDialog(
+                            ManageNoticesPanel.this,
+                            "Error loading notices!",
+                            "Notice Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         };
         worker.execute();
     }
 
+    /**
+     * show add new notice form
+     * @author janith
+     */
     private void showAddNoticePanel() {
         addNewNoticePanel.resetForm();
         bottomCardLayout.show(bottomContentPanel, ADD_NOTICE_CARD);
@@ -136,13 +202,21 @@ public class ManageNoticesPanel extends JPanel {
         SwingUtilities.invokeLater(this::showBottomPanel);
     }
 
+    /**
+     * load selected row notice details view
+     * @author janith
+     */
     private void updateDetailsView() {
-        int row = noticeTablePanel.getTable().getSelectedRow();
-        if (row == -1) {
+        JTable table = noticeTablePanel.getTable();
+        int viewRow = table.getSelectedRow();
+        if (viewRow == -1) {
+            noticeDetailsPanel.clearDetails();
+            collapseBottomPanel();
             return;
         }
 
-        int noticeId = Integer.parseInt(noticeTablePanel.getModel().getValueAt(row, 0).toString());
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        int noticeId = Integer.parseInt(noticeTablePanel.getModel().getValueAt(modelRow, 0).toString());
 
         SwingWorker<Notice, Void> worker = new SwingWorker<>() {
             @Override
@@ -154,48 +228,173 @@ public class ManageNoticesPanel extends JPanel {
             protected void done() {
                 try {
                     Notice notice = get();
+                    if (notice == null) {
+                        noticeDetailsPanel.clearDetails();
+                        collapseBottomPanel();
+                        return;
+                    }
                     bottomCardLayout.show(bottomContentPanel, DETAILS_CARD);
                     noticeDetailsPanel.updateDetails(notice);
                     SwingUtilities.invokeLater(ManageNoticesPanel.this::showBottomPanel);
                     noticeDetailsPanel.setVisible(true);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    noticeDetailsPanel.clearDetails();
+                    collapseBottomPanel();
                 }
             }
         };
         worker.execute();
     }
 
+    /**
+     * expand bottom split region
+     * @author janith
+     */
     private void showBottomPanel() {
-        splitPane.setDividerSize(EXPANDED_DIVIDER_SIZE);
-        bottomContentPanel.setPreferredSize(new Dimension(0, DETAILS_PANEL_HEIGHT));
-        bottomContentPanel.revalidate();
-
-        int availableHeight = splitPane.getHeight();
-        if (availableHeight > DETAILS_PANEL_HEIGHT) {
-            splitPane.setDividerLocation(availableHeight - DETAILS_PANEL_HEIGHT);
-        } else {
-            splitPane.setDividerLocation(0.6);
+        if (bottomExpanded) {
+            splitPane.setDividerSize(EXPANDED_DIVIDER_SIZE);
+            splitPane.revalidate();
+            splitPane.repaint();
+            return;
         }
+
+        bottomExpanded = true;
+        splitPane.setDividerSize(EXPANDED_DIVIDER_SIZE);
+        splitPane.setDividerLocation(DETAILS_PANEL_RATIO);
         splitPane.revalidate();
         splitPane.repaint();
     }
 
+    /**
+     * collapse bottom split region
+     * @author janith
+     */
     private void collapseBottomPanel() {
-        bottomContentPanel.setPreferredSize(new Dimension(0, 0));
+        bottomExpanded = false;
         splitPane.setDividerSize(COLLAPSED_DIVIDER_SIZE);
         splitPane.setDividerLocation(1.0);
         splitPane.revalidate();
         splitPane.repaint();
     }
 
+    /**
+     * refresh table after notice add
+     * @author janith
+     */
     private void afterNoticeAdded() {
         loadDataFromDatabase();
         collapseBottomPanel();
     }
 
+    /**
+     * refresh table after notice delete
+     * @author janith
+     */
     private void afterNoticeDeleted() {
         loadDataFromDatabase();
         collapseBottomPanel();
+    }
+
+    /**
+     * lock current selection while editing
+     * @param editing current edit mode state
+     * @author janith
+     */
+    private void onEditModeChanged(boolean editing) {
+        JTable table = noticeTablePanel.getTable();
+        if (editing) {
+            selectionLocked = true;
+            lockedSelectionRow = table.getSelectedRow();
+            return;
+        }
+
+        selectionLocked = false;
+        lockedSelectionRow = table.getSelectedRow();
+    }
+
+    /**
+     * keep selection on locked row while editing
+     * @author janith
+     */
+    private void maintainLockedSelection() {
+        JTable table = noticeTablePanel.getTable();
+        int selectedRow = table.getSelectedRow();
+        int rowCount = table.getRowCount();
+
+        if (lockedSelectionRow == -1) {
+            return;
+        }
+        if (lockedSelectionRow >= rowCount) {
+            selectionLocked = false;
+            lockedSelectionRow = -1;
+            return;
+        }
+        if (selectedRow == lockedSelectionRow) {
+            return;
+        }
+
+        restoringSelection = true;
+        try {
+            table.getSelectionModel().setSelectionInterval(lockedSelectionRow, lockedSelectionRow);
+        } finally {
+            restoringSelection = false;
+        }
+    }
+
+    /**
+     * resolve selected notice id from table selection
+     * @author janith
+     */
+    private Integer getSelectedNoticeId() {
+        JTable table = noticeTablePanel.getTable();
+        int viewRow = table.getSelectedRow();
+        if (viewRow < 0) {
+            return null;
+        }
+
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        Object idValue = noticeTablePanel.getModel().getValueAt(modelRow, 0);
+        if (idValue == null) {
+            return null;
+        }
+
+        try {
+            return Integer.parseInt(idValue.toString());
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * restore selection after table refresh using notice id
+     * @param noticeId notice id to reselect
+     * @author janith
+     */
+    private boolean restoreSelectionByNoticeId(int noticeId) {
+        JTable table = noticeTablePanel.getTable();
+
+        for (int modelRow = 0; modelRow < noticeTablePanel.getModel().getRowCount(); modelRow++) {
+            Object value = noticeTablePanel.getModel().getValueAt(modelRow, 0);
+            if (value == null || !String.valueOf(noticeId).equals(value.toString())) {
+                continue;
+            }
+
+            int viewRow = table.convertRowIndexToView(modelRow);
+            if (viewRow < 0) {
+                return false;
+            }
+
+            restoringSelection = true;
+            try {
+                table.getSelectionModel().setSelectionInterval(viewRow, viewRow);
+            } finally {
+                restoringSelection = false;
+            }
+
+            updateDetailsView();
+            return true;
+        }
+
+        return false;
     }
 }

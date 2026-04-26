@@ -67,7 +67,7 @@ public class ProfilePhotoFrame extends JComponent {
 
         if (image == null) {
             g2.setColor(AppTheme.AVATAR_TEXT);
-            g2.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            g2.setFont(AppTheme.fontPlain(14));
             FontMetrics metrics = g2.getFontMetrics();
             int textX = (getWidth() - metrics.stringWidth(emptyText)) / 2;
             int textY = (getHeight() + metrics.getAscent()) / 2 - 4;

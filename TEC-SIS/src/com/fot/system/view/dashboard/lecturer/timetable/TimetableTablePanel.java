@@ -1,6 +1,6 @@
 package com.fot.system.view.dashboard.lecturer.timetable;
 
-import com.fot.system.view.dashboard.admin.shared.BaseAdminTablePanel;
+import com.fot.system.view.dashboard.admin.components.BaseAdminTablePanel;
 
 public class TimetableTablePanel extends BaseAdminTablePanel {
 

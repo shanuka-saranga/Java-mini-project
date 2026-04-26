@@ -2,11 +2,8 @@ package com.fot.system.view.dashboard.lecturer.timetable;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.TimetableSessionController;
-import com.fot.system.model.Course;
-import com.fot.system.model.Staff;
-import com.fot.system.model.TimetableSession;
-import com.fot.system.model.TimetableSessionRequest;
-import com.fot.system.model.User;
+import com.fot.system.model.dto.*;
+import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.TimetableService;
 import com.fot.system.view.components.CustomButton;
@@ -52,11 +49,11 @@ public class TimetablePanel extends JPanel {
         titleBlock.setOpaque(false);
 
         JLabel title = new JLabel("Timetable Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        title.setFont(AppTheme.fontBold(26));
         title.setForeground(AppTheme.TEXT_DARK);
 
         JLabel subtitle = new JLabel("Manage timetable sessions in a clean editable table with add, edit, and delete actions.");
-        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setFont(AppTheme.fontPlain(14));
         subtitle.setForeground(AppTheme.TEXT_SUBTLE);
 
         titleBlock.add(title, BorderLayout.NORTH);
@@ -94,18 +91,18 @@ public class TimetablePanel extends JPanel {
     }
 
     private void loadLookupData() {
-        SwingWorker<LookupData, Void> worker = new SwingWorker<>() {
+        SwingWorker<TimetableLookupData, Void> worker = new SwingWorker<>() {
             @Override
-            protected LookupData doInBackground() {
-                return new LookupData(courseService.getAllCourses(), courseService.getAllLecturers());
+            protected TimetableLookupData doInBackground() {
+                return new TimetableLookupData(courseService.getAllCourses(), courseService.getAllLecturers());
             }
 
             @Override
             protected void done() {
                 try {
-                    LookupData data = get();
-                    courses = data.courses;
-                    lecturers = data.lecturers;
+                    TimetableLookupData data = get();
+                    courses = data.getCourses();
+                    lecturers = data.getLecturers();
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
                             TimetablePanel.this,
@@ -275,15 +272,5 @@ public class TimetablePanel extends JPanel {
 
     private String valueOrDash(String value) {
         return value == null || value.trim().isEmpty() ? "-" : value.trim();
-    }
-
-    private static class LookupData {
-        private final List<Course> courses;
-        private final List<Staff> lecturers;
-
-        private LookupData(List<Course> courses, List<Staff> lecturers) {
-            this.courses = courses;
-            this.lecturers = lecturers;
-        }
     }
 }
