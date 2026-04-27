@@ -14,9 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class BaseSidebar extends JPanel {
-    private static final int SIDEBAR_ICON_SIZE = 18;
-    private static final int SIDEBAR_ICON_SLOT_WIDTH = 28;
-    private static final int PROFILE_AVATAR_SIZE = 40;
+
     protected final MainDashboard parentFrame;
     private final Map<String, JButton> menuButtons = new HashMap<>();
     private String activeCardName = AppConfig.MENU_HOME;
@@ -197,17 +195,17 @@ public abstract class BaseSidebar extends JPanel {
      * @author methum
      */
     private Icon createAlignedIcon(FontAwesomeSolid iconCode) {
-        FontIcon baseIcon = FontIcon.of(iconCode, SIDEBAR_ICON_SIZE, AppTheme.TEXT_LIGHT);
+        FontIcon baseIcon = FontIcon.of(iconCode, AppTheme.SIDEBAR_ICON_SIZE, AppTheme.TEXT_LIGHT);
         return new Icon() {
             @Override
             public void paintIcon(Component c, Graphics g, int x, int y) {
-                int offsetX = x + (SIDEBAR_ICON_SLOT_WIDTH - baseIcon.getIconWidth()) / 2;
+                int offsetX = x + (AppTheme.SIDEBAR_ICON_SLOT_WIDTH - baseIcon.getIconWidth()) / 2;
                 baseIcon.paintIcon(c, g, offsetX, y);
             }
 
             @Override
             public int getIconWidth() {
-                return SIDEBAR_ICON_SLOT_WIDTH;
+                return AppTheme.SIDEBAR_ICON_SLOT_WIDTH;
             }
 
             @Override
@@ -234,9 +232,9 @@ public abstract class BaseSidebar extends JPanel {
         card.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JComponent avatar = createCircleAvatar(user);
-        avatar.setPreferredSize(new Dimension(PROFILE_AVATAR_SIZE, PROFILE_AVATAR_SIZE));
-        avatar.setMinimumSize(new Dimension(PROFILE_AVATAR_SIZE, PROFILE_AVATAR_SIZE));
-        avatar.setMaximumSize(new Dimension(PROFILE_AVATAR_SIZE, PROFILE_AVATAR_SIZE));
+        avatar.setPreferredSize(new Dimension(AppTheme.PROFILE_AVATAR_SIZE, AppTheme.PROFILE_AVATAR_SIZE));
+        avatar.setMinimumSize(new Dimension(AppTheme.PROFILE_AVATAR_SIZE,AppTheme.PROFILE_AVATAR_SIZE));
+        avatar.setMaximumSize(new Dimension(AppTheme.PROFILE_AVATAR_SIZE, AppTheme.PROFILE_AVATAR_SIZE));
 
         JPanel details = new JPanel();
         details.setOpaque(false);

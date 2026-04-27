@@ -18,7 +18,7 @@ public class LecturerSidebar extends BaseSidebar {
     }
 
     /**
-     * add lecturer specific menu buttons
+     * add lecturer specific menu bu ttons
      * @author methum
      */
     @Override

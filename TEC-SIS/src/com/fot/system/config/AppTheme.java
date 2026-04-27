@@ -70,6 +70,11 @@ public class AppTheme {
         return new Font(FONT_FAMILY, Font.BOLD, size);
     }
 
+    // sidebar
+    public static final int SIDEBAR_ICON_SIZE = 18;
+    public static final int SIDEBAR_ICON_SLOT_WIDTH = 28;
+    public static final int PROFILE_AVATAR_SIZE = 40;
+
     // table
     public static final Color TABLE_HEADER_BG = PRIMARY;
     public static final Color TABLE_HEADER_FG = Color.WHITE;
