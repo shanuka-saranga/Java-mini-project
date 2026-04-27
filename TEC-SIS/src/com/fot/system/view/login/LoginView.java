@@ -12,16 +12,23 @@ public class LoginView extends JFrame {
     private JPasswordField passwordField;
     private JButton loginButton;
 
+    /**
+     * initialize login page with optional pre-filled email and password (for testing/demo purposes)
+     * @param email
+     * @param password
+     * @author methum
+     */
     public LoginView(String email, String password) {
 
+        // basic frame setup
         setTitle("TEC-SIS | Login");
         setSize(450, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(null); // window center
         setResizable(false);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setBackground(AppTheme.BG_LIGHT);
 
         JPanel headerBar = new JPanel();
         headerBar.setBackground(AppTheme.PRIMARY);
