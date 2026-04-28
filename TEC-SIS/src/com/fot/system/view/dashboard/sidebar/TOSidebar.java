@@ -14,7 +14,7 @@ public class TOSidebar extends BaseSidebar {
      * @author methum
      */
     public TOSidebar(MainDashboard frame) {
-        super(frame, "TECHNICAL OFFICER");
+        super(frame, AppConfig.ROLE_TO);
     }
 
     /**

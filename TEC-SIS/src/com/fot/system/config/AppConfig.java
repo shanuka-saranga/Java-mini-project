@@ -46,4 +46,6 @@ public class AppConfig {
     public static final Dimension BUTTON_SIZE_SAVE = new Dimension(150, 40);
     public static final String[] COURSE_SESSION_TYPES = {"THEORY", "PRACTICAL", "BOTH"};
 
+    public static final Dimension LOGIN_PANEL_HEADER_BAR_SIZE =  new Dimension(450, 10);
+
 }

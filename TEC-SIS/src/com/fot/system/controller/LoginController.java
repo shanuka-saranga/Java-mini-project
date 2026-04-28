@@ -54,7 +54,7 @@ public class LoginController {
                             openDashboard(user);
                             view.dispose();
                         } else {
-                            JOptionPane.showMessageDialog(view,
+                            JOptionPane.showMessageDialog(view, // popup window
                                     "Invalid Email or Password",
                                     "Login Failed",
                                     JOptionPane.ERROR_MESSAGE);

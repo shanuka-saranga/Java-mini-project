@@ -57,6 +57,7 @@ public class MainDashboard extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
+        // add sidebars
         sidebar = createSidebar();
         add(sidebar, BorderLayout.WEST);
         cardLayout = new CardLayout();
@@ -131,7 +132,7 @@ public class MainDashboard extends JFrame {
 
     /**
      * Add student dashboard panels
-     * @author janith
+     * @author methum
      */
     private void addStudentPanels() {
         contentArea.add(new StudentHomePanel(currentUser), AppConfig.MENU_HOME);
@@ -218,8 +219,8 @@ public class MainDashboard extends JFrame {
         if (choice != JOptionPane.YES_OPTION) {
             return;
         }
-
-        LoginView loginView = new LoginView(getDevEmailForRole(), "1234");
+        // reopen login window
+        LoginView loginView = new LoginView(getDevEmailForRole(), "");
         loginView.setVisible(true);
         dispose();
     }

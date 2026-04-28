@@ -1,5 +1,6 @@
 package com.fot.system.view.login;
 
+import com.fot.system.config.AppConfig;
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.LoginController;
 import javax.swing.*;
@@ -12,29 +13,36 @@ public class LoginView extends JFrame {
     private JPasswordField passwordField;
     private JButton loginButton;
 
+    /**
+     * initialize login page with optional pre-filled email and password (for testing/demo purposes)
+     * @param email
+     * @param password
+     * @author methum
+     */
     public LoginView(String email, String password) {
 
+        // basic frame setup
         setTitle("TEC-SIS | Login");
         setSize(450, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(null); // window center
         setResizable(false);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setBackground(AppTheme.BG_LIGHT);
 
         JPanel headerBar = new JPanel();
         headerBar.setBackground(AppTheme.PRIMARY);
-        headerBar.setPreferredSize(new Dimension(450, 10));
+        headerBar.setPreferredSize(AppConfig.LOGIN_PANEL_HEADER_BAR_SIZE);
         mainPanel.add(headerBar, BorderLayout.NORTH);
 
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(Color.WHITE);
+        formPanel.setBackground(AppTheme.BG_LIGHT);
         formPanel.setBorder(new EmptyBorder(30, 40, 30, 40));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 5, 10, 5);
+        gbc.insets = new Insets(10, 5, 10, 5); // margin
 
         JLabel titleLabel = new JLabel("Welcome Back", JLabel.CENTER);
         titleLabel.setFont(AppTheme.LOGIN_TITLE_FONT);
@@ -46,7 +54,6 @@ public class LoginView extends JFrame {
         formPanel.add(titleLabel, gbc);
 
         gbc.insets = new Insets(5, 5, 5, 5);
-
         JLabel emailLabel = createFieldLabel("Email Address");
         gbc.gridy = 1;
         formPanel.add(emailLabel, gbc);
