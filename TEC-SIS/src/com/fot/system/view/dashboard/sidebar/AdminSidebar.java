@@ -12,7 +12,7 @@ public class AdminSidebar extends BaseSidebar {
      * @author methum
      */
     public AdminSidebar(MainDashboard frame) {
-        super(frame, "ADMIN");
+        super(frame, AppConfig.ROLE_ADMIN);
     }
 
     /**

@@ -8,6 +8,8 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.util.HashMap;
@@ -139,12 +141,12 @@ public abstract class BaseSidebar extends JPanel {
             }
         });
 
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
+        button.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
                 applyMenuButtonStyle(button, cardName.equals(activeCardName), true);
             }
 
-            public void mouseExited(java.awt.event.MouseEvent evt) {
+            public void mouseExited(MouseEvent evt) {
                 applyMenuButtonStyle(button, cardName.equals(activeCardName), false);
             }
         });
@@ -290,11 +292,11 @@ public abstract class BaseSidebar extends JPanel {
                 }
                 g2.setClip(previousClip);
 
-                g2.setColor(AppTheme.TEXT_LIGHT);
+                g2.setColor(AppTheme.TEXT_DARK);
                 g2.draw(circle);
 
                 if (image == null) {
-                    g2.setFont(AppTheme.fontBold(13));
+                    g2.setFont(AppTheme.fontBold(20));
                     FontMetrics metrics = g2.getFontMetrics();
                     int textX = x + (size - metrics.stringWidth(text)) / 2;
                     int textY = y + ((size - metrics.getHeight()) / 2) + metrics.getAscent();

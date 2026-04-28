@@ -14,7 +14,7 @@ public class LecturerSidebar extends BaseSidebar {
      * @author methum
      */
     public LecturerSidebar(MainDashboard frame) {
-        super(frame, "LECTURER");
+        super(frame, AppConfig.ROLE_LECTURER);
     }
 
     /**

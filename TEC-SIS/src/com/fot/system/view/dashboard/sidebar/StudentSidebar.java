@@ -14,7 +14,7 @@ public class StudentSidebar extends BaseSidebar {
      * @author methum
      */
     public StudentSidebar(MainDashboard frame) {
-        super(frame, "STUDENT");
+        super(frame, AppConfig.ROLE_STUDENT);
     }
 
     /**
