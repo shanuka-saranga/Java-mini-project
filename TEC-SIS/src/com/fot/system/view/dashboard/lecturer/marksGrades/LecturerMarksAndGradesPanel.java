@@ -8,9 +8,10 @@ import com.fot.system.service.LecturerGradesService;
 import com.fot.system.service.LecturerMarksService;
 import com.fot.system.view.components.CloseActionButton;
 import com.fot.system.view.dashboard.lecturer.myCourses.LecturerCourseCard;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -69,12 +70,13 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         this.cardLayout = new CardLayout();
         this.cardPanel = new JPanel(cardLayout);
 
+        // lecture marks and grade panel styles
         setLayout(new BorderLayout(20, 20));
         setBackground(AppTheme.SURFACE_SOFT);
         setBorder(new EmptyBorder(24, 24, 24, 24));
-
         add(createHeader(), BorderLayout.NORTH);
-        cardPanel.setOpaque(false);
+
+        cardPanel.setOpaque(false); // background
         courseListPanel = new JPanel();
         courseListPanel.setOpaque(true);
         courseListPanel.setBackground(AppTheme.SURFACE_SOFT);
@@ -119,19 +121,19 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                 BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
-        txtGradeSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+        txtGradeSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+            public void insertUpdate(DocumentEvent e) {
                 applyGradeFilters();
             }
 
             @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+            public void removeUpdate(DocumentEvent e) {
                 applyGradeFilters();
             }
 
             @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            public void changedUpdate(DocumentEvent e) {
                 applyGradeFilters();
             }
         });
@@ -140,7 +142,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         cmbGradeBatch.setFont(AppTheme.fontPlain(13));
         cmbGradeBatch.setPreferredSize(new Dimension(160, 38));
         cmbGradeBatch.addActionListener(e -> applyGradeFilters());
-
         gradeTableModel = new DefaultTableModel(
                 new Object[]{"Reg No", "Student", "Batch", "CA", "End", "Final Mark", "Grade"},
                 0
