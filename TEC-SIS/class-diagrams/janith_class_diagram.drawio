@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2">
   <diagram name="Page-1" id="diagram-1">
-    <mxGraphModel dx="1627" dy="1252" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="9100" pageHeight="2920" math="0" shadow="0">
+    <mxGraphModel dx="781" dy="601" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="9100" pageHeight="2920" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -107,7 +107,7 @@
           <mxGeometry height="130" width="213" x="4810" y="360" as="geometry" />
         </mxCell>
         <mxCell id="36" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fontSize=12;strokeWidth=2;" value="&lt;b&gt;LecturerMarksAndGradesPanel&lt;/b&gt;&lt;hr&gt;- currentUser: User&lt;br&gt;- courseService: CourseService&lt;br&gt;- lecturerMarksService: LecturerMarksService&lt;br&gt;- lecturerGradesService: LecturerGradesService&lt;br&gt;- selectedCourse: Course&lt;br&gt;- currentMarksYear: int&lt;hr&gt;- loadAssignedCourses(): void&lt;br&gt;- openCourse(course): void&lt;br&gt;- openAssessmentDetails(summary): void&lt;br&gt;- saveAssessmentDetailRows(): void" vertex="1">
-          <mxGeometry height="250" width="243" x="5260" y="360" as="geometry" />
+          <mxGeometry height="250" width="283" x="5220" y="360" as="geometry" />
         </mxCell>
         <mxCell id="37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fontSize=12;strokeWidth=2;" value="&lt;b&gt;AssessmentMarksDetailPanel&lt;/b&gt;&lt;hr&gt;- lblTitle: JLabel&lt;br&gt;- tableModel: DefaultTableModel&lt;br&gt;- currentAssessmentType: String&lt;br&gt;- currentRows: List&lt;hr&gt;+ setAssessmentTitle(title): void&lt;br&gt;+ setAssessmentType(type): void&lt;br&gt;+ setRows(rows): void&lt;br&gt;+ getEditedRows(): List" vertex="1">
           <mxGeometry height="190" width="200" x="5610" y="360" as="geometry" />
@@ -158,13 +158,13 @@
           <mxGeometry height="125" width="183" x="3930" y="1400" as="geometry" />
         </mxCell>
         <mxCell id="53" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fontSize=12;strokeWidth=2;" value="&lt;b&gt;LecturerMarksService&lt;/b&gt;&lt;hr&gt;- lecturerMarksRepository: LecturerMarksRepository&lt;hr&gt;+ getCurrentSemesterContext(courseId, year): CourseSemesterContext&lt;br&gt;+ getQuizCardSummaries(courseId, year, count): List&lt;br&gt;+ getAssessmentRows(type, courseId, year, itemNo): List&lt;br&gt;+ saveAssessmentRows(type, itemNo, rows): void" vertex="1">
-          <mxGeometry height="210" width="353" x="5140" y="1400" as="geometry" />
+          <mxGeometry height="210" width="403" x="5090" y="1400" as="geometry" />
         </mxCell>
         <mxCell id="54" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fontSize=12;strokeWidth=2;" value="&lt;b&gt;LecturerGradesService&lt;/b&gt;&lt;hr&gt;- lecturerGradesRepository: MarksRepository&lt;br&gt;- academicPerformance: AcademicPerformance&lt;hr&gt;+ getCourseGradeViewData(courseId): CourseGradeViewData&lt;br&gt;- buildRow(record): StudentGradeRow" vertex="1">
           <mxGeometry height="165" width="223" x="5600" y="1400" as="geometry" />
         </mxCell>
         <mxCell id="55" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fontSize=12;strokeWidth=2;" value="&lt;b&gt;AcademicPerformance&lt;/b&gt;&lt;hr&gt;+ calculateCaAverage(record): double&lt;br&gt;+ calculateEndExamAverage(record): double&lt;br&gt;+ calculateFinalMark(sessionType, ca, end): double&lt;br&gt;+ resolveGrade(finalMark): String&lt;br&gt;+ resolveSpecialGrade(record, ca, end): String&lt;br&gt;+ calculateSGpa(grades, credits): double" vertex="1">
-          <mxGeometry height="210" width="243" x="5930" y="1400" as="geometry" />
+          <mxGeometry height="190" width="243" x="5930" y="1400" as="geometry" />
         </mxCell>
         <mxCell id="56" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fontSize=12;strokeWidth=2;" value="&lt;b&gt;AddUserRequest&lt;/b&gt;&lt;hr&gt;- role: String&lt;br&gt;- firstName: String&lt;br&gt;- email: String&lt;br&gt;- departmentId: String&lt;br&gt;- registrationNo / staffCode: String&lt;hr&gt;+ isStudentRole(): boolean" vertex="1">
           <mxGeometry height="180" width="210" x="360" y="1830" as="geometry" />
@@ -206,7 +206,7 @@
           <mxGeometry height="220" width="223" x="4210" y="1800" as="geometry" />
         </mxCell>
         <mxCell id="69" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fontSize=12;strokeWidth=2;" value="&lt;b&gt;AssessmentCardSummary&lt;/b&gt;&lt;hr&gt;- title: String&lt;br&gt;- assessmentType: String&lt;br&gt;- itemNo: int&lt;br&gt;- averageMark: double&lt;br&gt;- attemptCount: int&lt;br&gt;- absentCount / medicalCount / pendingCount: int" vertex="1">
-          <mxGeometry height="155" width="213" x="5260" y="1800" as="geometry" />
+          <mxGeometry height="155" width="213" x="5250" y="1800" as="geometry" />
         </mxCell>
         <mxCell id="70" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=8;fontSize=12;strokeWidth=2;" value="&lt;b&gt;AssessmentStudentMarkRow&lt;/b&gt;&lt;hr&gt;- markId: int&lt;br&gt;- registrationNo: String&lt;br&gt;- attemptNo: int&lt;br&gt;- examType: String&lt;br&gt;- status: String&lt;br&gt;- mark: Double" vertex="1">
           <mxGeometry height="155" width="190" x="5580" y="1800" as="geometry" />
@@ -821,16 +821,16 @@
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="6010" y="610" />
-              <mxPoint x="5530" y="610" />
-              <mxPoint x="5530" y="1877" />
+              <mxPoint x="5520" y="610" />
+              <mxPoint x="5520" y="1877" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="161" edge="1" parent="1" source="53" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=12;strokeWidth=2;" target="79" value="">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="5410" y="1690" />
-              <mxPoint x="5500" y="1690" />
+              <mxPoint x="5400" y="1690" />
+              <mxPoint x="5490" y="1690" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -845,16 +845,16 @@
         <mxCell id="163" edge="1" parent="1" source="53" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=12;strokeWidth=2;" target="70" value="">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="5350" y="1630" />
-              <mxPoint x="5660" y="1630" />
+              <mxPoint x="5420" y="1630" />
+              <mxPoint x="5650" y="1630" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="164" edge="1" parent="1" source="53" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=12;strokeWidth=2;" target="71" value="">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="5376" y="1660" />
-              <mxPoint x="5982" y="1660" />
+              <mxPoint x="5370" y="1720" />
+              <mxPoint x="5982" y="1720" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -877,24 +877,24 @@
         <mxCell id="167" edge="1" parent="1" source="54" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=12;strokeWidth=2;" target="72" value="">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="5780" y="1640" />
-              <mxPoint x="6245" y="1640" />
+              <mxPoint x="5780" y="1630" />
+              <mxPoint x="6245" y="1630" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="168" edge="1" parent="1" source="54" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=12;strokeWidth=2;" target="73" value="">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="5730" y="1720" />
-              <mxPoint x="6565" y="1720" />
+              <mxPoint x="5730" y="1690" />
+              <mxPoint x="6565" y="1690" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="169" edge="1" parent="1" source="54" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;fontSize=12;strokeWidth=2;" target="74" value="">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="5760" y="1690" />
-              <mxPoint x="6942" y="1690" />
+              <mxPoint x="5760" y="1660" />
+              <mxPoint x="6942" y="1660" />
             </Array>
           </mxGeometry>
         </mxCell>

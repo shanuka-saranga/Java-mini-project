@@ -21,6 +21,32 @@ import java.text.DecimalFormat;
 import java.time.Year;
 import java.util.List;
 
+/*
+LecturerMarksAndGradesPanel
+├── Header Panel
+└── cardPanel (CardLayout)
+    ├── LIST_CARD
+    │   └── courseListScrollPane
+    │       └── courseListPanel
+    │           └── LecturerCourseCard list
+    └── DETAILS_CARD
+        └── detailsView
+            └── openedCoursePanel
+                ├── panelHeader
+                │   ├── lblOpenedCourseTab
+                │   └── closeButton
+                └── openedCourseScrollPane
+                    └── detailsContentPanel (CardLayout)
+                        ├── SUMMARY_VIEW
+                        │   └── contentStack
+                        │       ├── lblSemesterSummary
+                        │       ├── summaryCardsPanel
+                        │       └── gradeSection
+                        └── ITEM_VIEW
+                            └── assessmentMarksDetailPanel
+
+ */
+
 /**
  * manages lecturer marks entry, assessment summaries, and grade overview views
  * @author janith
@@ -110,9 +136,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         closeButton.addActionListener(e -> cardLayout.show(cardPanel, LIST_CARD));
         panelHeader.add(closeButton, BorderLayout.EAST);
 
+        // summary panel
         summaryCardsPanel = new JPanel(new GridLayout(0, 3, 14, 14));
         summaryCardsPanel.setOpaque(false);
 
+        // search bar
         txtGradeSearch = new JTextField();
         txtGradeSearch.setFont(AppTheme.fontPlain(13));
         txtGradeSearch.setPreferredSize(new Dimension(420, 38));
@@ -138,6 +166,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
             }
         });
 
+        // grades
         cmbGradeBatch = new JComboBox<>();
         cmbGradeBatch.setFont(AppTheme.fontPlain(13));
         cmbGradeBatch.setPreferredSize(new Dimension(160, 38));
@@ -168,6 +197,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         gradeRowSorter = new TableRowSorter<>(gradeTableModel);
         gradeTable.setRowSorter(gradeRowSorter);
 
+        // content stack
         JPanel contentStack = new JPanel();
         contentStack.setOpaque(false);
         contentStack.setLayout(new BoxLayout(contentStack, BoxLayout.Y_AXIS));
@@ -177,7 +207,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         contentStack.add(summaryCardsPanel);
         contentStack.add(Box.createVerticalStrut(20));
         contentStack.add(createGradeSection());
-        contentStack.add(Box.createVerticalGlue());
+        contentStack.add(Box.createVerticalGlue()); // push content to top
         detailsContentPanel.add(contentStack, SUMMARY_VIEW);
 
         assessmentMarksDetailPanel = new AssessmentMarksDetailPanel(
@@ -315,7 +345,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
      */
     private void openCourse(Course course) {
         selectedCourse = course;
-        logGradeFlow("openCourse -> courseId=" + course.getId() + ", courseCode=" + course.getCourseCode());
         lblOpenedCourseTab.setText(course.getCourseName());
         detailsCardLayout.show(detailsContentPanel, SUMMARY_VIEW);
         loadMarksOverview();
@@ -335,12 +364,9 @@ public class LecturerMarksAndGradesPanel extends JPanel {
             @Override
             protected MarksViewData doInBackground() {
                 int currentYear = Year.now().getValue();
-                logGradeFlow("loadMarksOverview.start -> courseId=" + selectedCourse.getId() + ", year=" + currentYear);
                 CourseSemesterContext context = lecturerMarksService.getCurrentSemesterContext(selectedCourse.getId(), currentYear);
                 List<AssessmentCardSummary> summaries = buildAssessmentSummaries(context);
                 CourseGradeViewData gradeViewData = lecturerGradesService.getCourseGradeViewData(selectedCourse.getId());
-                logGradeFlow("loadMarksOverview.fetched -> summaryCards=" + summaries.size()
-                        + ", gradeRows=" + (gradeViewData.getRows() == null ? 0 : gradeViewData.getRows().size()));
                 return new MarksViewData(context, summaries, gradeViewData);
             }
 
@@ -349,12 +375,10 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                 try {
                     MarksViewData data = get();
                     currentMarksYear = data.context.getSemesterYear();
-                    logGradeFlow("loadMarksOverview.done -> currentMarksYear=" + currentMarksYear);
                     lblSemesterSummary.setText("Current Year Marks Summary: " + data.context.getSemesterYear());
                     updateSummaryCards(data.summaries);
                     updateGradeView(data.gradeViewData);
                 } catch (Exception e) {
-                    logGradeFlow("loadMarksOverview.error -> " + e.getMessage());
                     lblSemesterSummary.setText("Current Year Marks Summary: -");
                     updateSummaryCards(List.of());
                     updateGradeView(createEmptyGradeViewData());
@@ -512,8 +536,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                     row.getGrade()
             });
         }
-        logGradeFlow("updateGradeView -> renderedRows=" + gradeTableModel.getRowCount()
-                + ", batches=" + (viewData.getRegistrationYears() == null ? 0 : viewData.getRegistrationYears().size()));
+
         applyGradeFilters();
     }
 
@@ -589,7 +612,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                     );
                     return normalizeAssessmentRowsForCourse(summary, rows);
                 }catch (Exception e) {
-                    logGradeFlow("openAssessmentDetails.error -> " + e.getMessage());
                     throw new RuntimeException("Failed to load assessment details. Make sure the new marks tables and status columns exist in your database.");
                 }
             }
@@ -766,14 +788,4 @@ public class LecturerMarksAndGradesPanel extends JPanel {
     ) {
     }
 
-    /**
-     * Writes grade flow debug messages when logging is enabled.
-     * @param message debug message text
-     * @author janith
-     */
-    private void logGradeFlow(String message) {
-        if (ENABLE_GRADE_FLOW_LOGS) {
-            System.out.println("[GRADE-FLOW][UI] " + message);
-        }
-    }
 }
