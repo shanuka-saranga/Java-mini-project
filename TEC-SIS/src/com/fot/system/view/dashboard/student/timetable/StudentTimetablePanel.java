@@ -1,7 +1,7 @@
 package com.fot.system.view.dashboard.student.timetable;
 
 import com.fot.system.model.entity.User;
-import com.fot.system.view.dashboard.shared_components.TimeTablePanel;
+import com.fot.system.view.shared_components.TimeTablePanel;
 
 /**
  * Shows the student timetable using the shared read-only timetable layout.

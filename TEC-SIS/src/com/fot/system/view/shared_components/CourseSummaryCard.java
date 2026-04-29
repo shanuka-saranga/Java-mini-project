@@ -1,7 +1,6 @@
-package com.fot.system.view.components;
+package com.fot.system.view.shared_components;
 
 import com.fot.system.config.AppTheme;
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 
 import javax.swing.*;

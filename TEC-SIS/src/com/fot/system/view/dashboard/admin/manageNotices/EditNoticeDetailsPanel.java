@@ -2,9 +2,9 @@ package com.fot.system.view.dashboard.admin.manageNotices;
 
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
-import com.fot.system.view.components.ThemedComboBox;
-import com.fot.system.view.components.ThemedDatePicker;
-import com.fot.system.view.components.ThemedTextField;
+import com.fot.system.view.shared_components.ThemedComboBox;
+import com.fot.system.view.shared_components.ThemedDatePicker;
+import com.fot.system.view.shared_components.ThemedTextField;
 
 import javax.swing.*;
 import java.awt.*;

@@ -6,9 +6,9 @@ import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.service.AttendanceService;
 import com.fot.system.service.FileOpenService;
-import com.fot.system.view.components.CustomButton;
-import com.fot.system.view.components.MaterialActionButton;
-import com.fot.system.view.components.ThemedDatePicker;
+import com.fot.system.view.shared_components.CustomButton;
+import com.fot.system.view.shared_components.MaterialActionButton;
+import com.fot.system.view.shared_components.ThemedDatePicker;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import javax.swing.*;

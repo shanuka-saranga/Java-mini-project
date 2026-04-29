@@ -1,4 +1,4 @@
-package com.fot.system.view.components;
+package com.fot.system.view.shared_components;
 
 import com.fot.system.config.AppTheme;
 
@@ -6,13 +6,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class ProfileSectionCard extends JPanel {
+public class SectionCard extends JPanel {
 
     private final JPanel contentPanel;
 
-    public ProfileSectionCard(String title, String description) {
+    public SectionCard(String title, String description) {
         setLayout(new BorderLayout(0, 10));
-        setBackground(Color.WHITE);
+        setBackground(AppTheme.CARD_BG);
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(AppTheme.BORDER_LIGHT, 1, false),
                 new EmptyBorder(18, 18, 18, 18)

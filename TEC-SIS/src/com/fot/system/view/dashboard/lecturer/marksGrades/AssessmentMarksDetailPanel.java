@@ -2,9 +2,8 @@ package com.fot.system.view.dashboard.lecturer.marksGrades;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
-import com.fot.system.view.components.CustomButton;
-import com.fot.system.view.components.SectionCard;
+import com.fot.system.view.shared_components.CustomButton;
+import com.fot.system.view.shared_components.SectionCard;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

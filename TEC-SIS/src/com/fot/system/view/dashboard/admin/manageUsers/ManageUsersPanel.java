@@ -6,7 +6,7 @@ import com.fot.system.model.entity.Department;
 import com.fot.system.model.entity.User;
 import com.fot.system.service.DepartmentService;
 import com.fot.system.service.UserService;
-import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.shared_components.CustomButton;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 

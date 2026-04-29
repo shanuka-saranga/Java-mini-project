@@ -24,7 +24,7 @@ import com.fot.system.view.dashboard.to.TOHomePanel;
 import com.fot.system.view.dashboard.to.TOAttendancePanel;
 import com.fot.system.view.dashboard.to.TOMedicalPanel;
 import com.fot.system.view.dashboard.to.TOTimetablePanel;
-import com.fot.system.view.dashboard.shared_components.UserProfilePanelFactory;
+import com.fot.system.view.shared_components.UserProfilePanelFactory;
 import com.fot.system.view.dashboard.sidebar.AdminSidebar;
 import com.fot.system.view.dashboard.sidebar.BaseSidebar;
 import com.fot.system.view.dashboard.sidebar.LecturerSidebar;
