@@ -295,6 +295,9 @@ public class AcademicPerformance {
         return !courseCode.trim().toUpperCase().startsWith("ENG");
     }
 
+
+
+
     public double calculateSGpa(List<String> grades, List<Integer> credits) {
         if (grades == null || credits == null || grades.size() != credits.size() || grades.isEmpty()) {
             return 0.00;

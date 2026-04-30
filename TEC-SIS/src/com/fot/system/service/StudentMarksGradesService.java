@@ -21,6 +21,8 @@ public class StudentMarksGradesService {
         this.academicPerformance = new AcademicPerformance();
     }
 
+    //marks calculation
+
     public StudentMarksGradeViewData getStudentMarksGradeViewData(int studentUserId) {
         if (studentUserId <= 0) {
             throw new RuntimeException("Invalid student user ID.");
