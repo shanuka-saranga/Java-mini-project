@@ -31,13 +31,10 @@ public class LecturerGradesService {
         }
 
         int currentYear = Year.now().getValue();
-        logGradeFlow("getCourseGradeViewData.start -> courseId=" + courseId + ", year=" + currentYear);
         List<StudentCourseGradeRecord> records = lecturerGradesRepository.findStudentCourseGradeRecords(courseId, currentYear);
-        logGradeFlow("getCourseGradeViewData.rawRecords -> count=" + records.size());
         List<StudentGradeRow> rows = records.stream()
                 .map(this::buildRow)
                 .toList();
-        logGradeFlow("getCourseGradeViewData.calculatedRows -> count=" + rows.size());
 
         CourseGradeViewData viewData = new CourseGradeViewData();
         viewData.setRows(rows);

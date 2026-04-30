@@ -19,6 +19,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -399,16 +400,19 @@ public class LecturerMarksAndGradesPanel extends JPanel {
      * @author janith
      */
     private List<AssessmentCardSummary> buildAssessmentSummaries(int semesterYear) {
-        List<AssessmentCardSummary> summaries = new java.util.ArrayList<>();
-        summaries.addAll(lecturerMarksService.getQuizCardSummaries(
-                selectedCourse.getId(),
-                semesterYear,
-                selectedCourse.getNoOfQuizzes()
+        List<AssessmentCardSummary> summaries = new ArrayList<>();
+
+        summaries.addAll(
+                lecturerMarksService.getQuizCardSummaries(
+                    selectedCourse.getId(),
+                    semesterYear,
+                    selectedCourse.getNoOfQuizzes()
         ));
-        summaries.addAll(lecturerMarksService.getAssignmentCardSummaries(
-                selectedCourse.getId(),
-                semesterYear,
-                selectedCourse.getNoOfAssignments()
+        summaries.addAll(
+                lecturerMarksService.getAssignmentCardSummaries(
+                    selectedCourse.getId(),
+                    semesterYear,
+                    selectedCourse.getNoOfAssignments()
         ));
 
         AssessmentCardSummary midSummary = lecturerMarksService.getMidExamSummary(

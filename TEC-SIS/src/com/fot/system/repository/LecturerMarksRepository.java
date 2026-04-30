@@ -19,7 +19,12 @@ public class LecturerMarksRepository {
     }
 
 
-
+    /**
+     * Loads summary data for quiz cards of the selected course and semester.
+     * @param courseId course id
+     * @param semesterYear semester year( current year)
+     * @param quizCount qui
+     */
     public List<AssessmentCardSummary> findQuizCardSummaries(int courseId, int semesterYear, int quizCount) {
         List<AssessmentCardSummary> summaries = new ArrayList<>();
         String sql = """
