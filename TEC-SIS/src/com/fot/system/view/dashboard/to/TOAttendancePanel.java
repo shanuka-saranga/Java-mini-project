@@ -285,9 +285,7 @@ public class TOAttendancePanel extends JPanel {
         table.setGridColor(AppTheme.BORDER_SOFT);
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(AppTheme.fontBold(13));
+        AppTheme.applyTableHeaderTheme(table);
         table.setFillsViewportHeight(true);
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         if (!editable) {

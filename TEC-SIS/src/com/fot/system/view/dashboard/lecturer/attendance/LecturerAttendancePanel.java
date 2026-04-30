@@ -193,9 +193,7 @@ public class LecturerAttendancePanel extends JPanel {
         attendanceTable.setGridColor(AppTheme.BORDER_SOFT);
         attendanceTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         attendanceTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        attendanceTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        attendanceTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        attendanceTable.getTableHeader().setFont(AppTheme.fontBold(13));
+        AppTheme.applyTableHeaderTheme(attendanceTable);
         attendanceTable.setFillsViewportHeight(true);
 
         rowSorter = new TableRowSorter<>(tableModel);
@@ -224,9 +222,7 @@ public class LecturerAttendancePanel extends JPanel {
         studentSummaryTable.setGridColor(AppTheme.BORDER_SOFT);
         studentSummaryTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         studentSummaryTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        studentSummaryTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        studentSummaryTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        studentSummaryTable.getTableHeader().setFont(AppTheme.fontBold(13));
+        AppTheme.applyTableHeaderTheme(studentSummaryTable);
         studentSummaryTable.setFillsViewportHeight(true);
 
         summaryRowSorter = new TableRowSorter<>(studentSummaryTableModel);
