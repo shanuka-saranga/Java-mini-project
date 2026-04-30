@@ -5,7 +5,7 @@ import com.fot.system.model.dto.LecturerDashboardData;
 import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.NoticeService;
-import com.fot.system.view.components.FeedItemCard;
+import com.fot.system.view.shared_components.FeedItemCard;
 import com.fot.system.view.dashboard.admin.components.DashboardStatCard;
 import com.fot.system.view.dashboard.admin.components.NoticeFeedPanel;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;

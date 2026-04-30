@@ -44,12 +44,40 @@ public class AcademicPerformance {
     }
 
     /**
+     * Calculates the CA average for CGPA snapshots using repository-provided summary data.
+     * @param snapshot student course performance snapshot
+     * @author janith
+     */
+    public double calculateCaAverage(StudentCoursePerformance snapshot) {
+        return averageComponentScores(
+                calculateQuizAverageForConfiguredCount(
+                        snapshot.getQuizTotal(),
+                        snapshot.getQuizLowestPresentMark(),
+                        snapshot.getQuizPresentCount(),
+                        snapshot.getQuizCount()
+                ),
+                calculateAssignmentAverageForConfiguredCount(snapshot.getAssignmentTotal(), snapshot.getAssignmentCount()),
+                calculateExamAverageForConfiguredCount(snapshot.getMidExamTotal(), snapshot.getMidExamCount())
+        );
+    }
+
+    /**
      * Calculates the end exam average from the configured end exam component count.
      * @param record student grade record snapshot
      * @author janith
      */
     public double calculateEndExamAverage(StudentCourseGradeRecord record) {
         Double endExamAverage = calculateExamAverageForConfiguredCount(record.getEndExamTotal(), record.getEndExamCount());
+        return endExamAverage == null ? 0 : endExamAverage;
+    }
+
+    /**
+     * Calculates the end exam average for CGPA snapshots.
+     * @param snapshot student course performance snapshot
+     * @author janith
+     */
+    public double calculateEndExamAverage(StudentCoursePerformance snapshot) {
+        Double endExamAverage = calculateExamAverageForConfiguredCount(snapshot.getEndExamTotal(), snapshot.getEndExamCount());
         return endExamAverage == null ? 0 : endExamAverage;
     }
 
@@ -218,9 +246,7 @@ public class AcademicPerformance {
      * @author janith
      */
     public String resolveSpecialGrade(StudentCourseGradeRecord record, double caAverage, double endExamAverage) {
-        if (record.getQuizMedicalCount() > 0
-                || record.getAssignmentMedicalCount() > 0
-                || record.getMidExamMedicalCount() > 0
+        if ( record.getMidExamMedicalCount() > 0
                 || record.getEndExamMedicalCount() > 0) {
             return "MC";
         }
@@ -236,6 +262,7 @@ public class AcademicPerformance {
                 || record.getMidExamIncompleteCount() > 0
                 || !caCompleteByCounts
                 || caAverage < CA_MINIMUM_MARK;
+
         boolean endFailOrIncomplete = record.getEndExamIncompleteCount() > 0
                 || !endCompleteByCounts
                 || endExamAverage < END_MINIMUM_MARK;
@@ -277,7 +304,9 @@ public class AcademicPerformance {
             if (!isCourseIncludedInCgpa(snapshot.getCourseCode())) continue;
             if (snapshot.getAttendancePercentage() < 80.0) continue;
 
-            double finalMark = calculateFinalMark(snapshot.getSessionType(), snapshot.getCaMarks(), snapshot.getEndExamMarks());
+            double caAverage = calculateCaAverage(snapshot);
+            double endExamAverage = calculateEndExamAverage(snapshot);
+            double finalMark = calculateFinalMark(snapshot.getSessionType(), caAverage, endExamAverage);
             String grade = resolveGrade(finalMark);
             double gradePoint = resolveGradePoint(grade);
 

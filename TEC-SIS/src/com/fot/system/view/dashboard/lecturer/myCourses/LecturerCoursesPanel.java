@@ -11,8 +11,10 @@ import com.fot.system.model.entity.User;
 import com.fot.system.service.CourseMaterialService;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.FileOpenService;
-import com.fot.system.view.components.CloseActionButton;
-import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.shared_components.CloseActionButton;
+import com.fot.system.view.shared_components.CustomButton;
+import com.fot.system.view.dashboard.lecturer.shared_components.LecturerCourseCard;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;

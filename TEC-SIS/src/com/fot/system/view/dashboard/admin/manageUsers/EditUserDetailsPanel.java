@@ -7,10 +7,10 @@ import com.fot.system.model.entity.Department;
 import com.fot.system.model.entity.Staff;
 import com.fot.system.model.entity.Student;
 import com.fot.system.model.entity.User;
-import com.fot.system.view.components.CustomButton;
-import com.fot.system.view.components.ProfilePhotoFrame;
-import com.fot.system.view.components.ThemedComboBox;
-import com.fot.system.view.components.ThemedDatePicker;
+import com.fot.system.view.shared_components.CustomButton;
+import com.fot.system.view.shared_components.ProfilePhotoFrame;
+import com.fot.system.view.shared_components.ThemedComboBox;
+import com.fot.system.view.shared_components.ThemedDatePicker;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

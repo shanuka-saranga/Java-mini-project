@@ -1,4 +1,4 @@
-package com.fot.system.view.dashboard.shared_components;
+package com.fot.system.view.shared_components;
 
 import com.fot.system.config.AppConfig;
 import com.fot.system.model.entity.*;

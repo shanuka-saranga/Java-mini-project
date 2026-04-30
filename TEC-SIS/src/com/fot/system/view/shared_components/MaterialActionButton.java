@@ -1,4 +1,4 @@
-package com.fot.system.view.components;
+package com.fot.system.view.shared_components;
 
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;

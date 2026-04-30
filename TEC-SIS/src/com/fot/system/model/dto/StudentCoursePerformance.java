@@ -1,7 +1,5 @@
 package com.fot.system.model.dto;
 
-import com.fot.system.model.entity.*;
-
 public class StudentCoursePerformance {
     private int courseId;
     private String courseCode;
@@ -9,6 +7,19 @@ public class StudentCoursePerformance {
     private String sessionType;
     private double caTotal;
     private double endExamMarks;
+    private double quizTotal;
+    private double assignmentTotal;
+    private double midExamTotal;
+    private double endExamTotal;
+    private int quizPresentCount;
+    private Double quizLowestPresentMark;
+    private int assignmentSubmittedCount;
+    private int midExamPresentCount;
+    private int endExamPresentCount;
+    private int quizCount;
+    private int assignmentCount;
+    private int midExamCount;
+    private int endExamCount;
 
     private int presentCount;
     private int absentCount;
@@ -70,6 +81,110 @@ public class StudentCoursePerformance {
 
     public void setEndExamMarks(double endExamAverage) {
         this.endExamMarks = endExamAverage;
+    }
+
+    public double getQuizTotal() {
+        return quizTotal;
+    }
+
+    public void setQuizTotal(double quizTotal) {
+        this.quizTotal = quizTotal;
+    }
+
+    public double getAssignmentTotal() {
+        return assignmentTotal;
+    }
+
+    public void setAssignmentTotal(double assignmentTotal) {
+        this.assignmentTotal = assignmentTotal;
+    }
+
+    public double getMidExamTotal() {
+        return midExamTotal;
+    }
+
+    public void setMidExamTotal(double midExamTotal) {
+        this.midExamTotal = midExamTotal;
+    }
+
+    public double getEndExamTotal() {
+        return endExamTotal;
+    }
+
+    public void setEndExamTotal(double endExamTotal) {
+        this.endExamTotal = endExamTotal;
+    }
+
+    public int getQuizPresentCount() {
+        return quizPresentCount;
+    }
+
+    public void setQuizPresentCount(int quizPresentCount) {
+        this.quizPresentCount = quizPresentCount;
+    }
+
+    public Double getQuizLowestPresentMark() {
+        return quizLowestPresentMark;
+    }
+
+    public void setQuizLowestPresentMark(Double quizLowestPresentMark) {
+        this.quizLowestPresentMark = quizLowestPresentMark;
+    }
+
+    public int getAssignmentSubmittedCount() {
+        return assignmentSubmittedCount;
+    }
+
+    public void setAssignmentSubmittedCount(int assignmentSubmittedCount) {
+        this.assignmentSubmittedCount = assignmentSubmittedCount;
+    }
+
+    public int getMidExamPresentCount() {
+        return midExamPresentCount;
+    }
+
+    public void setMidExamPresentCount(int midExamPresentCount) {
+        this.midExamPresentCount = midExamPresentCount;
+    }
+
+    public int getEndExamPresentCount() {
+        return endExamPresentCount;
+    }
+
+    public void setEndExamPresentCount(int endExamPresentCount) {
+        this.endExamPresentCount = endExamPresentCount;
+    }
+
+    public int getQuizCount() {
+        return quizCount;
+    }
+
+    public void setQuizCount(int quizCount) {
+        this.quizCount = quizCount;
+    }
+
+    public int getAssignmentCount() {
+        return assignmentCount;
+    }
+
+    public void setAssignmentCount(int assignmentCount) {
+        this.assignmentCount = assignmentCount;
+    }
+
+    public int getMidExamCount() {
+        return midExamCount;
+    }
+
+    public void setMidExamCount(int midExamCount) {
+        this.midExamCount = midExamCount;
+    }
+
+    public int getEndExamCount() {
+        return endExamCount;
+    }
+
+    public void setEndExamCount(int endExamCount) {
+        this.endExamCount = endExamCount;
     }
 
     // New Getters and Setters for Attendance Details

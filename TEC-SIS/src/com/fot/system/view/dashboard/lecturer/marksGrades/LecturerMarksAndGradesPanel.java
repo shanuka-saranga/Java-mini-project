@@ -6,11 +6,12 @@ import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.LecturerGradesService;
 import com.fot.system.service.LecturerMarksService;
-import com.fot.system.view.components.CloseActionButton;
-import com.fot.system.view.dashboard.lecturer.myCourses.LecturerCourseCard;
-
+import com.fot.system.view.shared_components.CloseActionButton;
+import com.fot.system.view.dashboard.lecturer.shared_components.LecturerCourseCard;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -18,7 +19,34 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
+
+/*
+LecturerMarksAndGradesPanel
+├── Header Panel
+└── cardPanel (CardLayout)
+    ├── LIST_CARD
+    │   └── courseListScrollPane
+    │       └── courseListPanel
+    │           └── LecturerCourseCard list
+    └── DETAILS_CARD
+        └── detailsView
+            └── openedCoursePanel
+                ├── panelHeader
+                │   ├── lblOpenedCourseTab
+                │   └── closeButton
+                └── openedCourseScrollPane
+                    └── detailsContentPanel (CardLayout)
+                        ├── SUMMARY_VIEW
+                        │   └── contentStack
+                        │       ├── lblSemesterSummary
+                        │       ├── summaryCardsPanel
+                        │       └── gradeSection
+                        └── ITEM_VIEW
+                            └── assessmentMarksDetailPanel
+
+ */
 
 /**
  * manages lecturer marks entry, assessment summaries, and grade overview views
@@ -69,12 +97,13 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         this.cardLayout = new CardLayout();
         this.cardPanel = new JPanel(cardLayout);
 
+        // lecture marks and grade panel styles
         setLayout(new BorderLayout(20, 20));
         setBackground(AppTheme.SURFACE_SOFT);
         setBorder(new EmptyBorder(24, 24, 24, 24));
-
         add(createHeader(), BorderLayout.NORTH);
-        cardPanel.setOpaque(false);
+
+        cardPanel.setOpaque(false); // background
         courseListPanel = new JPanel();
         courseListPanel.setOpaque(true);
         courseListPanel.setBackground(AppTheme.SURFACE_SOFT);
@@ -108,9 +137,11 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         closeButton.addActionListener(e -> cardLayout.show(cardPanel, LIST_CARD));
         panelHeader.add(closeButton, BorderLayout.EAST);
 
+        // summary panel
         summaryCardsPanel = new JPanel(new GridLayout(0, 3, 14, 14));
         summaryCardsPanel.setOpaque(false);
 
+        // search bar
         txtGradeSearch = new JTextField();
         txtGradeSearch.setFont(AppTheme.fontPlain(13));
         txtGradeSearch.setPreferredSize(new Dimension(420, 38));
@@ -119,28 +150,28 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                 BorderFactory.createLineBorder(AppTheme.BORDER_MUTED, 1, false),
                 new EmptyBorder(8, 10, 8, 10)
         ));
-        txtGradeSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+        txtGradeSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+            public void insertUpdate(DocumentEvent e) {
                 applyGradeFilters();
             }
 
             @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+            public void removeUpdate(DocumentEvent e) {
                 applyGradeFilters();
             }
 
             @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            public void changedUpdate(DocumentEvent e) {
                 applyGradeFilters();
             }
         });
 
+        // grades
         cmbGradeBatch = new JComboBox<>();
         cmbGradeBatch.setFont(AppTheme.fontPlain(13));
         cmbGradeBatch.setPreferredSize(new Dimension(160, 38));
         cmbGradeBatch.addActionListener(e -> applyGradeFilters());
-
         gradeTableModel = new DefaultTableModel(
                 new Object[]{"Reg No", "Student", "Batch", "CA", "End", "Final Mark", "Grade"},
                 0
@@ -167,6 +198,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         gradeRowSorter = new TableRowSorter<>(gradeTableModel);
         gradeTable.setRowSorter(gradeRowSorter);
 
+        // content stack
         JPanel contentStack = new JPanel();
         contentStack.setOpaque(false);
         contentStack.setLayout(new BoxLayout(contentStack, BoxLayout.Y_AXIS));
@@ -176,7 +208,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         contentStack.add(summaryCardsPanel);
         contentStack.add(Box.createVerticalStrut(20));
         contentStack.add(createGradeSection());
-        contentStack.add(Box.createVerticalGlue());
+        contentStack.add(Box.createVerticalGlue()); // push content to top
         detailsContentPanel.add(contentStack, SUMMARY_VIEW);
 
         assessmentMarksDetailPanel = new AssessmentMarksDetailPanel(
@@ -314,7 +346,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
      */
     private void openCourse(Course course) {
         selectedCourse = course;
-        logGradeFlow("openCourse -> courseId=" + course.getId() + ", courseCode=" + course.getCourseCode());
         lblOpenedCourseTab.setText(course.getCourseName());
         detailsCardLayout.show(detailsContentPanel, SUMMARY_VIEW);
         loadMarksOverview();
@@ -334,26 +365,20 @@ public class LecturerMarksAndGradesPanel extends JPanel {
             @Override
             protected MarksViewData doInBackground() {
                 int currentYear = Year.now().getValue();
-                logGradeFlow("loadMarksOverview.start -> courseId=" + selectedCourse.getId() + ", year=" + currentYear);
-                CourseSemesterContext context = lecturerMarksService.getCurrentSemesterContext(selectedCourse.getId(), currentYear);
-                List<AssessmentCardSummary> summaries = buildAssessmentSummaries(context);
+                List<AssessmentCardSummary> summaries = buildAssessmentSummaries(currentYear);
                 CourseGradeViewData gradeViewData = lecturerGradesService.getCourseGradeViewData(selectedCourse.getId());
-                logGradeFlow("loadMarksOverview.fetched -> summaryCards=" + summaries.size()
-                        + ", gradeRows=" + (gradeViewData.getRows() == null ? 0 : gradeViewData.getRows().size()));
-                return new MarksViewData(context, summaries, gradeViewData);
+                return new MarksViewData(currentYear, summaries, gradeViewData);
             }
 
             @Override
             protected void done() {
                 try {
                     MarksViewData data = get();
-                    currentMarksYear = data.context.getSemesterYear();
-                    logGradeFlow("loadMarksOverview.done -> currentMarksYear=" + currentMarksYear);
-                    lblSemesterSummary.setText("Current Year Marks Summary: " + data.context.getSemesterYear());
+                    currentMarksYear = data.semesterYear;
+                    lblSemesterSummary.setText("Current Year Marks Summary: " + data.semesterYear);
                     updateSummaryCards(data.summaries);
                     updateGradeView(data.gradeViewData);
                 } catch (Exception e) {
-                    logGradeFlow("loadMarksOverview.error -> " + e.getMessage());
                     lblSemesterSummary.setText("Current Year Marks Summary: -");
                     updateSummaryCards(List.of());
                     updateGradeView(createEmptyGradeViewData());
@@ -371,31 +396,34 @@ public class LecturerMarksAndGradesPanel extends JPanel {
 
     /**
      * Builds the full set of assessment summary cards for the current course.
-     * @param context current course semester context
+     * @param semesterYear current semester year
      * @author janith
      */
-    private List<AssessmentCardSummary> buildAssessmentSummaries(CourseSemesterContext context) {
-        List<AssessmentCardSummary> summaries = new java.util.ArrayList<>();
-        summaries.addAll(lecturerMarksService.getQuizCardSummaries(
-                selectedCourse.getId(),
-                context.getSemesterYear(),
-                selectedCourse.getNoOfQuizzes()
+    private List<AssessmentCardSummary> buildAssessmentSummaries(int semesterYear) {
+        List<AssessmentCardSummary> summaries = new ArrayList<>();
+
+        summaries.addAll(
+                lecturerMarksService.getQuizCardSummaries(
+                    selectedCourse.getId(),
+                    semesterYear,
+                    selectedCourse.getNoOfQuizzes()
         ));
-        summaries.addAll(lecturerMarksService.getAssignmentCardSummaries(
-                selectedCourse.getId(),
-                context.getSemesterYear(),
-                selectedCourse.getNoOfAssignments()
+        summaries.addAll(
+                lecturerMarksService.getAssignmentCardSummaries(
+                    selectedCourse.getId(),
+                    semesterYear,
+                    selectedCourse.getNoOfAssignments()
         ));
 
         AssessmentCardSummary midSummary = lecturerMarksService.getMidExamSummary(
                 selectedCourse.getId(),
-                context.getSemesterYear()
+                semesterYear
         );
         summaries.add(midSummary);
 
         AssessmentCardSummary endSummary = lecturerMarksService.getEndExamSummary(
                 selectedCourse.getId(),
-                context.getSemesterYear()
+                semesterYear
         );
         summaries.add(endSummary);
 
@@ -511,8 +539,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                     row.getGrade()
             });
         }
-        logGradeFlow("updateGradeView -> renderedRows=" + gradeTableModel.getRowCount()
-                + ", batches=" + (viewData.getRegistrationYears() == null ? 0 : viewData.getRegistrationYears().size()));
+
         applyGradeFilters();
     }
 
@@ -588,7 +615,6 @@ public class LecturerMarksAndGradesPanel extends JPanel {
                     );
                     return normalizeAssessmentRowsForCourse(summary, rows);
                 }catch (Exception e) {
-                    logGradeFlow("openAssessmentDetails.error -> " + e.getMessage());
                     throw new RuntimeException("Failed to load assessment details. Make sure the new marks tables and status columns exist in your database.");
                 }
             }
@@ -759,20 +785,10 @@ public class LecturerMarksAndGradesPanel extends JPanel {
     }
 
     private record MarksViewData(
-            CourseSemesterContext context,
+            int semesterYear,
             List<AssessmentCardSummary> summaries,
             CourseGradeViewData gradeViewData
     ) {
     }
 
-    /**
-     * Writes grade flow debug messages when logging is enabled.
-     * @param message debug message text
-     * @author janith
-     */
-    private void logGradeFlow(String message) {
-        if (ENABLE_GRADE_FLOW_LOGS) {
-            System.out.println("[GRADE-FLOW][UI] " + message);
-        }
-    }
 }

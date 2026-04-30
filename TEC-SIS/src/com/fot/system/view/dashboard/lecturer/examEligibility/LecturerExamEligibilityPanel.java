@@ -5,8 +5,8 @@ import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
 import com.fot.system.service.CourseService;
 import com.fot.system.service.ExamEligibilityService;
-import com.fot.system.view.components.CloseActionButton;
-import com.fot.system.view.dashboard.lecturer.myCourses.LecturerCourseCard;
+import com.fot.system.view.shared_components.CloseActionButton;
+import com.fot.system.view.dashboard.lecturer.shared_components.LecturerCourseCard;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

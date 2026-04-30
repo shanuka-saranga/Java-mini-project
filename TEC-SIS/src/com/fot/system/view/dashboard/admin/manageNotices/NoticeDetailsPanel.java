@@ -2,9 +2,8 @@ package com.fot.system.view.dashboard.admin.manageNotices;
 
 import com.fot.system.config.AppTheme;
 import com.fot.system.controller.EditNoticeController;
-import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
-import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.shared_components.CustomButton;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.swing.FontIcon;
 

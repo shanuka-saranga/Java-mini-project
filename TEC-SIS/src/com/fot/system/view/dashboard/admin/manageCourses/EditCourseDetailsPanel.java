@@ -4,9 +4,9 @@ import com.fot.system.config.AppConfig;
 import com.fot.system.config.AppTheme;
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
-import com.fot.system.view.components.ThemedComboBox;
-import com.fot.system.view.components.ThemedRadioButton;
-import com.fot.system.view.components.ThemedTextField;
+import com.fot.system.view.shared_components.ThemedComboBox;
+import com.fot.system.view.shared_components.ThemedRadioButton;
+import com.fot.system.view.shared_components.ThemedTextField;
 
 import javax.swing.*;
 import java.awt.*;

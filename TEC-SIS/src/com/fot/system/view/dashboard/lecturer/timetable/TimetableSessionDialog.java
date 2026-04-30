@@ -3,7 +3,7 @@ package com.fot.system.view.dashboard.lecturer.timetable;
 import com.fot.system.config.AppTheme;
 import com.fot.system.model.dto.*;
 import com.fot.system.model.entity.*;
-import com.fot.system.view.components.CustomButton;
+import com.fot.system.view.shared_components.CustomButton;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
