@@ -159,9 +159,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
         gradeTable.setGridColor(AppTheme.BORDER_SOFT);
         gradeTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         gradeTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        gradeTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        gradeTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        gradeTable.getTableHeader().setFont(AppTheme.fontBold(13));
+        AppTheme.applyTableHeaderTheme(gradeTable);
         gradeTable.setFillsViewportHeight(true);
 
         gradeRowSorter = new TableRowSorter<>(gradeTableModel);

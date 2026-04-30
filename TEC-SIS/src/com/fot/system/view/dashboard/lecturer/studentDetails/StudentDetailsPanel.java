@@ -136,9 +136,7 @@ public class StudentDetailsPanel extends JPanel {
         table.getColumnModel().getColumn(4).setPreferredWidth(180); // Email
         table.getColumnModel().getColumn(6).setPreferredWidth(150); // Address
 
-        table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(AppTheme.fontBold(13));
+        AppTheme.applyTableHeaderTheme(table);
         table.getTableHeader().setPreferredSize(new Dimension(0, 40));
     }
 

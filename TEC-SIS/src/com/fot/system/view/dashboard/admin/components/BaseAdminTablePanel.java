@@ -48,14 +48,10 @@ public abstract class  BaseAdminTablePanel extends JScrollPane {
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
 
+        AppTheme.applyTableHeaderTheme(table);
         table.getTableHeader().setFont(AppTheme.fontBold(14));
-        table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
         table.getTableHeader().setPreferredSize(new Dimension(0, 50));
         table.getTableHeader().setReorderingAllowed(false);
-
-        ((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer())
-                .setHorizontalAlignment(JLabel.CENTER);
 
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
             @Override

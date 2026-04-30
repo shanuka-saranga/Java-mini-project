@@ -263,9 +263,7 @@ public class TOMedicalPanel extends JPanel {
         table.setGridColor(AppTheme.BORDER_SOFT);
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(AppTheme.fontBold(13));
+        AppTheme.applyTableHeaderTheme(table);
         table.setFillsViewportHeight(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

@@ -180,9 +180,7 @@ public class LecturerExamEligibilityPanel extends JPanel {
         eligibilityTable.setGridColor(AppTheme.BORDER_SOFT);
         eligibilityTable.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         eligibilityTable.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
-        eligibilityTable.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        eligibilityTable.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        eligibilityTable.getTableHeader().setFont(AppTheme.fontBold(13));
+        AppTheme.applyTableHeaderTheme(eligibilityTable);
         eligibilityTable.setFillsViewportHeight(true);
         eligibilityTable.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
             @Override

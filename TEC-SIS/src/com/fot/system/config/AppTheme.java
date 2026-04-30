@@ -2,6 +2,8 @@ package com.fot.system.config;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 
 public class AppTheme {
@@ -136,5 +138,25 @@ public class AppTheme {
         UIManager.put("Table.gridColor", BORDER_SOFT);
         UIManager.put("Table.selectionBackground", TABLE_SELECTION_BG);
         UIManager.put("Table.selectionForeground", TABLE_SELECTION_FG);
+    }
+
+    public static void applyTableHeaderTheme(JTable table) {
+        if (table == null || table.getTableHeader() == null) {
+            return;
+        }
+
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(TABLE_HEADER_BG);
+        header.setForeground(TABLE_HEADER_FG);
+        header.setFont(fontBold(13));
+        header.setOpaque(true);
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(SwingConstants.CENTER);
+        renderer.setBackground(TABLE_HEADER_BG);
+        renderer.setForeground(TABLE_HEADER_FG);
+        renderer.setFont(fontBold(13));
+        renderer.setBorder(BorderFactory.createLineBorder(PRIMARY_ACTIVE, 1, false));
+        header.setDefaultRenderer(renderer);
     }
 }

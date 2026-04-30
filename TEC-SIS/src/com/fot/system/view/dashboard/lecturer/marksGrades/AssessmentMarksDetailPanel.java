@@ -158,9 +158,7 @@ public class AssessmentMarksDetailPanel extends JPanel {
         table.setFillsViewportHeight(true);
         table.getTableHeader().setReorderingAllowed(false);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getTableHeader().setBackground(AppTheme.TABLE_HEADER_BG);
-        table.getTableHeader().setForeground(AppTheme.TABLE_HEADER_FG);
-        table.getTableHeader().setFont(AppTheme.fontBold(13));
+        AppTheme.applyTableHeaderTheme(table);
         table.setFont(AppTheme.fontPlain(13));
         table.setSelectionBackground(AppTheme.TABLE_SELECTION_BG);
         table.setSelectionForeground(AppTheme.TABLE_SELECTION_FG);
