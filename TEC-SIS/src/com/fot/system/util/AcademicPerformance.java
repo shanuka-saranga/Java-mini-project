@@ -246,9 +246,7 @@ public class AcademicPerformance {
      * @author janith
      */
     public String resolveSpecialGrade(StudentCourseGradeRecord record, double caAverage, double endExamAverage) {
-        if (record.getQuizMedicalCount() > 0
-                || record.getAssignmentMedicalCount() > 0
-                || record.getMidExamMedicalCount() > 0
+        if ( record.getMidExamMedicalCount() > 0
                 || record.getEndExamMedicalCount() > 0) {
             return "MC";
         }
