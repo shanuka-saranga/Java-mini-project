@@ -364,18 +364,17 @@ public class LecturerMarksAndGradesPanel extends JPanel {
             @Override
             protected MarksViewData doInBackground() {
                 int currentYear = Year.now().getValue();
-                CourseSemesterContext context = lecturerMarksService.getCurrentSemesterContext(selectedCourse.getId(), currentYear);
-                List<AssessmentCardSummary> summaries = buildAssessmentSummaries(context);
+                List<AssessmentCardSummary> summaries = buildAssessmentSummaries(currentYear);
                 CourseGradeViewData gradeViewData = lecturerGradesService.getCourseGradeViewData(selectedCourse.getId());
-                return new MarksViewData(context, summaries, gradeViewData);
+                return new MarksViewData(currentYear, summaries, gradeViewData);
             }
 
             @Override
             protected void done() {
                 try {
                     MarksViewData data = get();
-                    currentMarksYear = data.context.getSemesterYear();
-                    lblSemesterSummary.setText("Current Year Marks Summary: " + data.context.getSemesterYear());
+                    currentMarksYear = data.semesterYear;
+                    lblSemesterSummary.setText("Current Year Marks Summary: " + data.semesterYear);
                     updateSummaryCards(data.summaries);
                     updateGradeView(data.gradeViewData);
                 } catch (Exception e) {
@@ -396,31 +395,31 @@ public class LecturerMarksAndGradesPanel extends JPanel {
 
     /**
      * Builds the full set of assessment summary cards for the current course.
-     * @param context current course semester context
+     * @param semesterYear current semester year
      * @author janith
      */
-    private List<AssessmentCardSummary> buildAssessmentSummaries(CourseSemesterContext context) {
+    private List<AssessmentCardSummary> buildAssessmentSummaries(int semesterYear) {
         List<AssessmentCardSummary> summaries = new java.util.ArrayList<>();
         summaries.addAll(lecturerMarksService.getQuizCardSummaries(
                 selectedCourse.getId(),
-                context.getSemesterYear(),
+                semesterYear,
                 selectedCourse.getNoOfQuizzes()
         ));
         summaries.addAll(lecturerMarksService.getAssignmentCardSummaries(
                 selectedCourse.getId(),
-                context.getSemesterYear(),
+                semesterYear,
                 selectedCourse.getNoOfAssignments()
         ));
 
         AssessmentCardSummary midSummary = lecturerMarksService.getMidExamSummary(
                 selectedCourse.getId(),
-                context.getSemesterYear()
+                semesterYear
         );
         summaries.add(midSummary);
 
         AssessmentCardSummary endSummary = lecturerMarksService.getEndExamSummary(
                 selectedCourse.getId(),
-                context.getSemesterYear()
+                semesterYear
         );
         summaries.add(endSummary);
 
@@ -782,7 +781,7 @@ public class LecturerMarksAndGradesPanel extends JPanel {
     }
 
     private record MarksViewData(
-            CourseSemesterContext context,
+            int semesterYear,
             List<AssessmentCardSummary> summaries,
             CourseGradeViewData gradeViewData
     ) {

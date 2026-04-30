@@ -1,7 +1,6 @@
 package com.fot.system.service;
 
 import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
 import com.fot.system.repository.LecturerMarksRepository;
 
 import java.util.List;
@@ -12,19 +11,6 @@ public class LecturerMarksService {
 
     public LecturerMarksService() {
         this.lecturerMarksRepository = new LecturerMarksRepository();
-    }
-
-    /**
-     * Gets the semester context used to load lecturer marks for the selected course.
-     * @param courseId selected course id
-     * @param currentYear current calendar year
-     * @author janith
-     */
-    public CourseSemesterContext getCurrentSemesterContext(int courseId, int currentYear) {
-        if (courseId <= 0) {
-            throw new RuntimeException("Invalid course ID.");
-        }
-        return lecturerMarksRepository.findCurrentSemesterContext(courseId, currentYear);
     }
 
     public List<AssessmentCardSummary> getQuizCardSummaries(int courseId, int semesterYear, int quizCount) {

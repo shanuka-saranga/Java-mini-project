@@ -2,7 +2,6 @@ package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
 import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,17 +18,7 @@ public class LecturerMarksRepository {
         this.conn = DBConnection.getInstance().getConnection();
     }
 
-    /**
-     * Returns the current semester year context used by the lecturer marks view.
-     * @param courseId selected course id
-     * @param currentYear current calendar year
-     * @author janith
-     */
-    public CourseSemesterContext findCurrentSemesterContext(int courseId, int currentYear) {
-        CourseSemesterContext context = new CourseSemesterContext();
-        context.setSemesterYear(currentYear);
-        return context;
-    }
+
 
     public List<AssessmentCardSummary> findQuizCardSummaries(int courseId, int semesterYear, int quizCount) {
         List<AssessmentCardSummary> summaries = new ArrayList<>();
