@@ -2,8 +2,6 @@ package com.fot.system.repository;
 
 import com.fot.system.config.DBConnection;
 import com.fot.system.model.dto.*;
-import com.fot.system.model.entity.*;
-import com.fot.system.util.AcademicPerformance;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,11 +11,9 @@ public class MarksRepository {
     private static final boolean ENABLE_GRADE_FLOW_LOGS = true;
 
     private final Connection conn;
-    private final AcademicPerformance academicPerformance;
 
     public MarksRepository() {
         this.conn = DBConnection.getInstance().getConnection();
-        this.academicPerformance = new AcademicPerformance();
     }
 
     /**
@@ -647,33 +643,19 @@ public class MarksRepository {
                     snapshot.setCourseCode(rs.getString("course_code"));
                     snapshot.setCredits(rs.getInt("credits"));
                     snapshot.setSessionType(rs.getString("session_type"));
-
-                    Double quizAverage = academicPerformance.calculateQuizAverageForConfiguredCount(
-                            rs.getDouble("quiz_total"),
-                            getNullableDouble(rs, "quiz_lowest_present_mark"),
-                            rs.getInt("quiz_present_count"),
-                            rs.getInt("no_of_quizzes")
-                    );
-                    Double assignmentAverage = academicPerformance.calculateAssignmentAverageForConfiguredCount(
-                            rs.getDouble("assignment_total"),
-                            rs.getInt("no_of_assignments")
-                    );
-                    Double midExamAverage = academicPerformance.calculateExamAverageForConfiguredCount(
-                            rs.getDouble("mid_exam_total"),
-                            rs.getInt("exam_component_count")
-                    );
-                    double caAverage = academicPerformance.averageComponentScores(
-                            quizAverage,
-                            assignmentAverage,
-                            midExamAverage
-                    );
-                    Double endExamAverage = academicPerformance.calculateExamAverageForConfiguredCount(
-                            rs.getDouble("end_exam_total"),
-                            rs.getInt("exam_component_count")
-                    );
-
-                    snapshot.setCaMarks(caAverage);
-                    snapshot.setEndExamMarks(endExamAverage == null ? 0 : endExamAverage);
+                    snapshot.setQuizTotal(rs.getDouble("quiz_total"));
+                    snapshot.setQuizPresentCount(rs.getInt("quiz_present_count"));
+                    snapshot.setQuizLowestPresentMark(getNullableDouble(rs, "quiz_lowest_present_mark"));
+                    snapshot.setAssignmentTotal(rs.getDouble("assignment_total"));
+                    snapshot.setAssignmentSubmittedCount(rs.getInt("assignment_submitted_count"));
+                    snapshot.setMidExamTotal(rs.getDouble("mid_exam_total"));
+                    snapshot.setMidExamPresentCount(rs.getInt("mid_exam_present_count"));
+                    snapshot.setEndExamTotal(rs.getDouble("end_exam_total"));
+                    snapshot.setEndExamPresentCount(rs.getInt("end_exam_present_count"));
+                    snapshot.setQuizCount(rs.getInt("no_of_quizzes"));
+                    snapshot.setAssignmentCount(rs.getInt("no_of_assignments"));
+                    snapshot.setMidExamCount(rs.getInt("exam_component_count"));
+                    snapshot.setEndExamCount(rs.getInt("exam_component_count"));
 
                     int totalSessions = rs.getInt("total_sessions");
                     int attendedSessions = rs.getInt("attended_sessions");
