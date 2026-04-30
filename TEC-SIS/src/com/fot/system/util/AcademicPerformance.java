@@ -262,6 +262,7 @@ public class AcademicPerformance {
                 || record.getMidExamIncompleteCount() > 0
                 || !caCompleteByCounts
                 || caAverage < CA_MINIMUM_MARK;
+
         boolean endFailOrIncomplete = record.getEndExamIncompleteCount() > 0
                 || !endCompleteByCounts
                 || endExamAverage < END_MINIMUM_MARK;
